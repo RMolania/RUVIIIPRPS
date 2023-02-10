@@ -9,6 +9,8 @@
 #'
 #'
 #' @return pca.all PCA components computed on the provided data
+#' @importFrom SummarizedExperiment assays
+#' @importFrom BiocSingular bsparam
 #' @export
 #'
 compute_pca=function(
@@ -30,4 +32,57 @@ compute_pca=function(
         })
     names(pca.all) <- normalizations
     return(pca.all)
+
+
+    #=================== PCA =================
+    # Principal component analysis using singular value decomposition (SVD)
+    ## data: gene expression matrix genes by samples
+    ## is.log:  logical factor indicating whether the data is log transformed or not
+    .pca <- function(data, is.log) {
+        if (is.log)
+            data <- data
+        else
+            data <- log2(data + 1)
+        svd <- base::svd(scale(
+            x = t(data),
+            center = TRUE,
+            scale = FALSE
+        ))
+        percent <- svd$d ^ 2 / sum(svd$d ^ 2) * 100
+        percent <-
+            sapply(seq_along(percent),
+                   function(i) {
+                       round(percent[i], 1)
+                   })
+        return(list(
+            sing.val = svd,
+            variation = percent))
+    }
+
+    # Fast principal component analysis
+    ## data: gene expression matrix genes by samples
+    ## nPcs: integer scalar specifying the number of singular values to return
+    ## is.log:  logical factor indicating whether the data is log transformed or not
+    fast.pca <- function(data, nPcs, is.log) {
+        if(is.log){
+            data <- data
+        }else{
+            data <- log2(data + 1)
+        }
+        svd <- BiocSingular::runSVD(
+            x = t(data),
+            k = nPcs,
+            BSPARAM = BiocSingular::bsparam(),
+            center = TRUE,
+            scale = FALSE
+        )
+        percent <- svd$d^2/sum(svd$d^2)*100
+        percent <-
+            sapply(
+                seq_along(percent),
+                function(i) {round(percent[i], 1)})
+        return(list(
+            sing.val = svd,
+            variation = percent))
+    }
 }
