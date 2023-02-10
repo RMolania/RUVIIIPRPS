@@ -4,7 +4,7 @@
 #' is used to plot PCA of the data colored by one variable
 #'
 #'
-#' @param pcs PCs of the dataset that will be used in the plot
+#' @param pca PCs of the dataset that will be used in the plot
 #' @param variable The variable that will be used to display and color the PCA plot
 #' @param variable.name The label of the variable that will be used on the PCA plot
 #' @param color The color palette to use to plot the variable
@@ -16,7 +16,7 @@
 
 
 pca_plot_squared<-function(
-        pcs,
+        pca,
         variable,
         variable.name,
         color,
@@ -25,7 +25,8 @@ pca_plot_squared<-function(
         strokeColor = 'gray30',
         alpha = .5
 ){
-    pc.var=pcs$var
+    pcs = pca$sing.val$u[,1:3]
+    pc.var = pca$var
     pair.pcs <- utils::combn(ncol(pcs), 2)
     pList <- list()
     for(i in 1:ncol(pair.pcs)){

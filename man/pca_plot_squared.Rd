@@ -7,7 +7,7 @@
 is used to plot PCA of the data colored by one variable}
 \usage{
 pca_plot_squared(
-  pcs,
+  pca,
   variable,
   variable.name,
   color,
@@ -18,7 +18,7 @@ pca_plot_squared(
 )
 }
 \arguments{
-\item{pcs}{PCs of the dataset that will be used in the plot}
+\item{pca}{PCs of the dataset that will be used in the plot}
 
 \item{variable}{The variable that will be used to display and color the PCA plot}
 
