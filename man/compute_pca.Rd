@@ -10,6 +10,8 @@ compute_pca(sce, apply.log = FALSE)
 }
 \arguments{
 \item{sce}{Dataset that will be used to compute the PCA}
+
+\item{apply.log}{Indicates whether to apply a log-transformation to the data}
 }
 \value{
 pca.all PCA components computed on the provided data
