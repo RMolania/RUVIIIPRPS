@@ -5,7 +5,7 @@
 #'
 #'
 #' @param sce Dataset that will be used to compute the PCA
-#'
+#' @param apply.log Indicates whether to apply a log-transformation to the data
 #'
 #'
 #' @return pca.all PCA components computed on the provided data
