@@ -11,7 +11,7 @@ The RUVPRPS software package itself can be cited as:
 
 Molania R, Foroutan M, Gagnon-Bartsch JA, Gandolfo LC, Jain A, Sinha A, Olshansky G, Dobrovic A, Papenfuss AT, Speed TP. Removing unwanted variation from large-scale RNA sequencing data with PRPS. Nat Biotechnol. 2023 Jan;41(1):82-95. doi: 10.1038/s41587-022-01440-w. Epub 2022 Sep 15. PMID: 36109686; PMCID: PMC9849124.
 
-##  RUVPRPS Installation
+##  RUV-PRPS Installation
 
 After installing the dependent libraries, RUVPRPS can be installed by running the following lines
 
@@ -20,7 +20,7 @@ library(devtools)
 install_github('mtrussart/RUVPRPS')
 ```
 
-## Using RUVPRPS to remove unwanted variation from large-scale RNA sequencing data
+## Using RUV-PRPS to remove unwanted variation from large-scale RNA sequencing data
 
 RUVPRPS is a novel strategy using pseudo-replicates of pseudo-samples (PRPS) to normalize RNA-seq data in situations when technical replicate are not available or well-designed. 
 We provided a vignette Introduction_to_RUVPRPS.Rmd that explains step by step how to load and normalise datasets and also how to visualise the diagnostic plots before and after normalisation.
