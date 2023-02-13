@@ -1,0 +1,38 @@
+---
+title: "RUVPRPS-vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ggplot2)
+library(SummarizedExperiment)
+library(BiocSingular)
+library(ggpubr)
+library(cowplot)
+library(scales)
+library(RUVPRPS)
+library(RUVPRPS)
+```
+
+```{r load data}
+# file_remote="https://zenodo.org/record/6326542/files/READ%20%28Rectum%20adenocarcinoma%29.rds"
+# # Make temp local copy
+# file_local <- basename(file_remote)
+# file_local <- file.path(tempdir(), file_local)
+# options(timeout=1000)
+# download.file(file_remote, file_local, quiet = F)
+# # Load file
+# data<- readRDS(file_local)
+
+```

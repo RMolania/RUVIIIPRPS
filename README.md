@@ -29,5 +29,12 @@ Please follow the instructions and refer to the following vignette to visualise 
 
 
 ``` r
+library(ggplot2)
+library(SummarizedExperiment)
+library(librarBiocSingular)
+library(ggpubr)
+library(cowplot)
+library(scales)
+library(RUVPRPS)
 Introduction_to_RUVPRPS.Rmd
 ```
