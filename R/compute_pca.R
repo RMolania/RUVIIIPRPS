@@ -11,7 +11,6 @@
 #' @import ggplot2
 #' @export
 compute_pca=function(
-        ##compute_pca(skcm.se)
     sce,
     apply.log=FALSE
 ){
@@ -21,11 +20,7 @@ compute_pca=function(
     pca.all <- lapply(
         normalizations,
         function(x){
-            pca(
-                sce= as.matrix(
-                    SummarizedExperiment::assay(sce, x)
-                ),
-                apply.log = apply.log)
+            pca(sce= as.matrix(SummarizedExperiment::assay(sce, x)),apply.log = apply.log)
         })
     names(pca.all) <- normalizations
     return(pca.all)
