@@ -10,8 +10,29 @@
 #' @importFrom BiocSingular bsparam
 #' @import ggplot2
 #' @export
+compute_pca=function(
+        ##compute_pca(skcm.se)
+    sce,
+    apply.log=FALSE
+){
+    normalizations=names(
+        SummarizedExperiment::assays(sce)
+    )
+    pca.all <- lapply(
+        normalizations,
+        function(x){
+            .pca(
+                sce= as.matrix(
+                    SummarizedExperiment::assay(sce, x)
+                ),
+                apply.log = apply.log)
+        })
+    names(pca.all) <- normalizations
+    return(pca.all)
+}
 
 
+#' @export
 #=================== PCA =================
 # Principal component analysis using singular value decomposition (SVD)
 ## sce: Dataset that will be used to compute the PCA
@@ -37,23 +58,3 @@
         variation = percent))
 }
 
-compute_pca=function(
-        ##compute_pca(skcm.se)
-    sce,
-    apply.log=FALSE
-){
-    normalizations=names(
-        SummarizedExperiment::assays(sce)
-    )
-    pca.all <- lapply(
-        normalizations,
-        function(x){
-            .pca(
-                sce= as.matrix(
-                    SummarizedExperiment::assay(sce, x)
-                ),
-                apply.log = apply.log)
-        })
-    names(pca.all) <- normalizations
-    return(pca.all)
-}
