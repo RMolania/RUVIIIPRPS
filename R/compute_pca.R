@@ -10,7 +10,33 @@
 #' @importFrom BiocSingular bsparam
 #' @import ggplot2
 #' @export
-#'
+
+
+#=================== PCA =================
+# Principal component analysis using singular value decomposition (SVD)
+## sce: Dataset that will be used to compute the PCA
+## is.log: Indicates whether to apply a log-transformation to the data
+.pca <- function(sce, apply.log=FALSE) {
+    if (apply.log==FALSE)
+        sce <- sce
+    else
+        sce <- log2(sce + 1)
+    svd <- base::svd(scale(
+        x = t(sce),
+        center = TRUE,
+        scale = FALSE
+    ))
+    percent <- svd$d ^ 2 / sum(svd$d ^ 2) * 100
+    percent <-
+        sapply(seq_along(percent),
+               function(i) {
+                   round(percent[i], 1)
+               })
+    return(list(
+        sing.val = svd,
+        variation = percent))
+}
+
 compute_pca=function(
         ##compute_pca(skcm.se)
     sce,
@@ -23,64 +49,11 @@ compute_pca=function(
         normalizations,
         function(x){
             .pca(
-                data = as.matrix(
+                sce= as.matrix(
                     SummarizedExperiment::assay(sce, x)
                 ),
-                is.log = !apply.log)
+                apply.log = apply.log)
         })
     names(pca.all) <- normalizations
     return(pca.all)
-
-
-    #=================== PCA =================
-    # Principal component analysis using singular value decomposition (SVD)
-    ## data: gene expression matrix genes by samples
-    ## is.log:  logical factor indicating whether the data is log transformed or not
-    .pca <- function(data, is.log) {
-        if (is.log)
-            data <- data
-        else
-            data <- log2(data + 1)
-        svd <- base::svd(scale(
-            x = t(data),
-            center = TRUE,
-            scale = FALSE
-        ))
-        percent <- svd$d ^ 2 / sum(svd$d ^ 2) * 100
-        percent <-
-            sapply(seq_along(percent),
-                   function(i) {
-                       round(percent[i], 1)
-                   })
-        return(list(
-            sing.val = svd,
-            variation = percent))
-    }
-
-    # Fast principal component analysis
-    ## data: gene expression matrix genes by samples
-    ## nPcs: integer scalar specifying the number of singular values to return
-    ## is.log:  logical factor indicating whether the data is log transformed or not
-    fast.pca <- function(data, nPcs, is.log) {
-        if(is.log){
-            data <- data
-        }else{
-            data <- log2(data + 1)
-        }
-        svd <- BiocSingular::runSVD(
-            x = t(data),
-            k = nPcs,
-            BSPARAM = BiocSingular::bsparam(),
-            center = TRUE,
-            scale = FALSE
-        )
-        percent <- svd$d^2/sum(svd$d^2)*100
-        percent <-
-            sapply(
-                seq_along(percent),
-                function(i) {round(percent[i], 1)})
-        return(list(
-            sing.val = svd,
-            variation = percent))
-    }
 }
