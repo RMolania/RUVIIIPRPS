@@ -2,6 +2,7 @@
 
 export(compute_pca)
 export(pca_plot_squared)
+export(single_pca)
 import(ggplot2)
 import(scales)
 importFrom(BiocSingular,bsparam)
