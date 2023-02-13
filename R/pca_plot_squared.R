@@ -1,17 +1,22 @@
-#' @rdname pca_plot_squared
-#' @title pca_plot_squared
-#'
+
 #' is used to plot PCA of the data colored by one variable
 #'
 #'
 #' @param pca PCs of the dataset that will be used in the plot
 #' @param variable The variable that will be used to display and color the PCA plot
 #' @param variable.name The label of the variable that will be used on the PCA plot
-#' @param color The color palette to use to plot the variable
+#' @param color The color of the variable that will be used on the PCA plot
+#' @param strokeSize geom_point aesthetics
+#' @param pointSize geom_point aesthetics
+#' @param strokeColor geom_point aesthetics
+#' @param alpha geom_point aesthetics
 #'
 #'
 #'
 #' @return p PCA plot of the data colored by one variable
+#' @importFrom ggpubr get_legend
+#' @importFrom cowplot axis_canvas ggdraw insert_xaxis_grob insert_yaxis_grob
+#' @import ggplot2 scales
 #' @export
 
 
@@ -64,7 +69,7 @@ pca_plot_squared<-function(
                 guides(fill = guide_legend(override.aes = list(size = 4))) +
                 scale_fill_manual(name = variable.name, values = color)
 
-            le <- ggpubr::get_legend(p)
+            le <- get_legend(p)
         }else{
             x <- pair.pcs[1,i]
             y <- pair.pcs[2,i]
@@ -95,7 +100,7 @@ pca_plot_squared<-function(
                 scale_fill_manual(values = color, name = variable.name)
         }
         p <- p + theme(legend.position = "none")
-        xdens <- cowplot::axis_canvas(p, axis = "x")+
+        xdens <- axis_canvas(p, axis = "x")+
             geom_density(
                 mapping = aes(
                     x = pcs[,x],
@@ -106,7 +111,7 @@ pca_plot_squared<-function(
             theme(legend.position = "none") +
             scale_fill_manual(values = color)
 
-        ydens <- cowplot::axis_canvas(
+        ydens <- axis_canvas(
             p,
             axis = "y",
             coord_flip = TRUE) +

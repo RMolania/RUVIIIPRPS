@@ -2,5 +2,12 @@
 
 export(compute_pca)
 export(pca_plot_squared)
+import(ggplot2)
+import(scales)
 importFrom(BiocSingular,bsparam)
 importFrom(SummarizedExperiment,assays)
+importFrom(cowplot,axis_canvas)
+importFrom(cowplot,ggdraw)
+importFrom(cowplot,insert_xaxis_grob)
+importFrom(cowplot,insert_yaxis_grob)
+importFrom(ggpubr,get_legend)

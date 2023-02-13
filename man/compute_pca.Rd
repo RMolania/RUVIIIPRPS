@@ -2,9 +2,7 @@
 % Please edit documentation in R/compute_pca.R
 \name{compute_pca}
 \alias{compute_pca}
-\title{compute_pca
-
-is used to compute PCA of the data}
+\title{is used to compute PCA of the data}
 \usage{
 compute_pca(sce, apply.log = FALSE)
 }
@@ -17,7 +15,5 @@ compute_pca(sce, apply.log = FALSE)
 pca.all PCA components computed on the provided data
 }
 \description{
-compute_pca
-
 is used to compute PCA of the data
 }

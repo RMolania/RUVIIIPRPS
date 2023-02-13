@@ -2,9 +2,7 @@
 % Please edit documentation in R/pca_plot_squared.R
 \name{pca_plot_squared}
 \alias{pca_plot_squared}
-\title{pca_plot_squared
-
-is used to plot PCA of the data colored by one variable}
+\title{is used to plot PCA of the data colored by one variable}
 \usage{
 pca_plot_squared(
   pca,
@@ -24,13 +22,19 @@ pca_plot_squared(
 
 \item{variable.name}{The label of the variable that will be used on the PCA plot}
 
-\item{color}{The color palette to use to plot the variable}
+\item{color}{The color of the variable that will be used on the PCA plot}
+
+\item{strokeSize}{geom_point aesthetics}
+
+\item{pointSize}{geom_point aesthetics}
+
+\item{strokeColor}{geom_point aesthetics}
+
+\item{alpha}{geom_point aesthetics}
 }
 \value{
 p PCA plot of the data colored by one variable
 }
 \description{
-pca_plot_squared
-
 is used to plot PCA of the data colored by one variable
 }

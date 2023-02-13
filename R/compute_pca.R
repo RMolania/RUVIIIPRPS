@@ -1,6 +1,3 @@
-#' @rdname compute_pca
-#' @title compute_pca
-#'
 #' is used to compute PCA of the data
 #'
 #'
@@ -11,6 +8,7 @@
 #' @return pca.all PCA components computed on the provided data
 #' @importFrom SummarizedExperiment assays
 #' @importFrom BiocSingular bsparam
+#' @import ggplot2
 #' @export
 #'
 compute_pca=function(
