@@ -21,7 +21,7 @@ compute_pca=function(
     pca.all <- lapply(
         normalizations,
         function(x){
-            .pca(
+            pca(
                 sce= as.matrix(
                     SummarizedExperiment::assay(sce, x)
                 ),
@@ -32,12 +32,11 @@ compute_pca=function(
 }
 
 
-#' @export
 #=================== PCA =================
 # Principal component analysis using singular value decomposition (SVD)
 ## sce: Dataset that will be used to compute the PCA
 ## is.log: Indicates whether to apply a log-transformation to the data
-.pca <- function(sce, apply.log=FALSE) {
+pca <- function(sce, apply.log=FALSE) {
     if (apply.log==FALSE)
         sce <- sce
     else
