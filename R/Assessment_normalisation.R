@@ -6,7 +6,7 @@
 #' @param biological_subtypes Biological subtypes of each sample
 #' @param library_size Library size of each sample
 #' @param time_effect Time effect (plates/years ) of each sample
-#' @param output_file Path of the output file to save the assessments plots
+#' @param output_file Path and name of the output file to save the assessments plots in a pdf format
 #'
 #'
 #' @return plots List of assessments plots
@@ -87,6 +87,11 @@ assessment_normalisation = function(
 
     ### Assessment on the library size ####
 
-
+    if (output_file!=NULL){
+        pdf(output_file)
+        plot_BIO
+        plot_TIME
+        dev.off()
+    }
     return(list(plot_BIO,plot_TIME))
 }
