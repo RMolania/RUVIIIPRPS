@@ -11,7 +11,7 @@
 #'
 #' @return plots List of assessments plots
 #' @importFrom RColorBrewer brewer.pal
-#' @importFrom grDevices colorRampPalette
+#' @importFrom grDevices colorRampPalette dev.off pdf
 #' @importFrom gridExtra grid.arrange
 #' @export
 

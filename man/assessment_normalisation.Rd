@@ -24,7 +24,7 @@ assessment_normalisation(
 
 \item{time_effect}{Time effect (plates/years ) of each sample}
 
-\item{output_file}{Path of the output file to save the assessments plots}
+\item{output_file}{Path and name of the output file to save the assessments plots in a pdf format}
 }
 \value{
 plots List of assessments plots
