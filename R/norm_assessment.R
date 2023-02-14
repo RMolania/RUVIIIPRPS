@@ -16,7 +16,7 @@
 #' @export
 
 
-assessment_normalisation = function(
+norm_assessment = function(
     sce,
     apply.log = FALSE,
     biological_subtypes,
