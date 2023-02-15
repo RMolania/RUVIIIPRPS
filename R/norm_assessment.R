@@ -35,8 +35,9 @@ norm_assessment = function(
     ### Assessment on the biology ####
     # Color Biology
     colfunc <- colorRampPalette(brewer.pal(n = 11, name = 'Spectral')[-6])
-    print(col)
     color.subtype<- colfunc(length(unique(sce$biological_subtypes)))
+    print("Test print")
+    print(color.subtype)
     names(color.subtype) <- levels(sce$biological_subtypes)
     print(color.subtype)
     ### Compute PCA Biology
@@ -64,7 +65,9 @@ norm_assessment = function(
     # Color Time (years)
     colfunc <- colorRampPalette(brewer.pal(n = 4, name = 'Set1')[-6])
     color.time <- colfunc(length(unique(sce$time_effect)))
+    print(color.time)
     names(color.time) <- levels(sce$time_effect)
+    print(color.time)
     ### Compute PCA Time
     pp_time <- lapply(
         normalizations,
