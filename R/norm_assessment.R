@@ -35,6 +35,7 @@ norm_assessment = function(
     ### Assessment on the biology ####
     # Color Biology
     colfunc <- colorRampPalette(brewer.pal(n = 11, name = 'Spectral')[-6])
+    print(col)
     color.subtype<- colfunc(length(unique(sce$biological_subtypes)))
     names(color.subtype) <- levels(sce$biological_subtypes)
     print(color.subtype)
