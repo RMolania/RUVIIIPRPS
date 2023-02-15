@@ -34,6 +34,7 @@ norm_assessment = function(
 
     ### Assessment on the biology ####
     # Color Biology
+    colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
     color.subtype<- colfunc(length(unique(biological_subtypes)))
     names(color.subtype) <- levels(biological_subtypes)
     message("PCA based on Biology")
@@ -51,9 +52,9 @@ norm_assessment = function(
         })
     names(pp_bio) <- normalizations
     plot_BIO=c(pp_bio[[1]],
-          pp_bio[[2]],
-          pp_bio[[3]],
-          pp_bio[[4]])
+               pp_bio[[2]],
+               pp_bio[[3]],
+               pp_bio[[4]])
 
     ### Assessment on the time effect ####
     # Color Time (years)
@@ -75,9 +76,9 @@ norm_assessment = function(
         })
     names(pp_time) <- normalizations
     plot_TIME=c(pp_time[[1]],
-          pp_time[[2]],
-          pp_time[[3]],
-          pp_time[[4]])
+                pp_time[[2]],
+                pp_time[[3]],
+                pp_time[[4]])
 
 
     # ### Assessment on the library size ####
@@ -88,5 +89,5 @@ norm_assessment = function(
     #     plot_TIME
     #     dev.off()
     # }
-   return(list(plot_bio=plot_BIO,plot_time=plot_TIME))
+    return(list(plot_bio=plot_BIO,plot_time=plot_TIME))
 }
