@@ -87,10 +87,10 @@ norm_assessment = function(
     if (!is.null(output_file)){
         pdf(output_file)
             do.call(grid.arrange,
-                c(all_plots$plot_BIO,
+                c(plot_BIO,
                   ncol = 4))
             do.call(grid.arrange,
-                c(all_plots$plot_TIME,
+                c(plot_TIME,
                   ncol = 4))
         dev.off()
     }
