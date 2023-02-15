@@ -21,7 +21,7 @@ library(BiocSingular)
 library(ggpubr)
 library(cowplot)
 library(scales)
-library(RUVPRPS)
+library(gridExtra)
 library(RUVPRPS)
 ```
 
@@ -36,3 +36,61 @@ library(RUVPRPS)
 # data<- readRDS(file_local)
 
 ```
+
+
+
+```{r RUVPRPS Norm data}
+
+```
+
+```{r Merge all datasets}
+# ### Merge all datasets together
+# raw.count.data <- SummarizedExperiment::assay(skcm.se,'HTseq_counts')
+# row.names(ruviii.prps.norm) <- as.data.frame(SummarizedExperiment::rowData(skcm.se))$gene_name.
+# skcm.se.log <- SummarizedExperiment::SummarizedExperiment(assays = list(
+#     HTseq_counts = log2(SummarizedExperiment::assay(
+#       skcm.se,
+#       'HTseq_counts') + 1),
+#     HTseq_FPKM = log2(SummarizedExperiment::assay(
+#       skcm.se,
+#       'HTseq_FPKM') + 1),
+#     HTseq_FPKM.UQ = log2(SummarizedExperiment::assay(
+#       skcm.se,
+#       'HTseq_FPKM.UQ') + 1),
+#     RUV_III = ruviii.prps.norm
+#   ),
+#   colData = S4Vectors::DataFrame(
+#     SummarizedExperiment::colData(skcm.se)),
+#   rowData = as.data.frame(
+#     SummarizedExperiment::rowData(skcm.se))
+# )
+# skcm.sampleAnnot <- as.data.frame(
+#   SummarizedExperiment::colData(skcm.se))
+# 
+# normalizations <- names(
+#   SummarizedExperiment::assays(skcm.se)
+# )
+# normalizations.names <- c(
+#   'Raw counts',
+#   'FPKM',
+#   'FPKM.UQ',
+#   'RUV-III')
+```
+
+```{r Assessment of the normalisations}
+# ### Generate all plots 
+# all_plots=norm_assessment(skcm.se.log,
+#     apply.log = FALSE,
+#     skcm.se.log$subtype_differentiation,
+#     skcm.se.log$libSize,
+#     skcm.se.log$PlateId_mda,
+#     output_file=paste0(wd,"test_pca.pdf"))
+# 
+# ## Plot based on Biology
+# do.call(grid.arrange,
+#   c(all_plots$plot_bio,
+#     ncol = 4))
+# ## Plot based on Time
+# do.call(grid.arrange,
+#       c(all_plots$plot_time,
+#           ncol = 4))
