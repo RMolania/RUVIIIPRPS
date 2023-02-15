@@ -87,7 +87,7 @@ norm_assessment = function(
 
     ### Assessment on the library size ####
 
-    if (output_file!=NULL){
+    if (!is.null(output_file)){
         pdf(output_file)
         plot_BIO
         plot_TIME
