@@ -37,6 +37,7 @@ norm_assessment = function(
     colfunc <- colorRampPalette(brewer.pal(n = 11, name = 'Spectral')[-6])
     color.subtype<- colfunc(length(unique(sce$biological_subtypes)))
     names(color.subtype) <- levels(sce$biological_subtypes)
+    print(color.subtype)
     ### Compute PCA Biology
     pp_bio <- lapply(
         normalizations,
@@ -93,5 +94,5 @@ norm_assessment = function(
         plot_TIME
         dev.off()
     }
-    return(list(plot_BIO,plot_TIME))
+    return(list(plot_bio=plot_BIO,plot_time=plot_TIME))
 }
