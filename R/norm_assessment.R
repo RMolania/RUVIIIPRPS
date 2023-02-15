@@ -57,16 +57,11 @@ norm_assessment = function(
             p1
         })
     names(pp_bio) <- normalizations
-    print(pp_bio[[1]])
-    message(pp_bio[[1]])
     pp_bio[[1]]
-    plot_BIO=do.call(
-        grid.arrange,
-        c(pp_bio[[1]],
+    plot_BIO=c(pp_bio[[1]],
           pp_bio[[2]],
           pp_bio[[3]],
-          pp_bio[[4]],
-          ncol = 4))
+          pp_bio[[4]])
 
     # ### Assessment on the time effect ####
     # # Color Time (years)
