@@ -82,12 +82,13 @@ norm_assessment = function(
 
 
     # ### Assessment on the library size ####
-    #
-    # if (!is.null(output_file)){
-    #     pdf(output_file)
-    #     plot_BIO
-    #     plot_TIME
-    #     dev.off()
-    # }
+
+    #### Generate pdf file to save the plots
+    if (!is.null(output_file)){
+        pdf(output_file)
+        plot_BIO
+        plot_TIME
+        dev.off()
+    }
     return(list(plot_bio=plot_BIO,plot_time=plot_TIME))
 }
