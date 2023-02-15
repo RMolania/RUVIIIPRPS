@@ -25,7 +25,7 @@ norm_assessment = function(
         output_file=NULL
 ){
     ### Compute PCA
-    #data_pca=RUVPRPS::compute_pca(sce,apply.log = apply.log)
+    data_pca=RUVPRPS::compute_pca(sce,apply.log = apply.log)
 
     ## Get all the available normalizations methods
     normalizations <- names(
@@ -44,27 +44,30 @@ norm_assessment = function(
     names(color.subtype) <- levels(biological_subtypes)
     print(color.subtype)
     message("Test print 3")
-    # ### Compute PCA Biology
-    # pp_bio <- lapply(
-    #     normalizations,
-    #     function(x){
-    #         pcs <- data_pca[[x]]
-    #         p1 <- RUVPRPS::pca_plot_squared(
-    #             pca = pcs,
-    #             variable= biological_subtypes,
-    #             variable.name =  'Biology',
-    #             color = color.subtype)
-    #         p1
-    #     })
-    # names(pp_bio) <- normalizations
-    # plot_BIO=do.call(
-    #     grid.arrange,
-    #     c(pp_bio[[1]],
-    #       pp_bio[[2]],
-    #       pp_bio[[3]],
-    #       pp_bio[[4]],
-    #       ncol = 4))
-    #
+    ### Compute PCA Biology
+    pp_bio <- lapply(
+        normalizations,
+        function(x){
+            pcs <- data_pca[[x]]
+            p1 <- RUVPRPS::pca_plot_squared(
+                pca = pcs,
+                variable= biological_subtypes,
+                variable.name =  'Biology',
+                color = color.subtype)
+            p1
+        })
+    names(pp_bio) <- normalizations
+    print(pp_bio[[1]])
+    message(pp_bio[[1]])
+    pp_bio[[1]]
+    plot_BIO=do.call(
+        grid.arrange,
+        c(pp_bio[[1]],
+          pp_bio[[2]],
+          pp_bio[[3]],
+          pp_bio[[4]],
+          ncol = 4))
+
     # ### Assessment on the time effect ####
     # # Color Time (years)
     # colfunc <- colorRampPalette(brewer.pal(n = 4, name = 'Set1')[-6])
@@ -103,5 +106,5 @@ norm_assessment = function(
     #     dev.off()
     # }
     # return(list(plot_bio=plot_BIO,plot_time=plot_TIME))
-    return(list("t1","t2"))
+    return(list(plot_bio=plot_BIO,plot_time="t2"))
 }
