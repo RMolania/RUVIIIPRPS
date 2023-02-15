@@ -86,8 +86,12 @@ norm_assessment = function(
     #### Generate pdf file to save the plots
     if (!is.null(output_file)){
         pdf(output_file)
-        plot_BIO
-        plot_TIME
+            do.call(grid.arrange,
+                c(all_plots$plot_BIO,
+                  ncol = 4))
+            do.call(grid.arrange,
+                c(all_plots$plot_TIME,
+                  ncol = 4))
         dev.off()
     }
     return(list(plot_bio=plot_BIO,plot_time=plot_TIME))
