@@ -9,7 +9,7 @@ norm_assessment(
   apply.log = FALSE,
   biological_subtypes,
   library_size,
-  time_effect,
+  time,
   output_file = NULL
 )
 }
@@ -18,11 +18,11 @@ norm_assessment(
 
 \item{apply.log}{Indicates whether to apply a log-transformation to the data}
 
-\item{biological_subtypes}{Biological subtypes of each sample}
+\item{biological_subtypes}{Vector containing the biological subtypes of each sample}
 
-\item{library_size}{Library size of each sample}
+\item{library_size}{Vector containing the library size of each sample}
 
-\item{time_effect}{Time effect (plates/years ) of each sample}
+\item{time}{Vector containing the time (plates/years) of each sample}
 
 \item{output_file}{Path and name of the output file to save the assessments plots in a pdf format}
 }

@@ -3,9 +3,9 @@
 #'
 #' @param sce Dataset that will be used to assess the performance of the normalisation of the data
 #' @param apply.log Indicates whether to apply a log-transformation to the data
-#' @param biological_subtypes Biological subtypes of each sample
-#' @param library_size Library size of each sample
-#' @param time_effect Time effect (plates/years ) of each sample
+#' @param biological_subtypes Vector containing the biological subtypes of each sample
+#' @param library_size Vector containing the library size of each sample
+#' @param time Vector containing the time (plates/years) of each sample
 #' @param output_file Path and name of the output file to save the assessments plots in a pdf format
 #'
 #'
@@ -17,12 +17,12 @@
 
 
 norm_assessment = function(
-    sce,
-    apply.log = FALSE,
-    biological_subtypes,
-    library_size,
-    time_effect,
-    output_file=NULL
+        sce,
+        apply.log = FALSE,
+        biological_subtypes,
+        library_size,
+        time,
+        output_file=NULL
 ){
     ### Compute PCA
     data_pca=RUVPRPS::compute_pca(sce,apply.log = apply.log)
@@ -35,10 +35,10 @@ norm_assessment = function(
     ### Assessment on the biology ####
     # Color Biology
     colfunc <- colorRampPalette(brewer.pal(n = 11, name = 'Spectral')[-6])
-    color.subtype<- colfunc(length(unique(sce$biological_subtypes)))
+    color.subtype<- colfunc(length(unique(biological_subtypes)))
     print("Test print")
     print(color.subtype)
-    names(color.subtype) <- levels(sce$biological_subtypes)
+    names(color.subtype) <- levels(biological_subtypes)
     print(color.subtype)
     ### Compute PCA Biology
     pp_bio <- lapply(
@@ -47,7 +47,7 @@ norm_assessment = function(
             pcs <- data_pca[[x]]
             p1 <- RUVPRPS::pca_plot_squared(
                 pca = pcs,
-                variable= sce$biological_subtypes,
+                variable= biological_subtypes,
                 variable.name =  'Biology',
                 color = color.subtype)
             p1
@@ -64,9 +64,9 @@ norm_assessment = function(
     ### Assessment on the time effect ####
     # Color Time (years)
     colfunc <- colorRampPalette(brewer.pal(n = 4, name = 'Set1')[-6])
-    color.time <- colfunc(length(unique(sce$time_effect)))
+    color.time <- colfunc(length(unique(time)))
     print(color.time)
-    names(color.time) <- levels(sce$time_effect)
+    names(color.time) <- levels(time)
     print(color.time)
     ### Compute PCA Time
     pp_time <- lapply(
@@ -75,7 +75,7 @@ norm_assessment = function(
             pcs <- data_pca[[x]]
             p1 <- RUVPRPS::pca_plot_squared(
                 pca = pcs,
-                variable= sce$time_effect,
+                variable= time,
                 variable.name =  'Time',
                 color = color.time)
             p1
