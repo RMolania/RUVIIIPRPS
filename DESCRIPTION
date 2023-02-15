@@ -18,7 +18,10 @@ Imports:
     scales,
     RColorBrewer,
     grDevices,
-    gridExtra
+    gridExtra,
+    wesanderson,
+    dplyr,
+    tidyr
 URL: https://github.com/mtrussart/RUVPRPS
 BugReports: https://github.com/mtrussart/RUVPRPS/issues
 Suggests: 

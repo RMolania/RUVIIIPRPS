@@ -1,7 +1,8 @@
 #' is used to assess the performance of the normalisation of the data
 #'
 #'
-#' @param sce Dataset that will be used to assess the performance of the normalisation of the data
+#' @param sce Dataset that will be used to assess the performance of the normalisation of the data.
+#' It will generate two PCA plots: one colored by biology and another one by time, each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
 #' @param apply.log Indicates whether to apply a log-transformation to the data
 #' @param biological_subtypes Vector containing the biological subtypes of each sample
 #' @param library_size Vector containing the library size of each sample
@@ -27,7 +28,7 @@ norm_assessment = function(
     ### Compute PCA
     data_pca=RUVPRPS::compute_pca(sce,apply.log = apply.log)
 
-    ## Get all the available normalizations methods
+    ## Get all the available assays (i.e. normalizations methods)
     normalizations <- names(
         SummarizedExperiment::assays(sce)
     )

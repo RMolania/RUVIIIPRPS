@@ -74,7 +74,7 @@ library(RUVPRPS)
 #   'Raw counts',
 #   'FPKM',
 #   'FPKM.UQ',
-#   'RUV-III')
+#   'RUV-PRPS')
 ```
 
 ```{r Assessment of the normalisations}

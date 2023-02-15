@@ -14,7 +14,8 @@ norm_assessment(
 )
 }
 \arguments{
-\item{sce}{Dataset that will be used to assess the performance of the normalisation of the data}
+\item{sce}{Dataset that will be used to assess the performance of the normalisation of the data.
+It will generate two PCA plots: one colored by biology and another one by time, each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.}
 
 \item{apply.log}{Indicates whether to apply a log-transformation to the data}
 
