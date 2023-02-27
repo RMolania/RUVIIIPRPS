@@ -89,7 +89,7 @@ norm_assessment = function(
     message("Regression based on Library size")
     reg_lib_size=regression_pc(data_pca,
                       normalizations,
-                      sce$library_size)
+                      library_size)
 
     #### Generate pdf file to save the plots
     if (!is.null(output_file)){
