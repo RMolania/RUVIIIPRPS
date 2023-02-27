@@ -86,6 +86,7 @@ norm_assessment = function(
     # ### Assessment on the library size ####
     ## Compute regression between library size and PCs
     ## Regression on the library size
+    message("Regression based on Library size")
     reg_lib_size=regression_pc(data_pca,
                       normalizations,
                       sce$library_size)
@@ -104,5 +105,5 @@ norm_assessment = function(
                       ncol=1))
         dev.off()
     }
-    return(list(plot_bio=plot_BIO,plot_time=plot_TIME))
+    return(list(plot_bio=plot_BIO,plot_time=plot_TIME,plot_reg_lib_size=reg_lib_size$plot))
 }
