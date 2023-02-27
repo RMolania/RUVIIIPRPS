@@ -4,15 +4,14 @@
 #'
 #' @param pca PCs of the dataset that will be used in the plot
 #' @param normalization All the available assays for the data (i.e. normalizations methods)
-#' @param regression_var The regression variable that will be computed to the PCAof the data
-#' @param variable.name The label of the variable that will be used on the PCA plot
+#' @param regression_var The regression variable that will be computed to the PCA of the data
 #' @param nb_pca_comp The number of components of the PCA used to compute the regression
 #'
 #' @return list List containing the association plot and the computed regression
 #' @importFrom stats lm
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate
-#' @importFrom tidyr pivot_longer
+#' @importFrom tidyr pivot_longer %>%
 #' @import ggplot2
 #' @export
 
@@ -39,42 +38,27 @@ regression_pc<-function(
     names(lreg.pcs) <- normalization
 
     ### Plot the association between the variable and the PC using the computed regression
-    pcs.lnreg <- as.data.frame(lreg.pcs) %>%
-        rename(
-            'Raw counts' =  normalization[1],
-            FPKM =  normalization[2],
-            FPKM.UQ =  normalization[3],
-            'RUV-PRPS' =  normalization[4]) %>%
-        mutate(pcs = c(1:10)) %>%
-        pivot_longer(
-            -pcs,
-            names_to = 'datasets',
-            values_to = 'r.sq') %>%
-        mutate(
-            datasets = factor(
-                datasets,
-                levels = c(
-                    'Raw counts',
-                    'FPKM',
-                    'FPKM.UQ',
-                    'RUV-PRPS')))
+    pcs<-datasets<-r.sq<-NULL
+    pcs.lnreg=cbind(as.data.frame(lreg.pcs),pcs=(1:10))
+    ## length of assays
+    assays_nb=length(normalization)
+    pcs.lnreg = pcs.lnreg %>% pivot_longer( -(assays_nb+1),
+    names_to = 'datasets',values_to = 'r.sq') %>%
+        mutate(datasets = factor(
+            datasets))
     # color
     dataSets.colors <- wes_palette(
         n = 4,
         name = "GrandBudapest1")[c(1,2,4,3)]
-    names(dataSets.colors) <- c(
-        'FPKM',
-        'Quantile',
-        'UQ',
-        'RUV-PRPS')
+    names(dataSets.colors) <- normalization
     p=ggplot(pcs.lnreg, aes(x = pcs, y = r.sq, group = datasets)) +
         geom_line(aes(color = datasets), size = .5) +
         geom_point(aes(color = datasets), size = 2) +
         xlab('PCs') + ylab (expression("R"^"2")) +
         scale_color_manual(
-            values = c(dataSets.colors3),
+            values = c(dataSets.colors),
             name = 'Datasets',
-            labels = c('Raw counts', 'FPKM','FPKM.UQ', 'RUV-PRPS')) +
+            labels = normalization) +
         scale_x_continuous(
             breaks = (1:10),
             labels = c('PC1', paste0('PC1:', 2:10)) ) +

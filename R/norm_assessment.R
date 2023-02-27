@@ -16,7 +16,8 @@
 #' @importFrom gridExtra grid.arrange
 #' @export
 
-
+## put as options the different variable
+## batch instead of time
 norm_assessment = function(
         sce,
         apply.log = FALSE,
