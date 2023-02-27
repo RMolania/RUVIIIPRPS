@@ -84,6 +84,11 @@ norm_assessment = function(
 
 
     # ### Assessment on the library size ####
+    ## Compute regression between library size and PCs
+    ## Regression on the library size
+    reg_lib_size=regression_pc(data_pca,
+                      normalizations,
+                      sce$library_size)
 
     #### Generate pdf file to save the plots
     if (!is.null(output_file)){
@@ -94,6 +99,9 @@ norm_assessment = function(
             do.call(grid.arrange,
                 c(plot_TIME,
                   ncol = 4))
+            do.call(grid.arrange,
+                c(reg_lib_size$plot,
+                      ncol=1))
         dev.off()
     }
     return(list(plot_bio=plot_BIO,plot_time=plot_TIME))

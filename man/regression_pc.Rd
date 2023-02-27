@@ -11,7 +11,7 @@ regression_pc(pca, normalization, regression_var, nb_pca_comp = 10)
 
 \item{normalization}{All the available assays for the data (i.e. normalizations methods)}
 
-\item{regression_var}{The regression variable that will be computed to the PCA of the data}
+\item{regression_var}{The regression variable that will be computed to the PCA of the data (library size)}
 
 \item{nb_pca_comp}{The number of components of the PCA used to compute the regression}
 }

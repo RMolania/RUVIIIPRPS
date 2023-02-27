@@ -4,7 +4,7 @@
 #'
 #' @param pca PCs of the dataset that will be used in the plot
 #' @param normalization All the available assays for the data (i.e. normalizations methods)
-#' @param regression_var The regression variable that will be computed to the PCA of the data
+#' @param regression_var The regression variable that will be computed to the PCA of the data (library size)
 #' @param nb_pca_comp The number of components of the PCA used to compute the regression
 #'
 #' @return list List containing the association plot and the computed regression
