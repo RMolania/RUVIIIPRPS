@@ -100,9 +100,7 @@ norm_assessment = function(
             do.call(grid.arrange,
                 c(plot_TIME,
                   ncol = 4))
-            do.call(grid.arrange,
-                c(reg_lib_size$plot,
-                      ncol=1))
+            plot(reg_lib_size$plot)
         dev.off()
     }
     return(list(plot_bio=plot_BIO,plot_time=plot_TIME,plot_reg_lib_size=reg_lib_size$plot))
