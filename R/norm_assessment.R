@@ -87,7 +87,7 @@ norm_assessment = function(
     ## Compute regression between library size and PCs
     ## Regression on the library size
     message("Regression based on Library size")
-    reg_lib_size=regression_pc(pca=data_pca,
+    reg_lib_size= RUVPRPS::regression_pc(pca=data_pca,
                                normalization=normalizations,
                                regression_var=library_size)
 
