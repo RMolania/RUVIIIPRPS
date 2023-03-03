@@ -4,7 +4,7 @@
 \alias{wilcoxon_test}
 \title{is used to compute the Wilcoxon Rank Sum and Signed Rank Test to data on a categorical variable}
 \usage{
-wilcoxon_test(expr.data, apply.log, variable, n.cores)
+wilcoxon_test(expr.data, apply.log = FALSE, variable, n.cores)
 }
 \arguments{
 \item{expr.data}{is the gene expression matrix genes by samples}
