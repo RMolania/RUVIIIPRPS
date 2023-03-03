@@ -8,6 +8,8 @@
 #' @param library_size Vector containing the library size of each sample
 #' @param time Vector containing the time (plates/years) of each sample
 #' @param output_file Path and name of the output file to save the assessments plots in a pdf format
+#' @param var_da_library_size Vector containing the categorical variable of high vs low library size of each sample to compute differential analysis
+#' @param n.cores is the number of cpus used for mclapply parallelization
 #'
 #'
 #' @return plots List of assessments plots
@@ -24,7 +26,9 @@ norm_assessment = function(
         biological_subtypes,
         library_size,
         time,
-        output_file=NULL
+        output_file=NULL,
+        var_da_library_size=NULL,
+        n.cores=5
 ){
     ### Compute PCA
     data_pca=RUVPRPS::compute_pca(sce,apply.log = apply.log)
@@ -91,6 +95,13 @@ norm_assessment = function(
                                normalization=normalizations,
                                regression_var=library_size)
 
+    ## DE between sample with low and high library size
+    if (!is.null(var_da_library_size)){
+    de_analysis_lib_size=de_analysis(sce,
+        var_da_library_size,
+        apply.log)
+    }
+
     #### Generate pdf file to save the plots
     if (!is.null(output_file)){
         pdf(output_file)
@@ -101,7 +112,20 @@ norm_assessment = function(
                 c(plot_TIME,
                   ncol = 4))
             plot(reg_lib_size$plot)
+            if (!is.null(var_da_library_size)){
+                plot(de_analysis_lib_size$plot)
+                }
         dev.off()
     }
-    return(list(plot_bio=plot_BIO,plot_time=plot_TIME,plot_reg_lib_size=reg_lib_size$plot))
+    if (!is.null(var_da_library_size)){
+        res=list(plot_bio=plot_BIO,
+                 plot_time=plot_TIME,
+                 plot_reg_lib_size=reg_lib_size$plot,
+                 plot_de_analysis_lib_size=de_analysis_lib_size$plot)
+    }else{
+        res=list(plot_bio=plot_BIO,
+                 plot_time=plot_TIME,
+                 plot_reg_lib_size=reg_lib_size$plot)
+        }
+    return(res)
 }

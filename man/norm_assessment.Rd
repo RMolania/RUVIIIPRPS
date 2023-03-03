@@ -10,7 +10,9 @@ norm_assessment(
   biological_subtypes,
   library_size,
   time,
-  output_file = NULL
+  output_file = NULL,
+  var_da_library_size = NULL,
+  n.cores = 5
 )
 }
 \arguments{
@@ -26,6 +28,10 @@ It will generate two PCA plots: one colored by biology and another one by time, 
 \item{time}{Vector containing the time (plates/years) of each sample}
 
 \item{output_file}{Path and name of the output file to save the assessments plots in a pdf format}
+
+\item{var_da_library_size}{Vector containing the categorical variable of high vs low library size of each sample to compute differential analysis}
+
+\item{n.cores}{is the number of cpus used for mclapply parallelization}
 }
 \value{
 plots List of assessments plots

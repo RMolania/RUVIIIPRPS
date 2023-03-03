@@ -17,7 +17,7 @@
 
 wilcoxon_test <- function(
   expr.data,
-  apply.log,
+  apply.log=FALSE,
   variable,
   n.cores
 ){

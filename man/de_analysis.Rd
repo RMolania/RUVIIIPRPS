@@ -4,12 +4,10 @@
 \alias{de_analysis}
 \title{is used to compute the differential analysis given a variable of the data}
 \usage{
-de_analysis(sce, normalization, regression_var, apply.log = FALSE, n.cores = 5)
+de_analysis(sce, regression_var, apply.log = FALSE, n.cores = 5)
 }
 \arguments{
 \item{sce}{the dataset that will be used for this analysis}
-
-\item{normalization}{All the available assays for the data (i.e. normalizations methods)}
 
 \item{regression_var}{The regression variable that will be computed to the PCA of the data (library size)}
 
