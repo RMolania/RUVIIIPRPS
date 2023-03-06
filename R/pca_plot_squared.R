@@ -26,7 +26,7 @@ pca_plot_squared<-function(
         variable.name,
         color,
         strokeSize = .2,
-        pointSize = 0.5,
+        pointSize = 0.8,
         strokeColor = 'gray30',
         alpha = .5
 ){
