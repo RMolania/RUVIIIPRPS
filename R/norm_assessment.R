@@ -2,7 +2,8 @@
 #'
 #'
 #' @param sce Dataset that will be used to assess the performance of the normalisation of the data.
-#' It will generate two PCA plots: one colored by biology and another one by time, each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
+#' It will first generate two PCA plots: one colored by biology and another one by time, each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
+#' It will also compute the regression between library size and PCs, and if asked it will compute a differential analysis between sample with low and high library size (i.e early years vs late years)
 #' @param apply.log Indicates whether to apply a log-transformation to the data
 #' @param biological_subtypes Vector containing the biological subtypes of each sample
 #' @param library_size Vector containing the library size of each sample
@@ -38,7 +39,7 @@ norm_assessment = function(
         SummarizedExperiment::assays(sce)
     )
 
-    ### Assessment on the biology ####
+    ################# Assessment on the biology ################
     # Color Biology
     colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
     color.subtype<- colfunc(length(unique(biological_subtypes)))
@@ -62,7 +63,7 @@ norm_assessment = function(
                pp_bio[[3]],
                pp_bio[[4]])
 
-    ### Assessment on the time effect ####
+    ################# Assessment on the time effect ##################
     # Color Time (years)
     colfunc <- colorRampPalette(brewer.pal(n = 4, name = 'Set1')[-6])
     color.time <- colfunc(length(unique(time)))
@@ -87,7 +88,7 @@ norm_assessment = function(
                 pp_time[[4]])
 
 
-    # ### Assessment on the library size ####
+    ################## Assessment on the library size ##################
     ## Compute regression between library size and PCs
     ## Regression on the library size
     message("Regression based on Library size")
@@ -95,14 +96,19 @@ norm_assessment = function(
                                normalization=normalizations,
                                regression_var=library_size)
 
-    ## DE between sample with low and high library size
+    ## DA between sample with low and high library size
     if (!is.null(var_da_library_size)){
-    de_analysis_lib_size=de_analysis(sce,
+        message("Differential analysis between samples with high vs low library size")
+        de_analysis_lib_size=RUVPRPS::de_analysis(sce,
         var_da_library_size,
         apply.log)
     }
 
-    #### Generate pdf file to save the plots
+    ### Spearman correlation between gene expression and library size
+    message("Spearman correlation between gene expression and library size")
+    corr_lib_size=RUVPRPS::correlation_gene_exp_lib_size
+
+    ################## Generate pdf file to save the plots #####################
     if (!is.null(output_file)){
         pdf(output_file)
             do.call(grid.arrange,

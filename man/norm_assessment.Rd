@@ -17,7 +17,8 @@ norm_assessment(
 }
 \arguments{
 \item{sce}{Dataset that will be used to assess the performance of the normalisation of the data.
-It will generate two PCA plots: one colored by biology and another one by time, each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.}
+It will first generate two PCA plots: one colored by biology and another one by time, each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
+It will also compute the regression between library size and PCs, and if asked it will compute a differential analysis between sample with low and high library size (i.e early years vs late years)}
 
 \item{apply.log}{Indicates whether to apply a log-transformation to the data}
 

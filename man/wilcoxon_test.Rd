@@ -11,12 +11,12 @@ wilcoxon_test(expr.data, apply.log = FALSE, variable, n.cores)
 
 \item{apply.log}{Indicates whether to apply a log-transformation to the data}
 
-\item{variable}{is a categorical variables such as sample types or batches}
+\item{variable}{is a categorical variable such as sample types or batches}
 
 \item{n.cores}{is the number of cpus used for mclapply parallelization}
 }
 \value{
-dataframe containing the genes, the pvalues before and after BH correction
+dataframe containing the genes, the p-values before and after BH correction
 }
 \description{
 is used to compute the Wilcoxon Rank Sum and Signed Rank Test to data on a categorical variable

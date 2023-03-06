@@ -3,14 +3,12 @@
 #'
 #' @param expr.data is the gene expression matrix genes by samples
 #' @param apply.log Indicates whether to apply a log-transformation to the data
-#' @param variable is a categorical variables such as sample types or batches
+#' @param variable is a categorical variable such as sample types or batches
 #' @param n.cores is the number of cpus used for mclapply parallelization
 #'
-#' @return dataframe containing the genes, the pvalues before and after BH correction
+#' @return dataframe containing the genes, the p-values before and after BH correction
 #' @importFrom stats wilcox.test p.adjust
 #' @importFrom parallel mclapply
-#' @importFrom dplyr rename mutate
-#' @importFrom tidyr pivot_longer %>%
 #' @import ggplot2
 #' @export
 
@@ -31,9 +29,9 @@ wilcoxon_test <- function(
     row.names(expr.data),
     function(x) wilcox.test(expr.data[x ,] ~ variable)[[3]], mc.cores = n.cores)
     results <- data.frame(
-    genes = row.names(expr.data),
-    pvalue = unlist(pval),
-    ad.pvalue = p.adjust(p = unlist(pval), method = 'BH')
+        genes = row.names(expr.data),
+        pvalue = unlist(pval),
+        ad.pvalue = p.adjust(p = unlist(pval), method = 'BH')
   )
   return(results)
 }
