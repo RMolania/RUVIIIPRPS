@@ -6,7 +6,6 @@
 #' @param n.cores is the number of cpus used for mclapply parallelization
 #'
 #' @return list List containing the association plot and the computed correlation
-#' @importFrom stats lm
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate
 #' @importFrom tidyr pivot_longer %>%
