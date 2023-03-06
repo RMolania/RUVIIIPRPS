@@ -2,7 +2,6 @@
 
 export(compute_pca)
 export(correlation)
-export(correlation_gene_exp_lib_size)
 export(de_analysis)
 export(norm_assessment)
 export(pca_plot_squared)
