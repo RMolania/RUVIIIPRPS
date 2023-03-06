@@ -105,10 +105,10 @@ norm_assessment = function(
     }
 
     # ### Spearman correlation between gene expression and library size
-    # message("Spearman correlation between gene expression and library size")
-    # corr_lib_size=RUVPRPS::correlation_gene_exp_lib_size(sce,
-    #                                                     library_size,
-    #                                                     apply.log)
+    message("Spearman correlation between gene expression and library size")
+    corr_lib_size=RUVPRPS::correlation_gene_exp_lib_size(sce,
+                                                        library_size,
+                                                        apply.log)
 
     ################## Generate pdf file to save the plots #####################
     if (!is.null(output_file)){
@@ -123,20 +123,20 @@ norm_assessment = function(
             if (!is.null(var_da_library_size)){
                 plot(de_analysis_lib_size$plot)
             }
-            #plot(corr_lib_size$plot)
+            plot(corr_lib_size$plot)
         dev.off()
     }
     if (!is.null(var_da_library_size)){
         res=list(plot_bio=plot_BIO,
                  plot_time=plot_TIME,
                  plot_reg_lib_size=reg_lib_size$plot,
-                 plot_de_analysis_lib_size=de_analysis_lib_size$plot)#,
-                 #plot_cor_gen_exp_lib_size=corr_lib_size$plot)
+                 plot_de_analysis_lib_size=de_analysis_lib_size$plot,
+                 plot_cor_gen_exp_lib_size=corr_lib_size$plot)
     }else{
         res=list(plot_bio=plot_BIO,
                  plot_time=plot_TIME,
-                 plot_reg_lib_size=reg_lib_size$plot)#,
-                 #plot_cor_gen_exp_lib_size=corr_lib_size$plot)
+                 plot_reg_lib_size=reg_lib_size$plot,
+                 plot_cor_gen_exp_lib_size=corr_lib_size$plot)
         }
     return(res)
 }
