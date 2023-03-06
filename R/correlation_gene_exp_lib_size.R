@@ -29,8 +29,9 @@ correlation_gene_exp_lib_size<-function(
             data <- as.matrix(assay(sce, x))
             cor <- correlation(
                 expr.data = data,
-                apply.log,
+                apply.log=apply.log,
                 variable=corr_var,
+                method='spearman',
                 n.cores = n.cores)
             cor
         })
