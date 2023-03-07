@@ -29,11 +29,13 @@ regression_pc_contvar_all_assays<-function(
         normalization,
         function(x){
             pcs <- pca[[x]]$sing.val$u
-            regression_pc_contvar_single_assay(
-                pcs,
-                regression_var,
-                nb_pca_comp
-            )
+            rSquared <- sapply(
+                1:nb_pca_comp,
+                function(y) {
+                    lm.ls <- summary(lm(
+                        regression_var ~ pcs[, 1:y])
+                    )$r.squared
+                })
         })
     names(lreg.pcs) <- normalization
 
