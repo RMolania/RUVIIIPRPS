@@ -1,4 +1,4 @@
-#' is used to compute PCA of a single dataset
+#' is used to compute PCA of a single assay
 #'
 #'
 #' @param sce Dataset that will be used to compute the PCA
@@ -7,11 +7,8 @@
 #'
 #' @return pca List containing the svd and the total variation explained by the PCA components computed on the single data
 #' @export
-#=================== PCA =================
-# Principal component analysis using singular value decomposition (SVD)
-## sce: Dataset that will be used to compute the PCA
-## is.log: Indicates whether to apply a log-transformation to the data
-single_pca <- function(sce, apply.log=FALSE) {
+
+compute_pca_single_assay <- function(sce, apply.log=FALSE) {
     if (apply.log==FALSE)
         sce <- sce
     else

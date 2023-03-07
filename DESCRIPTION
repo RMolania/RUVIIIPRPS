@@ -22,7 +22,8 @@ Imports:
     wesanderson,
     dplyr,
     tidyr,
-    parallel
+    parallel,
+    cluster
 URL: https://github.com/mtrussart/RUVPRPS
 BugReports: https://github.com/mtrussart/RUVPRPS/issues
 Suggests: 

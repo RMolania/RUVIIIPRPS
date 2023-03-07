@@ -1,4 +1,5 @@
 #' is used to compute the Spearman correlation between the data and library size
+#' on all assay
 #'
 #' @param sce the dataset that will be used for this analysis
 #' @param corr_var The continuous variable that will be used to compute to correlation
@@ -13,7 +14,7 @@
 #' @import ggplot2
 #' @export
 
-correlation_gene_exp_lib_size<-function(
+correlation_gene_exp_contvar_all_assays<-function(
         sce,
         corr_var,
         apply.log=FALSE,
@@ -25,7 +26,7 @@ correlation_gene_exp_lib_size<-function(
         normalization,
         function(x){
             data <- as.matrix(assay(sce, x))
-            cor <- correlation(
+            cor <- correlation_gene_exp_contvar_single_assay(
                 expr.data = data,
                 apply.log=apply.log,
                 variable=corr_var,

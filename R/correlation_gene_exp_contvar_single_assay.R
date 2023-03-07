@@ -1,9 +1,10 @@
 
-#' is used to compute the correlation (Spearman or Pearson) between the data and a continuous variable (i.e. library size)
+#' is used to compute the correlation (Spearman or Pearson) between the data and
+#' a continuous variable (i.e. library size)
 #'
 #' @param expr.data is the gene expression matrix genes by samples
 #' @param apply.log Indicates whether to apply a log-transformation to the data
-#' @param variable is a categorical variable such as library size or purity
+#' @param variable is a continous variable such as library size or purity
 #' @param method to select which method to use either Spearman or Pearson correlation
 #' @param n.cores is the number of cpus used for mclapply parallelization
 #'
@@ -13,7 +14,7 @@
 #' @import ggplot2
 #' @export
 
-correlation<- function(
+correlation_gene_exp_contvar_single_assay<- function(
         expr.data,
         apply.log,
         variable,

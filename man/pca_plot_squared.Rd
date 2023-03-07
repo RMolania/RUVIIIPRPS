@@ -10,7 +10,7 @@ pca_plot_squared(
   variable.name,
   color,
   strokeSize = 0.2,
-  pointSize = 3,
+  pointSize = 0.8,
   strokeColor = "gray30",
   alpha = 0.5
 )

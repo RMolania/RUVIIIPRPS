@@ -1,4 +1,4 @@
-#' is used to compute PCA of the data
+#' is used to compute PCA of the data on all assays
 #'
 #'
 #' @param sce Dataset that will be used to compute the PCA
@@ -10,7 +10,8 @@
 #' @importFrom BiocSingular bsparam
 #' @import ggplot2
 #' @export
-compute_pca=function(
+#'
+compute_pca_all_assays=function(
     sce,
     apply.log=FALSE
 ){
@@ -20,7 +21,7 @@ compute_pca=function(
     pca.all <- lapply(
         normalizations,
         function(x){
-            single_pca(sce= as.matrix(SummarizedExperiment::assay(sce, x)),apply.log = apply.log)
+            compute_pca_single_assay(sce= as.matrix(SummarizedExperiment::assay(sce, x)),apply.log = apply.log)
         })
     names(pca.all) <- normalizations
     return(pca.all)

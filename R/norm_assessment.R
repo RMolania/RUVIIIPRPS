@@ -32,7 +32,7 @@ norm_assessment = function(
         n.cores=5
 ){
     ### Compute PCA
-    data_pca=RUVPRPS::compute_pca(sce,apply.log = apply.log)
+    data_pca=RUVPRPS::compute_pca_all_assays(sce,apply.log = apply.log)
 
     ## Get all the available assays (i.e. normalizations methods)
     normalizations <- names(
@@ -92,7 +92,7 @@ norm_assessment = function(
     ## Compute regression between library size and PCs
     ## Regression on the library size
     message("Regression based on Library size")
-    reg_lib_size= RUVPRPS::regression_pc(pca=data_pca,
+    reg_lib_size= RUVPRPS::regression_pc_contvar_all_assays(pca=data_pca,
                                normalization=normalizations,
                                regression_var=library_size)
 
@@ -106,7 +106,7 @@ norm_assessment = function(
 
     # ### Spearman correlation between gene expression and library size
     message("Spearman correlation between gene expression and library size")
-    corr_lib_size=RUVPRPS::correlation_gene_exp_lib_size(sce,
+    corr_lib_size=RUVPRPS::correlation_gene_exp_contvar_all_assays(sce,
                                                         library_size,
                                                         apply.log)
 
