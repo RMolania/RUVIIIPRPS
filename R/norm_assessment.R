@@ -99,7 +99,7 @@ norm_assessment = function(
     ## DA between sample with low and high library size
     if (!is.null(var_da_library_size)){
         message("Differential analysis between samples with high vs low library size")
-        de_analysis_lib_size=RUVPRPS::de_analysis(sce,
+        de_analysis_lib_size=RUVPRPS::de_analysis_wilcoxon_gene_exp_catvar_all_assays(sce,
                                                 var_da_library_size,
                                                 apply.log)
     }

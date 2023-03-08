@@ -1,9 +1,10 @@
 
-#' is used to compute the differential analysis given a variable of the data
-#'
+#' is used to compute the differential gene expression analysis on all the assays
+#' given a categorical variable of two groups of the samples using the Wilcoxon test
 #'
 #' @param sce the dataset that will be used for this analysis
-#' @param regression_var The regression variable that will be computed to the PCA of the data (library size)
+#' @param regression_var The categorical variable of two groups that will be used
+#' to computed the differential expression analysis (i.e. high vs low library size)
 #' @param apply.log Indicates whether to apply a log-transformation to the data
 #' @param n.cores is the number of cpus used for mclapply parallelization
 #'
@@ -16,7 +17,7 @@
 #' @import ggplot2
 #' @export
 
-de_analysis<-function(
+de_analysis_wilcoxon_gene_exp_catvar_all_assays<-function(
         sce,
         regression_var,
         apply.log=FALSE,
@@ -28,7 +29,7 @@ de <- lapply(
     normalization,
     function(x){
         data <- assay(sce, x)
-        de <- wilcoxon_test(
+        de <- de_analysis_wilcoxon_gene_exp_catvar_single_assay(
             expr.data = data,
             apply.log,
             regression_var,

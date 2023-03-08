@@ -1,4 +1,5 @@
-#' is used to compute the Wilcoxon Rank Sum and Signed Rank Test to data on a categorical variable
+#' is used to compute the Wilcoxon Rank Sum and Signed Rank Test on the gene expression
+#' of a single assay given a categorical variable of two groups
 #'
 #'
 #' @param expr.data is the gene expression matrix genes by samples
@@ -13,7 +14,7 @@
 #' @export
 
 
-wilcoxon_test <- function(
+de_analysis_wilcoxon_gene_exp_catvar_single_assay <- function(
   expr.data,
   apply.log=FALSE,
   variable,
