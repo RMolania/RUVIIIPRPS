@@ -47,6 +47,7 @@ silhouette_coef_catvar_all_assays<-function(
         geom_col() +
         ylab("Silhouette coefficient") +
         xlab('') +
+        scale_fill_manual(values = dataSets.colors, guide = 'none')+
         theme(
             panel.background = element_blank(),
             axis.line = element_line(colour = 'black', size = 1),
