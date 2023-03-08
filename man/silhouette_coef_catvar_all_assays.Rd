@@ -5,7 +5,7 @@
 \title{is used to compute the Silhouette coefficient from the PC of all assays
 given a categorical variable}
 \usage{
-silhouette_coef_catvar_all_assays(pca, normalization, cat_var, nPCs)
+silhouette_coef_catvar_all_assays(pca, normalization, cat_var, nPCs = 3)
 }
 \arguments{
 \item{pca}{PCs of the dataset that will be used}

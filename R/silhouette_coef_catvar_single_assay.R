@@ -15,7 +15,7 @@
 silhouette_coef_catvar_single_assay <- function(
         pca,
         cat_var,
-        nPCs
+        nPCs=3
 ){
     d.matrix <- as.matrix(dist(pca[, seq_len(nPCs)]))
     avg=summary(silhouette(

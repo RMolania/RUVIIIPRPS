@@ -18,7 +18,7 @@ silhouette_coef_catvar_all_assays<-function(
         pca,
         normalization,
         cat_var,
-        nPCs
+        nPCs=3
 ){
     # Silhouette coefficients on all assays
     silCoef <- lapply(

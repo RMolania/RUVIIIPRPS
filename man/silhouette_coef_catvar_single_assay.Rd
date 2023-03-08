@@ -5,7 +5,7 @@
 \title{is used to compute the Silhouette coefficient from the PC of a single assay
 given a categorical variable}
 \usage{
-silhouette_coef_catvar_single_assay(pca, cat_var, nPCs)
+silhouette_coef_catvar_single_assay(pca, cat_var, nPCs = 3)
 }
 \arguments{
 \item{pca}{PCs of the dataset that will be used}
