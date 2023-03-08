@@ -69,6 +69,12 @@ norm_assessment = function(
                           normalizations,
                           cat_var=biological_subtypes)
 
+    ## Compute ARI based on biology
+    message("ARI based on biology")
+    ari_bio=RUVPRPS::ari_catvar_all_assays(data_pca,
+                          normalizations,
+                          cat_var=biological_subtypes)
+
     ################# Assessment on the batch effect ##################
     ## PCA Color Batch
     colfunc <- colorRampPalette(brewer.pal(n = 4, name = 'Set1')[-6])
@@ -99,6 +105,12 @@ norm_assessment = function(
                             normalizations,
                             cat_var=batch)
 
+    ## Compute ARI based on biology
+    message("ARI based on batch")
+    ari_batch=RUVPRPS::ari_catvar_all_assays(data_pca,
+                                           normalizations,
+                                           cat_var=batch)
+
     ## Plot combined silhouette based on batch and biology
     #combined_silh=
 
@@ -108,7 +120,7 @@ norm_assessment = function(
     message("Linear regression between the first cumulative PC and library size")
     reg_lib_size= RUVPRPS::regression_pc_contvar_all_assays(pca=data_pca,
                                normalization=normalizations,
-                               regression_var=library_size)
+                               cont_var = library_size)
 
     ## Compute Spearman correlation between gene expression and library size
     message("Spearman correlation between individual gene expression and library size")
@@ -131,10 +143,12 @@ norm_assessment = function(
                 c(PCA_BIO,
                   ncol = 4))
             plot(silh_bio$plot)
+            plot(ari_bio$plot)
             do.call(grid.arrange,
                 c(PCA_BATCH,
                   ncol = 4))
             plot(silh_batch$plot)
+            plot(ari_batch$plot)
             plot(reg_lib_size$plot)
             plot(corr_lib_size$plot)
             if (!is.null(catvar_da_library_size)){
@@ -145,8 +159,10 @@ norm_assessment = function(
     if (!is.null(catvar_da_library_size)){
         res=list(PCA_bio=PCA_BIO,
                  silh_bio=silh_bio,
+                 ari_bio=ari_bio,
                  PCA_batch=PCA_BATCH,
                  silh_batch=silh_batch,
+                 ari_batch=ari_batch,
                  plot_reg_lib_size=reg_lib_size$plot,
                  plot_cor_gen_exp_lib_size=corr_lib_size$plot,
                  plot_da_analysis_lib_size=da_analysis_lib_size$plot)
