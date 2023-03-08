@@ -5,7 +5,7 @@
 #'
 #' @param pca PCs of the dataset that will be used in the plot
 #' @param normalization All the available assays for the data (i.e. normalizations methods)
-#' @param regression_var The continous variable that will be computed to the PCA of the data
+#' @param cont_var The continous variable that will be computed to the PCA of the data
 #' (i.e. library size)
 #' @param nb_pca_comp The number of components of the PCA used to compute the regression
 #'
@@ -21,7 +21,7 @@
 regression_pc_contvar_all_assays<-function(
     pca,
     normalization,
-    regression_var,
+    cont_var,
     nb_pca_comp=10
 ){
     ### Compute the regression
@@ -33,7 +33,7 @@ regression_pc_contvar_all_assays<-function(
                 1:nb_pca_comp,
                 function(y) {
                     lm.ls <- summary(lm(
-                        regression_var ~ pcs[, 1:y])
+                        cont_var ~ pcs[, 1:y])
                     )$r.squared
                 })
         })

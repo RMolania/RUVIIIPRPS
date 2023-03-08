@@ -2,12 +2,12 @@
 % Please edit documentation in R/correlation_gene_exp_contvar_all_assays.R
 \name{correlation_gene_exp_contvar_all_assays}
 \alias{correlation_gene_exp_contvar_all_assays}
-\title{is used to compute the Spearman correlation between the data and library size
-on all assay}
+\title{is used to compute the Spearman correlation between the gene expression of all assays
+and a continous variable (i.e. library size)}
 \usage{
 correlation_gene_exp_contvar_all_assays(
   sce,
-  corr_var,
+  cont_var,
   apply.log = FALSE,
   n.cores = 5
 )
@@ -15,7 +15,7 @@ correlation_gene_exp_contvar_all_assays(
 \arguments{
 \item{sce}{the dataset that will be used for this analysis}
 
-\item{corr_var}{The continuous variable that will be used to compute to correlation}
+\item{cont_var}{The continuous variable that will be used to compute to correlation}
 
 \item{apply.log}{Indicates whether to apply a log-transformation to the data}
 
@@ -25,6 +25,6 @@ correlation_gene_exp_contvar_all_assays(
 list List containing the association plot and the computed correlation
 }
 \description{
-is used to compute the Spearman correlation between the data and library size
-on all assay
+is used to compute the Spearman correlation between the gene expression of all assays
+and a continous variable (i.e. library size)
 }

@@ -2,14 +2,16 @@
 #'
 #'
 #' @param sce Dataset that will be used to assess the performance of the normalisation of the data.
-#' It will first generate two PCA plots: one colored by biology and another one by time, each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
-#' It will also compute the regression between library size and PCs, and if asked it will compute a differential analysis between sample with low and high library size (i.e early years vs late years)
+#' It will first generate two PCA plots: one colored by biology and another one by batch,
+#' each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
+#' It will also compute the regression between library size and PCs,
+#' and if asked it will compute a differential analysis between sample with low and high library size (i.e early years vs late years)
 #' @param apply.log Indicates whether to apply a log-transformation to the data
 #' @param biological_subtypes Vector containing the biological subtypes of each sample
 #' @param library_size Vector containing the library size of each sample
-#' @param time Vector containing the time (plates/years) of each sample
+#' @param batch Vector containing the batch (plates/years) of each sample
 #' @param output_file Path and name of the output file to save the assessments plots in a pdf format
-#' @param var_da_library_size Vector containing the categorical variable of high vs low library size of each sample to compute differential analysis
+#' @param catvar_da_library_size Vector containing the categorical variable of high vs low library size of each sample to compute differential analysis
 #' @param n.cores is the number of cpus used for mclapply parallelization
 #'
 #'
@@ -19,16 +21,14 @@
 #' @importFrom gridExtra grid.arrange
 #' @export
 
-## put as options the different variable
-## batch instead of time
 norm_assessment = function(
         sce,
         apply.log = FALSE,
         biological_subtypes,
         library_size,
-        time,
+        batch,
         output_file=NULL,
-        var_da_library_size=NULL,
+        catvar_da_library_size=NULL,
         n.cores=5
 ){
     ### Compute PCA
@@ -40,7 +40,7 @@ norm_assessment = function(
     )
 
     ################# Assessment on the biology ################
-    # Color Biology
+    ## PCA Color Biology
     colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
     color.subtype<- colfunc(length(unique(biological_subtypes)))
     names(color.subtype) <- levels(biological_subtypes)
@@ -58,83 +58,103 @@ norm_assessment = function(
             p1
         })
     names(pp_bio) <- normalizations
-    plot_BIO=c(pp_bio[[1]],
+    PCA_BIO=c(pp_bio[[1]],
                pp_bio[[2]],
                pp_bio[[3]],
                pp_bio[[4]])
 
-    ################# Assessment on the time effect ##################
-    # Color Time (years)
+    ## Compute Silhouette based on biology
+    message("Silhouette coefficient based on biology")
+    silh_bio=RUVPRPS::silhouette_coef_catvar_all_assays(data_pca,
+                          normalizations,
+                          cat_var=biological_subtypes)
+
+    ################# Assessment on the batch effect ##################
+    ## PCA Color Batch
     colfunc <- colorRampPalette(brewer.pal(n = 4, name = 'Set1')[-6])
-    color.time <- colfunc(length(unique(time)))
-    names(color.time) <- levels(time)
-    message("PCA based on Time")
-    ### Compute PCA Time
-    pp_time <- lapply(
+    color.batch <- colfunc(length(unique(batch)))
+    names(color.batch) <- levels(batch)
+    message("PCA based on Batch")
+    ### Compute PCA Batch
+    pp_batch <- lapply(
         normalizations,
         function(x){
             pcs <- data_pca[[x]]
             p1 <- RUVPRPS::pca_plot_squared(
                 pca = pcs,
-                variable= time,
-                variable.name =  'Time',
-                color = color.time)
+                variable= batch,
+                variable.name =  'Batch',
+                color = color.batch)
             p1
         })
-    names(pp_time) <- normalizations
-    plot_TIME=c(pp_time[[1]],
-                pp_time[[2]],
-                pp_time[[3]],
-                pp_time[[4]])
+    names(pp_batch) <- normalizations
+    PCA_BATCH=c(pp_batch[[1]],
+                pp_batch[[2]],
+                pp_batch[[3]],
+                pp_batch[[4]])
+
+    ## Compute Silhouette based on batch
+    message("Silhouette coefficient based on batch")
+    silh_batch=RUVPRPS::silhouette_coef_catvar_all_assays(data_pca,
+                            normalizations,
+                            cat_var=batch)
+
+    ## Plot combined silhouette based on batch and biology
+    #combined_silh=
 
 
     ################## Assessment on the library size ##################
     ## Compute regression between library size and PCs
-    ## Regression on the library size
-    message("Regression based on Library size")
+    message("Linear regression between the first cumulative PC and library size")
     reg_lib_size= RUVPRPS::regression_pc_contvar_all_assays(pca=data_pca,
                                normalization=normalizations,
                                regression_var=library_size)
 
-    ## DA between sample with low and high library size
-    if (!is.null(var_da_library_size)){
-        message("Differential analysis between samples with high vs low library size")
-        de_analysis_lib_size=RUVPRPS::de_analysis_wilcoxon_gene_exp_catvar_all_assays(sce,
-                                                var_da_library_size,
-                                                apply.log)
-    }
-
-    # ### Spearman correlation between gene expression and library size
-    message("Spearman correlation between gene expression and library size")
+    ## Compute Spearman correlation between gene expression and library size
+    message("Spearman correlation between individual gene expression and library size")
     corr_lib_size=RUVPRPS::correlation_gene_exp_contvar_all_assays(sce,
                                                         library_size,
                                                         apply.log)
+
+    ## DA between sample with low and high library size
+    if (!is.null(catvar_da_library_size)){
+        message("Differential analysis using Wilcoxon test between samples with high vs low library size")
+        da_analysis_lib_size=RUVPRPS::da_analysis_wilcoxon_gene_exp_catvar_all_assays(sce,
+                                                                                      catvar_da_library_size,
+                                                                                      apply.log)
+    }
 
     ################## Generate pdf file to save the plots #####################
     if (!is.null(output_file)){
         pdf(output_file)
             do.call(grid.arrange,
-                c(plot_BIO,
+                c(PCA_BIO,
                   ncol = 4))
+            plot(silh_bio$plot)
             do.call(grid.arrange,
-                c(plot_TIME,
+                c(PCA_BATCH,
                   ncol = 4))
+            plot(silh_batch$plot)
             plot(reg_lib_size$plot)
-            if (!is.null(var_da_library_size)){
-                plot(de_analysis_lib_size$plot)
-            }
             plot(corr_lib_size$plot)
+            if (!is.null(catvar_da_library_size)){
+                plot(da_analysis_lib_size$plot)
+            }
         dev.off()
     }
-    if (!is.null(var_da_library_size)){
-        res=list(plot_bio=plot_BIO,
-                 plot_time=plot_TIME,
+    if (!is.null(catvar_da_library_size)){
+        res=list(PCA_bio=PCA_BIO,
+                 silh_bio=silh_bio,
+                 PCA_batch=PCA_BATCH,
+                 silh_batch=silh_batch,
                  plot_reg_lib_size=reg_lib_size$plot,
-                 plot_de_analysis_lib_size=de_analysis_lib_size$plot,
-                 plot_cor_gen_exp_lib_size=corr_lib_size$plot)
+                 plot_cor_gen_exp_lib_size=corr_lib_size$plot,
+                 plot_da_analysis_lib_size=da_analysis_lib_size$plot)
     }else{
-        res=list(plot_bio=plot_BIO,
-                 plot_time=plot_TIME,
+        res=list(PCA_bio=PCA_BIO,
+                 silh_bio=silh_bio,
+                 PCA_batch=PCA_BATCH,
+                 silh_batch=silh_batch,
                  plot_reg_lib_size=reg_lib_size$plot,
                  plot_cor_gen_exp_lib_size=corr_lib_size$plot)
         }

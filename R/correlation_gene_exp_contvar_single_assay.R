@@ -1,10 +1,10 @@
 
-#' is used to compute the correlation (Spearman or Pearson) between the data and
-#' a continuous variable (i.e. library size)
+#' is used to compute the correlation (Spearman or Pearson) between the gene expression
+#' of a single assay and a continuous variable (i.e. library size)
 #'
 #' @param expr.data is the gene expression matrix genes by samples
 #' @param apply.log Indicates whether to apply a log-transformation to the data
-#' @param variable is a continous variable such as library size or purity
+#' @param cont_var is a continous cont_var such as library size or purity
 #' @param method to select which method to use either Spearman or Pearson correlation
 #' @param n.cores is the number of cpus used for mclapply parallelization
 #'
@@ -17,7 +17,7 @@
 correlation_gene_exp_contvar_single_assay<- function(
         expr.data,
         apply.log,
-        variable,
+        cont_var,
         method,
         n.cores
 ){
@@ -32,7 +32,7 @@ correlation_gene_exp_contvar_single_assay<- function(
         function(x){
             round(cor.test(
                 x = expr.data[x, ],
-                y = variable,
+                y = cont_var,
                 method = method)[[4]], 6)},
         mc.cores = n.cores
     )
@@ -41,7 +41,7 @@ correlation_gene_exp_contvar_single_assay<- function(
         function(x){
             cor.test(
                 x = expr.data[x, ],
-                y = variable,
+                y = cont_var,
                 method = method)[[3]]},
         mc.cores = n.cores)
 

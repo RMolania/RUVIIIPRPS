@@ -9,16 +9,18 @@ norm_assessment(
   apply.log = FALSE,
   biological_subtypes,
   library_size,
-  time,
+  batch,
   output_file = NULL,
-  var_da_library_size = NULL,
+  catvar_da_library_size = NULL,
   n.cores = 5
 )
 }
 \arguments{
 \item{sce}{Dataset that will be used to assess the performance of the normalisation of the data.
-It will first generate two PCA plots: one colored by biology and another one by time, each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
-It will also compute the regression between library size and PCs, and if asked it will compute a differential analysis between sample with low and high library size (i.e early years vs late years)}
+It will first generate two PCA plots: one colored by biology and another one by batch,
+each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
+It will also compute the regression between library size and PCs,
+and if asked it will compute a differential analysis between sample with low and high library size (i.e early years vs late years)}
 
 \item{apply.log}{Indicates whether to apply a log-transformation to the data}
 
@@ -26,11 +28,11 @@ It will also compute the regression between library size and PCs, and if asked i
 
 \item{library_size}{Vector containing the library size of each sample}
 
-\item{time}{Vector containing the time (plates/years) of each sample}
+\item{batch}{Vector containing the batch (plates/years) of each sample}
 
 \item{output_file}{Path and name of the output file to save the assessments plots in a pdf format}
 
-\item{var_da_library_size}{Vector containing the categorical variable of high vs low library size of each sample to compute differential analysis}
+\item{catvar_da_library_size}{Vector containing the categorical variable of high vs low library size of each sample to compute differential analysis}
 
 \item{n.cores}{is the number of cpus used for mclapply parallelization}
 }

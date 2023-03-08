@@ -2,13 +2,13 @@
 % Please edit documentation in R/correlation_gene_exp_contvar_single_assay.R
 \name{correlation_gene_exp_contvar_single_assay}
 \alias{correlation_gene_exp_contvar_single_assay}
-\title{is used to compute the correlation (Spearman or Pearson) between the data and
-a continuous variable (i.e. library size)}
+\title{is used to compute the correlation (Spearman or Pearson) between the gene expression
+of a single assay and a continuous variable (i.e. library size)}
 \usage{
 correlation_gene_exp_contvar_single_assay(
   expr.data,
   apply.log,
-  variable,
+  cont_var,
   method,
   n.cores
 )
@@ -18,7 +18,7 @@ correlation_gene_exp_contvar_single_assay(
 
 \item{apply.log}{Indicates whether to apply a log-transformation to the data}
 
-\item{variable}{is a continous variable such as library size or purity}
+\item{cont_var}{is a continous cont_var such as library size or purity}
 
 \item{method}{to select which method to use either Spearman or Pearson correlation}
 
@@ -28,6 +28,6 @@ correlation_gene_exp_contvar_single_assay(
 dataframe containing the genes, the rho, the pvalues before and after BH correction
 }
 \description{
-is used to compute the correlation (Spearman or Pearson) between the data and
-a continuous variable (i.e. library size)
+is used to compute the correlation (Spearman or Pearson) between the gene expression
+of a single assay and a continuous variable (i.e. library size)
 }

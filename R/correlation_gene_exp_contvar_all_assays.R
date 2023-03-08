@@ -1,8 +1,8 @@
-#' is used to compute the Spearman correlation between the data and library size
-#' on all assay
+#' is used to compute the Spearman correlation between the gene expression of all assays
+#' and a continous variable (i.e. library size)
 #'
 #' @param sce the dataset that will be used for this analysis
-#' @param corr_var The continuous variable that will be used to compute to correlation
+#' @param cont_var The continuous variable that will be used to compute to correlation
 #' @param apply.log Indicates whether to apply a log-transformation to the data
 #' @param n.cores is the number of cpus used for mclapply parallelization
 #'
@@ -16,34 +16,34 @@
 
 correlation_gene_exp_contvar_all_assays<-function(
         sce,
-        corr_var,
+        cont_var,
         apply.log=FALSE,
         n.cores=5
 ){
     normalization=names(assays(sce))
-    # Correlation gene expression and lib size
-    cor.ls <- lapply(
+    # Correlation gene expression and continous variable
+    cor.all<- lapply(
         normalization,
         function(x){
             data <- as.matrix(assay(sce, x))
             cor <- correlation_gene_exp_contvar_single_assay(
                 expr.data = data,
                 apply.log=apply.log,
-                variable=corr_var,
+                cont_var=cont_var,
                 method='spearman',
                 n.cores = n.cores)
             cor
         })
-    names(cor.ls) <- normalization
-    cor.ls.coeff <- lapply(
+    names(cor.all) <- normalization
+    cor.all.coeff <- lapply(
         normalization,
         function(x){
-            cor.ls[[x]]$rho
+            cor.all[[x]]$rho
         })
-    names(cor.ls.coeff) <- normalization
+    names(cor.all.coeff) <- normalization
     everything<-datasets<-corr.coeff<-NULL
-    cor.ls.coeff <- as.data.frame(cor.ls.coeff)
-    cor.ls.coeff= cor.ls.coeff %>% pivot_longer(
+    cor.all.coeff <- as.data.frame(cor.all.coeff)
+    cor.all.coeff= cor.all.coeff %>% pivot_longer(
         everything(),
         names_to = 'datasets',
         values_to = 'corr.coeff') %>% mutate(datasets = factor(
@@ -53,7 +53,7 @@ correlation_gene_exp_contvar_all_assays<-function(
     dataSets.colors <- wes_palette(
         n = 4,
         name = "GrandBudapest1")[c(1,2,4,3)]
-    p=ggplot(cor.ls.coeff, aes(x = datasets, y = corr.coeff, fill = datasets)) +
+    p=ggplot(cor.all.coeff, aes(x = datasets, y = corr.coeff, fill = datasets)) +
         geom_boxplot() +
         ylab("Spearman correlation") +
         xlab('') +
@@ -67,6 +67,6 @@ correlation_gene_exp_contvar_all_assays<-function(
             axis.text.x = element_text(size = 12),
             axis.text.y = element_text(size = 12))
 
-    return(list(plot=p,corr.ls.coeff=cor.ls.coeff))
+    return(list(plot=p,corr.coeff=cor.all.coeff))
 }
 

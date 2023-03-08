@@ -8,7 +8,7 @@ of the data on all assays}
 regression_pc_contvar_all_assays(
   pca,
   normalization,
-  regression_var,
+  cont_var,
   nb_pca_comp = 10
 )
 }
@@ -17,7 +17,7 @@ regression_pc_contvar_all_assays(
 
 \item{normalization}{All the available assays for the data (i.e. normalizations methods)}
 
-\item{regression_var}{The continous variable that will be computed to the PCA of the data
+\item{cont_var}{The continous variable that will be computed to the PCA of the data
 (i.e. library size)}
 
 \item{nb_pca_comp}{The number of components of the PCA used to compute the regression}

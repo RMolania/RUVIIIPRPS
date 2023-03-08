@@ -3,7 +3,7 @@
 #' given a categorical variable of two groups of the samples using the Wilcoxon test
 #'
 #' @param sce the dataset that will be used for this analysis
-#' @param regression_var The categorical variable of two groups that will be used
+#' @param cat_var The categorical variable of two groups that will be used
 #' to computed the differential expression analysis (i.e. high vs low library size)
 #' @param apply.log Indicates whether to apply a log-transformation to the data
 #' @param n.cores is the number of cpus used for mclapply parallelization
@@ -17,9 +17,9 @@
 #' @import ggplot2
 #' @export
 
-de_analysis_wilcoxon_gene_exp_catvar_all_assays<-function(
+da_analysis_wilcoxon_gene_exp_catvar_all_assays<-function(
         sce,
-        regression_var,
+        cat_var,
         apply.log=FALSE,
         n.cores=5
 ){
@@ -29,10 +29,10 @@ de <- lapply(
     normalization,
     function(x){
         data <- assay(sce, x)
-        de <- de_analysis_wilcoxon_gene_exp_catvar_single_assay(
+        de <- da_analysis_wilcoxon_gene_exp_catvar_single_assay(
             expr.data = data,
             apply.log,
-            regression_var,
+            cat_var,
             n.cores = n.cores)
         de
     })

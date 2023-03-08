@@ -1,8 +1,9 @@
-#' is used to compute the Silhouette coefficient given a categorical variable
+#' is used to compute the Silhouette coefficient from the PC of a single assay
+#' given a categorical variable
 #'
 #'
 #' @param pca PCs of the dataset that will be used
-#' @param variable is a categorical variable such as sample types or batches
+#' @param cat_var is a categorical variable such as sample types or batches
 #' @param nPCs is the number of PCs used to measure the distance
 #'
 #' @return a single value, the silhouette coefficient computed
@@ -11,14 +12,14 @@
 #' @export
 
 
-silhouette_coeff <- function(
+silhouette_coef_catvar_single_assay <- function(
         pca,
-        variable,
+        cat_var,
         nPCs
 ){
     d.matrix <- as.matrix(dist(pca[, seq_len(nPCs)]))
     avg=summary(silhouette(
-        as.numeric(as.factor(variable)),
+        as.numeric(as.factor(cat_var)),
         d.matrix))$avg.width
     return(avg)
 }
