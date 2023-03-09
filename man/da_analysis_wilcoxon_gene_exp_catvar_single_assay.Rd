@@ -4,7 +4,7 @@
 \name{da_analysis_wilcoxon_gene_exp_catvar_single_assay}
 \alias{da_analysis_wilcoxon_gene_exp_catvar_single_assay}
 \title{is used to compute the Wilcoxon Rank Sum and Signed Rank Test on the gene expression
-of a single assay given a categorical cat_var of two groups}
+of a single assay given a categorical of two groups}
 \usage{
 da_analysis_wilcoxon_gene_exp_catvar_single_assay(
   expr.data,
@@ -27,5 +27,5 @@ dataframe containing the genes, the p-values before and after BH correction
 }
 \description{
 is used to compute the Wilcoxon Rank Sum and Signed Rank Test on the gene expression
-of a single assay given a categorical cat_var of two groups
+of a single assay given a categorical of two groups
 }

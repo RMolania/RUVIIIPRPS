@@ -1,5 +1,5 @@
 #' is used to compute the Wilcoxon Rank Sum and Signed Rank Test on the gene expression
-#' of a single assay given a categorical cat_var of two groups
+#' of a single assay given a categorical of two groups
 #'
 #'
 #' @param expr.data is the gene expression matrix genes by samples
