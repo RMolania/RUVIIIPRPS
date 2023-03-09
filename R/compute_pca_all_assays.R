@@ -22,8 +22,7 @@ compute_pca_all_assays=function(
     pca.all <- lapply(
         normalizations,
         function(x){
-            #compute_pca_single_assay(sce= as.matrix(SummarizedExperiment::assay(sce, x)),apply.log = apply.log)
-            compute_pca_single_assay <- function(y) {
+          compute_pca_single_assay <- function(y) {
                 dat=as.matrix(SummarizedExperiment::assay(sce, x))
                 if (apply.log==FALSE)
                     dat <- dat
@@ -44,7 +43,8 @@ compute_pca_all_assays=function(
                     sing.val = svd,
                     variation = percent)
                 return(pca)
-            }
+          }
+          return(compute_pca_single_assay)
         })
     names(pca.all) <- normalizations
     return(pca.all)
