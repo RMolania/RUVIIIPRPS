@@ -20,7 +20,7 @@
 #' @export
 
 
-pca_plot_squared<-function(
+pca_plot<-function(
         pca,
         variable,
         variable.name,
