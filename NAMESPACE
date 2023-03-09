@@ -2,8 +2,7 @@
 
 export(ari_catvar_all_assays)
 export(ari_catvar_single_assay)
-export(compute_pca_all_assays)
-export(compute_pca_single_assay)
+export(compute_pca)
 export(correlation_gene_exp_contvar_all_assays)
 export(correlation_gene_exp_contvar_single_assay)
 export(da_analysis_wilcoxon_gene_exp_catvar_all_assays)

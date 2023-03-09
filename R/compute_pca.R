@@ -2,6 +2,7 @@
 #'
 #'
 #' @param sce Dataset that will be used to compute the PCA
+#' @param assay_names Optional selection of names of the assays to compute the PCA
 #' @param apply.log Indicates whether to apply a log-transformation to the data
 #'
 #'
@@ -11,14 +12,17 @@
 #' @import ggplot2
 #' @export
 #'
-compute_pca_all_assays=function(
+compute_pca=function(
     sce,
-    #assay_names,
+    assay_names=NULL,
     apply.log=FALSE
 ){
+    if (!is.null(assay_names)){
     normalizations=names(
-        SummarizedExperiment::assays(sce)
-    )
+        SummarizedExperiment::assays(sce))
+    }else{
+    normalizations=assay_names
+    }
     pca.all <- lapply(
         normalizations,
         function(x){

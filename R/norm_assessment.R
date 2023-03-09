@@ -32,7 +32,7 @@ norm_assessment = function(
         n.cores=5
 ){
     ### Compute PCA
-    data_pca=RUVPRPS::compute_pca_all_assays(sce,apply.log = apply.log)
+    data_pca=RUVPRPS::compute_pca(sce,apply.log = apply.log)
 
     ## Get all the available assays (i.e. normalizations methods)
     normalizations <- names(
@@ -50,7 +50,7 @@ norm_assessment = function(
         normalizations,
         function(x){
             pcs <- data_pca[[x]]
-            p1 <- RUVPRPS::pca_plot_squared(
+            p1 <- RUVPRPS::pca_plot(
                 pca = pcs,
                 variable= biological_subtypes,
                 variable.name =  'Biology',
@@ -86,7 +86,7 @@ norm_assessment = function(
         normalizations,
         function(x){
             pcs <- data_pca[[x]]
-            p1 <- RUVPRPS::pca_plot_squared(
+            p1 <- RUVPRPS::pca_plot(
                 pca = pcs,
                 variable= batch,
                 variable.name =  'Batch',
