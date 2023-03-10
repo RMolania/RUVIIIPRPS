@@ -46,18 +46,22 @@ norm_assessment = function(
     names(color.subtype) <- levels(biological_subtypes)
     message("PCA based on Biology")
     ### Compute PCA Biology
-    pp_bio <- lapply(
-        normalizations,
-        function(x){
-            pcs <- data_pca[[x]]
-            p1 <- RUVPRPS::pca_plot(
-                pca = pcs,
-                variable= biological_subtypes,
-                variable.name =  'Biology',
-                color = color.subtype)
-            p1
-        })
-    names(pp_bio) <- normalizations
+    # pp_bio <- lapply(
+    #     normalizations,
+    #     function(x){
+    #         pcs <- data_pca[[x]]
+    #         p1 <- RUVPRPS::pca_plot(
+    #             pca = pcs,
+    #             variable= biological_subtypes,
+    #             variable.name =  'Biology',
+    #             color = color.subtype)
+    #         p1
+    #     })
+    # names(pp_bio) <- normalizations
+    pp_bio=RUVPRPS::plot_pca(data_pca,
+                    variable= biological_subtypes,
+                    variable.name =  'Biology',
+                    color = color.subtype)
     PCA_BIO=c(pp_bio[[1]],
                pp_bio[[2]],
                pp_bio[[3]],
@@ -82,18 +86,22 @@ norm_assessment = function(
     names(color.batch) <- levels(batch)
     message("PCA based on Batch")
     ### Compute PCA Batch
-    pp_batch <- lapply(
-        normalizations,
-        function(x){
-            pcs <- data_pca[[x]]
-            p1 <- RUVPRPS::pca_plot(
-                pca = pcs,
-                variable= batch,
-                variable.name =  'Batch',
-                color = color.batch)
-            p1
-        })
-    names(pp_batch) <- normalizations
+    # pp_batch <- lapply(
+    #     normalizations,
+    #     function(x){
+    #         pcs <- data_pca[[x]]
+    #         p1 <- RUVPRPS::pca_plot(
+    #             pca = pcs,
+    #             variable= batch,
+    #             variable.name =  'Batch',
+    #             color = color.batch)
+    #         p1
+    #     })
+    # names(pp_batch) <- normalizations
+    pp_batch=RUVPRPS::plot_pca(data_pca,
+                    variable= batch,
+                    variable.name =   'Batch',
+                    color =color.batch)
     PCA_BATCH=c(pp_batch[[1]],
                 pp_batch[[2]],
                 pp_batch[[3]],
