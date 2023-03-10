@@ -58,14 +58,14 @@ norm_assessment = function(
     #         p1
     #     })
     # names(pp_bio) <- normalizations
-    pp_bio=RUVPRPS::plot_pca(data_pca,
+    PCA_BIO=RUVPRPS::plot_pca(data_pca,
                     variable= biological_subtypes,
                     variable.name =  'Biology',
-                    color = color.subtype)
-    PCA_BIO=c(pp_bio[[1]],
-               pp_bio[[2]],
-               pp_bio[[3]],
-               pp_bio[[4]])
+                     color = color.subtype)
+    # PCA_BIO=c(pp_bio[[1]],
+    #            pp_bio[[2]],
+    #            pp_bio[[3]],
+    #            pp_bio[[4]])
 
     ## Compute Silhouette based on biology
     message("Silhouette coefficient based on biology")
@@ -98,14 +98,14 @@ norm_assessment = function(
     #         p1
     #     })
     # names(pp_batch) <- normalizations
-    pp_batch=RUVPRPS::plot_pca(data_pca,
+    PCA_BATCH=RUVPRPS::plot_pca(data_pca,
                     variable= batch,
                     variable.name =   'Batch',
                     color =color.batch)
-    PCA_BATCH=c(pp_batch[[1]],
-                pp_batch[[2]],
-                pp_batch[[3]],
-                pp_batch[[4]])
+    # PCA_BATCH=c(pp_batch[[1]],
+    #             pp_batch[[2]],
+    #             pp_batch[[3]],
+    #             pp_batch[[4]])
 
     ## Compute Silhouette based on batch
     message("Silhouette coefficient based on batch")

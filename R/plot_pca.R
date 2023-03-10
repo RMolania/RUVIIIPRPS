@@ -1,8 +1,9 @@
 
-#' is used to plot PCA of the data colored by one variable
+#' is used to plot the pairwise plots of the first 3 PCA of the data colored by one variable
 #'
 #'
 #' @param pca PCs of the dataset that will be used in the plot
+#' @param assay_names Optional selection of names of the assays to compute the PCA
 #' @param variable The variable that will be used to display and color the PCA plot
 #' @param variable.name The label of the variable that will be used on the PCA plot
 #' @param color The color of the variable that will be used on the PCA plot
@@ -21,7 +22,7 @@
 
 plot_pca=function(
         pca,
-        #assay_names=NULL,
+        assay_names=NULL,
         variable,
         variable.name,
         color,
@@ -30,11 +31,11 @@ plot_pca=function(
         strokeColor = 'gray30',
         alpha = .5
 ){
-    # if (!is.null(assay_names)){
-    #     normalizations=assay_names
-    # }else{
+    if (!is.null(assay_names)){
+        normalizations=assay_names
+    }else{
          normalizations=names(pca)
-    #}
+    }
     ppca <- lapply(
         normalizations,
         function(x){
@@ -163,6 +164,19 @@ plot_pca=function(
             p1
         })
         names(ppca) <- normalizations
-        return(ppca)
+
+        ## Prepare plot
+        p=ppca[[1]]
+        if (length(normalizations)>1){
+            for (n in 2:length(normalizations)){
+                p=c(p,ppca[[n]])
+            }
+        }
+        plot=do.call(
+            gridExtra::grid.arrange,
+            c(p,
+              ncol = 4))
+
+        return(plot=plot)
 }
 
