@@ -47,7 +47,7 @@ plot_pca=function(
                                             strokeColor = strokeColor,
                                             alpha = alpha){
                 pcs = pca_x$sing.val$u[,1:3]
-                pc.var = pca$var
+                pc.var = pca_x$var
                 pair.pcs <- utils::combn(ncol(pcs), 2)
                 pList <- list()
                 for(i in 1:ncol(pair.pcs)){
@@ -159,11 +159,10 @@ plot_pca=function(
                 return(pList)
             }
             pca_x <- pca[[x]]
-            p1=plot_pca_single_assay(pca_x,variable,variable.name,color)
+            p1=plot_pca_single_assay(pca_x,variable,variable.name,color,strokeSize,pointSize,strokeColor,alpha)
             p1
         })
         names(ppca) <- normalizations
         return(ppca)
-
 }
 
