@@ -69,7 +69,7 @@ norm_assessment = function(
 
     ## Compute Silhouette based on biology
     message("Silhouette coefficient based on biology")
-    silh_bio=RUVPRPS::silhouette_coef_catvar(data_pca,
+    silh_bio=RUVPRPS::compute_silhouette(data_pca,
                           normalizations,
                           cat_var=biological_subtypes)
 
@@ -109,7 +109,7 @@ norm_assessment = function(
 
     ## Compute Silhouette based on batch
     message("Silhouette coefficient based on batch")
-    silh_batch=RUVPRPS::silhouette_coef_catvar(data_pca,
+    silh_batch=RUVPRPS::compute_silhouette(data_pca,
                             normalizations,
                             cat_var=batch)
 

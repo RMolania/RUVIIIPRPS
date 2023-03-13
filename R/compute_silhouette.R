@@ -5,7 +5,9 @@
 #' @param pca PCs of the dataset that will be used
 #' @param cat_var is a categorical variable such as sample types or batches
 #' @param assay_names Optional selection of names of the assays to compute the PCA
-#' @param nPCs is the number of PCs used to measure the distance
+#' @param plot Optional output of a plot, default set to FALSE.
+
+#' @param nPCs is the number of PCs used to measure the distance, by default it is set to 3
 #'
 #' @return list List containing the association plot and the computed silhouette
 #' @importFrom wesanderson wes_palette
@@ -16,10 +18,11 @@
 #' @import ggplot2
 #' @export
 
-silhouette_coef_catvar<-function(
+compute_silhouette<-function(
         pca,
-        assay_names=NULL,
         cat_var,
+        assay_names=NULL,
+        plot=FALSE,
         nPCs=3
 ){
     if (!is.null(assay_names)){
@@ -56,23 +59,25 @@ silhouette_coef_catvar<-function(
             datasets))
 
     ### Plot
-    # color
-    dataSets.colors <- wes_palette(
-        n = length(normalization),
-        name = "GrandBudapest1")[c(1,2,4,3)]
-    p=ggplot(pcs.silCoef , aes(x = datasets, y = silh.coeff, fill = datasets)) +
-        geom_col() +
-        ylab("Silhouette coefficient") +
-        xlab('') +
-        scale_fill_manual(values = dataSets.colors, guide = 'none')+
-        theme(
-            panel.background = element_blank(),
-            axis.line = element_line(colour = 'black', size = 1),
-            axis.title.x = element_text(size = 18),
-            axis.title.y = element_text(size = 18),
-            axis.text.x = element_text(size = 12),
-            axis.text.y = element_text(size = 12))
-
-    return(list(plot=p,silh.coeff=pcs.silCoef))
+    if (isTRUE(plot)){
+        # color
+        dataSets.colors <- wes_palette(
+            n = length(normalization),
+            name = "GrandBudapest1")[c(1,2,4,3)]
+        p=ggplot(pcs.silCoef , aes(x = datasets, y = silh.coeff, fill = datasets)) +
+            geom_col() +
+            ylab("Silhouette coefficient") +
+            xlab('') +
+            scale_fill_manual(values = dataSets.colors, guide = 'none')+
+            theme(
+                panel.background = element_blank(),
+                axis.line = element_line(colour = 'black', size = 1),
+                axis.title.x = element_text(size = 18),
+                axis.title.y = element_text(size = 18),
+                axis.text.x = element_text(size = 12),
+                axis.text.y = element_text(size = 12))
+        return(list(plot=p,silh.coeff=pcs.silCoef))
+    }else{
+        return(silh.coeff=pcs.silCoef)}
 }
 
