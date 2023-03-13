@@ -12,6 +12,8 @@
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate
 #' @importFrom tidyr pivot_longer %>%
+#' @importFrom stats dist
+#' @importFrom mclust mclustBIC Mclust adjustedRandIndex
 #' @import ggplot2
 #' @export
 #'
