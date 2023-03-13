@@ -3,24 +3,26 @@
 \name{regression_pc_contvar}
 \alias{regression_pc_contvar}
 \title{is used to compute the linear regression of a continuous variable and the first cumulative PCs
-of the data on all assays}
+of the gene expression (assay)
+of a SummarizedExperiment class object.}
 \usage{
 regression_pc_contvar(pca, cont_var, assay_names = NULL, nb_pca_comp = 10)
 }
 \arguments{
-\item{pca}{PCs of the dataset that will be used in the plot}
+\item{pca}{PCA components of a SummarizedExperiment variable that will be used in the plot.}
 
-\item{cont_var}{The continous variable that will be computed to the PCA of the data
+\item{cont_var}{Vector of a continuous variable that will be computed to the PCA of the data
 (i.e. library size)}
 
-\item{assay_names}{Optional selection of names of the assays to compute the PCA}
+\item{assay_names}{Optional selection of names of the assays to compute the PCA.}
 
-\item{nb_pca_comp}{The number of components of the PCA used to compute the regression}
+\item{nb_pca_comp}{The number of components of the PCA used to compute the regression.}
 }
 \value{
 list List containing the association plot and the computed regression
 }
 \description{
 is used to compute the linear regression of a continuous variable and the first cumulative PCs
-of the data on all assays
+of the gene expression (assay)
+of a SummarizedExperiment class object.
 }

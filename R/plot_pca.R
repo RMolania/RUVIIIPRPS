@@ -1,9 +1,9 @@
-
-#' is used to plot the pairwise plots of the first 3 PCA of the data colored by one variable
+#' is used to plot the pairwise plots of the first 3 PCA of the gene expression (assay)
+#' of a SummarizedExperiment class object.
 #'
 #'
-#' @param pca PCs of the dataset that will be used in the plot
-#' @param assay_names Optional selection of names of the assays to compute the PCA
+#' @param pca PCA components of a SummarizedExperiment variable that will be used in the plot.
+#' @param assay_names Optional selection of names of the assays to compute the PCA.
 #' @param variable The variable that will be used to display and color the PCA plot
 #' @param variable.name The label of the variable that will be used on the PCA plot
 #' @param color The color of the variable that will be used on the PCA plot
@@ -11,8 +11,6 @@
 #' @param pointSize geom_point aesthetics
 #' @param strokeColor geom_point aesthetics
 #' @param alpha geom_point aesthetics
-#'
-#'
 #'
 #' @return p PCA plot of the data colored by one variable
 #' @importFrom ggpubr get_legend

@@ -2,20 +2,22 @@
 % Please edit documentation in R/compute_pca.R
 \name{compute_pca}
 \alias{compute_pca}
-\title{is used to compute PCA of the data on all assays}
+\title{is used to compute PCA of the gene expression (assay) of a SummarizedExperiment class object.}
 \usage{
-compute_pca(sce, assay_names = NULL, apply.log = FALSE)
+compute_pca(se, assay_names = NULL, apply.log = FALSE)
 }
 \arguments{
-\item{sce}{Dataset that will be used to compute the PCA}
+\item{se}{A SummarizedExperiment object that will be used to compute the PCA.}
 
-\item{assay_names}{Optional selection of names of the assays to compute the PCA}
+\item{assay_names}{Optional string or list of strings for selection of the names
+of the assays of the SummarizedExperiment class object to compute the PCA.}
 
-\item{apply.log}{Indicates whether to apply a log-transformation to the data}
+\item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
+no transformation will be selected.}
 }
 \value{
-pca.all PCA components computed on the provided data
+pca.all List of the PCA components computed
 }
 \description{
-is used to compute PCA of the data on all assays
+is used to compute PCA of the gene expression (assay) of a SummarizedExperiment class object.
 }

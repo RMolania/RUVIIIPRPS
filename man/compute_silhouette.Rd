@@ -2,26 +2,27 @@
 % Please edit documentation in R/compute_silhouette.R
 \name{compute_silhouette}
 \alias{compute_silhouette}
-\title{is used to compute the Silhouette coefficient from the PC of all assays
-given a categorical variable}
+\title{is used to compute the Silhouette coefficient from the first PC of a SummarizedExperiment class
+object given a categorical variable.}
 \usage{
 compute_silhouette(pca, cat_var, assay_names = NULL, plot = FALSE, nPCs = 3)
 }
 \arguments{
-\item{pca}{PCs of the dataset that will be used}
+\item{pca}{PCA components of a SummarizedExperiment variable.}
 
-\item{cat_var}{is a categorical variable such as sample types or batches}
+\item{cat_var}{Vector of a categorical variable such as sample types or batches.}
 
-\item{assay_names}{Optional selection of names of the assays to compute the PCA}
+\item{assay_names}{Optional string or list of strings for selection of the names
+of the assays of the SummarizedExperiment class object to compute the PCA.}
 
 \item{plot}{Optional output of a plot, default set to FALSE.}
 
-\item{nPCs}{is the number of PCs used to measure the distance, by default it is set to 3}
+\item{nPCs}{is the number of PCs used to measure the distance, by default it is set to 3.}
 }
 \value{
 list List containing the association plot and the computed silhouette
 }
 \description{
-is used to compute the Silhouette coefficient from the PC of all assays
-given a categorical variable
+is used to compute the Silhouette coefficient from the first PC of a SummarizedExperiment class
+object given a categorical variable.
 }

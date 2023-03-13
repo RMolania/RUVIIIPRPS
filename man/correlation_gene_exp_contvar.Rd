@@ -2,11 +2,11 @@
 % Please edit documentation in R/correlation_gene_exp_contvar.R
 \name{correlation_gene_exp_contvar}
 \alias{correlation_gene_exp_contvar}
-\title{is used to compute the Spearman correlation between the gene expression of all assays
-and a continous variable (i.e. library size)}
+\title{is used to compute the correlation between the gene expression (assay)
+of a SummarizedExperiment class object and a continous variable (i.e. library size).}
 \usage{
 correlation_gene_exp_contvar(
-  sce,
+  se,
   cont_var,
   assay_names = NULL,
   method = "spearman",
@@ -15,24 +15,26 @@ correlation_gene_exp_contvar(
 )
 }
 \arguments{
-\item{sce}{the dataset that will be used for this analysis}
+\item{se}{A SummarizedExperiment object that will be used to compute the correlation}
 
-\item{cont_var}{The continuous variable that will be used to compute to correlation}
+\item{cont_var}{Vector of a continuous variable that will be used to compute to correlation}
 
-\item{assay_names}{Optional selection of names of the assays to compute the correlation}
+\item{assay_names}{Optional string or list of strings for selection of the names
+of the assays of the SummarizedExperiment class object to compute the correlation.}
 
-\item{method}{ta character string indicating which correlation coefficient
+\item{method}{A character string indicating which correlation coefficient
 is to be used for the test: "pearson", "kendall", or "spearman". By default 'spearman will
 be selected.}
 
-\item{apply.log}{Indicates whether to apply a log-transformation to the data}
+\item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
+no transformation will be selected.}
 
-\item{n.cores}{is the number of cpus used for mclapply parallelization}
+\item{n.cores}{is the number of cpus used for mclapply parallelization.}
 }
 \value{
 list List containing the association plot and the computed correlation
 }
 \description{
-is used to compute the Spearman correlation between the gene expression of all assays
-and a continous variable (i.e. library size)
+is used to compute the correlation between the gene expression (assay)
+of a SummarizedExperiment class object and a continous variable (i.e. library size).
 }

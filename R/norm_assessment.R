@@ -1,12 +1,11 @@
-#' is used to assess the performance of the normalisation of the data
-#'
-#'
-#' @param sce Dataset that will be used to assess the performance of the normalisation of the data.
+#' is used to assess the performance of the normalisation of a SummarizedExperiment class object.
 #' It will first generate two PCA plots: one colored by biology and another one by batch,
 #' each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
 #' It will also compute the regression between library size and PCs,
-#' and if asked it will compute a differential analysis between sample with low and high library size (i.e early years vs late years)
-#' @param apply.log Indicates whether to apply a log-transformation to the data
+#'
+#' @param se Dataset that will be used to assess the performance of the normalisation of the data.
+#' @param apply.log Indicates whether to apply a log-transformation to the data. By default
+#' no transformation will be selected.
 #' @param biological_subtypes Vector containing the biological subtypes of each sample
 #' @param library_size Vector containing the library size of each sample
 #' @param batch Vector containing the batch (plates/years) of each sample
@@ -22,7 +21,7 @@
 #' @export
 
 norm_assessment = function(
-        sce,
+        se,
         apply.log = FALSE,
         biological_subtypes,
         library_size,
@@ -32,11 +31,11 @@ norm_assessment = function(
         n.cores=5
 ){
     ### Compute PCA
-    data_pca=RUVPRPS::compute_pca(sce,apply.log = apply.log)
+    data_pca=RUVPRPS::compute_pca(se,apply.log = apply.log)
 
     ## Get all the available assays (i.e. normalizations methods)
     normalizations <- names(
-        SummarizedExperiment::assays(sce)
+        SummarizedExperiment::assays(se)
     )
 
     ################# Assessment on the biology ################
@@ -129,14 +128,14 @@ norm_assessment = function(
 
     ## Compute Spearman correlation between gene expression and library size
     message("Spearman correlation between individual gene expression and library size")
-    corr_lib_size=RUVPRPS::correlation_gene_exp_contvar(sce,
+    corr_lib_size=RUVPRPS::correlation_gene_exp_contvar(se,
                                                         library_size,
                                                         apply.log)
 
     # ## DA between sample with low and high library size
     # if (!is.null(catvar_da_library_size)){
     #     message("Differential analysis using Wilcoxon test between samples with high vs low library size")
-    #     da_analysis_lib_size=RUVPRPS::da_analysis_wilcoxon_gene_exp_catvar_all_assays(sce,
+    #     da_analysis_lib_size=RUVPRPS::da_analysis_wilcoxon_gene_exp_catvar_all_assays(se,
     #                                                                                   catvar_da_library_size,
     #                                                                                   apply.log)
     # }

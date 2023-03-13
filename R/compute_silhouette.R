@@ -1,12 +1,13 @@
-#' is used to compute the Silhouette coefficient from the PC of all assays
-#' given a categorical variable
+#' is used to compute the Silhouette coefficient from the first PC of a SummarizedExperiment class
+#' object given a categorical variable.
 #'
 #'
-#' @param pca PCs of the dataset that will be used
-#' @param cat_var is a categorical variable such as sample types or batches
-#' @param assay_names Optional selection of names of the assays to compute the PCA
+#' @param pca PCA components of a SummarizedExperiment variable.
+#' @param cat_var Vector of a categorical variable such as sample types or batches.
+#' @param assay_names Optional string or list of strings for selection of the names
+#' of the assays of the SummarizedExperiment class object to compute the PCA.
 #' @param plot Optional output of a plot, default set to FALSE.
-#' @param nPCs is the number of PCs used to measure the distance, by default it is set to 3
+#' @param nPCs is the number of PCs used to measure the distance, by default it is set to 3.
 #'
 #' @return list List containing the association plot and the computed silhouette
 #' @importFrom wesanderson wes_palette

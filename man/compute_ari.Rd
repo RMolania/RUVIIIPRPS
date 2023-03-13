@@ -2,17 +2,18 @@
 % Please edit documentation in R/compute_ari.R
 \name{compute_ari}
 \alias{compute_ari}
-\title{is used to compute the adjusted rank index (ARI) from the first PC of all assays
-given a categorical variable}
+\title{is used to compute the adjusted rank index (ARI) from the first PC of a SummarizedExperiment class
+object given a categorical variable.}
 \usage{
 compute_ari(pca, cat_var, assay_names = NULL, plot = FALSE, nPCs = 3)
 }
 \arguments{
-\item{pca}{PCs of the dataset that will be used}
+\item{pca}{PCA components of a SummarizedExperiment variable.}
 
-\item{cat_var}{is a categorical variable such as sample types or batches}
+\item{cat_var}{Vector of a categorical variable such as sample types or batches.}
 
-\item{assay_names}{Optional selection of names of the assays to compute the ARI}
+\item{assay_names}{Optional string or list of strings for selection of the names
+of the assays of the SummarizedExperiment class object to compute the ARI.}
 
 \item{plot}{Optional output of a plot, default set to FALSE.}
 
@@ -22,6 +23,6 @@ compute_ari(pca, cat_var, assay_names = NULL, plot = FALSE, nPCs = 3)
 list List containing the association plot and the computed ari
 }
 \description{
-is used to compute the adjusted rank index (ARI) from the first PC of all assays
-given a categorical variable
+is used to compute the adjusted rank index (ARI) from the first PC of a SummarizedExperiment class
+object given a categorical variable.
 }

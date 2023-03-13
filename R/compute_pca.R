@@ -1,19 +1,20 @@
-#' is used to compute PCA of the data on all assays
+#' is used to compute PCA of the gene expression (assay) of a SummarizedExperiment class object.
 #'
+#' @param se A SummarizedExperiment object that will be used to compute the PCA.
+#' @param assay_names Optional string or list of strings for selection of the names
+#' of the assays of the SummarizedExperiment class object to compute the PCA.
+#' @param apply.log Indicates whether to apply a log-transformation to the data. By default
+#' no transformation will be selected.
 #'
-#' @param sce Dataset that will be used to compute the PCA
-#' @param assay_names Optional selection of names of the assays to compute the PCA
-#' @param apply.log Indicates whether to apply a log-transformation to the data
-#'
-#'
-#' @return pca.all PCA components computed on the provided data
+#' @return pca.all List of the PCA components computed
 #' @importFrom SummarizedExperiment assays
 #' @importFrom BiocSingular bsparam
 #' @import ggplot2
 #' @export
 #'
+
 compute_pca=function(
-    sce,
+    se,
     assay_names=NULL,
     apply.log=FALSE
 ){
@@ -21,7 +22,7 @@ compute_pca=function(
         normalizations=assay_names
     }else{
         normalizations=names(
-        SummarizedExperiment::assays(sce))
+        SummarizedExperiment::assays(se))
     }
     pca.all <- lapply(
         normalizations,
@@ -48,7 +49,7 @@ compute_pca=function(
                     variation = percent)
                 return(pca)
           }
-          return(compute_pca_single_assay(sce))
+          return(compute_pca_single_assay(se))
         })
     names(pca.all) <- normalizations
     return(pca.all)

@@ -2,10 +2,13 @@
 % Please edit documentation in R/norm_assessment.R
 \name{norm_assessment}
 \alias{norm_assessment}
-\title{is used to assess the performance of the normalisation of the data}
+\title{is used to assess the performance of the normalisation of a SummarizedExperiment class object.
+It will first generate two PCA plots: one colored by biology and another one by batch,
+each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
+It will also compute the regression between library size and PCs,}
 \usage{
 norm_assessment(
-  sce,
+  se,
   apply.log = FALSE,
   biological_subtypes,
   library_size,
@@ -16,13 +19,10 @@ norm_assessment(
 )
 }
 \arguments{
-\item{sce}{Dataset that will be used to assess the performance of the normalisation of the data.
-It will first generate two PCA plots: one colored by biology and another one by batch,
-each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
-It will also compute the regression between library size and PCs,
-and if asked it will compute a differential analysis between sample with low and high library size (i.e early years vs late years)}
+\item{se}{Dataset that will be used to assess the performance of the normalisation of the data.}
 
-\item{apply.log}{Indicates whether to apply a log-transformation to the data}
+\item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
+no transformation will be selected.}
 
 \item{biological_subtypes}{Vector containing the biological subtypes of each sample}
 
@@ -40,5 +40,8 @@ and if asked it will compute a differential analysis between sample with low and
 plots List of assessments plots
 }
 \description{
-is used to assess the performance of the normalisation of the data
+is used to assess the performance of the normalisation of a SummarizedExperiment class object.
+It will first generate two PCA plots: one colored by biology and another one by batch,
+each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
+It will also compute the regression between library size and PCs,
 }

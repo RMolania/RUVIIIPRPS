@@ -1,13 +1,14 @@
 
 #' is used to compute the linear regression of a continuous variable and the first cumulative PCs
-#' of the data on all assays
+#' of the gene expression (assay)
+#' of a SummarizedExperiment class object.
 #'
 #'
-#' @param pca PCs of the dataset that will be used in the plot
-#' @param cont_var The continous variable that will be computed to the PCA of the data
+#' @param pca PCA components of a SummarizedExperiment variable that will be used in the plot.
+#' @param cont_var Vector of a continuous variable that will be computed to the PCA of the data
 #' (i.e. library size)
-#' @param assay_names Optional selection of names of the assays to compute the PCA
-#' @param nb_pca_comp The number of components of the PCA used to compute the regression
+#' @param assay_names Optional selection of names of the assays to compute the PCA.
+#' @param nb_pca_comp The number of components of the PCA used to compute the regression.
 #'
 #' @return list List containing the association plot and the computed regression
 #' @importFrom stats lm

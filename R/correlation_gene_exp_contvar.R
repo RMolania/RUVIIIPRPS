@@ -1,14 +1,16 @@
-#' is used to compute the Spearman correlation between the gene expression of all assays
-#' and a continous variable (i.e. library size)
+#' is used to compute the correlation between the gene expression (assay)
+#' of a SummarizedExperiment class object and a continous variable (i.e. library size).
 #'
-#' @param sce the dataset that will be used for this analysis
-#' @param cont_var The continuous variable that will be used to compute to correlation
-#' @param method ta character string indicating which correlation coefficient
+#' @param se A SummarizedExperiment object that will be used to compute the correlation
+#' @param cont_var Vector of a continuous variable that will be used to compute to correlation
+#' @param method A character string indicating which correlation coefficient
 #' is to be used for the test: "pearson", "kendall", or "spearman". By default 'spearman will
 #' be selected.
-#' @param assay_names Optional selection of names of the assays to compute the correlation
-#' @param apply.log Indicates whether to apply a log-transformation to the data
-#' @param n.cores is the number of cpus used for mclapply parallelization
+#' @param assay_names Optional string or list of strings for selection of the names
+#' of the assays of the SummarizedExperiment class object to compute the correlation.
+#' @param apply.log Indicates whether to apply a log-transformation to the data. By default
+#' no transformation will be selected.
+#' @param n.cores is the number of cpus used for mclapply parallelization.
 #'
 #' @return list List containing the association plot and the computed correlation
 #' @importFrom wesanderson wes_palette
@@ -21,7 +23,7 @@
 #' @export
 
 correlation_gene_exp_contvar<-function(
-        sce,
+        se,
         cont_var,
         assay_names=NULL,
         method='spearman',
@@ -32,7 +34,7 @@ correlation_gene_exp_contvar<-function(
         normalization=assay_names
     }else{
         normalization=names(
-            SummarizedExperiment::assays(sce))
+            SummarizedExperiment::assays(se))
     }
     # Correlation gene expression and continous variable
     cor.all<- lapply(
@@ -76,7 +78,7 @@ correlation_gene_exp_contvar<-function(
                 return(results)
             }
 
-            data <- as.matrix(assay(sce, x))
+            data <- as.matrix(assay(se, x))
             cor <- correlation_gene_exp_contvar_single_assay(
                 expr.data = data,
                 apply.log=apply.log,
