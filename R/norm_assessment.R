@@ -75,7 +75,7 @@ norm_assessment = function(
 
     ## Compute ARI based on biology
     message("ARI based on biology")
-    ari_bio=RUVPRPS::ari_catvar_all_assays(data_pca,
+    ari_bio=RUVPRPS::compute_ari(data_pca,
                           normalizations,
                           cat_var=biological_subtypes)
 
@@ -110,14 +110,11 @@ norm_assessment = function(
     ## Compute Silhouette based on batch
     message("Silhouette coefficient based on batch")
     silh_batch=RUVPRPS::compute_silhouette(data_pca,
-                            normalizations,
                             cat_var=batch)
 
     ## Compute ARI based on biology
     message("ARI based on batch")
-    ari_batch=RUVPRPS::ari_catvar_all_assays(data_pca,
-                                           normalizations,
-                                           cat_var=batch)
+    ari_batch=RUVPRPS::compute_ari(data_pca,cat_var=batch)
 
     ## Plot combined silhouette based on batch and biology
     #combined_silh=

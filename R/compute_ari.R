@@ -3,9 +3,10 @@
 #'
 #'
 #' @param pca PCs of the dataset that will be used
-#' @param normalization All the available assays for the data (i.e. normalizations methods)
 #' @param cat_var is a categorical variable such as sample types or batches
-#' @param nPCs is the number of PCs used to measure the distance
+#' @param assay_names Optional selection of names of the assays to compute the ARI
+#' @param plot Optional output of a plot, default set to FALSE.
+#' @param nPCs is the number of PCs used to measure the distance, default is set to 3.
 #'
 #' @return list List containing the association plot and the computed ari
 #' @importFrom wesanderson wes_palette
@@ -15,20 +16,36 @@
 #' @export
 #'
 
-ari_catvar_all_assays <-function(
+compute_ari <-function(
         pca,
-        normalization,
         cat_var,
+        assay_names=NULL,
+        plot=FALSE,
         nPCs=3
 ){
-    # Silhouette coefficients on all assays
+    if (!is.null(assay_names)){
+        normalization=assay_names
+    }else{
+        normalization=names(pca)
+    }
+    # ARI on all assays
     ari <- lapply(
         normalization,
         function(x){
-            ari_catvar_single_assay(
-                pca[[x]]$sing.val$u,
-                cat_var,
-                nPCs)
+            ari_catvar_single_assay <- function(pca,
+                                                cat_var,
+                                                nPCs){
+                BIC <- mclustBIC(data = pca)
+                mod <- Mclust(data = pca, x = BIC)
+                ari=adjustedRandIndex(
+                    mod$classification,
+                    cat_var)
+                return(ari)
+            }
+            coef=ari_catvar_single_assay(pca[[x]]$sing.val$u,
+                                        cat_var,
+                                        nPCs)
+            coef
         })
     names(ari) <- normalization
     everything<-datasets<-silh.coeff<-NULL
@@ -40,9 +57,9 @@ ari_catvar_all_assays <-function(
             datasets))
 
     ### Plot
-    # color
+    if (isTRUE(plot)){
     dataSets.colors <- wes_palette(
-        n = 4,
+        n = length(normalization),
         name = "GrandBudapest1")[c(1,2,4,3)]
     p=ggplot(pcs.ari , aes(x = datasets, y = ari, fill = datasets)) +
         geom_col() +
@@ -55,7 +72,8 @@ ari_catvar_all_assays <-function(
             axis.title.y = element_text(size = 18),
             axis.text.x = element_text(size = 12),
             axis.text.y = element_text(size = 12))
-
     return(list(plot=p,ari=pcs.ari))
+    }else{
+        return(ari=pcs.ari)}
 }
 

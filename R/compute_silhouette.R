@@ -6,7 +6,6 @@
 #' @param cat_var is a categorical variable such as sample types or batches
 #' @param assay_names Optional selection of names of the assays to compute the PCA
 #' @param plot Optional output of a plot, default set to FALSE.
-
 #' @param nPCs is the number of PCs used to measure the distance, by default it is set to 3
 #'
 #' @return list List containing the association plot and the computed silhouette

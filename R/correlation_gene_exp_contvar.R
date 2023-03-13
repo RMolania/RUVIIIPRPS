@@ -6,7 +6,7 @@
 #' @param method ta character string indicating which correlation coefficient
 #' is to be used for the test: "pearson", "kendall", or "spearman". By default 'spearman will
 #' be selected.
-#' @param assay_names Optional selection of names of the assays to compute the PCA
+#' @param assay_names Optional selection of names of the assays to compute the correlation
 #' @param apply.log Indicates whether to apply a log-transformation to the data
 #' @param n.cores is the number of cpus used for mclapply parallelization
 #'
