@@ -69,7 +69,7 @@ norm_assessment = function(
 
     ## Compute Silhouette based on biology
     message("Silhouette coefficient based on biology")
-    silh_bio=RUVPRPS::silhouette_coef_catvar_all_assays(data_pca,
+    silh_bio=RUVPRPS::silhouette_coef_catvar(data_pca,
                           normalizations,
                           cat_var=biological_subtypes)
 
@@ -109,7 +109,7 @@ norm_assessment = function(
 
     ## Compute Silhouette based on batch
     message("Silhouette coefficient based on batch")
-    silh_batch=RUVPRPS::silhouette_coef_catvar_all_assays(data_pca,
+    silh_batch=RUVPRPS::silhouette_coef_catvar(data_pca,
                             normalizations,
                             cat_var=batch)
 
@@ -136,13 +136,13 @@ norm_assessment = function(
                                                         library_size,
                                                         apply.log)
 
-    ## DA between sample with low and high library size
-    if (!is.null(catvar_da_library_size)){
-        message("Differential analysis using Wilcoxon test between samples with high vs low library size")
-        da_analysis_lib_size=RUVPRPS::da_analysis_wilcoxon_gene_exp_catvar_all_assays(sce,
-                                                                                      catvar_da_library_size,
-                                                                                      apply.log)
-    }
+    # ## DA between sample with low and high library size
+    # if (!is.null(catvar_da_library_size)){
+    #     message("Differential analysis using Wilcoxon test between samples with high vs low library size")
+    #     da_analysis_lib_size=RUVPRPS::da_analysis_wilcoxon_gene_exp_catvar_all_assays(sce,
+    #                                                                                   catvar_da_library_size,
+    #                                                                                   apply.log)
+    # }
 
     ################## Generate pdf file to save the plots #####################
     if (!is.null(output_file)){
@@ -159,28 +159,28 @@ norm_assessment = function(
             plot(ari_batch$plot)
             plot(reg_lib_size$plot)
             plot(corr_lib_size$plot)
-            if (!is.null(catvar_da_library_size)){
-                plot(da_analysis_lib_size$plot)
-            }
+            # if (!is.null(catvar_da_library_size)){
+            #     plot(da_analysis_lib_size$plot)
+            # }
         dev.off()
     }
-    if (!is.null(catvar_da_library_size)){
-        res=list(PCA_bio=PCA_BIO,
-                 silh_bio=silh_bio,
-                 ari_bio=ari_bio,
-                 PCA_batch=PCA_BATCH,
-                 silh_batch=silh_batch,
-                 ari_batch=ari_batch,
-                 plot_reg_lib_size=reg_lib_size$plot,
-                 plot_cor_gen_exp_lib_size=corr_lib_size$plot,
-                 plot_da_analysis_lib_size=da_analysis_lib_size$plot)
-    }else{
+    # if (!is.null(catvar_da_library_size)){
+    #     res=list(PCA_bio=PCA_BIO,
+    #              silh_bio=silh_bio,
+    #              ari_bio=ari_bio,
+    #              PCA_batch=PCA_BATCH,
+    #              silh_batch=silh_batch,
+    #              ari_batch=ari_batch,
+    #              plot_reg_lib_size=reg_lib_size$plot,
+    #              plot_cor_gen_exp_lib_size=corr_lib_size$plot,
+    #              plot_da_analysis_lib_size=da_analysis_lib_size$plot)
+    # }else{
         res=list(PCA_bio=PCA_BIO,
                  silh_bio=silh_bio,
                  PCA_batch=PCA_BATCH,
                  silh_batch=silh_batch,
                  plot_reg_lib_size=reg_lib_size$plot,
                  plot_cor_gen_exp_lib_size=corr_lib_size$plot)
-        }
+        #}
     return(res)
 }

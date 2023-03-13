@@ -8,6 +8,7 @@ and a continous variable (i.e. library size)}
 correlation_gene_exp_contvar(
   sce,
   cont_var,
+  assay_names = NULL,
   method = "spearman",
   apply.log = FALSE,
   n.cores = 5
@@ -17,6 +18,8 @@ correlation_gene_exp_contvar(
 \item{sce}{the dataset that will be used for this analysis}
 
 \item{cont_var}{The continuous variable that will be used to compute to correlation}
+
+\item{assay_names}{Optional selection of names of the assays to compute the PCA}
 
 \item{method}{ta character string indicating which correlation coefficient
 is to be used for the test: "pearson", "kendall", or "spearman". By default 'spearman will

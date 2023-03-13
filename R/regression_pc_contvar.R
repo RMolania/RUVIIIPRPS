@@ -4,9 +4,9 @@
 #'
 #'
 #' @param pca PCs of the dataset that will be used in the plot
-#' @param assay_names Optional selection of names of the assays to compute the PCA
 #' @param cont_var The continous variable that will be computed to the PCA of the data
 #' (i.e. library size)
+#' @param assay_names Optional selection of names of the assays to compute the PCA
 #' @param nb_pca_comp The number of components of the PCA used to compute the regression
 #'
 #' @return list List containing the association plot and the computed regression
@@ -20,8 +20,8 @@
 
 regression_pc_contvar<-function(
     pca,
-    assay_names=NULL,
     cont_var,
+    assay_names=NULL,
     nb_pca_comp=10
 ){
     if (!is.null(assay_names)){
@@ -55,7 +55,7 @@ regression_pc_contvar<-function(
             datasets))
     # color
     dataSets.colors <- wes_palette(
-        n = 4,
+        n = assays_nb,
         name = "GrandBudapest1")[c(1,2,4,3)]
     names(dataSets.colors) <- normalization
     p=ggplot(pcs.lnreg, aes(x = pcs, y = r.sq, group = datasets)) +

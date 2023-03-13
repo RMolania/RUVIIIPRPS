@@ -6,6 +6,7 @@
 #' @param method ta character string indicating which correlation coefficient
 #' is to be used for the test: "pearson", "kendall", or "spearman". By default 'spearman will
 #' be selected.
+#' @param assay_names Optional selection of names of the assays to compute the PCA
 #' @param apply.log Indicates whether to apply a log-transformation to the data
 #' @param n.cores is the number of cpus used for mclapply parallelization
 #'
@@ -22,11 +23,17 @@
 correlation_gene_exp_contvar<-function(
         sce,
         cont_var,
+        assay_names=NULL,
         method='spearman',
         apply.log=FALSE,
         n.cores=5
 ){
-    normalization=names(assays(sce))
+    if (!is.null(assay_names)){
+        normalization=assay_names
+    }else{
+        normalization=names(
+            SummarizedExperiment::assays(sce))
+    }
     # Correlation gene expression and continous variable
     cor.all<- lapply(
         normalization,
@@ -95,7 +102,7 @@ correlation_gene_exp_contvar<-function(
     ### Plot
     # color
     dataSets.colors <- wes_palette(
-        n = 4,
+        n = length(normalization),
         name = "GrandBudapest1")[c(1,2,4,3)]
     p=ggplot(cor.all.coeff, aes(x = datasets, y = corr.coeff, fill = datasets)) +
         geom_boxplot() +
