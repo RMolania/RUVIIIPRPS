@@ -3,6 +3,9 @@
 #'
 #' @param sce the dataset that will be used for this analysis
 #' @param cont_var The continuous variable that will be used to compute to correlation
+#' @param method ta character string indicating which correlation coefficient
+#' is to be used for the test: "pearson", "kendall", or "spearman". By default 'spearman will
+#' be selected.
 #' @param apply.log Indicates whether to apply a log-transformation to the data
 #' @param n.cores is the number of cpus used for mclapply parallelization
 #'
@@ -11,12 +14,15 @@
 #' @importFrom dplyr rename mutate
 #' @importFrom tidyr pivot_longer %>%
 #' @importFrom SummarizedExperiment assay
+#' @importFrom stats cor.test p.adjust
+#' @importFrom parallel mclapply
 #' @import ggplot2
 #' @export
 
-correlation_gene_exp_contvar_all_assays<-function(
+correlation_gene_exp_contvar<-function(
         sce,
         cont_var,
+        method='spearman',
         apply.log=FALSE,
         n.cores=5
 ){
@@ -25,12 +31,50 @@ correlation_gene_exp_contvar_all_assays<-function(
     cor.all<- lapply(
         normalization,
         function(x){
+            correlation_gene_exp_contvar_single_assay <- function(expr.data,
+                                                 apply.log,
+                                                 cont_var,
+                                                 method,
+                                                 n.cores) {
+                if(apply.log==FALSE){
+                    expr.data <- expr.data
+                }
+                else{
+                    expr.data <- log2(expr.data + 1)
+                }
+                rho <- mclapply(
+                    1:nrow(expr.data),
+                    function(x){
+                        round(cor.test(
+                            x = expr.data[x, ],
+                            y = cont_var,
+                            method = method)[[4]], 6)},
+                    mc.cores = n.cores
+                )
+                pval <- mclapply(
+                    1:nrow(expr.data),
+                    function(x){
+                        cor.test(
+                            x = expr.data[x, ],
+                            y = cont_var,
+                            method = method)[[3]]},
+                    mc.cores = n.cores)
+
+                results <- data.frame(
+                    genes = row.names(expr.data),
+                    rho = unlist(rho),
+                    pvalue = unlist(pval),
+                    adj.pvalue = p.adjust(unlist(pval), 'BH')
+                )
+                return(results)
+            }
+
             data <- as.matrix(assay(sce, x))
             cor <- correlation_gene_exp_contvar_single_assay(
                 expr.data = data,
                 apply.log=apply.log,
                 cont_var=cont_var,
-                method='spearman',
+                method=method,
                 n.cores = n.cores)
             cor
         })
@@ -55,7 +99,7 @@ correlation_gene_exp_contvar_all_assays<-function(
         name = "GrandBudapest1")[c(1,2,4,3)]
     p=ggplot(cor.all.coeff, aes(x = datasets, y = corr.coeff, fill = datasets)) +
         geom_boxplot() +
-        ylab("Spearman correlation") +
+        ylab(paste(method,"correlation",sep=" ")) +
         xlab('') +
         geom_hline(yintercept=0)+
         scale_fill_manual(values = dataSets.colors, guide = 'none') +

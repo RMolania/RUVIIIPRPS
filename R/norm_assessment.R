@@ -132,7 +132,7 @@ norm_assessment = function(
 
     ## Compute Spearman correlation between gene expression and library size
     message("Spearman correlation between individual gene expression and library size")
-    corr_lib_size=RUVPRPS::correlation_gene_exp_contvar_all_assays(sce,
+    corr_lib_size=RUVPRPS::correlation_gene_exp_contvar(sce,
                                                         library_size,
                                                         apply.log)
 
