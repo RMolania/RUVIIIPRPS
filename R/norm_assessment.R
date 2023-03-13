@@ -126,7 +126,7 @@ norm_assessment = function(
     ################## Assessment on the library size ##################
     ## Compute regression between library size and PCs
     message("Linear regression between the first cumulative PC and library size")
-    reg_lib_size= RUVPRPS::regression_pc_contvar_all_assays(pca=data_pca,
+    reg_lib_size= RUVPRPS::regression_pc_contvar(pca=data_pca,
                                normalization=normalizations,
                                cont_var = library_size)
 

@@ -4,7 +4,7 @@
 #'
 #'
 #' @param pca PCs of the dataset that will be used in the plot
-#' @param normalization All the available assays for the data (i.e. normalizations methods)
+#' @param assay_names Optional selection of names of the assays to compute the PCA
 #' @param cont_var The continous variable that will be computed to the PCA of the data
 #' (i.e. library size)
 #' @param nb_pca_comp The number of components of the PCA used to compute the regression
@@ -18,12 +18,17 @@
 #' @export
 
 
-regression_pc_contvar_all_assays<-function(
+regression_pc_contvar<-function(
     pca,
-    normalization,
+    assay_names=NULL,
     cont_var,
     nb_pca_comp=10
 ){
+    if (!is.null(assay_names)){
+        normalization=assay_names
+    }else{
+        normalization=names(pca)
+    }
     ### Compute the regression
     lreg.pcs<- lapply(
         normalization,
