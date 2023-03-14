@@ -65,9 +65,10 @@ compute_ari <-function(
         n = length(normalization),
         name = "GrandBudapest1")[c(1,2,4,3)]
     p=ggplot(pcs.ari , aes(x = datasets, y = ari, fill = datasets)) +
-        geom_col() +
+        geom_point() +
         ylab("ARI") +
         xlab('') +
+        scale_fill_manual(values = dataSets.colors, guide = 'none')+
         theme(
             panel.background = element_blank(),
             axis.line = element_line(colour = 'black', size = 1),

@@ -65,7 +65,7 @@ compute_silhouette<-function(
             n = length(normalization),
             name = "GrandBudapest1")[c(1,2,4,3)]
         p=ggplot(pcs.silCoef , aes(x = datasets, y = silh.coeff, fill = datasets)) +
-            geom_col() +
+            geom_point() +
             ylab("Silhouette coefficient") +
             xlab('') +
             scale_fill_manual(values = dataSets.colors, guide = 'none')+
