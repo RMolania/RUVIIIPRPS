@@ -6,12 +6,11 @@
 #' @param se Dataset that will be used to assess the performance of the normalisation of the data.
 #' @param apply.log Indicates whether to apply a log-transformation to the data. By default
 #' no transformation will be selected.
-#' @param biological_subtypes Vector containing the biological subtypes of each sample
-#' @param library_size Vector containing the library size of each sample
-#' @param batch Vector containing the batch (plates/years) of each sample
-#' @param output_file Path and name of the output file to save the assessments plots in a pdf format
-#' @param catvar_da_library_size Vector containing the categorical variable of high vs low library size of each sample to compute differential analysis
-#' @param n.cores is the number of cpus used for mclapply parallelization
+#' @param biological_subtypes Vector containing the biological subtypes of each sample.
+#' @param library_size Vector containing the library size of each sample.
+#' @param batch Vector containing the batch (plates/years) of each sample.
+#' @param output_file Path and name of the output file to save the assessments plots in a pdf format.
+#' @param n.cores is the number of cpus used for mclapply parallelization. Default is set to 5.
 #'
 #'
 #' @return plots List of assessments plots
@@ -27,7 +26,6 @@ norm_assessment = function(
         library_size,
         batch,
         output_file=NULL,
-        catvar_da_library_size=NULL,
         n.cores=5
 ){
     ### Compute PCA
@@ -45,38 +43,18 @@ norm_assessment = function(
     names(color.subtype) <- levels(biological_subtypes)
     message("PCA based on Biology")
     ### Compute PCA Biology
-    # pp_bio <- lapply(
-    #     normalizations,
-    #     function(x){
-    #         pcs <- data_pca[[x]]
-    #         p1 <- RUVPRPS::pca_plot(
-    #             pca = pcs,
-    #             variable= biological_subtypes,
-    #             variable.name =  'Biology',
-    #             color = color.subtype)
-    #         p1
-    #     })
-    # names(pp_bio) <- normalizations
     PCA_BIO=RUVPRPS::plot_pca(data_pca,
                     variable= biological_subtypes,
                     variable.name =  'Biology',
                      color = color.subtype)
-    # PCA_BIO=c(pp_bio[[1]],
-    #            pp_bio[[2]],
-    #            pp_bio[[3]],
-    #            pp_bio[[4]])
 
     ## Compute Silhouette based on biology
     message("Silhouette coefficient based on biology")
-    silh_bio=RUVPRPS::compute_silhouette(data_pca,
-                          normalizations,
-                          cat_var=biological_subtypes)
+    silh_bio=RUVPRPS::compute_silhouette(data_pca,cat_var=biological_subtypes)
 
     ## Compute ARI based on biology
     message("ARI based on biology")
-    ari_bio=RUVPRPS::compute_ari(data_pca,
-                          normalizations,
-                          cat_var=biological_subtypes)
+    ari_bio=RUVPRPS::compute_ari(data_pca,cat_var=biological_subtypes)
 
     ################# Assessment on the batch effect ##################
     ## PCA Color Batch
@@ -85,31 +63,14 @@ norm_assessment = function(
     names(color.batch) <- levels(batch)
     message("PCA based on Batch")
     ### Compute PCA Batch
-    # pp_batch <- lapply(
-    #     normalizations,
-    #     function(x){
-    #         pcs <- data_pca[[x]]
-    #         p1 <- RUVPRPS::pca_plot(
-    #             pca = pcs,
-    #             variable= batch,
-    #             variable.name =  'Batch',
-    #             color = color.batch)
-    #         p1
-    #     })
-    # names(pp_batch) <- normalizations
     PCA_BATCH=RUVPRPS::plot_pca(data_pca,
                     variable= batch,
                     variable.name =   'Batch',
                     color =color.batch)
-    # PCA_BATCH=c(pp_batch[[1]],
-    #             pp_batch[[2]],
-    #             pp_batch[[3]],
-    #             pp_batch[[4]])
 
     ## Compute Silhouette based on batch
     message("Silhouette coefficient based on batch")
-    silh_batch=RUVPRPS::compute_silhouette(data_pca,
-                            cat_var=batch)
+    silh_batch=RUVPRPS::compute_silhouette(data_pca,cat_var=batch)
 
     ## Compute ARI based on biology
     message("ARI based on batch")

@@ -14,7 +14,6 @@ norm_assessment(
   library_size,
   batch,
   output_file = NULL,
-  catvar_da_library_size = NULL,
   n.cores = 5
 )
 }
@@ -24,17 +23,15 @@ norm_assessment(
 \item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
 
-\item{biological_subtypes}{Vector containing the biological subtypes of each sample}
+\item{biological_subtypes}{Vector containing the biological subtypes of each sample.}
 
-\item{library_size}{Vector containing the library size of each sample}
+\item{library_size}{Vector containing the library size of each sample.}
 
-\item{batch}{Vector containing the batch (plates/years) of each sample}
+\item{batch}{Vector containing the batch (plates/years) of each sample.}
 
-\item{output_file}{Path and name of the output file to save the assessments plots in a pdf format}
+\item{output_file}{Path and name of the output file to save the assessments plots in a pdf format.}
 
-\item{catvar_da_library_size}{Vector containing the categorical variable of high vs low library size of each sample to compute differential analysis}
-
-\item{n.cores}{is the number of cpus used for mclapply parallelization}
+\item{n.cores}{is the number of cpus used for mclapply parallelization. Default is set to 5.}
 }
 \value{
 plots List of assessments plots
