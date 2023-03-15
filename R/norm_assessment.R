@@ -76,8 +76,7 @@ norm_assessment = function(
     message("ARI based on batch")
     ari_batch=RUVPRPS::compute_ari(data_pca,cat_var=batch)
 
-    ## Plot combined silhouette based on batch and biology
-    #combined_silh=
+
 
 
     ################## Assessment on the library size ##################
