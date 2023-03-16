@@ -5,6 +5,12 @@
 #' of the assays of the SummarizedExperiment class object to compute the PCA.
 #' @param apply.log Indicates whether to apply a log-transformation to the data. By default
 #' no transformation will be selected.
+#' @param scale Either a logical value or a numeric-alike vector of length equal
+#' to the number of columns of the gene expression (assay) of a SummarizedExperiment class object.
+#' It is a generic function to scale the columns of a numeric matrix, default is set to 'FALSE'.
+#' @param center Either a logical value or a numeric-alike vector of length equal
+#' to the number of columns of the gene expression (assay) of a SummarizedExperiment class object.
+#' It is a generic function to center the columns of a numeric matrix, default is set to 'FALSE'.
 #'
 #' @return pca.all List of the PCA components computed
 #' @importFrom SummarizedExperiment assays
@@ -16,7 +22,9 @@
 compute_pca=function(
     se,
     assay_names=NULL,
-    apply.log=FALSE
+    apply.log=FALSE,
+    scale=FALSE,
+    center=TRUE
 ){
     if (!is.null(assay_names)){
         normalizations=assay_names
@@ -35,8 +43,8 @@ compute_pca=function(
                     dat <- log2(dat + 1)
                 svd <- base::svd(scale(
                     x = t(dat),
-                    center = TRUE,
-                    scale = FALSE
+                    center = center,
+                    scale = scale
                 ))
                 percent <- svd$d ^ 2 / sum(svd$d ^ 2) * 100
                 percent <-

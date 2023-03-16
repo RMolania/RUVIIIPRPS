@@ -3,8 +3,7 @@
 \name{regression_pc_contvar}
 \alias{regression_pc_contvar}
 \title{is used to compute the linear regression of a continuous variable and the first cumulative PCs
-of the gene expression (assay)
-of a SummarizedExperiment class object.}
+of the gene expression (assay) of a SummarizedExperiment class object.}
 \usage{
 regression_pc_contvar(pca, cont_var, assay_names = NULL, nb_pca_comp = 10)
 }
@@ -23,6 +22,5 @@ list List containing the association plot and the computed regression
 }
 \description{
 is used to compute the linear regression of a continuous variable and the first cumulative PCs
-of the gene expression (assay)
-of a SummarizedExperiment class object.
+of the gene expression (assay) of a SummarizedExperiment class object.
 }

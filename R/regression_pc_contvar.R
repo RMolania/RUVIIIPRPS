@@ -1,7 +1,6 @@
 
 #' is used to compute the linear regression of a continuous variable and the first cumulative PCs
-#' of the gene expression (assay)
-#' of a SummarizedExperiment class object.
+#' of the gene expression (assay) of a SummarizedExperiment class object.
 #'
 #'
 #' @param pca PCA components of a SummarizedExperiment variable that will be used in the plot.

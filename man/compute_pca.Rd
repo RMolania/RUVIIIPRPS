@@ -4,7 +4,13 @@
 \alias{compute_pca}
 \title{is used to compute PCA of the gene expression (assay) of a SummarizedExperiment class object.}
 \usage{
-compute_pca(se, assay_names = NULL, apply.log = FALSE)
+compute_pca(
+  se,
+  assay_names = NULL,
+  apply.log = FALSE,
+  scale = FALSE,
+  center = TRUE
+)
 }
 \arguments{
 \item{se}{A SummarizedExperiment object that will be used to compute the PCA.}
@@ -14,6 +20,14 @@ of the assays of the SummarizedExperiment class object to compute the PCA.}
 
 \item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
+
+\item{scale}{Either a logical value or a numeric-alike vector of length equal
+to the number of columns of the gene expression (assay) of a SummarizedExperiment class object.
+It is a generic function to scale the columns of a numeric matrix, default is set to 'FALSE'.}
+
+\item{center}{Either a logical value or a numeric-alike vector of length equal
+to the number of columns of the gene expression (assay) of a SummarizedExperiment class object.
+It is a generic function to center the columns of a numeric matrix, default is set to 'FALSE'.}
 }
 \value{
 pca.all List of the PCA components computed

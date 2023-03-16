@@ -6,7 +6,7 @@
 #' @param se Dataset that will be used to assess the performance of the normalisation of the data.
 #' @param apply.log Indicates whether to apply a log-transformation to the data. By default
 #' no transformation will be selected.
-#' @param biological_subtypes Vector containing the biological subtypes of each sample.
+#' @param biological_subtypes Vector containing the biological subtype of each sample.
 #' @param library_size Vector containing the library size of each sample.
 #' @param batch Vector containing the batch (plates/years) of each sample.
 #' @param output_file Path and name of the output file to save the assessments plots in a pdf format.

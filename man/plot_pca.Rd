@@ -10,6 +10,8 @@ plot_pca(
   assay_names = NULL,
   variable,
   variable.name,
+  nPCs = 3,
+  ncol_plot = 4,
   color,
   strokeSize = 0.2,
   pointSize = 0.8,
@@ -25,6 +27,10 @@ plot_pca(
 \item{variable}{The variable that will be used to display and color the PCA plot}
 
 \item{variable.name}{The label of the variable that will be used on the PCA plot}
+
+\item{nPCs}{is the number of PCs used to measure the distance, by default it is set to 3.}
+
+\item{ncol_plot}{is the argument of gtable for the layout specifying ncol, by default it is set to 4.}
 
 \item{color}{The color of the variable that will be used on the PCA plot}
 

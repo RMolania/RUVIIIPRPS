@@ -6,6 +6,8 @@
 #' @param assay_names Optional selection of names of the assays to compute the PCA.
 #' @param variable The variable that will be used to display and color the PCA plot
 #' @param variable.name The label of the variable that will be used on the PCA plot
+#' @param nPCs is the number of PCs used to measure the distance, by default it is set to 3.
+#' @param ncol_plot is the argument of gtable for the layout specifying ncol, by default it is set to 4.
 #' @param color The color of the variable that will be used on the PCA plot
 #' @param strokeSize geom_point aesthetics
 #' @param pointSize geom_point aesthetics
@@ -16,6 +18,7 @@
 #' @importFrom ggpubr get_legend
 #' @importFrom cowplot axis_canvas ggdraw insert_xaxis_grob insert_yaxis_grob
 #' @import ggplot2 scales
+#' @importFrom gridExtra grid.arrange
 #' @export
 
 plot_pca=function(
@@ -23,6 +26,8 @@ plot_pca=function(
         assay_names=NULL,
         variable,
         variable.name,
+        nPCs=3,
+        ncol_plot=4,
         color,
         strokeSize = .2,
         pointSize = 0.8,
@@ -45,7 +50,7 @@ plot_pca=function(
                                             pointSize = pointSize,
                                             strokeColor = strokeColor,
                                             alpha = alpha){
-                pcs = pca_x$sing.val$u[,1:3]
+                pcs = pca_x$sing.val$u[,1:nPCs]
                 pc.var = pca_x$var
                 pair.pcs <- utils::combn(ncol(pcs), 2)
                 pList <- list()
@@ -170,8 +175,7 @@ plot_pca=function(
                 p=c(p,ppca[[n]])
             }
         }
-        plot=do.call(
-            gridExtra::grid.arrange,
+        plot=do.call(grid.arrange, ### update
             c(p,
               ncol = 4))
 

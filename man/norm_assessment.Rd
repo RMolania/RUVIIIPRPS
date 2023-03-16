@@ -23,7 +23,7 @@ norm_assessment(
 \item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
 
-\item{biological_subtypes}{Vector containing the biological subtypes of each sample.}
+\item{biological_subtypes}{Vector containing the biological subtype of each sample.}
 
 \item{library_size}{Vector containing the library size of each sample.}
 
