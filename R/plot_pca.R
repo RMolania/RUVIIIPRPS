@@ -1,4 +1,4 @@
-#' is used to plot the pairwise plots of the first 3 PCA of the gene expression (assay)
+#' is used to plot the pairwise plots of the first PCA of the gene expression (assay)
 #' of a SummarizedExperiment class object.
 #'
 #'
@@ -177,7 +177,7 @@ plot_pca=function(
         }
         plot=do.call(grid.arrange, ### update
             c(p,
-              ncol = 4))
+              ncol = ncol_plot))
 
         return(plot=plot)
 }
