@@ -45,7 +45,7 @@ norm_assessment = function(
         stop('The Summarized experiment object does not contain
            sample annotations, please provide colData of the summarized
            experiment object before running the norm_assessment() function.')
-    } else if(!(assay_names %in% names(assays(se)))){
+    } else if((!is.null(assay_names))&!(assay_names %in% names(assays(se)))){
         stop('The selected assay(s) is/are not in the assays names of the SummarizedExperiment class object.')
     }
 
