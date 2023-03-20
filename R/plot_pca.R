@@ -175,10 +175,10 @@ plot_pca=function(
                 p=c(p,ppca[[n]])
             }
         }
-        plot=do.call(grid.arrange, ### update
+        plot=do.call(grid.arrange,
             c(p,
               ncol = ncol_plot))
 
-        return(plot=plot)
+        return(plot=as_ggplot(plot))
 }
 
