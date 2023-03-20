@@ -33,8 +33,7 @@ correlation_gene_exp_contvar<-function(
     if (!is.null(assay_names)){
         normalization=assay_names
     }else{
-        normalization=names(
-            SummarizedExperiment::assays(se))
+        normalization=names(assays(se))
     }
     # Correlation gene expression and continous variable
     cor.all<- lapply(
