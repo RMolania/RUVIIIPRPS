@@ -23,7 +23,7 @@ norm_assessment(
 )
 }
 \arguments{
-\item{se}{Dataset that will be used to assess the performance of the normalisation of the data.}
+\item{se}{A SummarizedExperiment object that will be used to assess the performance of the normalisation of the data.}
 
 \item{assay_names}{Optional string or list of strings for selection of the names
 of the assays of the SummarizedExperiment class object.}

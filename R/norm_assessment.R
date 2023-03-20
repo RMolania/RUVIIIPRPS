@@ -6,7 +6,7 @@
 #' 4) Linear regression between the first cumulative PC and continuous variable.
 #' 5) Spearman correlation between gene expression and continuous variable.
 #'
-#' @param se Dataset that will be used to assess the performance of the normalisation of the data.
+#' @param se A SummarizedExperiment object that will be used to assess the performance of the normalisation of the data.
 #' @param assay_names Optional string or list of strings for selection of the names
 #' of the assays of the SummarizedExperiment class object.
 #' @param apply.log Indicates whether to apply a log-transformation to the data. By default
@@ -32,9 +32,6 @@ norm_assessment = function(
         apply.log = FALSE,
         cat_var_label,
         cont_var_label,
-        #biological_subtypes,
-        #library_size,
-        #batch,
         output_file=NULL,
         n.cores=5
 ){
@@ -56,9 +53,8 @@ norm_assessment = function(
     if (!sum(all.var.label %in% exist.var.label) == length(all.var.label)){
         stop(
             'Provided variable label from cat_var_label and cont_var_label "',
-            paste0(
-                all.var.label[!all.var.label %in% exist.var.label], collapse = ' & '),
-            '" are not in the colData of the summarized experiment object.')
+            paste0(all.var.label[!all.var.label %in% exist.var.label], collapse = ' & '),
+            '" are not in the colData of the Summarized Experiment object.')
     }
 
     ### Compute PCA
@@ -72,27 +68,32 @@ norm_assessment = function(
     }
     ################# Categorical variable ################
     #nb_catvar=
-    biological_subtypes=sample.annot[, cat_var_label]
-    ## PCA Color Biology
-    colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
-    color.subtype<- colfunc(length(unique(biological_subtypes)))
-    names(color.subtype) <- levels(biological_subtypes)
-    message("PCA based on Biology")
-    ### Compute PCA Biology
-    PCA_BIO=RUVPRPS::plot_pca(data_pca,
-                    variable= biological_subtypes,
-                    variable.name =  'Biology',
-                     color = color.subtype)
+    cat.var.assessment<- lapply(
+        cat_var_label,
+        function(x){
+            group=as.factor(sample.annot[ , x])
+            ## PCA Color
+            colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
+            color.group<- colfunc(length(unique(x)))
+            names(color.group) <- levels(group)
+            message(paste("PCA based on : ",x,sep=""))
+            ### Compute PCA
+            PCA=RUVPRPS::plot_pca(data_pca,
+                                  variable=group,
+                                  variable.name =  x,
+                                  color = color.group)
 
-    ## Compute Silhouette based on biology
-    message("Silhouette coefficient based on biology")
-    silh_bio=RUVPRPS::compute_silhouette(data_pca,
-                          cat_var=biological_subtypes)
+            ## Compute Silhouette
+            message(paste("Silhouette coefficient based on: ",x,sep=""))
+            silh=RUVPRPS::compute_silhouette(data_pca,
+                                                 cat_var=group)
 
-    ## Compute ARI based on biology
-    message("ARI based on biology")
-    ari_bio=RUVPRPS::compute_ari(data_pca,
-                          cat_var=biological_subtypes)
+            ## Compute ARI
+            message(paste("ARI based on : ",x,sep=""))
+            ari=RUVPRPS::compute_ari(data_pca,
+                                         cat_var=group)
+            return(cbind(PCA,silh,ari))
+        })
 
     ################# Assessment on the batch effect ##################
     batch=sample.annot[, cat_var_label]
@@ -131,32 +132,32 @@ norm_assessment = function(
 
     ## Plot combined silhouette based on batch and biology
     message("Combined silhouette plot")
-    combined_silh_plot=RUVPRPS::plot_combined_silh_batch_bio(silh_bio,silh_batch)
+    #combined_silh_plot=RUVPRPS::plot_combined_silh_batch_bio(silh_bio,silh_batch)
 
     ################## Generate pdf file to save the plots #####################
     if (!is.null(output_file)){
         pdf(output_file)
-            do.call(grid.arrange,
-                c(PCA_BIO,
-                  ncol = 4))
-            plot(silh_bio$plot)
-            plot(ari_bio$plot)
-            do.call(grid.arrange,
-                c(PCA_BATCH,
-                  ncol = 4))
-            plot(silh_batch$plot)
-            plot(ari_batch$plot)
+            # do.call(grid.arrange,
+            #     c(PCA_BIO,
+            #       ncol = 4))
+            # plot(silh_bio$plot)
+            # plot(ari_bio$plot)
+            # do.call(grid.arrange,
+            #     c(PCA_BATCH,
+            #       ncol = 4))
+            # plot(silh_batch$plot)
+            # plot(ari_batch$plot)
             plot(reg_lib_size$plot)
             plot(corr_lib_size$plot)
-            plot(combined_silh_plot)
+            #plot(combined_silh_plot)
         dev.off()
     }
-        res=list(PCA_bio=PCA_BIO,
-                 silh_bio=silh_bio,
-                 PCA_batch=PCA_BATCH,
-                 silh_batch=silh_batch,
+        res=list(#PCA_bio=PCA_BIO,
+                 #silh_bio=silh_bio,
+                 #PCA_batch=PCA_BATCH,
+                 #silh_batch=silh_batch,
                  plot_reg_lib_size=reg_lib_size$plot,
-                 plot_cor_gen_exp_lib_size=corr_lib_size$plot,
-                 combined_silh_plot)
+                 plot_cor_gen_exp_lib_size=corr_lib_size$plot)#,
+                 #combined_silh_plot)
     return(res)
 }

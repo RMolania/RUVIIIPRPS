@@ -77,7 +77,7 @@ correlation_gene_exp_contvar<-function(
                 return(results)
             }
 
-            data <- as.matrix(assay(se, x))
+            data <- as.matrix(assays(se, x))
             cor <- correlation_gene_exp_contvar_single_assay(
                 expr.data = data,
                 apply.log=apply.log,
