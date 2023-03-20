@@ -2,7 +2,7 @@
 #' of a SummarizedExperiment class object and a continous variable (i.e. library size).
 #'
 #' @param se A SummarizedExperiment object that will be used to compute the correlation
-#' @param cont_var Vector of a continuous variable that will be used to compute to correlation
+#' @param cont_var Vector of a continuous variable that will be used to compute to correlation.
 #' @param method A character string indicating which correlation coefficient
 #' is to be used for the test: "pearson", "kendall", or "spearman". By default 'spearman will
 #' be selected.

@@ -4,14 +4,14 @@
 \alias{compute_ari}
 \title{is used to compute the adjusted rank index (ARI) from the first PC of a SummarizedExperiment class
 object given a categorical variable. It can be used to assess how a group of biological samples
-are preserved (e.g. example subtypes), and how batches ### update}
+are distributed across batches (i.e. example subtypes vs batch), and how batches ### update}
 \usage{
 compute_ari(pca, cat_var, assay_names = NULL, plot = FALSE, nPCs = 3)
 }
 \arguments{
 \item{pca}{PCA components of a SummarizedExperiment variable.}
 
-\item{cat_var}{Vector of a categorical variable such as sample types (e.g. biological subtypes) or batches.}
+\item{cat_var}{Vector of a categorical variable such as sample types (i.e. biological subtypes) or batches.}
 
 \item{assay_names}{Optional string or list of strings for selection of the names
 of the assays of the SummarizedExperiment class object to compute the ARI.}
@@ -26,5 +26,5 @@ list List containing the association plot and the computed ari
 \description{
 is used to compute the adjusted rank index (ARI) from the first PC of a SummarizedExperiment class
 object given a categorical variable. It can be used to assess how a group of biological samples
-are preserved (e.g. example subtypes), and how batches ### update
+are distributed across batches (i.e. example subtypes vs batch), and how batches ### update
 }

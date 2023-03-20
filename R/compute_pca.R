@@ -29,8 +29,7 @@ compute_pca=function(
     if (!is.null(assay_names)){
         normalizations=assay_names
     }else{
-        normalizations=names(
-        SummarizedExperiment::assays(se))
+        normalizations=names(assays(se))
     }
     pca.all <- lapply(
         normalizations,

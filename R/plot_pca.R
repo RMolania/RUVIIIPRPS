@@ -15,7 +15,7 @@
 #' @param alpha geom_point aesthetics
 #'
 #' @return p PCA plot of the data colored by one variable
-#' @importFrom ggpubr get_legend
+#' @importFrom ggpubr get_legend as_ggplot
 #' @importFrom cowplot axis_canvas ggdraw insert_xaxis_grob insert_yaxis_grob
 #' @import ggplot2 scales
 #' @importFrom gridExtra grid.arrange

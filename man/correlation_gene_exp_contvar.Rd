@@ -17,7 +17,7 @@ correlation_gene_exp_contvar(
 \arguments{
 \item{se}{A SummarizedExperiment object that will be used to compute the correlation}
 
-\item{cont_var}{Vector of a continuous variable that will be used to compute to correlation}
+\item{cont_var}{Vector of a continuous variable that will be used to compute to correlation.}
 
 \item{assay_names}{Optional string or list of strings for selection of the names
 of the assays of the SummarizedExperiment class object to compute the correlation.}

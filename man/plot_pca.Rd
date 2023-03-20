@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_pca.R
 \name{plot_pca}
 \alias{plot_pca}
-\title{is used to plot the pairwise plots of the first 3 PCA of the gene expression (assay)
+\title{is used to plot the pairwise plots of the first PCA of the gene expression (assay)
 of a SummarizedExperiment class object.}
 \usage{
 plot_pca(
@@ -46,6 +46,6 @@ plot_pca(
 p PCA plot of the data colored by one variable
 }
 \description{
-is used to plot the pairwise plots of the first 3 PCA of the gene expression (assay)
+is used to plot the pairwise plots of the first PCA of the gene expression (assay)
 of a SummarizedExperiment class object.
 }

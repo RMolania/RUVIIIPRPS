@@ -3,16 +3,21 @@
 \name{norm_assessment}
 \alias{norm_assessment}
 \title{is used to assess the performance of the normalisation of a SummarizedExperiment class object.
-It will first generate two PCA plots: one colored by biology and another one by batch,
-each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
-It will also compute the regression between library size and PCs,}
+Several assessment will be performed:
+\enumerate{
+\item PCA plot of each categorical variable.
+\item Silhouette and ARI computed on categorical variable.
+\item Combined Silhouette plot of the combined pair of categorical variable.
+\item Linear regression between the first cumulative PC and continuous variable.
+\item Spearman correlation between gene expression and continuous variable.
+}}
 \usage{
 norm_assessment(
   se,
+  assay_names = NULL,
   apply.log = FALSE,
-  biological_subtypes,
-  library_size,
-  batch,
+  cat_var_label,
+  cont_var_label,
   output_file = NULL,
   n.cores = 5
 )
@@ -20,14 +25,17 @@ norm_assessment(
 \arguments{
 \item{se}{Dataset that will be used to assess the performance of the normalisation of the data.}
 
+\item{assay_names}{Optional string or list of strings for selection of the names
+of the assays of the SummarizedExperiment class object.}
+
 \item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
 
-\item{biological_subtypes}{Vector containing the biological subtype of each sample.}
+\item{cat_var_label}{String or vector of strings of the label of categorical variable(s) such as
+sample types or batches from colData(se).}
 
-\item{library_size}{Vector containing the library size of each sample.}
-
-\item{batch}{Vector containing the batch (plates/years) of each sample.}
+\item{cont_var_label}{String or vector of strings of the label of continuous variable(s)
+such as library size from colData(se).}
 
 \item{output_file}{Path and name of the output file to save the assessments plots in a pdf format.}
 
@@ -38,7 +46,12 @@ plots List of assessments plots
 }
 \description{
 is used to assess the performance of the normalisation of a SummarizedExperiment class object.
-It will first generate two PCA plots: one colored by biology and another one by batch,
-each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
-It will also compute the regression between library size and PCs,
+Several assessment will be performed:
+\enumerate{
+\item PCA plot of each categorical variable.
+\item Silhouette and ARI computed on categorical variable.
+\item Combined Silhouette plot of the combined pair of categorical variable.
+\item Linear regression between the first cumulative PC and continuous variable.
+\item Spearman correlation between gene expression and continuous variable.
+}
 }

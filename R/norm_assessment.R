@@ -1,14 +1,20 @@
 #' is used to assess the performance of the normalisation of a SummarizedExperiment class object.
-#' It will first generate two PCA plots: one colored by biology and another one by batch,
-#' each plot will display PCA plot for each assay in the following order: raw, fpkm, fpkm.uq and ruvprps.
-#' It will also compute the regression between library size and PCs,
+#' Several assessment will be performed:
+#' 1) PCA plot of each categorical variable.
+#' 2) Silhouette and ARI computed on categorical variable.
+#' 3) Combined Silhouette plot of the combined pair of categorical variable.
+#' 4) Linear regression between the first cumulative PC and continuous variable.
+#' 5) Spearman correlation between gene expression and continuous variable.
 #'
 #' @param se Dataset that will be used to assess the performance of the normalisation of the data.
+#' @param assay_names Optional string or list of strings for selection of the names
+#' of the assays of the SummarizedExperiment class object.
 #' @param apply.log Indicates whether to apply a log-transformation to the data. By default
 #' no transformation will be selected.
-#' @param biological_subtypes Vector containing the biological subtype of each sample.
-#' @param library_size Vector containing the library size of each sample.
-#' @param batch Vector containing the batch (plates/years) of each sample.
+#' @param cat_var_label String or vector of strings of the label of categorical variable(s) such as
+#' sample types or batches from colData(se).
+#' @param cont_var_label String or vector of strings of the label of continuous variable(s)
+#' such as library size from colData(se).
 #' @param output_file Path and name of the output file to save the assessments plots in a pdf format.
 #' @param n.cores is the number of cpus used for mclapply parallelization. Default is set to 5.
 #'
@@ -17,26 +23,57 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom grDevices colorRampPalette dev.off pdf
 #' @importFrom gridExtra grid.arrange
+#' @importFrom SummarizedExperiment assays colData
 #' @export
 
 norm_assessment = function(
         se,
+        assay_names=NULL,
         apply.log = FALSE,
-        biological_subtypes,
-        library_size,
-        batch,
+        cat_var_label,
+        cont_var_label,
+        #biological_subtypes,
+        #library_size,
+        #batch,
         output_file=NULL,
         n.cores=5
 ){
+    ### Check se and assay names
+    if (!class(se)[1] == 'SummarizedExperiment') {
+        stop('Please provide a summarized experiment object.')
+    } else if (class(se)[1] == 'SummarizedExperiment' & ncol(colData(se)) == 0){
+        stop('The Summarized experiment object does not contain
+           sample annotations, please provide colData of the summarized
+           experiment object before running the norm_assessment() function.')
+    } else if(!(assay_names %in% names(assays(se)))){
+        stop('The selected assay(s) is/are not in the assays names of the SummarizedExperiment class object.')
+    }
+
+    ### Check cat_var_label and cont_var_label
+    sample.annot <- as.data.frame(colData(x = se))
+    all.var.label<- c(cat_var_label, cont_var_label)
+    exist.var.label <- colnames(sample.annot)[colnames(sample.annot) %in% all.var.label]
+    if (!sum(all.var.label %in% exist.var.label) == length(all.var.label)){
+        stop(
+            'Provided variable label from cat_var_label and cont_var_label "',
+            paste0(
+                all.var.label[!all.var.label %in% exist.var.label], collapse = ' & '),
+            '" are not in the colData of the summarized experiment object.')
+    }
+
     ### Compute PCA
     data_pca=RUVPRPS::compute_pca(se,apply.log = apply.log)
 
     ## Get all the available assays (i.e. normalizations methods)
-    normalizations <- names(
-        SummarizedExperiment::assays(se)
-    )
-
-    ################# Assessment on the biology ################
+    if (!is.null(assay_names)){
+        normalization=assay_names
+    }else{
+        normalization=names(
+            SummarizedExperiment::assays(se))
+    }
+    ################# Categorical variable ################
+    #nb_catvar=
+    biological_subtypes=sample.annot[, cat_var_label]
     ## PCA Color Biology
     colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
     color.subtype<- colfunc(length(unique(biological_subtypes)))
@@ -59,6 +96,7 @@ norm_assessment = function(
                           cat_var=biological_subtypes)
 
     ################# Assessment on the batch effect ##################
+    batch=sample.annot[, cat_var_label]
     ## PCA Color Batch
     colfunc <- colorRampPalette(brewer.pal(n = 4, name = 'Set1')[-6])
     color.batch <- colfunc(length(unique(batch)))
@@ -80,6 +118,7 @@ norm_assessment = function(
 
 
     ################## Assessment on the library size ##################
+    library_size=sample.annot[, cont_var_label]
     ## Compute regression between library size and PCs
     message("Linear regression between the first cumulative PC and library size")
     reg_lib_size= RUVPRPS::regression_pc_contvar(pca=data_pca,
