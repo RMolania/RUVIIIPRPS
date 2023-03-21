@@ -8,8 +8,8 @@ of a SummarizedExperiment class object.}
 plot_pca(
   pca,
   assay_names = NULL,
-  variable,
-  variable.name,
+  cat_var,
+  cat_var_label,
   nPCs = 3,
   ncol_plot = 4,
   color,
@@ -24,9 +24,11 @@ plot_pca(
 
 \item{assay_names}{Optional selection of names of the assays to compute the PCA.}
 
-\item{variable}{The variable that will be used to display and color the PCA plot}
+\item{cat_var}{Vector of a categorical variable such as sample types
+(i.e. biological subtypes) or batches.}
 
-\item{variable.name}{The label of the variable that will be used on the PCA plot}
+\item{cat_var_label}{String or vector of strings of the label of categorical variable(s) such as
+sample types or batches from colData(se).}
 
 \item{nPCs}{is the number of PCs used to measure the distance, by default it is set to 3.}
 

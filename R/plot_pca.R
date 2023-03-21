@@ -4,8 +4,10 @@
 #'
 #' @param pca PCA components of a SummarizedExperiment variable that will be used in the plot.
 #' @param assay_names Optional selection of names of the assays to compute the PCA.
-#' @param variable The variable that will be used to display and color the PCA plot
-#' @param variable.name The label of the variable that will be used on the PCA plot
+#' @param cat_var Vector of a categorical variable such as sample types
+#' (i.e. biological subtypes) or batches.
+#' @param cat_var_label String or vector of strings of the label of categorical variable(s) such as
+#' sample types or batches from colData(se).
 #' @param nPCs is the number of PCs used to measure the distance, by default it is set to 3.
 #' @param ncol_plot is the argument of gtable for the layout specifying ncol, by default it is set to 4.
 #' @param color The color of the variable that will be used on the PCA plot
@@ -16,6 +18,7 @@
 #'
 #' @return p PCA plot of the data colored by one variable
 #' @importFrom ggpubr get_legend as_ggplot
+#' @importFrom grid textGrob
 #' @importFrom cowplot axis_canvas ggdraw insert_xaxis_grob insert_yaxis_grob
 #' @import ggplot2 scales
 #' @importFrom gridExtra grid.arrange
@@ -24,8 +27,8 @@
 plot_pca=function(
         pca,
         assay_names=NULL,
-        variable,
-        variable.name,
+        cat_var,
+        cat_var_label,
         nPCs=3,
         ncol_plot=4,
         color,
@@ -43,8 +46,8 @@ plot_pca=function(
         normalizations,
         function(x){
             plot_pca_single_assay<-function(pca_x,
-                                            variable,
-                                            variable.name,
+                                            cat_var,
+                                            cat_var_label,
                                             color,
                                             strokeSize = strokeSize,
                                             pointSize = pointSize,
@@ -61,11 +64,11 @@ plot_pca=function(
                         p <- ggplot(mapping = aes(
                             x = pcs[,x],
                             y = pcs[,y],
-                            fill = variable)) +
+                            fill = cat_var)) +
                             xlab(paste0('PC', x, ' (', pc.var[x], '%)')) +
                             ylab(paste0('PC', y, ' (', pc.var[y], '%)')) +
                             geom_point(
-                                aes(fill = variable),
+                                aes(fill = cat_var),
                                 pch = 21,
                                 color = strokeColor,
                                 stroke = strokeSize,
@@ -87,7 +90,7 @@ plot_pca=function(
                                 axis.title.y = element_text(size = 14),
                                 aspect.ratio=1) +
                             guides(fill = guide_legend(override.aes = list(size = 4))) +
-                            scale_fill_manual(name = variable.name, values = color)
+                            scale_fill_manual(name = cat_var_label, values = color)
 
                         le <- get_legend(p)
                     }else{
@@ -96,11 +99,11 @@ plot_pca=function(
                         p <- ggplot(mapping = aes(
                             x = pcs[,x],
                             y = pcs[,y],
-                            fill = variable)) +
+                            fill = cat_var)) +
                             xlab(paste0('PC', x, ' (',pc.var[x],  '%)')) +
                             ylab(paste0('PC', y, ' (',pc.var[y], '%)')) +
                             geom_point(
-                                aes(fill = variable),
+                                aes(fill = cat_var),
                                 pch = 21,
                                 color = strokeColor,
                                 stroke = strokeSize,
@@ -117,14 +120,14 @@ plot_pca=function(
                                 axis.title.x = element_text(size = 14),
                                 axis.title.y = element_text(size = 14),
                                 aspect.ratio=1) +
-                            scale_fill_manual(values = color, name = variable.name)
+                            scale_fill_manual(values = color, name = cat_var_label)
                     }
                     p <- p + theme(legend.position = "none")
                     xdens <- axis_canvas(p, axis = "x")+
                         geom_density(
                             mapping = aes(
                                 x = pcs[,x],
-                                fill = variable),
+                                fill = cat_var),
                             alpha = 0.7,
                             size = 0.2
                         ) +
@@ -138,11 +141,11 @@ plot_pca=function(
                         geom_density(
                             mapping = aes(
                                 x = pcs[,y],
-                                fill = variable),
+                                fill = cat_var),
                             alpha = 0.7,
                             size = 0.2) +
                         theme(legend.position = "none") +
-                        scale_fill_manual(name = variable.name, values = color) +
+                        scale_fill_manual(name = cat_var_label, values = color) +
                         coord_flip()
 
                     p1 <- insert_xaxis_grob(
@@ -163,7 +166,7 @@ plot_pca=function(
                 return(pList)
             }
             pca_x <- pca[[x]]
-            p1=plot_pca_single_assay(pca_x,variable,variable.name,color,strokeSize,pointSize,strokeColor,alpha)
+            p1=plot_pca_single_assay(pca_x,cat_var,cat_var_label,color,strokeSize,pointSize,strokeColor,alpha)
             p1
         })
         names(ppca) <- normalizations
@@ -177,7 +180,8 @@ plot_pca=function(
         }
         plot=do.call(grid.arrange,
             c(p,
-              ncol = ncol_plot))
+              ncol = ncol_plot,
+           top=paste0("PCA colored by ",cat_var_label)))
 
         return(plot=as_ggplot(plot))
 }
