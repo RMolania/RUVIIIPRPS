@@ -59,7 +59,7 @@ compute_silhouette<-function(
     pcs.silCoef =  pcs.silCoef %>% pivot_longer(
         everything(),
         names_to = 'datasets',
-        values_to = paste('silh.coeff.',cat_var_label,sep="")) %>% mutate(datasets = factor(
+        values_to = 'silh.coeff') %>% mutate(datasets = factor(
             datasets))
 
     ### Plot
@@ -80,7 +80,7 @@ compute_silhouette<-function(
                 axis.title.y = element_text(size = 18),
                 axis.text.x = element_text(size = 12),
                 axis.text.y = element_text(size = 12))
-        return(list(plot=p,silh.coeff=pcs.silCoef))
+        return(list(plot=p,silh.coeff=pcs.silCoef,cat_var_label=cat_var_label))
     }else{
         return(silh.coeff=pcs.silCoef)}
 }

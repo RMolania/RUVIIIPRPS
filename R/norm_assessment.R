@@ -86,7 +86,7 @@ norm_assessment = function(
             ## Compute Silhouette
             message(paste("Silhouette coefficient based on: ",x,sep=""))
             silh=RUVPRPS::compute_silhouette(data_pca,
-                                             cat_var=group)
+                                             cat_var=group,cat_var_label = cat_var_label)
 
             ## Compute ARI
             message(paste("ARI based on: ",x,sep=""))
