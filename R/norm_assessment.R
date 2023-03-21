@@ -67,16 +67,16 @@ norm_assessment = function(
         normalization=names(assays(se))
     }
     ################# Categorical variable ################
-    #nb_catvar=
+    nb_cat_var=length(cat_var_label)
     cat.var.assessment<- lapply(
         cat_var_label,
         function(x){
             group=as.factor(sample.annot[ , x])
             ## PCA Color
             colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
-            color.group<- colfunc(length(unique(x)))
+            color.group<- colfunc(length(unique(group)))
             names(color.group) <- levels(group)
-            message(paste("PCA based on : ",x,sep=""))
+            message(paste("PCA based on: ",x,sep=""))
             ### Compute PCA
             PCA=RUVPRPS::plot_pca(data_pca,
                                   variable=group,
@@ -86,35 +86,32 @@ norm_assessment = function(
             ## Compute Silhouette
             message(paste("Silhouette coefficient based on: ",x,sep=""))
             silh=RUVPRPS::compute_silhouette(data_pca,
-                                                 cat_var=group)
+                                             cat_var=group)
 
             ## Compute ARI
-            message(paste("ARI based on : ",x,sep=""))
+            message(paste("ARI based on: ",x,sep=""))
             ari=RUVPRPS::compute_ari(data_pca,
-                                         cat_var=group)
-            return(cbind(PCA,silh,ari))
+                                     cat_var=group)
+            return(list(PCA=PCA,sil=silh,ari=ari))
         })
+    names(cat.var.assessment)=cat_var_label
 
-    ################# Assessment on the batch effect ##################
-    batch=sample.annot[, cat_var_label]
-    ## PCA Color Batch
-    colfunc <- colorRampPalette(brewer.pal(n = 4, name = 'Set1')[-6])
-    color.batch <- colfunc(length(unique(batch)))
-    names(color.batch) <- levels(batch)
-    message("PCA based on Batch")
-    ### Compute PCA Batch
-    PCA_BATCH=RUVPRPS::plot_pca(data_pca,
-                    variable= batch,
-                    variable.name =   'Batch',
-                    color =color.batch)
 
-    ## Compute Silhouette based on batch
-    message("Silhouette coefficient based on batch")
-    silh_batch=RUVPRPS::compute_silhouette(data_pca,cat_var=batch)
+    ## Plot combined silhouette based on all pairs of cat var
+    Combined_sil_plot<-NULL
+    if (nb_cat_var>1){
+        message("Combined silhouette plot of cat var")
+        for (v in 1:(nb_cat_var-1)){
+            for (v2 in ((v+1):nb_cat_var)){
+                p=RUVPRPS::plot_combined_silh(
+                        cat.var.assessment[[cat_var_label[v]]][['sil']],
+                        cat.var.assessment[[cat_var_label[v+1]]][['sil']])
+                #new_name=c(paste0(cat_var_label[v],"_",cat_var_label[v2]),names(Combined_sil_plot))
+                Combined_sil_plot[[paste0(cat_var_label[v],"_",cat_var_label[v2])]]=p
+            }
+        }
+    }
 
-    ## Compute ARI based on biology
-    message("ARI based on batch")
-    ari_batch=RUVPRPS::compute_ari(data_pca,cat_var=batch)
 
 
     ################## Assessment on the library size ##################
@@ -130,9 +127,6 @@ norm_assessment = function(
                                                         library_size,
                                                         apply.log)
 
-    ## Plot combined silhouette based on batch and biology
-    message("Combined silhouette plot")
-    #combined_silh_plot=RUVPRPS::plot_combined_silh_batch_bio(silh_bio,silh_batch)
 
     ################## Generate pdf file to save the plots #####################
     if (!is.null(output_file)){

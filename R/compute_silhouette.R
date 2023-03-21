@@ -3,7 +3,10 @@
 #'
 #'
 #' @param pca PCA components of a SummarizedExperiment variable.
-#' @param cat_var Vector of a categorical variable such as sample types or batches.
+#' @param cat_var Vector of a categorical variable such as sample types
+#' (i.e. biological subtypes) or batches.
+#' @param cat_var_label String or vector of strings of the label of categorical variable(s) such as
+#' sample types or batches from colData(se).
 #' @param assay_names Optional string or list of strings for selection of the names
 #' of the assays of the SummarizedExperiment class object to compute the PCA.
 #' @param plot Optional output of a plot, default set to FALSE.
@@ -21,6 +24,7 @@
 compute_silhouette<-function(
         pca,
         cat_var,
+        cat_var_label,
         assay_names=NULL,
         plot=FALSE,
         nPCs=3
@@ -55,7 +59,7 @@ compute_silhouette<-function(
     pcs.silCoef =  pcs.silCoef %>% pivot_longer(
         everything(),
         names_to = 'datasets',
-        values_to = 'silh.coeff') %>% mutate(datasets = factor(
+        values_to = paste('silh.coeff.',cat_var_label,sep="")) %>% mutate(datasets = factor(
             datasets))
 
     ### Plot
@@ -66,7 +70,7 @@ compute_silhouette<-function(
             name = "GrandBudapest1")[c(1,2,4,3)]
         p=ggplot(pcs.silCoef , aes(x = datasets, y = silh.coeff, fill = datasets)) +
             geom_point() +
-            ylab("Silhouette coefficient") +
+            ylab(paste("Silhouette coefficient computed on ",cat_var_label,sep="")) +
             xlab('') +
             scale_fill_manual(values = dataSets.colors, guide = 'none')+
             theme(

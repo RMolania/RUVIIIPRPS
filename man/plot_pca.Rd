@@ -14,7 +14,7 @@ plot_pca(
   ncol_plot = 4,
   color,
   strokeSize = 0.2,
-  pointSize = 0.8,
+  pointSize = 1.5,
   strokeColor = "gray30",
   alpha = 0.5
 )

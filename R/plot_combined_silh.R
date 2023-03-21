@@ -13,7 +13,7 @@
 
 plot_combined_silh<-function(
         silh1,
-        silh2,
+        silh2
 ){
 
 ## Merge two silh coeffs

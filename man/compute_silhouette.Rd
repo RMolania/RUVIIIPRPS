@@ -5,12 +5,23 @@
 \title{is used to compute the Silhouette coefficient from the first PC of a SummarizedExperiment class
 object given a categorical variable.}
 \usage{
-compute_silhouette(pca, cat_var, assay_names = NULL, plot = FALSE, nPCs = 3)
+compute_silhouette(
+  pca,
+  cat_var,
+  cat_var_label,
+  assay_names = NULL,
+  plot = FALSE,
+  nPCs = 3
+)
 }
 \arguments{
 \item{pca}{PCA components of a SummarizedExperiment variable.}
 
-\item{cat_var}{Vector of a categorical variable such as sample types or batches.}
+\item{cat_var}{Vector of a categorical variable such as sample types
+(i.e. biological subtypes) or batches.}
+
+\item{cat_var_label}{String or vector of strings of the label of categorical variable(s) such as
+sample types or batches from colData(se).}
 
 \item{assay_names}{Optional string or list of strings for selection of the names
 of the assays of the SummarizedExperiment class object to compute the PCA.}
