@@ -26,7 +26,7 @@ df=df[,-3]
 dataSets.colors <- wes_palette(
         n = dim(df)[1],
         name = "GrandBudapest1")[c(1,2,4,3)]
-p=ggplot(df,aes(Silh2Silh2colour=datasets)) +
+p=ggplot(df,aes(Silh1,Silh2,colour=datasets)) +
     geom_point(aes(color = datasets), size = 3) +
     xlab('Silhouette based on Biology') +
     ylab ('Silhouette based on Batch') +

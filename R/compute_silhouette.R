@@ -68,11 +68,12 @@ compute_silhouette<-function(
         dataSets.colors <- wes_palette(
             n = length(normalization),
             name = "GrandBudapest1")[c(1,2,4,3)]
+        names(dataSets.colors)=normalization
         p=ggplot(pcs.silCoef , aes(x = datasets, y = silh.coeff, fill = datasets)) +
-            geom_point() +
+            geom_point(aes(colour=datasets)) +
             ylab(paste("Silhouette coefficient computed on ",cat_var_label,sep="")) +
             xlab('') +
-            scale_fill_manual(values = dataSets.colors, guide = 'none')+
+            scale_color_manual(values = dataSets.colors) +
             theme(
                 panel.background = element_blank(),
                 axis.line = element_line(colour = 'black', size = 1),
