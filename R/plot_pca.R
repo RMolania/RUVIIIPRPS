@@ -30,7 +30,7 @@ plot_pca=function(
         ncol_plot=4,
         color,
         strokeSize = .2,
-        pointSize = 0.8,
+        pointSize = 1.5,
         strokeColor = 'gray30',
         alpha = .5
 ){
