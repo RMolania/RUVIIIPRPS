@@ -2,7 +2,10 @@
 #' of a SummarizedExperiment class object and a continous variable (i.e. library size).
 #'
 #' @param se A SummarizedExperiment object that will be used to compute the correlation
-#' @param cont_var Vector of a continuous variable that will be used to compute to correlation.
+#' @param cont_var Vector of a categorical variable such as sample types
+#' (i.e. biological subtypes) or batches.
+#' @param cont_var_label String or vector of strings of the label of categorical variable(s) such as
+#' sample types or batches from colData(se).
 #' @param method A character string indicating which correlation coefficient
 #' is to be used for the test: "pearson", "kendall", or "spearman". By default 'spearman will
 #' be selected.
@@ -25,6 +28,7 @@
 correlation_gene_exp_contvar<-function(
         se,
         cont_var,
+        cont_var_label,
         assay_names=NULL,
         method='spearman',
         apply.log=FALSE,
@@ -117,8 +121,10 @@ correlation_gene_exp_contvar<-function(
             axis.title.x = element_text(size = 18),
             axis.title.y = element_text(size = 18),
             axis.text.x = element_text(size = 12),
-            axis.text.y = element_text(size = 12))
+            axis.text.y = element_text(size = 12))+
+        ggtitle(paste("Correlation between the gene expression and ",cont_var_label,sep=""))
 
-    return(list(plot=p,corr.coeff=cor.all.coeff))
+
+    return(list(plot=p,corr.coeff=cor.all.coeff,cont_var_label=cont_var_label))
 }
 
