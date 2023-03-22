@@ -71,7 +71,7 @@ compute_silhouette<-function(
         names(dataSets.colors)=normalization
         p=ggplot(pcs.silCoef , aes(x = datasets, y = silh.coeff, fill = datasets)) +
             geom_point(aes(colour=datasets)) +
-            ylab(paste("Silhouette coefficient computed on ",cat_var_label,sep="")) +
+            ylab("Silhouette coefficient") +
             xlab('') +
             scale_color_manual(values = dataSets.colors) +
             theme(
@@ -80,7 +80,8 @@ compute_silhouette<-function(
                 axis.title.x = element_text(size = 18),
                 axis.title.y = element_text(size = 18),
                 axis.text.x = element_text(size = 12),
-                axis.text.y = element_text(size = 12))
+                axis.text.y = element_text(size = 12))+
+            ggtitle(paste("Silhouette coefficient computed on ",cat_var_label,sep=""))
         return(list(plot=p,silh.coeff=pcs.silCoef,cat_var_label=cat_var_label))
     }else{
         return(silh.coeff=pcs.silCoef)}
