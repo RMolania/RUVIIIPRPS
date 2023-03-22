@@ -4,13 +4,17 @@
 #'
 #'
 #' @param pca PCA components of a SummarizedExperiment variable.
-#' @param cat_var Vector of a categorical variable such as sample types (i.e. biological subtypes) or batches.
+#' @param cat_var Vector of a categorical variable such as sample types
+#' (i.e. biological subtypes) or batches.
+#' @param cat_var_label String or vector of strings of the label of categorical variable(s) such as
+#' sample types or batches from colData(se).
 #' @param assay_names Optional string or list of strings for selection of the names
 #' of the assays of the SummarizedExperiment class object to compute the ARI.
 #' @param plot Optional output of a plot, default set to FALSE.
 #' @param nPCs is the number of PCs used to measure the distance, default is set to 3.
 #'
 #' @return list List containing the association plot and the computed ari
+#' and the cat_var_label
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate
 #' @importFrom tidyr pivot_longer %>%
@@ -23,6 +27,7 @@
 compute_ari <-function(
         pca,
         cat_var,
+        cat_var_label,
         assay_names=NULL,
         plot=FALSE,
         nPCs=3
@@ -76,8 +81,9 @@ compute_ari <-function(
             axis.title.x = element_text(size = 18),
             axis.title.y = element_text(size = 18),
             axis.text.x = element_text(size = 12),
-            axis.text.y = element_text(size = 12))
-    return(list(plot=p,ari=pcs.ari))
+            axis.text.y = element_text(size = 12))+
+        ggtitle(paste("ARI computed on ",cat_var_label,sep=""))
+    return(list(plot=p,ari=pcs.ari,cat_var_label=cat_var_label))
     }else{
         return(ari=pcs.ari)}
 }

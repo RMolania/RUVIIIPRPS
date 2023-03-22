@@ -86,12 +86,14 @@ norm_assessment = function(
             ## Compute Silhouette
             message(paste("Silhouette coefficient based on: ",x,sep=""))
             silh=RUVPRPS::compute_silhouette(data_pca,
-                                             cat_var=group,cat_var_label = cat_var_label)
+                                             cat_var=group,
+                                             cat_var_label = cat_var_label)
 
             ## Compute ARI
             message(paste("ARI based on: ",x,sep=""))
             ari=RUVPRPS::compute_ari(data_pca,
-                                     cat_var=group)
+                                     cat_var=group,
+                                     cat_var_label = cat_var_label)
             return(list(PCA=PCA,sil=silh,ari=ari))
         })
     names(cat.var.assessment)=cat_var_label
@@ -106,7 +108,6 @@ norm_assessment = function(
                 p=RUVPRPS::plot_combined_silh(
                         cat.var.assessment[[cat_var_label[v]]][['sil']],
                         cat.var.assessment[[cat_var_label[v+1]]][['sil']])
-                #new_name=c(paste0(cat_var_label[v],"_",cat_var_label[v2]),names(Combined_sil_plot))
                 Combined_sil_plot[[paste0(cat_var_label[v],"_",cat_var_label[v2])]]=p
             }
         }

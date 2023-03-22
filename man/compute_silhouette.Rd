@@ -32,6 +32,7 @@ of the assays of the SummarizedExperiment class object to compute the PCA.}
 }
 \value{
 list List containing the association plot and the computed silhouette
+and the cat_var_label
 }
 \description{
 is used to compute the Silhouette coefficient from the first PC of a SummarizedExperiment class

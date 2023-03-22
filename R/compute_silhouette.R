@@ -13,6 +13,7 @@
 #' @param nPCs is the number of PCs used to measure the distance, by default it is set to 3.
 #'
 #' @return list List containing the association plot and the computed silhouette
+#' and the cat_var_label
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate
 #' @importFrom tidyr pivot_longer %>%
