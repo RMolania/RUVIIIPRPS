@@ -181,7 +181,7 @@ plot_pca=function(
         plot=do.call(grid.arrange,
             c(p,
               ncol = ncol_plot,
-           top=paste0("PCA colored by ",cat_var_label)))
+           top=paste0("PCA colored by ",cat_var_label," ordered as ",normalizations)))
 
         return(plot=as_ggplot(plot))
 }
