@@ -58,7 +58,7 @@ norm_assessment = function(
     }
 
     ### Compute PCA
-    data_pca=RUVPRPS::compute_pca(se,apply.log = apply.log)
+    data_pca=RUVPRPS::compute_pca(se,apply.log = apply.log,assay_names = assay_names)
 
     ## Get all the available assays (i.e. normalizations methods)
     if (!is.null(assay_names)){
@@ -78,20 +78,20 @@ norm_assessment = function(
             names(color.group) <- levels(group)
             message(paste("PCA based on: ",x,sep=""))
             ### Compute PCA
-            PCA=RUVPRPS::plot_pca(data_pca,
+            PCA=RUVPRPS::plot_pca(data_pca,assay_names = assay_names,
                                   cat_var=group,
                                   cat_var_label = x,
                                   color = color.group)
 
             ## Compute Silhouette
             message(paste("Silhouette coefficient based on: ",x,sep=""))
-            silh=RUVPRPS::compute_silhouette(data_pca,
+            silh=RUVPRPS::compute_silhouette(data_pca,assay_names = assay_names,
                                              cat_var=group,
                                              cat_var_label = x)
 
             ## Compute ARI
             message(paste("ARI based on: ",x,sep=""))
-            ari=RUVPRPS::compute_ari(data_pca,
+            ari=RUVPRPS::compute_ari(data_pca,assay_names = assay_names,
                                      cat_var=group,
                                      cat_var_label = x)
             return(list(PCA=PCA,sil=silh,ari=ari))
@@ -119,12 +119,12 @@ norm_assessment = function(
     library_size=sample.annot[, cont_var_label]
     ## Compute regression between library size and PCs
     message("Linear regression between the first cumulative PC and library size")
-    reg_lib_size= RUVPRPS::regression_pc_contvar(pca=data_pca,
+    reg_lib_size= RUVPRPS::regression_pc_contvar(pca=data_pca,assay_names = assay_names,
                                cont_var = library_size)
 
     ## Compute Spearman correlation between gene expression and library size
     message("Spearman correlation between individual gene expression and library size")
-    corr_lib_size=RUVPRPS::correlation_gene_exp_contvar(se,
+    corr_lib_size=RUVPRPS::correlation_gene_exp_contvar(se,assay_names = assay_names,
                                                         library_size,
                                                         apply.log)
 
@@ -140,7 +140,8 @@ norm_assessment = function(
             plot(Combined_sil_plot[[x]])
         })
             plot(reg_lib_size$plot)
-            plot(corr_lib_size$plot)
+
+            #plot(corr_lib_size$plot)
             #plot(combined_silh_plot)
         dev.off()
     }
@@ -148,8 +149,8 @@ norm_assessment = function(
                  #silh_bio=silh_bio,
                  #PCA_batch=PCA_BATCH,
                  #silh_batch=silh_batch,
-                 plot_reg_lib_size=reg_lib_size$plot,
-                 plot_cor_gen_exp_lib_size=corr_lib_size$plot)#,
+                 plot_reg_lib_size=reg_lib_size$plot)#,
+                 #plot_cor_gen_exp_lib_size=corr_lib_size$plot)#,
                  #combined_silh_plot)
     return(res)
 }
