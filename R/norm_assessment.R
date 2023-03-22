@@ -30,8 +30,8 @@ norm_assessment = function(
         se,
         assay_names=NULL,
         apply.log = FALSE,
-        cat_var_label,
-        cont_var_label,
+        cat_var_label=NULL,
+        cont_var_label=NULL,
         output_file=NULL,
         n.cores=5
 ){
@@ -72,65 +72,63 @@ norm_assessment = function(
         normalization=names(assays(se))
     }
     ################# Categorical variable ################
-    nb_cat_var=length(cat_var_label)
-    if (nb_cont_var>0){
+    if (!is.null(cat_var_label)){
+        nb_cat_var=length(cat_var_label)
         cat.var.assessment<- lapply(
-            cat_var_label,
-            function(x){
-                group=as.factor(sample.annot[ , x])
-                ## PCA Color
-                colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
-                color.group<- colfunc(length(unique(group)))
-                names(color.group) <- levels(group)
-                message(paste("PCA based on: ",x,sep=""))
-                ### Compute PCA
-                PCA=RUVPRPS::plot_pca(data_pca,
-                                      assay_names = assay_names,
-                                      cat_var=group,
-                                      cat_var_label = x,
-                                      color = color.group)
+                cat_var_label,
+                function(x){
+                    group=as.factor(sample.annot[ , x])
+                    ## PCA Color
+                    colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
+                    color.group<- colfunc(length(unique(group)))
+                    names(color.group) <- levels(group)
+                    message(paste("PCA based on: ",x,sep=""))
+                    ### Compute PCA
+                    PCA=RUVPRPS::plot_pca(data_pca,
+                                          assay_names = assay_names,
+                                          cat_var=group,
+                                          cat_var_label = x,
+                                          color = color.group)
 
-                ## Compute Silhouette
-                message(paste("Silhouette coefficient based on: ",x,sep=""))
-                silh=RUVPRPS::compute_silhouette(data_pca,
-                                                 assay_names = assay_names,
-                                                 cat_var=group,
-                                                 cat_var_label = x)
+                    ## Compute Silhouette
+                    message(paste("Silhouette coefficient based on: ",x,sep=""))
+                    silh=RUVPRPS::compute_silhouette(data_pca,
+                                                     assay_names = assay_names,
+                                                     cat_var=group,
+                                                     cat_var_label = x)
 
-                ## Compute ARI
-                message(paste("ARI based on: ",x,sep=""))
-                ari=RUVPRPS::compute_ari(data_pca,
-                                         assay_names = assay_names,
-                                         cat_var=group,
-                                         cat_var_label = x)
-                return(list(PCA=PCA,sil=silh,ari=ari))
-            })
+                    ## Compute ARI
+                    message(paste("ARI based on: ",x,sep=""))
+                    ari=RUVPRPS::compute_ari(data_pca,
+                                             assay_names = assay_names,
+                                             cat_var=group,
+                                             cat_var_label = x)
+                    return(list(PCA=PCA,sil=silh,ari=ari))
+                })
         names(cat.var.assessment)=cat_var_label
-    }
 
-    ## Plot combined silhouette based on all pairs of cat var
-    Combined_sil_plot<-NULL
-    if (nb_cat_var>1){
-        message("Combined silhouette plot of cat var")
-        for (v in 1:(nb_cat_var-1)){
-            for (v2 in ((v+1):nb_cat_var)){
-                p=RUVPRPS::plot_combined_silh(
+        ## Plot combined silhouette based on all pairs of cat var
+        Combined_sil_plot<-NULL
+        if (nb_cat_var>1){
+            message("Combined silhouette plot of cat var")
+            for (v in 1:(nb_cat_var-1)){
+                for (v2 in ((v+1):nb_cat_var)){
+                    p=RUVPRPS::plot_combined_silh(
                         cat.var.assessment[[cat_var_label[v]]][['sil']],
                         cat.var.assessment[[cat_var_label[v+1]]][['sil']])
-                Combined_sil_plot[[paste0(cat_var_label[v],"_",cat_var_label[v2])]]=p
+                    Combined_sil_plot[[paste0(cat_var_label[v],"_",cat_var_label[v2])]]=p
+                }
             }
         }
     }
 
-
-
     ################# Continous variable ################
-    nb_cont_var=length(cont_var_label)
-    if (nb_cont_var>0){
+    if (!is.null(cont_var_label)){
+        nb_cont_var=length(cont_var_label)
         cont.var.assessment<- lapply(
             cont_var_label,
             function(x){
-                group=as.factor(sample.annot[ , x])
+                group=sample.annot[ , x]
 
                 ## Compute regression between library size and PCs
                 message("Linear regression between the first cumulative PC and library size")
@@ -141,7 +139,7 @@ norm_assessment = function(
 
                 ## Compute Spearman correlation between gene expression and library size
                 message("Spearman correlation between individual gene expression and library size")
-                corr=RUVPRPS::correlation_gene_exp_contvar(se,
+                corr=RUVPRPS::correlation_gene_exp_contvar(se = se,
                                                            assay_names = assay_names,
                                                            cont_var = group,
                                                            cont_var_label=x,
