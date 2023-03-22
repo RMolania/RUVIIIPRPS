@@ -57,6 +57,11 @@ norm_assessment = function(
             '" are not in the colData of the Summarized Experiment object.')
     }
 
+    ### Check cat or cont var are selected
+    if (is.null(cat_var_label) && is.null(cont_var_label)){
+        stop('Please provide at least cat_var_label or cont_var_label')
+    }
+
     ### Compute PCA
     data_pca=RUVPRPS::compute_pca(se,apply.log = apply.log,assay_names = assay_names)
 
@@ -68,36 +73,40 @@ norm_assessment = function(
     }
     ################# Categorical variable ################
     nb_cat_var=length(cat_var_label)
-    cat.var.assessment<- lapply(
-        cat_var_label,
-        function(x){
-            group=as.factor(sample.annot[ , x])
-            ## PCA Color
-            colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
-            color.group<- colfunc(length(unique(group)))
-            names(color.group) <- levels(group)
-            message(paste("PCA based on: ",x,sep=""))
-            ### Compute PCA
-            PCA=RUVPRPS::plot_pca(data_pca,assay_names = assay_names,
-                                  cat_var=group,
-                                  cat_var_label = x,
-                                  color = color.group)
+    if (nb_cont_var>0){
+        cat.var.assessment<- lapply(
+            cat_var_label,
+            function(x){
+                group=as.factor(sample.annot[ , x])
+                ## PCA Color
+                colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
+                color.group<- colfunc(length(unique(group)))
+                names(color.group) <- levels(group)
+                message(paste("PCA based on: ",x,sep=""))
+                ### Compute PCA
+                PCA=RUVPRPS::plot_pca(data_pca,
+                                      assay_names = assay_names,
+                                      cat_var=group,
+                                      cat_var_label = x,
+                                      color = color.group)
 
-            ## Compute Silhouette
-            message(paste("Silhouette coefficient based on: ",x,sep=""))
-            silh=RUVPRPS::compute_silhouette(data_pca,assay_names = assay_names,
-                                             cat_var=group,
-                                             cat_var_label = x)
+                ## Compute Silhouette
+                message(paste("Silhouette coefficient based on: ",x,sep=""))
+                silh=RUVPRPS::compute_silhouette(data_pca,
+                                                 assay_names = assay_names,
+                                                 cat_var=group,
+                                                 cat_var_label = x)
 
-            ## Compute ARI
-            message(paste("ARI based on: ",x,sep=""))
-            ari=RUVPRPS::compute_ari(data_pca,assay_names = assay_names,
-                                     cat_var=group,
-                                     cat_var_label = x)
-            return(list(PCA=PCA,sil=silh,ari=ari))
-        })
-    names(cat.var.assessment)=cat_var_label
-
+                ## Compute ARI
+                message(paste("ARI based on: ",x,sep=""))
+                ari=RUVPRPS::compute_ari(data_pca,
+                                         assay_names = assay_names,
+                                         cat_var=group,
+                                         cat_var_label = x)
+                return(list(PCA=PCA,sil=silh,ari=ari))
+            })
+        names(cat.var.assessment)=cat_var_label
+    }
 
     ## Plot combined silhouette based on all pairs of cat var
     Combined_sil_plot<-NULL
@@ -115,43 +124,65 @@ norm_assessment = function(
 
 
 
-    ################## Assessment on the library size ##################
-    cont_var=sample.annot[, cont_var_label]
-    ## Compute regression between library size and PCs
-    message("Linear regression between the first cumulative PC and library size")
-    reg_lib_size= RUVPRPS::regression_pc_contvar(pca=data_pca,assay_names = assay_names,
-                               cont_var = cont_var,cont_var_label)
+    ################# Continous variable ################
+    nb_cont_var=length(cont_var_label)
+    if (nb_cont_var>0){
+        cont.var.assessment<- lapply(
+            cont_var_label,
+            function(x){
+                group=as.factor(sample.annot[ , x])
 
-    ## Compute Spearman correlation between gene expression and library size
-    message("Spearman correlation between individual gene expression and library size")
-    corr_lib_size=RUVPRPS::correlation_gene_exp_contvar(se,assay_names = assay_names,
-                                                        cont_var = cont_var,
-                                                        cont_var_label=cont_var_label,
-                                                        apply.log)
+                ## Compute regression between library size and PCs
+                message("Linear regression between the first cumulative PC and library size")
+                reg= RUVPRPS::regression_pc_contvar(pca=data_pca,
+                                                    assay_names = assay_names,
+                                                    cont_var = group,
+                                                    cont_var_label=x)
+
+                ## Compute Spearman correlation between gene expression and library size
+                message("Spearman correlation between individual gene expression and library size")
+                corr=RUVPRPS::correlation_gene_exp_contvar(se,
+                                                           assay_names = assay_names,
+                                                           cont_var = group,
+                                                           cont_var_label=x,
+                                                           apply.log)
+                return(list(reg=reg,corr=corr))
+            })
+        names(cont.var.assessment)=cont_var_label
+    }
 
 
     ################## Generate pdf file to save the plots #####################
     if (!is.null(output_file)){
         pdf(output_file)
-        ## Plot PCA
-        for (v in 1:(nb_cat_var)){
-            plot(cat.var.assessment[[v]][['PCA']])
+        ## Categorical variable
+            for (v in 1:(nb_cat_var)){
+                plot(cat.var.assessment[[v]][['PCA']])
+            }
+            ## Combined silhouette
+            p <- lapply(names(Combined_sil_plot),
+                        function(x){
+                        plot(Combined_sil_plot[[x]])
+            })
+        ## Continuous variable
+        for (v in 1:(nb_cont_var)){
+            plot(cont.var.assessment[[v]][['reg']][['plot']])
+            plot(cont.var.assessment[[v]][['corr']][['plot']])
         }
-        p <- lapply(names(Combined_sil_plot), function(x) {
-            plot(Combined_sil_plot[[x]])
-        })
-            plot(reg_lib_size$plot)
-
-            #plot(corr_lib_size$plot)
-            #plot(combined_silh_plot)
         dev.off()
     }
-        res=list(#PCA_bio=PCA_BIO,
-                 #silh_bio=silh_bio,
-                 #PCA_batch=PCA_BATCH,
-                 #silh_batch=silh_batch,
-                 plot_reg_lib_size=reg_lib_size$plot)#,
-                 #plot_cor_gen_exp_lib_size=corr_lib_size$plot)#,
-                 #combined_silh_plot)
-    return(res)
+
+        ### Results to return
+        if (nb_cat_var>0){
+        cat.var.ass=cat.var.assessment
+        } else {
+        cat.var.ass=NULL
+        }
+        if (nb_cont_var>0){
+        cont.var.ass=cont.var.assessment
+        } else {
+        cont.var.ass=NULL
+        }
+
+        return(list(cat.var.ass=cat.var.ass,cont.var.ass=cont.var.ass))
 }

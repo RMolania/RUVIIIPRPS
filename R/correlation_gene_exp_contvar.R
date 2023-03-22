@@ -19,7 +19,7 @@
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate
 #' @importFrom tidyr pivot_longer %>%
-#' @importFrom SummarizedExperiment assays
+#' @importFrom SummarizedExperiment assay
 #' @importFrom stats cor.test p.adjust
 #' @importFrom parallel mclapply
 #' @import ggplot2
@@ -81,7 +81,7 @@ correlation_gene_exp_contvar<-function(
                 return(results)
             }
 
-            data <- as.matrix(assays(se, x))
+            data <- as.matrix(assay(se, x))
             cor <- correlation_gene_exp_contvar_single_assay(
                 expr.data = data,
                 apply.log=apply.log,
