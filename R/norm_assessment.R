@@ -123,10 +123,11 @@ norm_assessment = function(
                                cont_var = cont_var,cont_var_label)
 
     ## Compute Spearman correlation between gene expression and library size
-    # message("Spearman correlation between individual gene expression and library size")
-    # corr_lib_size=RUVPRPS::correlation_gene_exp_contvar(se,assay_names = assay_names,
-    #                                                     library_size,
-    #                                                     apply.log)
+    message("Spearman correlation between individual gene expression and library size")
+    corr_lib_size=RUVPRPS::correlation_gene_exp_contvar(se,assay_names = assay_names,
+                                                        cont_var = cont_var,
+                                                        cont_var_label=cont_var_label,
+                                                        apply.log)
 
 
     ################## Generate pdf file to save the plots #####################
