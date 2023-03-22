@@ -154,6 +154,7 @@ norm_assessment = function(
     if (!is.null(output_file)){
         pdf(output_file)
         ## Categorical variable
+        if (!is.null(cat_var_label)){
             for (v in 1:(nb_cat_var)){
                 plot(cat.var.assessment[[v]][['PCA']])
             }
@@ -162,25 +163,22 @@ norm_assessment = function(
                         function(x){
                         plot(Combined_sil_plot[[x]])
             })
+            cat.var.ass=cat.var.assessment
+        }else {
+            cat.var.ass=NULL
+        }
         ## Continuous variable
-        for (v in 1:(nb_cont_var)){
-            plot(cont.var.assessment[[v]][['reg']][['plot']])
-            plot(cont.var.assessment[[v]][['corr']][['plot']])
+        if (!is.null(cont_var_label)){
+            for (v in 1:(nb_cont_var)){
+                plot(cont.var.assessment[[v]][['reg']][['plot']])
+                plot(cont.var.assessment[[v]][['corr']][['plot']])
+            }
+            cont.var.ass=cont.var.assessment
+        } else {
+            cont.var.ass=NULL
         }
         dev.off()
     }
-
-        ### Results to return
-        if (nb_cat_var>0){
-        cat.var.ass=cat.var.assessment
-        } else {
-        cat.var.ass=NULL
-        }
-        if (nb_cont_var>0){
-        cont.var.ass=cont.var.assessment
-        } else {
-        cont.var.ass=NULL
-        }
 
         return(list(cat.var.ass=cat.var.ass,cont.var.ass=cont.var.ass))
 }
