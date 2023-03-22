@@ -84,7 +84,7 @@ regression_pc_contvar<-function(
             axis.text.y = element_text(size = 12),
             legend.text = element_text(size = 10),
             legend.title = element_text(size = 14))+
-    ggtitle(paste("Regression of",cont_var_label,"and the first cumulative PCs",sep=""))
+    ggtitle(paste("Regression of ",cont_var_label," and the first cumulative PCs",sep=""))
 
     return(list(plot=p,reg=pcs.lnreg,cont_var_label=cont_var_label))
 }
