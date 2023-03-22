@@ -116,11 +116,11 @@ norm_assessment = function(
 
 
     ################## Assessment on the library size ##################
-    library_size=sample.annot[, cont_var_label]
+    cont_var=sample.annot[, cont_var_label]
     ## Compute regression between library size and PCs
     message("Linear regression between the first cumulative PC and library size")
     reg_lib_size= RUVPRPS::regression_pc_contvar(pca=data_pca,assay_names = assay_names,
-                               cont_var = library_size)
+                               cont_var = cont_var,cont_var_label)
 
     ## Compute Spearman correlation between gene expression and library size
     # message("Spearman correlation between individual gene expression and library size")

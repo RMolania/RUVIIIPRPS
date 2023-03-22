@@ -5,13 +5,22 @@
 \title{is used to compute the linear regression of a continuous variable and the first cumulative PCs
 of the gene expression (assay) of a SummarizedExperiment class object.}
 \usage{
-regression_pc_contvar(pca, cont_var, assay_names = NULL, nb_pca_comp = 10)
+regression_pc_contvar(
+  pca,
+  cont_var,
+  cont_var_label,
+  assay_names = NULL,
+  nb_pca_comp = 10
+)
 }
 \arguments{
 \item{pca}{PCA components of a SummarizedExperiment variable that will be used in the plot.}
 
-\item{cont_var}{Vector of a continuous variable that will be computed to the PCA of the data
-(i.e. library size)}
+\item{cont_var}{Vector of a categorical variable such as sample types
+(i.e. biological subtypes) or batches.}
+
+\item{cont_var_label}{String or vector of strings of the label of categorical variable(s) such as
+sample types or batches from colData(se).}
 
 \item{assay_names}{Optional selection of names of the assays to compute the PCA.}
 

@@ -4,8 +4,10 @@
 #'
 #'
 #' @param pca PCA components of a SummarizedExperiment variable that will be used in the plot.
-#' @param cont_var Vector of a continuous variable that will be computed to the PCA of the data
-#' (i.e. library size)
+#' @param cont_var Vector of a categorical variable such as sample types
+#' (i.e. biological subtypes) or batches.
+#' @param cont_var_label String or vector of strings of the label of categorical variable(s) such as
+#' sample types or batches from colData(se).
 #' @param assay_names Optional selection of names of the assays to compute the PCA.
 #' @param nb_pca_comp The number of components of the PCA used to compute the regression.
 #'
@@ -21,6 +23,7 @@
 regression_pc_contvar<-function(
     pca,
     cont_var,
+    cont_var_label,
     assay_names=NULL,
     nb_pca_comp=10
 ){
@@ -80,7 +83,8 @@ regression_pc_contvar<-function(
             axis.text.x = element_text(size = 12, angle = 35, hjust = 1),
             axis.text.y = element_text(size = 12),
             legend.text = element_text(size = 10),
-            legend.title = element_text(size = 14))
+            legend.title = element_text(size = 14))+
+    ggtitle(paste("Regression of",cont_var_label,"and the first cumulative PCs",sep=""))
 
-    return(list(plot=p,reg=pcs.lnreg))
+    return(list(plot=p,reg=pcs.lnreg,cont_var_label=cont_var_label))
 }
