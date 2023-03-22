@@ -17,7 +17,7 @@ plot_combined_silh<-function(
 ){
 
 ## Merge two silh coeffs
-df=cbind(silh1,silh2)
+df=cbind(silh1$silh.coeff,silh2$silh.coeff)
 everything<-datasets<-Silh1<-Silh2<-NULL
 colnames(df)=c("datasets","Silh1","datasets","Silh2")
 df=df[,-3]
@@ -28,8 +28,8 @@ dataSets.colors <- wes_palette(
         name = "GrandBudapest1")[c(1,2,4,3)]
 p=ggplot(df,aes(Silh1,Silh2,colour=datasets)) +
     geom_point(aes(color = datasets), size = 3) +
-    xlab('Silhouette based on Biology') +
-    ylab ('Silhouette based on Batch') +
+    xlab(paste('Silhouette based on ',silh1$cat_var_label,sep="")) +
+    ylab (paste('Silhouette based on ',silh2$cat_var_label,sep="")) +
     scale_color_manual(
         values=c(dataSets.colors),
         name = 'Datasets') +

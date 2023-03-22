@@ -85,6 +85,6 @@ compute_silhouette<-function(
             ggtitle(paste("Silhouette coefficient computed on ",cat_var_label,sep=""))
         return(list(plot=p,silh.coeff=pcs.silCoef,cat_var_label=cat_var_label))
     }else{
-        return(silh.coeff=pcs.silCoef)}
+        return(list(silh.coeff=pcs.silCoef,cat_var_label=cat_var_label))}
 }
 

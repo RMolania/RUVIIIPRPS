@@ -85,6 +85,6 @@ compute_ari <-function(
         ggtitle(paste("ARI computed on ",cat_var_label,sep=""))
     return(list(plot=p,ari=pcs.ari,cat_var_label=cat_var_label))
     }else{
-        return(ari=pcs.ari)}
+        return(list(ari=pcs.ari,cat_var_label=cat_var_label))}
 }
 

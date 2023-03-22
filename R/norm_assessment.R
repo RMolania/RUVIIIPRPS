@@ -79,21 +79,21 @@ norm_assessment = function(
             message(paste("PCA based on: ",x,sep=""))
             ### Compute PCA
             PCA=RUVPRPS::plot_pca(data_pca,
-                                  variable=group,
-                                  variable.name =  x,
+                                  cat_var=group,
+                                  cat_var_label = x,
                                   color = color.group)
 
             ## Compute Silhouette
             message(paste("Silhouette coefficient based on: ",x,sep=""))
             silh=RUVPRPS::compute_silhouette(data_pca,
                                              cat_var=group,
-                                             cat_var_label = cat_var_label)
+                                             cat_var_label = x)
 
             ## Compute ARI
             message(paste("ARI based on: ",x,sep=""))
             ari=RUVPRPS::compute_ari(data_pca,
                                      cat_var=group,
-                                     cat_var_label = cat_var_label)
+                                     cat_var_label = x)
             return(list(PCA=PCA,sil=silh,ari=ari))
         })
     names(cat.var.assessment)=cat_var_label
@@ -132,16 +132,13 @@ norm_assessment = function(
     ################## Generate pdf file to save the plots #####################
     if (!is.null(output_file)){
         pdf(output_file)
-            # do.call(grid.arrange,
-            #     c(PCA_BIO,
-            #       ncol = 4))
-            # plot(silh_bio$plot)
-            # plot(ari_bio$plot)
-            # do.call(grid.arrange,
-            #     c(PCA_BATCH,
-            #       ncol = 4))
-            # plot(silh_batch$plot)
-            # plot(ari_batch$plot)
+        ## Plot PCA
+        for (v in 1:(nb_cat_var)){
+            plot(cat.var.assessment[[v]][['PCA']])
+        }
+        p <- lapply(names(Combined_sil_plot), function(x) {
+            plot(Combined_sil_plot[[x]])
+        })
             plot(reg_lib_size$plot)
             plot(corr_lib_size$plot)
             #plot(combined_silh_plot)
