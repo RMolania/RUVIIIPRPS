@@ -41,7 +41,10 @@ p=ggplot(df,aes(Silh1,Silh2,colour=datasets)) +
         axis.text.x = element_text(size = 12),
         axis.text.y = element_text(size = 12),
         legend.text = element_text(size = 12),
-        legend.title = element_text(size = 16))
+        legend.title = element_text(size = 16))+
+    ggtitle(paste("Combined silhouette coefficients computed on "
+                  ,silh1$cat_var_label," and ",silh2$cat_var_label,sep=""))
+
 return(p)
 
 }
