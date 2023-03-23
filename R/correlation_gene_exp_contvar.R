@@ -19,7 +19,7 @@
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate
 #' @importFrom tidyr pivot_longer %>%
-#' @importFrom SummarizedExperiment assay
+#' @importFrom SummarizedExperiment assays assay
 #' @importFrom stats cor.test p.adjust
 #' @importFrom parallel mclapply
 #' @import ggplot2
