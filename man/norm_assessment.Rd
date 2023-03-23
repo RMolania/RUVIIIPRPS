@@ -16,8 +16,8 @@ norm_assessment(
   se,
   assay_names = NULL,
   apply.log = FALSE,
-  cat_var_label,
-  cont_var_label,
+  cat_var_label = NULL,
+  cont_var_label = NULL,
   output_file = NULL,
   n.cores = 5
 )
