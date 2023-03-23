@@ -143,7 +143,7 @@ norm_assessment = function(
                                                            assay_names = assay_names,
                                                            cont_var = group,
                                                            cont_var_label=x,
-                                                           apply.log)
+                                                           apply.log=apply.log)
                 return(list(reg=reg,corr=corr))
             })
         names(cont.var.assessment)=cont_var_label
