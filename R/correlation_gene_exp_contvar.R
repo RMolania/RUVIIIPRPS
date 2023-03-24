@@ -41,7 +41,7 @@ correlation_gene_exp_contvar<-function(
             cont_var_label,
             'is different from the continous variable provided ',
             cont_var,
-            'please provide the corresponding label and continous variable.'))
+            'please provide the corresponding label and continous variable.\n'))
     }
     if (!is.null(assay_names)){
         normalization=assay_names

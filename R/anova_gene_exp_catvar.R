@@ -32,11 +32,10 @@ anova_gene_exp_contvar<-function(
     ### check the inputs
     if( !identical(cat_var,se@colData[, cat_var_label])){
         stop(paste0(
-            'There label of the categorical variable ',
+            'The label of the categorical variable ',
             cat_var_label,
-            'is different from the categorical variable provided ',
-            cat_var,
-            'please provide the corresponding label and categorical variable.\n'))
+            'is different from the categorical variable provided,
+            please provide the corresponding label and categorical variable.\n'))
     }
 
     if( anyNA(se@colData[, cat_var_label]) ){
@@ -48,13 +47,13 @@ anova_gene_exp_contvar<-function(
     if( length(unique(se@colData[, cat_var_label])) < 2 ){
         stop(paste0(
             'The ',
-            cat_var,
+            cat_var_label,
             ', contains only one variable. Please provide at least 2.\n'))
     }
     if( is.numeric(class(se@colData[, cat_var_label]))){
         stop(paste0(
             'The ',
-            cat_var,
+            cat_var_label,
             ', is numeric, please provide a categorical variable.\n'))
     }
     ## Assays
@@ -103,6 +102,7 @@ anova_gene_exp_contvar<-function(
                     ylab('Gene expression (log)') +
                     xlab(cat_var_label) +
                     facet_wrap(~genes) +
+                    ggtitle(paste("ANOVA pos. correlation computed on ",cat_var_label,sep=""))+
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', size = 1),
@@ -113,8 +113,7 @@ anova_gene_exp_contvar<-function(
                         legend.text = element_text(size = 10),
                         legend.title = element_text(size = 14),
                         strip.text.x = element_text(size = 10),
-                        plot.title = element_text(size = 16)+
-                            ggtitle(paste("ANOVA pos. correlation computed on ",cat_var_label,sep=""))
+                        plot.title = element_text(size = 16)
                     )
                 ### negative correlation
                 p.low <- as.data.frame(t(y[row.names(anova.batch.genes)[c(c(nrow(anova.batch.genes)-c(top.genes.no -1)): nrow(anova.batch.genes))], ]))
@@ -125,6 +124,7 @@ anova_gene_exp_contvar<-function(
                     ylab('Gene expression (log)') +
                     xlab(cat_var_label) +
                     facet_wrap(~genes) +
+                    ggtitle(paste("ANOVA neg. correlation computed on ",cat_var_label,sep=""))+
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', size = 1),
@@ -135,8 +135,7 @@ anova_gene_exp_contvar<-function(
                         legend.text = element_text(size = 10),
                         legend.title = element_text(size = 14),
                         strip.text.x = element_text(size = 10),
-                        plot.title = element_text(size = 16)+
-                            ggtitle(paste("ANOVA neg. correlationcomputed on ",cat_var_label,sep=""))
+                        plot.title = element_text(size = 16)
                     )
                 return(list(
                     anova.batch.genes =anova.batch.genes[row.names(se), ],

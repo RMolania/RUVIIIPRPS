@@ -37,13 +37,13 @@ norm_assessment = function(
 ){
     ### Check se and assay names
     if (!class(se)[1] == 'SummarizedExperiment') {
-        stop('Please provide a summarized experiment object.')
+        stop('Please provide a summarized experiment object.\n')
     } else if (class(se)[1] == 'SummarizedExperiment' & ncol(colData(se)) == 0){
         stop('The Summarized experiment object does not contain
            sample annotations, please provide colData of the summarized
-           experiment object before running the norm_assessment() function.')
+           experiment object before running the norm_assessment() function.\n')
     } else if((!is.null(assay_names))&&!(assay_names %in% names(assays(se)))){
-        stop('The selected assay(s) is/are not in the assays names of the SummarizedExperiment class object.')
+        stop('The selected assay(s) is/are not in the assays names of the SummarizedExperiment class object.\n')
     }
 
     ### Check cat_var_label and cont_var_label
@@ -54,12 +54,12 @@ norm_assessment = function(
         stop(
             'Provided variable label from cat_var_label and cont_var_label "',
             paste0(all.var.label[!all.var.label %in% exist.var.label], collapse = ' & '),
-            '" are not in the colData of the Summarized Experiment object.')
+            '" are not in the colData of the Summarized Experiment object.\n')
     }
 
     ### Check cat or cont var are selected
     if (is.null(cat_var_label) && is.null(cont_var_label)){
-        stop('Please provide at least cat_var_label or cont_var_label')
+        stop('Please provide at least cat_var_label or cont_var_label.\n')
     }
 
     ### Compute PCA
@@ -106,11 +106,11 @@ norm_assessment = function(
 
                     ## Compute ANOVA
                     message(paste("ANOVA based on: ",x,sep=""))
-                    anova=RUVPRPS::anova_gene_exp_contvar(se,
-                                           assay_names = assay_names,
-                                           apply.log=FALSE,
-                                           cat_var=group,
-                                           cat_var_label = x)
+                    anova=RUVPRPS::anova_gene_exp_contvar(se = se,
+                                                          cat_var=group,
+                                                          cat_var_label = x,
+                                                          assay_names = assay_names,
+                                                          apply.log=apply.log)
 
                     return(list(PCA=PCA,sil=silh,ari=ari,anova=anova))
                 })
