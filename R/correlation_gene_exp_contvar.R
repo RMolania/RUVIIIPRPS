@@ -34,6 +34,15 @@ correlation_gene_exp_contvar<-function(
         apply.log=FALSE,
         n.cores=5
 ){
+    ### check the inputs
+    if( !identical(cont_var,se@colData[, cont_var_label])){
+        stop(paste0(
+            'There label of the continous variable ',
+            cont_var_label,
+            'is different from the continous variable provided ',
+            cont_var,
+            'please provide the corresponding label and continous variable.'))
+    }
     if (!is.null(assay_names)){
         normalization=assay_names
     }else{

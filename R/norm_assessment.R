@@ -103,7 +103,16 @@ norm_assessment = function(
                                              assay_names = assay_names,
                                              cat_var=group,
                                              cat_var_label = x)
-                    return(list(PCA=PCA,sil=silh,ari=ari))
+
+                    ## Compute ANOVA
+                    message(paste("ANOVA based on: ",x,sep=""))
+                    anova=RUVPRPS::anova_gene_exp_contvar(se,
+                                           assay_names = assay_names,
+                                           apply.log=FALSE,
+                                           cat_var=group,
+                                           cat_var_label = x)
+
+                    return(list(PCA=PCA,sil=silh,ari=ari,anova=anova))
                 })
         names(cat.var.assessment)=cat_var_label
 
@@ -157,6 +166,8 @@ norm_assessment = function(
         if (!is.null(cat_var_label)){
             for (v in 1:(nb_cat_var)){
                 plot(cat.var.assessment[[v]][['PCA']])
+                plot(cat.var.assessment[[v]][['anova']][['plot.high']])
+                plot(cat.var.assessment[[v]][['anova']][['plot.low']])
             }
             ## Combined silhouette
             p <- lapply(names(Combined_sil_plot),
