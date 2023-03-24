@@ -103,6 +103,7 @@ anova_gene_exp_contvar<-function(
                     ylab('Gene expression (log)') +
                     xlab(cat_var_label) +
                     facet_wrap(~genes) +
+                    ggtitle(paste("ANOVA pos. correlation computed on ",cat_var_label,sep=""))+
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', size = 1),
@@ -113,8 +114,7 @@ anova_gene_exp_contvar<-function(
                         legend.text = element_text(size = 10),
                         legend.title = element_text(size = 14),
                         strip.text.x = element_text(size = 10),
-                        plot.title = element_text(size = 16)+
-                            ggtitle(paste("ANOVA pos. correlation computed on ",cat_var_label,sep=""))
+                        plot.title = element_text(size = 16)
                     )
                 ### negative correlation
                 p.low <- as.data.frame(t(y[row.names(anova.batch.genes)[c(c(nrow(anova.batch.genes)-c(top.genes.no -1)): nrow(anova.batch.genes))], ]))
@@ -125,6 +125,7 @@ anova_gene_exp_contvar<-function(
                     ylab('Gene expression (log)') +
                     xlab(cat_var_label) +
                     facet_wrap(~genes) +
+                    ggtitle(paste("ANOVA neg. correlation computed on ",cat_var_label,sep=""))+
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', size = 1),
@@ -135,8 +136,7 @@ anova_gene_exp_contvar<-function(
                         legend.text = element_text(size = 10),
                         legend.title = element_text(size = 14),
                         strip.text.x = element_text(size = 10),
-                        plot.title = element_text(size = 16)+
-                            ggtitle(paste("ANOVA neg. correlationcomputed on ",cat_var_label,sep=""))
+                        plot.title = element_text(size = 16)
                     )
                 return(list(
                     anova.batch.genes =anova.batch.genes[row.names(se), ],
