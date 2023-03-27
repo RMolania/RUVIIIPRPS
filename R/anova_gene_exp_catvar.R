@@ -30,11 +30,11 @@ anova_gene_exp_contvar<-function(
         top.genes.no = 3
 ){
     ### check the inputs
-    if( !identical(cat_var,se@colData[, cat_var_label])){
+    if( !identical(cat_var,as.factor(se@colData[, cat_var_label]))){
         stop(paste0(
             'The label of the categorical variable ',
             cat_var_label,
-            'is different from the categorical variable provided,
+            ' is different from the categorical variable provided,
             please provide the corresponding label and categorical variable.\n'))
     }
 
