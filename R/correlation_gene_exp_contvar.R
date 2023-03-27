@@ -2,9 +2,9 @@
 #' of a SummarizedExperiment class object and a continous variable (i.e. library size).
 #'
 #' @param se A SummarizedExperiment object that will be used to compute the correlation
-#' @param cont_var Vector of a categorical variable such as sample types
+#' @param cont_var Vector of a continous variable such as sample types
 #' (i.e. biological subtypes) or batches.
-#' @param cont_var_label String or vector of strings of the label of categorical variable(s) such as
+#' @param cont_var_label String or vector of strings of the label of continous variable(s) such as
 #' sample types or batches from colData(se).
 #' @param method A character string indicating which correlation coefficient
 #' is to be used for the test: "pearson", "kendall", or "spearman". By default 'spearman will
@@ -35,10 +35,10 @@ correlation_gene_exp_contvar<-function(
         n.cores=5
 ){
     ### check the inputs
-    if( !identical(cat_var,as.factor(se@colData[, cat_var_label]))){
+    if( !identical(cont_var,se@colData[, cont_var_label])){
         stop(paste0(
-            'The label of the categorical variable ',
-            cat_var_label,
+            'The label of the continous variable ',
+            cont_var_label,
             ' is different from the categorical variable provided,
             please provide the corresponding label and categorical variable.\n'))
     }
