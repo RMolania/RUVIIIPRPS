@@ -18,10 +18,10 @@ correlation_gene_exp_contvar(
 \arguments{
 \item{se}{A SummarizedExperiment object that will be used to compute the correlation}
 
-\item{cont_var}{Vector of a categorical variable such as sample types
+\item{cont_var}{Vector of a continous variable such as sample types
 (i.e. biological subtypes) or batches.}
 
-\item{cont_var_label}{String or vector of strings of the label of categorical variable(s) such as
+\item{cont_var_label}{String or vector of strings of the label of continous variable(s) such as
 sample types or batches from colData(se).}
 
 \item{assay_names}{Optional string or list of strings for selection of the names
