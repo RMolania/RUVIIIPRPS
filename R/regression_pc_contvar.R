@@ -70,8 +70,8 @@ regression_pc_contvar<-function(
             name = 'Datasets',
             labels = normalization) +
         scale_x_continuous(
-            breaks = (1:10),
-            labels = c('PC1', paste0('PC1:', 2:10)) ) +
+            breaks = (1:nb_pca_comp),
+            labels = c('PC1', paste0('PC1:', 2:nb_pca_comp)) ) +
         scale_y_continuous(
             breaks = scales::pretty_breaks(n = 5),
             limits = c(0,1)) +
