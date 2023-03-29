@@ -112,7 +112,7 @@ norm_assessment = function(
                                                           assay_names = assay_names,
                                                           apply.log=apply.log)
 
-                    return(list(PCA=PCA,sil=silh,ari=ari,anova=anova))
+                    return(list(PCA=PCA,sil=silh,ari=ari,da_anova=anova))
                 })
         names(cat.var.assessment)=cat_var_label
 
@@ -166,7 +166,7 @@ norm_assessment = function(
         if (!is.null(cat_var_label)){
             for (v in 1:(nb_cat_var)){
                 plot(cat.var.assessment[[v]][['PCA']])
-                plot(cat.var.assessment[[v]][['anova']][['boxplot_ftest']])
+                plot(cat.var.assessment[[v]][['da_anova']][['boxplot_ftest']])
             }
             ## Combined silhouette
             p <- lapply(names(Combined_sil_plot),
