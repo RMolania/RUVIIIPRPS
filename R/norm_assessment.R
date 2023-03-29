@@ -106,7 +106,7 @@ norm_assessment = function(
 
                     ## Compute ANOVA
                     message(paste("ANOVA based on: ",x,sep=""))
-                    anova=RUVPRPS::anova_gene_exp_contvar(se = se,
+                    anova=RUVPRPS::anova_gene_exp_catvar(se = se,
                                                           cat_var=group,
                                                           cat_var_label = x,
                                                           assay_names = assay_names,
