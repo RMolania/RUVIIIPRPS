@@ -119,7 +119,7 @@ norm_assessment = function(
         ## Plot combined silhouette based on all pairs of cat var
         Combined_sil_plot<-NULL
         if (nb_cat_var>1){
-            message("Combined silhouette plot of cat var")
+            message("Combined silhouette plot of all categorical variables")
             for (v in 1:(nb_cat_var-1)){
                 for (v2 in ((v+1):nb_cat_var)){
                     p=RUVPRPS::plot_combined_silh(
@@ -166,8 +166,7 @@ norm_assessment = function(
         if (!is.null(cat_var_label)){
             for (v in 1:(nb_cat_var)){
                 plot(cat.var.assessment[[v]][['PCA']])
-                plot(cat.var.assessment[[v]][['anova']][['plot.high']])
-                plot(cat.var.assessment[[v]][['anova']][['plot.low']])
+                plot(cat.var.assessment[[v]][['anova']][['boxplot_ftest']])
             }
             ## Combined silhouette
             p <- lapply(names(Combined_sil_plot),
