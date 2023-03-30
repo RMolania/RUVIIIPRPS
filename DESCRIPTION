@@ -28,7 +28,8 @@ Imports:
     matrixTests,
     fastDummies,
     kunstomverse,
-    stats
+    stats,
+    Rfast
 URL: https://github.com/mtrussart/RUVPRPS
 BugReports: https://github.com/mtrussart/RUVPRPS/issues
 Suggests: 

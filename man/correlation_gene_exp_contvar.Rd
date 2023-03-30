@@ -12,7 +12,11 @@ correlation_gene_exp_contvar(
   assay_names = NULL,
   method = "spearman",
   apply.log = FALSE,
-  n.cores = 5
+  boxplot_output = TRUE,
+  ranked_genes_plot_output = FALSE,
+  a = 0.05,
+  rho = 0,
+  nb_ranked_genes = 3
 )
 }
 \arguments{
@@ -34,7 +38,19 @@ be selected.}
 \item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
 
-\item{n.cores}{is the number of cpus used for mclapply parallelization.}
+\item{boxplot_output}{Indicates whether to plot the boxplot of the correlation.}
+
+\item{ranked_genes_plot_output}{Indicates whether to plot the gene expression of the number of genes
+from the high or low correlation.}
+
+\item{a}{The significance level used for the confidence intervals in the correlation,
+by default it is set to 0.05.}
+
+\item{rho}{The value of the hypothesised correlation to be used in the hypothesis testing,
+by default it is set to 0.}
+
+\item{nb_ranked_genes}{Defines the number of genes from the top or bottom listing of anova to plot,
+by default is set to 3.}
 }
 \value{
 list List containing the association plot and the computed correlation
