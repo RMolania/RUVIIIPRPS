@@ -124,7 +124,7 @@ norm_assessment = function(
                 for (v2 in ((v+1):nb_cat_var)){
                     p=RUVPRPS::plot_combined_silh(
                         cat.var.assessment[[cat_var_label[v]]][['sil']],
-                        cat.var.assessment[[cat_var_label[v+1]]][['sil']])
+                        cat.var.assessment[[cat_var_label[v2]]][['sil']])
                     Combined_sil_plot[[paste0(cat_var_label[v],"_",cat_var_label[v2])]]=p
                 }
             }
