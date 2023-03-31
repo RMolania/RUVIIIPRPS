@@ -17,6 +17,7 @@
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom matrixTests row_oneway_equalvar
 #' @importFrom fastDummies dummy_cols
+#' @importFrom wesanderson wes_palette
 #' @import ggplot2
 #' @export
 
@@ -33,7 +34,7 @@ vector_correlation_pc_catvar<-function(
     if (!is.null(assay_names)){
         normalization=assay_names
     }else{
-        normalization=names(assays(pca))
+        normalization=names(pca)
     }
 
     ## Correlation
@@ -61,7 +62,7 @@ vector_correlation_pc_catvar<-function(
                 })
         })
     names(cca.all)=normalization
-    return(cca.all)
+
 
     ### Plot the association between the variable and the PC using the computed regression
     pcs<-datasets<-pcs<-cca.coef<-NULL
@@ -100,7 +101,7 @@ vector_correlation_pc_catvar<-function(
             axis.text.y = element_text(size = 12),
             legend.text = element_text(size = 10),
             legend.title = element_text(size = 14))+
-        ggtitle(paste("Vector correlation between",cat_var_label," and PCs",sep=""))
+        ggtitle(paste("Vector correlation between ",cat_var_label," and PCs",sep=""))
 
     return(list(plot=p,cca=pcs.cca,cat_var_label=cat_var_label))
 }

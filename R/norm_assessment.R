@@ -112,7 +112,14 @@ norm_assessment = function(
                                                           assay_names = assay_names,
                                                           apply.log=apply.log)
 
-                    return(list(PCA=PCA,sil=silh,ari=ari,da_anova=anova))
+                    ## Compute Vector correlation
+                    message(paste("Vector correlation with PCs based on: ",x,sep=""))
+                    corr=RUVPRPS::vector_correlation_pc_catvar(data_pca,
+                                                                cat_var=group,
+                                                                cat_var_label = x,
+                                                                assay_names=assay_names)
+
+                    return(list(PCA=PCA,sil=silh,ari=ari,da_anova=anova,corr=corr))
                 })
         names(cat.var.assessment)=cat_var_label
 
@@ -167,6 +174,7 @@ norm_assessment = function(
             for (v in 1:(nb_cat_var)){
                 plot(cat.var.assessment[[v]][['PCA']])
                 plot(cat.var.assessment[[v]][['da_anova']][['boxplot_ftest']])
+                plot(cat.var.assessment[[v]][['corr']][['plot']])
             }
             ## Combined silhouette
             p <- lapply(names(Combined_sil_plot),
