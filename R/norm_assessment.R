@@ -201,7 +201,11 @@ norm_assessment = function(
             cont.var.ass=NULL
         }
         ## RLE plot
-        plot(rle$plot)
+        lreg.pcs<- lapply(
+            normalization,
+            function(x){
+                plot(rle$plot[[x]])
+            })
         dev.off()
     }
 
