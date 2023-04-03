@@ -56,6 +56,7 @@ plot_RLE<-function(
             rle=rle.comp(expr=expr)
             rle
         })
+        names(rle.all)=normalization
 
         ## Plot RLE
         samples<-rle<-everything<-NULL
