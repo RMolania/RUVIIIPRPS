@@ -68,7 +68,7 @@ plot_RLE<-function(
                     names_to = 'samples',values_to = 'rle') %>%
                     mutate(samples = factor(samples))
                 p=ggplot(rle_plot, aes(x = samples,y=rle)) +
-                geom_boxplot2() +
+                geom_boxplot2(width=0.01,lwd=0.5) +
                 ylab('RLE') +
                 xlab('') +
                 theme(panel.background = element_blank(),
