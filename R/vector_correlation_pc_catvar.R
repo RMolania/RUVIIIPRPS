@@ -18,6 +18,7 @@
 #' @importFrom matrixTests row_oneway_equalvar
 #' @importFrom fastDummies dummy_cols
 #' @importFrom wesanderson wes_palette
+#' @importFrom stats cancor
 #' @import ggplot2
 #' @export
 
@@ -55,7 +56,7 @@ vector_correlation_pc_catvar<-function(
                 1:nb_pca_comp,
                 function(y){
                     ## Canonical correlations
-                    cca.fcch <- stats::cancor(
+                    cca.fcch <- cancor(
                         x = pcs[, 1:y, drop = FALSE],
                         y = catvar.dummies)
                     1 - prod(1 - cca.fcch$cor^2)
