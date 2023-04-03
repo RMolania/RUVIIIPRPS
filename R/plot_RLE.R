@@ -68,7 +68,7 @@ plot_RLE<-function(
                     names_to = 'samples',values_to = 'rle') %>%
                     mutate(samples = factor(samples))
                 p=ggplot(rle_plot, aes(x = samples,y=rle)) +
-                geom_boxplot2(width=0.01,lwd=0.5) +
+                geom_boxplot2(width=0.01,lwd=0.5,alpha=0.2) +
                 ylab('RLE') +
                 xlab('') +
                 theme(panel.background = element_blank(),
@@ -76,7 +76,8 @@ plot_RLE<-function(
                 axis.title.y = element_text(size = 14),
                 axis.text.x = element_text(size = 12),
                 axis.text.y = element_text(size = 8))+
-                ggtitle(paste(" RLE plot distribution of ",x,sep=""))
+                ggtitle(paste(" RLE plot distribution of ",x,sep=""))+
+                    geom_hline(yintercept=0)
             p
             })
 
