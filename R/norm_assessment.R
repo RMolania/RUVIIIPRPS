@@ -165,6 +165,11 @@ norm_assessment = function(
         names(cont.var.assessment)=cont_var_label
     }
 
+    ########## RLE plot ############
+    # RLE
+    rle=RUVPRPS::plot_RLE(se=se,
+                          assay_names = assay_names,
+                          apply.log=apply.log)
 
     ################## Generate pdf file to save the plots #####################
     if (!is.null(output_file)){
@@ -195,8 +200,10 @@ norm_assessment = function(
         } else {
             cont.var.ass=NULL
         }
+        ## RLE plot
+        plot(rle$plot)
         dev.off()
     }
 
-        return(list(cat.var.ass=cat.var.ass,cont.var.ass=cont.var.ass))
+        return(list(cat.var.ass=cat.var.ass,cont.var.ass=cont.var.ass,rle=rle))
 }
