@@ -71,6 +71,9 @@ plot_RLE<-function(
                 geom_boxplot2(width=0.01,lwd=0.5,alpha=0.2) +
                 ylab('RLE') +
                 xlab('') +
+                coord_cartesian(ylim=c(-6,6))+
+                stat_summary(geom = "crossbar", width=1, fatten=4, color="darkgreen",
+                                 fun.data = function(x){c(y=median(x), ymin=median(x), ymax=median(x))})+
                 theme(panel.background = element_blank(),
                 axis.line = element_line(colour = 'black'),
                 axis.title.y = element_text(size = 14),
