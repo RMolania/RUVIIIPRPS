@@ -63,11 +63,8 @@ identify_unwanted_variation = function(
     }
 
 
-    assessment=RUVPRPS::norm_assessment(se,
-                                        cat_var_label,
-                                        assay_names,
-                                        apply.log,
-                                        cont_var_label,
-                                        output_file)
+    assessment=RUVPRPS::norm_assessment(se=se,assay_names = assay_names,apply.log = apply.log,
+                                        cat_var_label = cat_var_label,cont_var_label =cont_var_label,
+                                        output_file =  output_file)
     return(assessment)
 }
