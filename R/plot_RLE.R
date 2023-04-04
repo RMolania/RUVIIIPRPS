@@ -73,7 +73,7 @@ plot_RLE<-function(
                 ylab('RLE') +
                 xlab('') +
                 coord_cartesian(ylim=c(-6,6))+
-                stat_summary(geom = "crossbar", width=1, fatten=4, color="darkgreen",
+                stat_summary(geom = "crossbar", width=5, fatten=8, color="darkgreen",
                                  fun.data = function(x){c(y=median(x), ymin=median(x), ymax=median(x))})+
                 theme(panel.background = element_blank(),
                 axis.line = element_line(colour = 'black'),
