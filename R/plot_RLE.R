@@ -11,6 +11,7 @@
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom kunstomverse geom_boxplot2
 #' @importFrom matrixStats rowMedians colMedians colIQRs
+#' @importFrom stats median
 #' @import ggplot2
 #' @export
 
