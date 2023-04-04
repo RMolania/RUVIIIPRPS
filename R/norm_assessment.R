@@ -1,23 +1,23 @@
 #' is used to assess the performance of the normalisation of a SummarizedExperiment class object.
 #'
 #' Several assessment will be performed:
-#' * For each categorical variable:
+#' For each categorical variable:
 #' - PCA plot of the categorical variable.
 #' - Silhouette and ARI computed on the categorical variable.
 #' - Differential analysis based ANOVA between the gene expression and the categorical variable.
 #' - Vector correlation between the first cumulative PCs of the gene expression and the categorical variable.
+#' For each continous variable:
+#' - Linear regression between the first cumulative PC and continuous variable.
+#' - Correlation between gene expression and continuous variable.
+#'
 #' It will output the following plots:
 #' - PCA plot of each categorical variable.
 #' - Boxplot of the F-test distribution from ANOVA between the gene expression and each categorical variable.
 #' - Vector correlation between the first cumulative PCs of the gene expression and each categorical variable.
 #' - Combined Silhouette plot of the combined pair of all categorical variables.
-#' * For each continous variable:
-#' - Linear regression between the first cumulative PC and continuous variable.
-#' - Correlation between gene expression and continuous variable.
-#' It will output the following plots:
 #' - Linear regression between the first cumulative PC and continuous variable.
 #' - Boxplot of the correlation between gene expression and continuous variable.
-#' * It will also output the RLE plot distribution.
+#' - It will also output the RLE plot distribution.
 #'
 #' @param se A SummarizedExperiment object that will be used to assess the performance of the normalisation of the data.
 #' @param assay_names Optional string or list of strings for selection of the names
