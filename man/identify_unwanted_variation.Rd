@@ -38,7 +38,7 @@ list List of assessments plots and metrics used for the assessment
 }
 \description{
 Several assessment will be performed:
-\enumerate{
+\itemize{
 \item For each categorical variable:
 }
 \itemize{
@@ -52,7 +52,7 @@ It will output the following plots:
 \item Vector correlation between the first cumulative PCs of the gene expression and each categorical variable.
 \item Combined Silhouette plot of the combined pair of all categorical variables.
 }
-\enumerate{
+\itemize{
 \item For each continous variable:
 }
 \itemize{
@@ -62,7 +62,7 @@ It will output the following plots:
 \item Linear regression between the first cumulative PC and continuous variable.
 \item Boxplot of the correlation between gene expression and continuous variable.
 }
-\enumerate{
+\itemize{
 \item It will also output the RLE plot distribution.
 }
 }
