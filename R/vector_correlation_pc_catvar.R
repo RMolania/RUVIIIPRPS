@@ -1,5 +1,5 @@
-#' is used to compute the vector correlation between the first  PCs of the gene expression (assay)
-#' of a SummarizedExperiment class object and a continous variable (i.e. library size).
+#' is used to compute the vector correlation between the first cumulative PCs of the gene expression (assay)
+#' of a SummarizedExperiment class object and a categorical variable (i.e. batch).
 #'
 #' @param pca PCA components of a SummarizedExperiment variable that will be used in the plot.
 #' @param cat_var Vector of a categorical variable such as sample types
@@ -11,7 +11,7 @@
 #' @param plot_output Indicates whether to plot the results
 #' @param nb_pca_comp The number of components of the PCA used to compute the regression.
 #'
-#'
+#' @return list List containing the associated plot and correlation for the categorical variable.
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
 #' @importFrom SummarizedExperiment assays assay
@@ -102,7 +102,7 @@ vector_correlation_pc_catvar<-function(
             axis.text.y = element_text(size = 12),
             legend.text = element_text(size = 10),
             legend.title = element_text(size = 14))+
-        ggtitle(paste("Vector correlation between ",cat_var_label," and PCs",sep=""))
+        ggtitle(paste("Vector correlation between ",cat_var_label," and the first cumulative PCs",sep=""))
 
     return(list(plot=p,cca=pcs.cca,cat_var_label=cat_var_label))
 }

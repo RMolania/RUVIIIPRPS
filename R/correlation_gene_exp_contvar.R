@@ -1,5 +1,5 @@
 #' is used to compute the correlation between the gene expression (assay)
-#' of a SummarizedExperiment class object and a continous variable (i.e. library size).
+#' of a SummarizedExperiment class object and a continuous variable (i.e. library size).
 #'
 #' @param se A SummarizedExperiment object that will be used to compute the correlation
 #' @param cont_var Vector of a continous variable such as sample types
@@ -23,7 +23,7 @@
 #' @param nb_ranked_genes Defines the number of genes from the top or bottom listing of anova to plot,
 #' by default is set to 3.
 #'
-#' @return list List containing the association plot and the computed correlation
+#' @return list List containing the associated plot and the computed correlation on the continuous variable.
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate
 #' @importFrom tidyr pivot_longer %>%

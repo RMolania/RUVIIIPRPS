@@ -1,10 +1,25 @@
 #' is used to identify the unwanted variation of a SummarizedExperiment class object.
+#'
 #' Several assessment will be performed:
-#' 1) PCA plot of each categorical variable.
-#' 2) Silhouette and ARI computed on categorical variable.
-#' 3) Combined Silhouette plot of the combined pair of categorical variable.
-#' 4) Linear regression between the first cumulative PC and continuous variable.
-#' 5) Spearman correlation between gene expression and continuous variable.
+#' 1) For each categorical variable:
+#' - PCA plot of the categorical variable.
+#' - Silhouette and ARI computed on the categorical variable.
+#' - Differential analysis based ANOVA between the gene expression and the categorical variable.
+#' - Vector correlation between the first cumulative PCs of the gene expression and the categorical variable.
+#' It will output the following plots:
+#' - PCA plot of each categorical variable.
+#' - Boxplot of the F-test distribution from ANOVA between the gene expression and each categorical variable.
+#' - Vector correlation between the first cumulative PCs of the gene expression and each categorical variable.
+#' - Combined Silhouette plot of the combined pair of all categorical variables.
+#'
+#' 2) For each continous variable:
+#' - Linear regression between the first cumulative PC and continuous variable.
+#' - Correlation between gene expression and continuous variable.
+#' It will output the following plots:
+#' - Linear regression between the first cumulative PC and continuous variable.
+#' - Boxplot of the correlation between gene expression and continuous variable.
+#'
+#' It will also output the RLE plot distribution.
 #'
 #' @param se A SummarizedExperiment object that will be used to assess the performance of the normalisation of the data.
 #' @param assay_names String or list of strings for selection of the name
@@ -19,7 +34,7 @@
 #' @param n.cores is the number of cpus used for mclapply parallelization. Default is set to 5.
 #'
 #'
-#' @return plots List of assessments plots
+#' @return list List of assessments plots and metrics used for the assessment
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom grDevices colorRampPalette dev.off pdf
 #' @importFrom gridExtra grid.arrange

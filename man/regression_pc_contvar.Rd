@@ -27,7 +27,7 @@ sample types or batches from colData(se).}
 \item{nb_pca_comp}{The number of components of the PCA used to compute the regression.}
 }
 \value{
-list List containing the association plot and the computed regression
+list List containing the associated plot and the computed regression for the continuous variable.
 }
 \description{
 is used to compute the linear regression of a continuous variable and the first cumulative PCs

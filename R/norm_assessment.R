@@ -1,10 +1,25 @@
 #' is used to assess the performance of the normalisation of a SummarizedExperiment class object.
+#'
 #' Several assessment will be performed:
-#' 1) PCA plot of each categorical variable.
-#' 2) Silhouette and ARI computed on categorical variable.
-#' 3) Combined Silhouette plot of the combined pair of categorical variable.
-#' 4) Linear regression between the first cumulative PC and continuous variable.
-#' 5) Spearman correlation between gene expression and continuous variable.
+#' 1) For each categorical variable:
+#' - PCA plot of the categorical variable.
+#' - Silhouette and ARI computed on the categorical variable.
+#' - Differential analysis based ANOVA between the gene expression and the categorical variable.
+#' - Vector correlation between the first cumulative PCs of the gene expression and the categorical variable.
+#' It will output the following plots:
+#' - PCA plot of each categorical variable.
+#' - Boxplot of the F-test distribution from ANOVA between the gene expression and each categorical variable.
+#' - Vector correlation between the first cumulative PCs of the gene expression and each categorical variable.
+#' - Combined Silhouette plot of the combined pair of all categorical variables.
+#'
+#' 2) For each continous variable:
+#' - Linear regression between the first cumulative PC and continuous variable.
+#' - Correlation between gene expression and continuous variable.
+#' It will output the following plots:
+#' - Linear regression between the first cumulative PC and continuous variable.
+#' - Boxplot of the correlation between gene expression and continuous variable.
+#'
+#' It will also output the RLE plot distribution.
 #'
 #' @param se A SummarizedExperiment object that will be used to assess the performance of the normalisation of the data.
 #' @param assay_names Optional string or list of strings for selection of the names
@@ -19,7 +34,7 @@
 #' @param n.cores is the number of cpus used for mclapply parallelization. Default is set to 5.
 #'
 #'
-#' @return plots List of assessments plots
+#' @return list List of assessments plots and metrics used for the assessment
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom grDevices colorRampPalette dev.off pdf
 #' @importFrom gridExtra grid.arrange
@@ -75,52 +90,52 @@ norm_assessment = function(
     if (!is.null(cat_var_label)){
         nb_cat_var=length(cat_var_label)
         cat.var.assessment<- lapply(
-                cat_var_label,
-                function(x){
-                    group=as.factor(sample.annot[ , x])
-                    ## PCA Color
-                    colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
-                    color.group<- colfunc(length(unique(group)))
-                    names(color.group) <- levels(group)
-                    message(paste("PCA based on: ",x,sep=""))
-                    ### Compute PCA
-                    PCA=RUVPRPS::plot_pca(data_pca,
-                                          assay_names = assay_names,
-                                          cat_var=group,
-                                          cat_var_label = x,
-                                          color = color.group)
+            cat_var_label,
+            function(x){
+                group=as.factor(sample.annot[ , x])
+                ## PCA Color
+                colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
+                color.group<- colfunc(length(unique(group)))
+                names(color.group) <- levels(group)
+                message(paste("PCA based on: ",x,sep=""))
+                ### Compute PCA
+                PCA=RUVPRPS::plot_pca(data_pca,
+                                      assay_names = assay_names,
+                                      cat_var=group,
+                                      cat_var_label = x,
+                                      color = color.group)
 
-                    ## Compute Silhouette
-                    message(paste("Silhouette coefficient based on: ",x,sep=""))
-                    silh=RUVPRPS::compute_silhouette(data_pca,
-                                                     assay_names = assay_names,
+                ## Compute Silhouette
+                message(paste("Silhouette coefficient based on: ",x,sep=""))
+                silh=RUVPRPS::compute_silhouette(data_pca,
+                                                 assay_names = assay_names,
+                                                 cat_var=group,
+                                                 cat_var_label = x)
+
+                ## Compute ARI
+                message(paste("ARI based on: ",x,sep=""))
+                ari=RUVPRPS::compute_ari(data_pca,
+                                         assay_names = assay_names,
+                                         cat_var=group,
+                                         cat_var_label = x)
+
+                ## Compute ANOVA
+                message(paste("ANOVA based on: ",x,sep=""))
+                anova=RUVPRPS::anova_gene_exp_catvar(se = se,
                                                      cat_var=group,
-                                                     cat_var_label = x)
+                                                     cat_var_label = x,
+                                                     assay_names = assay_names,
+                                                     apply.log=apply.log)
 
-                    ## Compute ARI
-                    message(paste("ARI based on: ",x,sep=""))
-                    ari=RUVPRPS::compute_ari(data_pca,
-                                             assay_names = assay_names,
-                                             cat_var=group,
-                                             cat_var_label = x)
+                ## Compute Vector correlation
+                message(paste("Vector correlation with PCs based on: ",x,sep=""))
+                corr=RUVPRPS::vector_correlation_pc_catvar(data_pca,
+                                                           cat_var=group,
+                                                           cat_var_label = x,
+                                                           assay_names=assay_names)
 
-                    ## Compute ANOVA
-                    message(paste("ANOVA based on: ",x,sep=""))
-                    anova=RUVPRPS::anova_gene_exp_catvar(se = se,
-                                                          cat_var=group,
-                                                          cat_var_label = x,
-                                                          assay_names = assay_names,
-                                                          apply.log=apply.log)
-
-                    ## Compute Vector correlation
-                    message(paste("Vector correlation with PCs based on: ",x,sep=""))
-                    corr=RUVPRPS::vector_correlation_pc_catvar(data_pca,
-                                                                cat_var=group,
-                                                                cat_var_label = x,
-                                                                assay_names=assay_names)
-
-                    return(list(PCA=PCA,sil=silh,ari=ari,da_anova=anova,corr=corr))
-                })
+                return(list(PCA=PCA,sil=silh,ari=ari,da_anova=anova,corr=corr))
+            })
         names(cat.var.assessment)=cat_var_label
 
         ## Plot combined silhouette based on all pairs of cat var
@@ -184,8 +199,8 @@ norm_assessment = function(
             ## Combined silhouette
             p <- lapply(names(Combined_sil_plot),
                         function(x){
-                        plot(Combined_sil_plot[[x]])
-            })
+                            plot(Combined_sil_plot[[x]])
+                        })
             cat.var.ass=cat.var.assessment
         }else {
             cat.var.ass=NULL
@@ -209,5 +224,5 @@ norm_assessment = function(
         dev.off()
     }
 
-        return(list(cat.var.ass=cat.var.ass,cont.var.ass=cont.var.ass,rle=rle))
+    return(list(cat.var.ass=cat.var.ass,cont.var.ass=cont.var.ass,rle=rle))
 }

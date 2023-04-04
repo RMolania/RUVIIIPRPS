@@ -3,8 +3,7 @@
 \name{compute_ari}
 \alias{compute_ari}
 \title{is used to compute the adjusted rank index (ARI) from the first PC of a SummarizedExperiment class
-object given a categorical variable. It can be used to assess how a group of biological samples
-are distributed across batches (i.e. example subtypes vs batch), and how batches ### update}
+object given a categorical variable.}
 \usage{
 compute_ari(
   pca,
@@ -32,11 +31,9 @@ of the assays of the SummarizedExperiment class object to compute the ARI.}
 \item{nPCs}{is the number of PCs used to measure the distance, default is set to 3.}
 }
 \value{
-list List containing the association plot and the computed ari
-and the cat_var_label
+list List containing the association plot and the computed ari and the categorical variable.
 }
 \description{
-is used to compute the adjusted rank index (ARI) from the first PC of a SummarizedExperiment class
-object given a categorical variable. It can be used to assess how a group of biological samples
+It can be used to assess how a group of biological samples
 are distributed across batches (i.e. example subtypes vs batch), and how batches ### update
 }

@@ -12,8 +12,8 @@
 #' @param plot Optional output of a plot, default set to FALSE.
 #' @param nPCs is the number of PCs used to measure the distance, by default it is set to 3.
 #'
-#' @return list List containing the association plot and the computed silhouette
-#' and the cat_var_label
+#' @return list List containing the associated plot and the computed silhouette
+#' on the categorical variable.
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate
 #' @importFrom tidyr pivot_longer %>%

@@ -3,7 +3,7 @@
 \name{correlation_gene_exp_contvar}
 \alias{correlation_gene_exp_contvar}
 \title{is used to compute the correlation between the gene expression (assay)
-of a SummarizedExperiment class object and a continous variable (i.e. library size).}
+of a SummarizedExperiment class object and a continuous variable (i.e. library size).}
 \usage{
 correlation_gene_exp_contvar(
   se,
@@ -53,9 +53,9 @@ by default it is set to 0.}
 by default is set to 3.}
 }
 \value{
-list List containing the association plot and the computed correlation
+list List containing the associated plot and the computed correlation on the continuous variable.
 }
 \description{
 is used to compute the correlation between the gene expression (assay)
-of a SummarizedExperiment class object and a continous variable (i.e. library size).
+of a SummarizedExperiment class object and a continuous variable (i.e. library size).
 }

@@ -1,12 +1,11 @@
-#' is used to plot a combined plot of the silhouette computed on two caategorical variable
+#' is used to plot a combined plot of the silhouette computed on two categorical variable
 #' of a SummarizedExperiment class object (i.e. biology vs batch).
 #'
 #'
 #' @param silh1 Vector of the Silhouette coefficient computed based on a categorical variable
 #' @param silh2 Vector of the Silhouette coefficient based on batch.
 
-#' @return Combined plot of the silhouette computed on batch versus the one
-#' computed on biology
+#' @return plot Combined plot of the silhouette coefficient on the two categorical variables.
 #' @importFrom wesanderson wes_palette
 #' @import ggplot2
 #' @export

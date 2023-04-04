@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_combined_silh.R
 \name{plot_combined_silh}
 \alias{plot_combined_silh}
-\title{is used to plot a combined plot of the silhouette computed on two caategorical variable
+\title{is used to plot a combined plot of the silhouette computed on two categorical variable
 of a SummarizedExperiment class object (i.e. biology vs batch).}
 \usage{
 plot_combined_silh(silh1, silh2)
@@ -13,10 +13,9 @@ plot_combined_silh(silh1, silh2)
 \item{silh2}{Vector of the Silhouette coefficient based on batch.}
 }
 \value{
-Combined plot of the silhouette computed on batch versus the one
-computed on biology
+plot Combined plot of the silhouette coefficient on the two categorical variables.
 }
 \description{
-is used to plot a combined plot of the silhouette computed on two caategorical variable
+is used to plot a combined plot of the silhouette computed on two categorical variable
 of a SummarizedExperiment class object (i.e. biology vs batch).
 }

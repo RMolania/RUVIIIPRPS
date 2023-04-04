@@ -11,7 +11,7 @@
 #' @param assay_names Optional selection of names of the assays to compute the PCA.
 #' @param nb_pca_comp The number of components of the PCA used to compute the regression.
 #'
-#' @return list List containing the association plot and the computed regression
+#' @return list List containing the associated plot and the computed regression for the continuous variable.
 #' @importFrom stats lm
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate

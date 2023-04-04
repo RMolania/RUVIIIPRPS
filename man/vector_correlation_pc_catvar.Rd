@@ -2,8 +2,8 @@
 % Please edit documentation in R/vector_correlation_pc_catvar.R
 \name{vector_correlation_pc_catvar}
 \alias{vector_correlation_pc_catvar}
-\title{is used to compute the vector correlation between the first  PCs of the gene expression (assay)
-of a SummarizedExperiment class object and a continous variable (i.e. library size).}
+\title{is used to compute the vector correlation between the first cumulative PCs of the gene expression (assay)
+of a SummarizedExperiment class object and a categorical variable (i.e. batch).}
 \usage{
 vector_correlation_pc_catvar(
   pca,
@@ -30,7 +30,10 @@ of the assays of the SummarizedExperiment class object to compute the correlatio
 
 \item{nb_pca_comp}{The number of components of the PCA used to compute the regression.}
 }
+\value{
+list List containing the associated plot and correlation for the categorical variable.
+}
 \description{
-is used to compute the vector correlation between the first  PCs of the gene expression (assay)
-of a SummarizedExperiment class object and a continous variable (i.e. library size).
+is used to compute the vector correlation between the first cumulative PCs of the gene expression (assay)
+of a SummarizedExperiment class object and a categorical variable (i.e. batch).
 }

@@ -2,15 +2,7 @@
 % Please edit documentation in R/identify_unwanted_variation.R
 \name{identify_unwanted_variation}
 \alias{identify_unwanted_variation}
-\title{is used to identify the unwanted variation of a SummarizedExperiment class object.
-Several assessment will be performed:
-\enumerate{
-\item PCA plot of each categorical variable.
-\item Silhouette and ARI computed on categorical variable.
-\item Combined Silhouette plot of the combined pair of categorical variable.
-\item Linear regression between the first cumulative PC and continuous variable.
-\item Spearman correlation between gene expression and continuous variable.
-}}
+\title{is used to identify the unwanted variation of a SummarizedExperiment class object.}
 \usage{
 identify_unwanted_variation(
   se,
@@ -42,16 +34,36 @@ such as library size from colData(se).}
 \item{n.cores}{is the number of cpus used for mclapply parallelization. Default is set to 5.}
 }
 \value{
-plots List of assessments plots
+list List of assessments plots and metrics used for the assessment
 }
 \description{
-is used to identify the unwanted variation of a SummarizedExperiment class object.
 Several assessment will be performed:
 \enumerate{
-\item PCA plot of each categorical variable.
-\item Silhouette and ARI computed on categorical variable.
-\item Combined Silhouette plot of the combined pair of categorical variable.
-\item Linear regression between the first cumulative PC and continuous variable.
-\item Spearman correlation between gene expression and continuous variable.
+\item For each categorical variable:
 }
+\itemize{
+\item PCA plot of the categorical variable.
+\item Silhouette and ARI computed on the categorical variable.
+\item Differential analysis based ANOVA between the gene expression and the categorical variable.
+\item Vector correlation between the first cumulative PCs of the gene expression and the categorical variable.
+It will output the following plots:
+\item PCA plot of each categorical variable.
+\item Boxplot of the F-test distribution from ANOVA between the gene expression and each categorical variable.
+\item Vector correlation between the first cumulative PCs of the gene expression and each categorical variable.
+\item Combined Silhouette plot of the combined pair of all categorical variables.
+}
+}
+\details{
+\enumerate{
+\item For each continous variable:
+}
+\itemize{
+\item Linear regression between the first cumulative PC and continuous variable.
+\item Correlation between gene expression and continuous variable.
+It will output the following plots:
+\item Linear regression between the first cumulative PC and continuous variable.
+\item Boxplot of the correlation between gene expression and continuous variable.
+}
+
+It will also output the RLE plot distribution.
 }

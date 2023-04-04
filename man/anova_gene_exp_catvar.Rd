@@ -39,6 +39,9 @@ from the top or bottom listing of anova}
 \item{nb_ranked_genes}{Defines the number of genes from the top or bottom listing of anova to plot,
 by default is set to 3.}
 }
+\value{
+list List containing the associated plot and the anova computed for the categorical variable.
+}
 \description{
 is used to compute the differential gene expression analysis between the gene expression (assay)
 of a SummarizedExperiment class object and a categorical variable (i.e. library size) using ANOVA.

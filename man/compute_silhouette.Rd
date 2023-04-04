@@ -31,8 +31,8 @@ of the assays of the SummarizedExperiment class object to compute the PCA.}
 \item{nPCs}{is the number of PCs used to measure the distance, by default it is set to 3.}
 }
 \value{
-list List containing the association plot and the computed silhouette
-and the cat_var_label
+list List containing the associated plot and the computed silhouette
+on the categorical variable.
 }
 \description{
 is used to compute the Silhouette coefficient from the first PC of a SummarizedExperiment class

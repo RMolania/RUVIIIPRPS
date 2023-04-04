@@ -6,6 +6,7 @@
 #' @param apply.log Indicates whether to apply a log-transformation to the data. By default
 #' no transformation will be selected.
 #'
+#' @return list List of the computed RLE and the associated plot
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
 #' @importFrom SummarizedExperiment assays assay

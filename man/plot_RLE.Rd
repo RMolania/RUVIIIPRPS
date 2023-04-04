@@ -15,6 +15,9 @@ of the assays of the SummarizedExperiment class object to compute the correlatio
 \item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
 }
+\value{
+list List of the computed RLE and the associated plot
+}
 \description{
 is used to plot the RLE of a SummarizedExperiment class object.
 }

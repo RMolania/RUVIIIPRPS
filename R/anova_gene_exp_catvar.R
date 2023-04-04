@@ -16,6 +16,8 @@
 #' @param nb_ranked_genes Defines the number of genes from the top or bottom listing of anova to plot,
 #' by default is set to 3.
 #'
+#'@return list List containing the associated plot and the anova computed for the categorical variable.
+
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
 #' @importFrom SummarizedExperiment assays assay

@@ -45,7 +45,7 @@ sample types or batches from colData(se).}
 \item{alpha}{geom_point aesthetics}
 }
 \value{
-p PCA plot of the data colored by one variable
+plot PCA plot of the data colored by one variable
 }
 \description{
 is used to plot the pairwise plots of the first PCA of the gene expression (assay)
