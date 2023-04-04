@@ -52,8 +52,6 @@ It will output the following plots:
 \item Vector correlation between the first cumulative PCs of the gene expression and each categorical variable.
 \item Combined Silhouette plot of the combined pair of all categorical variables.
 }
-}
-\details{
 \enumerate{
 \item For each continous variable:
 }
@@ -64,6 +62,7 @@ It will output the following plots:
 \item Linear regression between the first cumulative PC and continuous variable.
 \item Boxplot of the correlation between gene expression and continuous variable.
 }
-
-It will also output the RLE plot distribution.
+\enumerate{
+\item It will also output the RLE plot distribution.
+}
 }
