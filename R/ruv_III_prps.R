@@ -41,11 +41,10 @@ ruv_III_prps<-function(
     m <- nrow(Y)
     n <- ncol(Y)
     M <- ruv::replicate.matrix(M)
-    ctl <- function(ctl, n) {
-        ctl2 <- rep(FALSE, n)
-        ctl2[ctl] <- TRUE
-        return(ctl2)
-    }
+
+    ctl2 <- rep(FALSE, n)
+    ctl2[ctl] <- TRUE
+    ctl=ctl2
 
     if (inputcheck) {
         if (m > n)
