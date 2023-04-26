@@ -30,7 +30,8 @@ Imports:
     kunstomverse,
     stats,
     Rfast,
-    matrixStats
+    matrixStats,
+    ruv
 URL: https://github.com/mtrussart/RUVPRPS
 BugReports: https://github.com/mtrussart/RUVPRPS/issues
 Suggests: 
