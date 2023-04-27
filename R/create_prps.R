@@ -35,6 +35,7 @@
 #' @return list List containing the PRPS created to correct for batch, for library size and for purity.
 
 #' @importFrom Matrix rowMeans
+#' @importFrom SummarizedExperiment assay colData
 #' @export
 
 create_prps <- function(
@@ -63,8 +64,8 @@ create_prps <- function(
         stop('error: minSamplesForLibrarySizePerBatch should be at least two times larger than minSamplesForLibrarySizePS')
     }
     ### Biology
-    expr.data = as.data.frame(SummarizedExperiment::assay(se, raw_data_assay_label))
-    sample.info = droplevels(as.data.frame(SummarizedExperiment::colData(se)))
+    expr.data = as.data.frame(assay(se, raw_data_assay_label))
+    sample.info = droplevels(as.data.frame(colData(se)))
     row.names(sample.info) <- colnames(expr.data)
     sample.info$biology <- apply(
         sample.info[ , biology, drop = FALSE],
