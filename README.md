@@ -36,5 +36,5 @@ library(ggpubr)
 library(cowplot)
 library(scales)
 library(RUVPRPS)
-Introduction_to_RUVPRPS.Rmd
+RUVPRPS-vignette.Rmd
 ```
