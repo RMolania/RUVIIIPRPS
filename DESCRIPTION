@@ -2,8 +2,7 @@ Package: RUVPRPS
 Title: RUV-PRPS: Removing unwanted variation from large-scale RNA sequencing data with PRPS
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person("Marie", "Trussart", , "trussart.m@wehi.edu.au", role = c("aut", "cre"))
 Description: We propose a strategy, called pseudo-replicates of pseudo-samples (PRPS), for deploying our recently developed normalization method, called removing unwanted variation III (RUV-III), to remove the variation caused by library size, tumor purity and batch effects in TCGA RNA-seq data. RUV-III with PRPS can be used to integrate and normalize other large transcriptomic datasets coming from multiple laboratories or platforms.
 License: GPL (>= 3)
 Encoding: UTF-8
