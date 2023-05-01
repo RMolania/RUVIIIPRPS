@@ -1,10 +1,14 @@
 ---
-title: "RUVPRPS-vignette"
+title: "Introduction to RUVIII-PRPS"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{my-vignette}
+  %\VignetteIndexEntry{Introduction to CytofRUV}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+author:
+- name: Marie Trussart
+  affiliation: Speed Lab, Bioinformatics, WEHI.
+date: "01-12-2022"
 ---
 
 ```{r, include = FALSE}
@@ -14,83 +18,207 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Introduction to RUVIII-PRPS
+
+RUVPRPS is a novel strategy using pseudo-replicates of pseudo-samples (PRPS) to normalize RNA-seq data in situations when technical replicate are not available or well-designed.We provided an introduction here that explains step by step how to load and normalise datasets and also how to visualise the diagnostic plots before and after RUVIII-PRPS normalisation.
+
+## Setup
+
+We provided an example from The Cancer Genome Atlas (TCGA) which is the invasive breast cancer (BRCA) RNA-seq dataset. First of all we need to load all the packages.
+
 ```{r setup}
-library(ggplot2)
-library(SummarizedExperiment)
-library(BiocSingular)
-library(ggpubr)
-library(cowplot)
-library(scales)
-library(gridExtra)
 library(RUVPRPS)
+library(kunstomverse)
+library(SummarizedExperiment)
 ```
 
-```{r load data}
-# file_remote="https://zenodo.org/record/6326542/files/READ%20%28Rectum%20adenocarcinoma%29.rds"
-# # Make temp local copy
-# file_local <- basename(file_remote)
-# file_local <- file.path(tempdir(), file_local)
-# options(timeout=1000)
-# download.file(file_remote, file_local, quiet = F)
-# # Load file
-# data<- readRDS(file_local)
+## Dataset
 
+Users are required to provide: a "SummarizedExperiment" object containing the details of all genes used in the study. 
+The BRCA RNA-seq study involved ~1180 assays that were carried out on samples from 40 tissue source sites (TSS), distributed across 38 plates, and profiled over five years from 2010 to 2014.
+We provided an example dataset to help you prepare your data, a "SummarizedExperiment" object that contains: 
+1) Three assays (Raw gene-level counts, FPKM and FPKM.UQ)
+2) The sample, batch and clinical information (collected from different resources)
+3) Details about the individual genes (GC content, chromosome, housekeeping genes)
+The command below will load the dataset in the working directory.
+
+```{r loading example dataset}
+link="https://zenodo.org/record/6326542/files/BRCA%20%28Breast%20invasive%20carcinoma%29.rds"
+file <- "BRAC_files.rds"
+options(timeout=1000)
+download.file(link, destfile = file, mode = "wb")
+brca.se <- readRDS(file)
+brca.se
+rownames(brca.se)=as.data.frame(SummarizedExperiment::rowData(brca.se))$gene_name.
 ```
 
+### Preprocessing of the dataset
 
 
-```{r RUVPRPS Norm data}
+We select :
+- only genes having more than 15 raw counts in at least 10% of cancer and normal samples. 
+- only genes that have a non-duplicated ENTREZ gene id or gene symbol.
+- only protein conding genes.
+- only plates with at least 2 samples
 
-```
+```{r LowlyExprGene,  warning=F, message=F, error=F}
+# Remove lowly expressed genes
+normal.tissues <- SummarizedExperiment::colData(brca.se)$tissue == 'normal'
+cancer.tissues <- SummarizedExperiment::colData(brca.se)$tissue == 'cancer'
+keep.genes.normal <- apply(SummarizedExperiment::assay(brca.se[ , normal.tissues], 'HTseq_counts'), 1, 
+  function(x) length(x[x > 15]) >= round(.11*sum(normal.tissues), digits = 0))
+keep.genes.normal <- names(keep.genes.normal[keep.genes.normal == TRUE])
+keep.genes.cancer <- apply(SummarizedExperiment::assay(brca.se[ , cancer.tissues], 'HTseq_counts'), 1, 
+  function(x) length(x[x > 15]) >= round(.1*sum(cancer.tissues), digits = 0))
+keep.genes.cancer <- names(keep.genes.cancer[keep.genes.cancer == TRUE])
 
-```{r Merge all datasets}
-# ### Merge all datasets together
-# raw.count.data <- SummarizedExperiment::assay(skcm.se,'HTseq_counts')
-# row.names(ruviii.prps.norm) <- as.data.frame(SummarizedExperiment::rowData(skcm.se))$gene_name.
-# skcm.se.log <- SummarizedExperiment::SummarizedExperiment(assays = list(
-#     HTseq_counts = log2(SummarizedExperiment::assay(
-#       skcm.se,
-#       'HTseq_counts') + 1),
-#     HTseq_FPKM = log2(SummarizedExperiment::assay(
-#       skcm.se,
-#       'HTseq_FPKM') + 1),
-#     HTseq_FPKM.UQ = log2(SummarizedExperiment::assay(
-#       skcm.se,
-#       'HTseq_FPKM.UQ') + 1),
-#     RUV_III = ruviii.prps.norm
-#   ),
-#   colData = S4Vectors::DataFrame(
-#     SummarizedExperiment::colData(skcm.se)),
-#   rowData = as.data.frame(
-#     SummarizedExperiment::rowData(skcm.se))
-# )
-# skcm.sampleAnnot <- as.data.frame(
-#   SummarizedExperiment::colData(skcm.se))
+# Remove duplicated genes
+# Entrez ids
+SummarizedExperiment::rowData(brca.se)$entrezgene.use <- 'keep'
+na.duplicated <- is.na(SummarizedExperiment::rowData(brca.se)$entrezgene_id_BioMart) |
+  duplicated(SummarizedExperiment::rowData(brca.se)$entrezgene_id_BioMart)
+SummarizedExperiment::rowData(brca.se)$entrezgene.use[na.duplicated] <- 'remove'
+# gene symbol
+SummarizedExperiment::rowData(brca.se)$geneName.use <- 'keep'
+na.duplicated <- is.na(SummarizedExperiment::rowData(brca.se)$gene_name.) |
+  duplicated(SummarizedExperiment::rowData(brca.se)$gene_name.)
+SummarizedExperiment::rowData(brca.se)$geneName.use[na.duplicated] <- 'remove'
+keep.genes <- SummarizedExperiment::rowData(brca.se)$entrezgene.use == 'keep' &
+  SummarizedExperiment::rowData(brca.se)$geneName.use == 'keep' &
+  SummarizedExperiment::rowData(brca.se)$selected.genes == 'keep'
+brca.se <- brca.se[ keep.genes, ] # 16537  1222
+
+
+# Select only protein conding genes
+# proteinCoding.index <- as.data.frame(SummarizedExperiment::rowData(brca.se))$gene_type. == 'protein.coding'
+# keep.proteinCoding <- as.data.frame(SummarizedExperiment::rowData(brca.se))$gene_id.v[proteinCoding.index]
+# selected.genes <- intersect(unique(c(keep.genes.normal, keep.genes.cancer)),keep.proteinCoding)
+# SummarizedExperiment::rowData(brca.se)$selected.genes <- 'remove'
+# SummarizedExperiment::rowData(brca.se)$selected.genes[SummarizedExperiment::rowData(brca.se)$gene_id.v %in% selected.genes]<- 'keep'
 # 
-# normalizations <- names(
-#   SummarizedExperiment::assays(skcm.se)
-# )
-# normalizations.names <- c(
-#   'Raw counts',
-#   'FPKM',
-#   'FPKM.UQ',
-#   'RUV-PRPS')
+# # Keep Plates with at least two samples for down-stream analyses.
+# keep.plates <- names(which(table(brca.se$plate_RNAseq) > 2))
+# keep.plates <- brca.se$plate_RNAseq %in% keep.plates
+# brca.se <- brca.se[ , keep.plates]
 ```
 
-```{r Assessment of the normalisations}
-# ### Generate all plots 
-# all_plots=norm_assessment(skcm.se.log,
-#     apply.log = FALSE,
-#     skcm.se.log$subtype_differentiation,
-#     skcm.se.log$libSize,
-#     skcm.se.log$PlateId_mda,
-#     output_file=paste0(wd,"test_pca.pdf"))
-# 
-# ## Plot based on Biology
-# do.call(grid.arrange,
-#   c(all_plots$plot_bio,
-#     ncol = 4))
-# ## Plot based on Time
-# do.call(grid.arrange,
-#       c(all_plots$plot_time,
-#           ncol = 4))
+## Identification of unwanted variation before RUVIII-PRPS normalisation
+
+To examine the batch effects found when comparing samples replicated across batches, we use a function called 'identify_unwanted_variation' that exhibits any batch effects present in samples using several assessment.  
+It will output the following plots:
+- PCA plot of each categorical variable.
+- Boxplot of the F-test distribution from ANOVA between the gene expression and each categorical variable.
+- Vector correlation between the first cumulative PCs of the gene expression and each categorical variable.
+- Combined Silhouette plot of the combined pair of all categorical variables.
+- Linear regression between the first cumulative PC and continuous variable.
+- Boxplot of the correlation between gene expression and continuous variable.
+- It will also output the RLE plot distribution.
+
+The user needs to select the raw data to use ("HTseq_counts") to visualise the diagnostic plots that can be saved
+into a pdf file which might be advisable for exploratory analysis.
+
+```{r Unwanted-variation on the raw data,eval=FALSE}
+# Compute the library size (total counts) and add this to the SummarizedExperiment object:
+brca.se$libSize <-log2(colSums(SummarizedExperiment::assay(brca.se, 'HTseq_counts')))
+wd="/stornext/Bioinf/data/lab_speed/Marie/RNAseq/Vignette_test/"
+raw_data_uv=RUVPRPS::identify_unwanted_variation(brca.se,
+                                                assay_names= "HTseq_counts",
+                                                apply.log = TRUE,
+                                                cat_var_label = c('Year'),
+                                                cont_var_label = "libSize",
+                                                output_file=paste0(wd,"Raw_data_unwanted_variation_assessment_output.pdf"))
+
+```
+
+
+## Creation of PRPS
+
+```{r creation-prps}
+## Create PRPS
+brca.prps<-RUVPRPS::create_prps(se = brca.se,
+    raw_data_assay_label = 'HTseq_counts',
+    batch = 'Year',
+    biology = ???,
+    purity = FALSE,
+    include.ls = TRUE,
+    librarySize = "libSize",
+    minSamplesForLibrarySizePerBatch = 8,
+    minSamplesForPurityPS = 2,
+    include.purity = FALSE,
+    minSamplesPerBatchPS = 2)
+```
+
+## Selection of negative control genes (NCG)
+Here, we will explain how to select a suitable set of negative control genes and pseud-replicates of pseudo-samples to remove tumour purity variation, library size variation, flow cell chemistry and an unknown source of unwanted variation from the TCGA BRCA RNA-seq data.
+
+```{r selection-ncg}
+
+```
+
+## RUVIII-PRPS normalisation procedure
+
+The 'ruv_III_prps' function allow the user to adjust for batch effects with parameter settings for the RUV-PRPS algorithm, such as the negative control genes to use and the value of k. 
+
+```{r RUVIII-PRPS normalisation}
+## Raw counts data
+brca.rawCounts <- SummarizedExperiment::assay(
+  brca.se,
+  'HTseq_counts'
+)
+
+prps.batch <- skcm.prps$ps.batch
+colnames(prps.batch) <- paste(
+  lapply(
+    colnames(prps.batch),
+    function(x){
+      unlist(strsplit(x, '[_]'))[1]
+    }),
+  lapply(
+    colnames(prps.batch),
+    function(x){
+      unlist(strsplit(x, '[_]'))[2]
+    }),
+  sep = '_')
+
+ruv.data.input <- cbind(
+  brca.rawCounts,
+  brca.prps$ps.ls,
+  prps.batch
+)
+dim(ruv.data.input) #19162 561
+
+### replicate matrix
+rep.matrix.ruv <- ruv::replicate.matrix(
+  colnames(ruv.data.input)
+)
+
+### Norm data
+ruviii.norm <- ruv_III_prps(
+  Y = t(log2(ruv.data.input + 1)),
+  M =rep.matrix.ruv,
+  ctl = negative.control.genes,
+  k = 20,
+  eta = NULL,
+  return.info = TRUE
+)
+ruviii.prps.norm <- t(ruviii.norm$newY[1:ncol(skcm.se), ])
+```
+
+## Normalisation assessment 
+
+The 'norm_assessment' function can be used to assess the performance of the normalisation methods. The user can specify below where to save the assessments plots into a pdf file.
+It will output the following plots:
+- PCA plot of each categorical variable.
+- Boxplot of the F-test distribution from ANOVA between the gene expression and each categorical variable.
+- Vector correlation between the first cumulative PCs of the gene expression and each categorical variable.
+- Combined Silhouette plot of the combined pair of all categorical variables.
+- Linear regression between the first cumulative PC and continuous variable.
+- Boxplot of the correlation between gene expression and continuous variable.
+- It will also output the RLE plot distribution.
+
+``` {r Norm-assessment ,eval=FALSE}
+all_assessments=RUVPRPS::norm_assessment(brca.se.log,cat_var_label = c("Year"),
+                          apply.log = FALSE,
+                          cont_var_label = "libSize",
+                          output_file=paste0(wd,"Norm_assessment_output_new.pdf"))
+```
