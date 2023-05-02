@@ -29,12 +29,31 @@ Please follow the instructions and refer to the following vignette to visualise 
 
 
 ``` r
-library(ggplot2)
+library(RUVPRPS)
+library(kunstomverse)
 library(SummarizedExperiment)
-library(librarBiocSingular)
+library(ggplot2)
+library(BiocSingular)
 library(ggpubr)
 library(cowplot)
 library(scales)
-library(RUVPRPS)
-RUVPRPS-vignette.Rmd
+library(RColorBrewer)
+library(grDevices)
+library(gridExtra)
+library(wesanderson)
+library(dplyr)
+library(tidyr)
+library(parallel)
+library(cluster)
+library(mclust)
+library(matrixTests)
+library(fastDummies)
+library(kunstomverse)
+library(stats)
+library(Rfast)
+library(matrixStats)
+library(ruv)
+library(Matrix)
+
+vignettes/RUVPRPS-vignette.Rmd
 ```
