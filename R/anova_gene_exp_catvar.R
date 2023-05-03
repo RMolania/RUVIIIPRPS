@@ -180,7 +180,7 @@ anova_gene_exp_catvar<-function(
             # color
             dataSets.colors <- wes_palette(
                 n = length(normalization),
-                name = "GrandBudapest1")[c(1,2,4,3)]
+                name = "GrandBudapest1")[seq(1:length(normalization))]
             boxplot_p=ggplot(ftest.all, aes(x = datasets, y = log2(fval),fill = datasets)) +
                 geom_boxplot2() +
                 ylab(expression(Log[2]~'F statistics')) +

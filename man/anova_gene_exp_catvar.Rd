@@ -3,7 +3,7 @@
 \name{anova_gene_exp_catvar}
 \alias{anova_gene_exp_catvar}
 \title{is used to compute the differential gene expression analysis between the gene expression (assay)
-of a SummarizedExperiment class object and a categorical variable (i.e. library size) using ANOVA.}
+of a SummarizedExperiment class object and a categorical variable (i.e. batches) using ANOVA.}
 \usage{
 anova_gene_exp_catvar(
   se,
@@ -44,5 +44,5 @@ list List containing the associated plot and the anova computed for the categori
 }
 \description{
 is used to compute the differential gene expression analysis between the gene expression (assay)
-of a SummarizedExperiment class object and a categorical variable (i.e. library size) using ANOVA.
+of a SummarizedExperiment class object and a categorical variable (i.e. batches) using ANOVA.
 }
