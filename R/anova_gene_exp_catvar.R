@@ -1,5 +1,5 @@
 #' is used to compute the differential gene expression analysis between the gene expression (assay)
-#' of a SummarizedExperiment class object and a categorical variable (i.e. library size) using ANOVA.
+#' of a SummarizedExperiment class object and a categorical variable (i.e. batches) using ANOVA.
 #'
 #' @param se A SummarizedExperiment object that will be used to compute the correlation
 #' @param cat_var Vector of a categorical variable such as sample types
