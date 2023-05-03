@@ -206,7 +206,7 @@ correlation_gene_exp_contvar<-function(
     if(boxplot_output){
         dataSets.colors <- wes_palette(
             n = length(normalization),
-            name = "GrandBudapest1")[c(1,2,4,3)]
+            name = "GrandBudapest1")[seq(1:length(normalization))]
         p=ggplot(cor.all.coeff, aes(x = datasets, y = corr.coeff, fill = datasets)) +
             geom_boxplot() +
             ylab(paste(method,"correlation",sep=" ")) +
