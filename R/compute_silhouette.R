@@ -68,7 +68,7 @@ compute_silhouette<-function(
         # color
         dataSets.colors <- wes_palette(
             n = length(normalization),
-            name = "GrandBudapest1")[c(1,2,4,3)]
+            name = "GrandBudapest1")[seq(1:length(normalization))]
         names(dataSets.colors)=normalization
         p=ggplot(pcs.silCoef , aes(x = datasets, y = silh.coeff, fill = datasets)) +
             geom_point(aes(colour=datasets)) +

@@ -24,7 +24,7 @@ df=df[,-3]
 ## Plot
 dataSets.colors <- wes_palette(
         n = dim(df)[1],
-        name = "GrandBudapest1")[c(1,2,4,3)]
+        name = "GrandBudapest1")[seq(1:dim(df)[1])]
 p=ggplot(df,aes(Silh1,Silh2,colour=datasets)) +
     geom_point(aes(color = datasets), size = 3) +
     xlab(paste('Silhouette based on ',silh1$cat_var_label,sep="")) +

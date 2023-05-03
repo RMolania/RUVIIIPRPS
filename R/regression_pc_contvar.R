@@ -59,7 +59,7 @@ regression_pc_contvar<-function(
     # color
     dataSets.colors <- wes_palette(
         n = assays_nb,
-        name = "GrandBudapest1")[c(1,2,4,3)]
+        name = "GrandBudapest1")[seq(1:assays_nb)]
     names(dataSets.colors) <- normalization
     p=ggplot(pcs.lnreg, aes(x = pcs, y = r.sq, group = datasets)) +
         geom_line(aes(color = datasets), size = 1) +

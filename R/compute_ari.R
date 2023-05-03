@@ -70,7 +70,7 @@ compute_ari <-function(
     if (isTRUE(plot)){
     dataSets.colors <- wes_palette(
         n = length(normalization),
-        name = "GrandBudapest1")[c(1,2,4,3)]
+        name = "GrandBudapest1")[seq(1:length(normalization))]
     p=ggplot(pcs.ari , aes(x = datasets, y = ari, fill = datasets)) +
         geom_point() +
         ylab("ARI") +
