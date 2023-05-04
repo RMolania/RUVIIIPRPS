@@ -146,7 +146,8 @@ create_prps <- function(
             message('PRPS are generated for purity effects')
             sample.info <- sample.info[
                 with(sample.info,
-                     order(sample.info[, 'biology.batch'],
+                     order(sample.info[, 'biology'],
+                     #order(sample.info[, 'biology.batch'],
                            sample.info[, purity])),]
             expr.data <- expr.data[, row.names(sample.info)]
             ps.purity <- lapply(
