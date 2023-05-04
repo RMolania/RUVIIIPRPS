@@ -94,7 +94,7 @@ norm_assessment = function(
                 ## PCA Color
                 colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
                 color.group<- colfunc(length(unique(group)))
-                names(color.group) <- levels(group)
+                names(color.group) <- unique(group)
                 message(paste("PCA based on: ",x,sep=""))
                 ### Compute PCA
                 PCA=RUVPRPS::plot_pca(data_pca,
