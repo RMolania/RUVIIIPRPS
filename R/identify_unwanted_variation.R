@@ -55,7 +55,7 @@ identify_unwanted_variation = function(
         stop('The Summarized experiment object does not contain
            sample annotations, please provide colData of the summarized
            experiment object before running the norm_assessment() function.\n')
-    } else if((!is.null(assay_names))&&!(assay_names %in% names(assays(se)))){
+    } else if((!is.null(assay_names))&& (any(assay_names %in% names(assays(se)))=='FALSE')){
         stop('The selected assay is not in the assays names of the SummarizedExperiment class object.\n')
     }
 
