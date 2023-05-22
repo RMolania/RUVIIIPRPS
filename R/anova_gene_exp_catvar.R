@@ -176,7 +176,7 @@ anova_gene_exp_catvar<-function(
             assays_nb=length(normalization)
             ftest.all = as.data.frame(ftest.all) %>% pivot_longer( everything(),
                         names_to = 'datasets',values_to = 'fval') %>%
-                        mutate(datasets = factor(datasets))
+                        mutate(datasets = factor(datasets,levels=normalization))
             # color
             dataSets.colors <- wes_palette(
                 n = length(normalization),
