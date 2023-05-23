@@ -67,9 +67,9 @@ anova_gene_exp_catvar<-function(
     }
     ## Assays
     if (!is.null(assay_names)){
-        normalization=assay_names
+        normalization=as.factor(assay_names)
     }else{
-        normalization=names(assays(se))
+        normalization=as.factor(names(assays(se)))
     }
 
     ### ANOVA
