@@ -34,9 +34,9 @@ compute_ari <-function(
         nPCs=3
 ){
     if (!is.null(assay_names)){
-        normalization=assay_names
+        normalization=as.factor(assay_names)
     }else{
-        normalization=names(pca)
+        normalization=as.factor(names(pca))
     }
     # ARI on all assays
     ari <- lapply(
@@ -64,7 +64,7 @@ compute_ari <-function(
         everything(),
         names_to = 'datasets',
         values_to = 'ari') %>% mutate(datasets = factor(
-            datasets))
+            datasets),levels=normalization)
 
     ### Plot
     if (isTRUE(plot)){
