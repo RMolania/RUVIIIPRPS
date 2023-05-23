@@ -56,9 +56,9 @@ correlation_gene_exp_contvar<-function(
     #         please provide the corresponding label and continous variable.\n'))
     # }
     if (!is.null(assay_names)){
-        normalization=assay_names
+        normalization=as.factor(assay_names)
     }else{
-        normalization=names(assays(se))
+        normalization=as.factor(names(assays(se)))
     }
     # Correlation gene expression and continous variable
     cor.all<- lapply(
@@ -201,7 +201,7 @@ correlation_gene_exp_contvar<-function(
         everything(),
         names_to = 'datasets',
         values_to = 'corr.coeff') %>% mutate(datasets = factor(
-            datasets))
+            datasets),levels=normalization)
     ### Boxplot of the F-test association between the variable and gene expression
     if(boxplot_output){
         dataSets.colors <- wes_palette(

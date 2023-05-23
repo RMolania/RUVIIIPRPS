@@ -38,12 +38,12 @@ plot_pca=function(
         alpha = .5
 ){
     if (!is.null(assay_names)){
-        normalizations=assay_names
+        normalization=as.factor(assay_names)
     }else{
-         normalizations=names(pca)
+         normalization=as.factor(names(pca))
     }
     ppca <- lapply(
-        normalizations,
+        normalization,
         function(x){
             plot_pca_single_assay<-function(pca_x,
                                             cat_var,
@@ -169,19 +169,19 @@ plot_pca=function(
             p1=plot_pca_single_assay(pca_x,cat_var,cat_var_label,color,strokeSize,pointSize,strokeColor,alpha)
             p1
         })
-        names(ppca) <- normalizations
+        names(ppca) <- normalization
 
         ## Prepare plot
         p=ppca[[1]]
-        if (length(normalizations)>1){
-            for (n in 2:length(normalizations)){
+        if (length(normalization)>1){
+            for (n in 2:length(normalization)){
                 p=c(p,ppca[[n]])
             }
         }
         plot=do.call(grid.arrange,
             c(p,
               ncol = ncol_plot,
-           top=paste0("PCA ordered as ", paste(normalizations, collapse = ","))))
+           top=paste0("PCA ordered as ", paste(normalization, collapse = ","))))
 
         return(plot=as_ggplot(plot))
 }

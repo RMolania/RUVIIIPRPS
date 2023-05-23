@@ -27,9 +27,9 @@ compute_pca=function(
     center=TRUE
 ){
     if (!is.null(assay_names)){
-        normalizations=assay_names
+        normalizations=as.factor(assay_names)
     }else{
-        normalizations=names(assays(se))
+        normalizations=as.factor(names(assays(se)))
     }
     pca.all <- lapply(
         normalizations,

@@ -28,9 +28,9 @@ regression_pc_contvar<-function(
     nb_pca_comp=10
 ){
     if (!is.null(assay_names)){
-        normalization=assay_names
+        normalization=as.factor(assay_names)
     }else{
-        normalization=names(pca)
+        normalization=as.factor(names(pca))
     }
     ### Compute the regression
     lreg.pcs<- lapply(
@@ -55,7 +55,7 @@ regression_pc_contvar<-function(
     pcs.lnreg = pcs.lnreg %>% pivot_longer( -(assays_nb+1),
     names_to = 'datasets',values_to = 'r.sq') %>%
         mutate(datasets = factor(
-            datasets))
+            datasets),levels=normalization)
     # color
     dataSets.colors <- wes_palette(
         n = assays_nb,

@@ -33,9 +33,9 @@ vector_correlation_pc_catvar<-function(
 
     ## Assays
     if (!is.null(assay_names)){
-        normalization=assay_names
+        normalization=as.factor(assay_names)
     }else{
-        normalization=names(pca)
+        normalization=as.factor(names(pca))
     }
 
     ## Correlation
@@ -71,7 +71,7 @@ vector_correlation_pc_catvar<-function(
     pcs.cca = pcs.cca %>% mutate(pcs=c(1:nb_pca_comp)) %>% pivot_longer( -pcs,
                                             names_to = 'datasets',values_to = 'cca.coef') %>%
         mutate(datasets = factor(
-            datasets))
+            datasets),levels=normalization)
     ## length of assays
     assays_nb=length(normalization)
     # color
