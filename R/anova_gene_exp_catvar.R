@@ -38,14 +38,12 @@ anova_gene_exp_catvar<-function(
         ranked_genes_plot_output = FALSE,
         nb_ranked_genes = 3
 ){
-    ### check the inputs
-    # if( !identical(cat_var,as.factor(se@colData[, cat_var_label]))){
-    #     stop(paste0(
-    #         'The label of the categorical variable ',
-    #         cat_var_label,
-    #         ' is different from the categorical variable provided,
-    #         please provide the corresponding label and categorical variable.\n'))
-    # }
+    ### Check se and assay names
+    if (!class(se)[1] == 'SummarizedExperiment') {
+        stop('Please provide a summarized experiment object.\n')
+    } else if((!is.null(assay_names))&& (any(assay_names %in% names(assays(se)))=='FALSE')){
+        stop('The selected assay is/are not in the assay names of the SummarizedExperiment class object.\n')
+    }
 
     if( anyNA(se@colData[, cat_var_label]) ){
         stop(paste0(
@@ -57,7 +55,7 @@ anova_gene_exp_catvar<-function(
         stop(paste0(
             'The ',
             cat_var_label,
-            ', contains only one variable. Please provide at least 2.\n'))
+            ', contains a unique variable. Please provide at least 2.\n'))
     }
     if( is.numeric(class(se@colData[, cat_var_label]))){
         stop(paste0(
