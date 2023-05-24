@@ -55,7 +55,7 @@ regression_pc_contvar<-function(
     pcs.lnreg = pcs.lnreg %>% pivot_longer( -(assays_nb+1),
     names_to = 'datasets',values_to = 'r.sq') %>%
         mutate(datasets = factor(
-            datasets),levels=normalization)
+            datasets,levels=normalization))
     # color
     dataSets.colors <- wes_palette(
         n = assays_nb,

@@ -201,7 +201,7 @@ correlation_gene_exp_contvar<-function(
         everything(),
         names_to = 'datasets',
         values_to = 'corr.coeff') %>% mutate(datasets = factor(
-            datasets),levels=normalization)
+            datasets,levels=normalization))
     ### Boxplot of the F-test association between the variable and gene expression
     if(boxplot_output){
         dataSets.colors <- wes_palette(
