@@ -71,7 +71,7 @@ vector_correlation_pc_catvar<-function(
     pcs.cca = pcs.cca %>% mutate(pcs=c(1:nb_pca_comp)) %>% pivot_longer( -pcs,
                                             names_to = 'datasets',values_to = 'cca.coef') %>%
         mutate(datasets = factor(
-            datasets),levels=normalization)
+            datasets,levels=normalization))
     ## length of assays
     assays_nb=length(normalization)
     # color
