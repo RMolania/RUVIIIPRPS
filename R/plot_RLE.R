@@ -21,10 +21,16 @@ plot_RLE<-function(
         assay_names=NULL,
         apply.log=FALSE
 ){
+    ### Check se and assay names
+    if (!class(se)[1] == 'SummarizedExperiment') {
+        stop('Please provide a summarized experiment object.\n')
+    } else if((!is.null(assay_names))&& (any(assay_names %in% names(assays(se)))=='FALSE')){
+        stop('The selected assay is/are not in the assay names of the SummarizedExperiment class object.\n')
+    }
 
     ## Assays
     if (!is.null(assay_names)){
-        normalization=as.factor(assay_names)
+        normalization=as.factor(unlist(assay_names))
     }else{
         normalization=as.factor(names(assays(se)))
     }

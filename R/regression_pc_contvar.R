@@ -27,10 +27,24 @@ regression_pc_contvar<-function(
     assay_names=NULL,
     nb_pca_comp=10
 ){
+    ### Check se and assay names
+    if (!class(se)[1] == 'SummarizedExperiment') {
+        stop('Please provide a summarized experiment object.\n')
+    } else if((!is.null(assay_names))&& (any(assay_names %in% names(assays(se)))=='FALSE')){
+        stop('The selected assay is/are not in the assay names of the SummarizedExperiment class object.\n')
+    }
+
+    if( !is.numeric(se@colData[, cont_var_label])){
+        stop(paste0(
+            'The ',
+            cont_var_label,
+            ', is not numeric, please provide a continous variable.\n'))
+    }
+    ## Assays
     if (!is.null(assay_names)){
-        normalization=as.factor(assay_names)
+        normalization=as.factor(unlist(assay_names))
     }else{
-        normalization=as.factor(names(pca))
+        normalization=as.factor(names(assays(se)))
     }
     ### Compute the regression
     lreg.pcs<- lapply(

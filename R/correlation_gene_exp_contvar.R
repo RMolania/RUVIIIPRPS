@@ -47,19 +47,26 @@ correlation_gene_exp_contvar<-function(
         rho = 0,
         nb_ranked_genes = 3
 ){
-    ### check the inputs
-    # if( !identical(cont_var,as.vector(se@colData[, cont_var_label]))){
-    #     stop(paste0(
-    #         'The label of the continous variable ',
-    #         cont_var_label,
-    #         ' is different from the continous variable provided,
-    #         please provide the corresponding label and continous variable.\n'))
-    # }
+    ### Check se and assay names
+    if (!class(se)[1] == 'SummarizedExperiment') {
+        stop('Please provide a summarized experiment object.\n')
+    } else if((!is.null(assay_names))&& (any(assay_names %in% names(assays(se)))=='FALSE')){
+        stop('The selected assay is/are not in the assay names of the SummarizedExperiment class object.\n')
+    }
+
+    if( !is.numeric(se@colData[, cont_var_label])){
+        stop(paste0(
+            'The ',
+            cont_var_label,
+            ', is not numeric, please provide a continous variable.\n'))
+    }
+    ## Assays
     if (!is.null(assay_names)){
-        normalization=as.factor(assay_names)
+        normalization=as.factor(unlist(assay_names))
     }else{
         normalization=as.factor(names(assays(se)))
     }
+
     # Correlation gene expression and continous variable
     cor.all<- lapply(
         normalization,

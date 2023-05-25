@@ -57,7 +57,7 @@ anova_gene_exp_catvar<-function(
             cat_var_label,
             ', contains a unique variable. Please provide at least 2.\n'))
     }
-    if( is.numeric(class(se@colData[, cat_var_label]))){
+    if( is.numeric(se@colData[, cat_var_label])){
         stop(paste0(
             'The ',
             cat_var_label,

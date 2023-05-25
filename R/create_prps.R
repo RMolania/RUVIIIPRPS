@@ -53,7 +53,11 @@ create_prps <- function(
         minSamplesForLibrarySizePerBatch = 10,
         minSamplesForLibrarySizePS = 3
 ){
-    ### checl
+    ### Check se
+    if (!class(se)[1] == 'SummarizedExperiment') {
+        stop('Please provide a summarized experiment object.\n')
+    }
+    ### Check minSamples
     if(include.purity & minSamplesForPurityPS > minSamplesForPurityPerBiology){
         stop('error: minSamplesForPurityPS can not be smaller than minSamplesForPurityPerBiology')
     } else if(include.purity & minSamplesForPurityPerBiology < 2*minSamplesForPurityPS){
