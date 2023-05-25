@@ -34,12 +34,12 @@ compute_pca=function(
     }
     ## Assays
     if (!is.null(assay_names)){
-        normalization=as.factor(unlist(assay_names))
+        normalisation=as.factor(unlist(assay_names))
     }else{
-        normalizations=as.factor(names(assays(se)))
+        normalisation=as.factor(names(assays(se)))
     }
     pca.all <- lapply(
-        normalizations,
+        normalisation,
         function(x){
           compute_pca_single_assay <- function(y) {
                 dat=as.matrix(SummarizedExperiment::assay(y, x))
@@ -65,6 +65,6 @@ compute_pca=function(
           }
           return(compute_pca_single_assay(se))
         })
-    names(pca.all) <- normalizations
+    names(pca.all) <- normalisation
     return(pca.all)
 }
