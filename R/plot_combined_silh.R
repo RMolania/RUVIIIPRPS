@@ -18,7 +18,7 @@ plot_combined_silh<-function(
 ## Merge two silh coeffs
 df=cbind(silh1$silh.coeff,silh2$silh.coeff)
 everything<-datasets<-Silh1<-Silh2<-NULL
-colnames(df)=c("datasets","Silh1","datasets","Silh2")
+colnames(df)=c("datasets","Silh1","levels","datasets","Silh2","levels")
 df=df[,-3]
 
 ## Plot
