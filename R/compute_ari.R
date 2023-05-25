@@ -34,7 +34,7 @@ compute_ari <-function(
         nPCs=3
 ){
     if (!is.null(assay_names)){
-        normalization=as.factor(assay_names)
+        normalization=as.factor(unlist(assay_names))
     }else{
         normalization=as.factor(names(pca))
     }

@@ -26,8 +26,15 @@ compute_pca=function(
     scale=FALSE,
     center=TRUE
 ){
+    ### Check se and assay names
+    if (!class(se)[1] == 'SummarizedExperiment') {
+        stop('Please provide a summarized experiment object.\n')
+    } else if((!is.null(assay_names))&& (any(assay_names %in% names(assays(se)))=='FALSE')){
+        stop('The selected assay is/are not in the assay names of the SummarizedExperiment class object.\n')
+    }
+    ## Assays
     if (!is.null(assay_names)){
-        normalizations=as.factor(assay_names)
+        normalization=as.factor(unlist(assay_names))
     }else{
         normalizations=as.factor(names(assays(se)))
     }
