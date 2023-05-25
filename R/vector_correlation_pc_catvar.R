@@ -35,7 +35,7 @@ vector_correlation_pc_catvar<-function(
     if (!is.null(assay_names)){
         normalization=as.factor(unlist(assay_names))
     }else{
-        normalization=as.factor(names(assays(se)))
+        normalization=as.factor(names(pca))
     }
 
     ## Correlation
