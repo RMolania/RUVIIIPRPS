@@ -32,7 +32,7 @@ regression_pc_contvar<-function(
     if (!is.null(assay_names)){
         normalization=as.factor(unlist(assay_names))
     }else{
-        normalization=as.factor(names(assays(pca)))
+        normalization=as.factor(names(pca))
     }
     ### Compute the regression
     lreg.pcs<- lapply(
