@@ -82,7 +82,7 @@ norm_assessment = function(
     if (!is.null(assay_names)){
         normalisation=as.factor(unlist(assay_names))
     }else{
-        normalization=as.factor(names(assays(se)))
+        normalisation=as.factor(names(assays(se)))
     }
     ################# Categorical variable ################
     if (!is.null(cat_var_label)){
@@ -215,7 +215,7 @@ norm_assessment = function(
         }
         ## RLE plot
         lreg.pcs<- lapply(
-            normalization,
+            normalisation,
             function(x){
                 plot(rle$plot[[x]])
             })
