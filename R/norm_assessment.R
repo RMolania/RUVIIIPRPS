@@ -80,7 +80,7 @@ norm_assessment = function(
 
     ## Get all the available assays (i.e. normalizations methods)
     if (!is.null(assay_names)){
-        normalization=as.factor(assay_names)
+        normalisation=as.factor(unlist(assay_names))
     }else{
         normalization=as.factor(names(assays(se)))
     }
