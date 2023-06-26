@@ -39,7 +39,7 @@ compute_pca=function(
         normalisation=as.factor(names(assays(se)))
     }
     pca.all <- lapply(
-        normalisation,
+        levels(normalization),
         function(x){
           compute_pca_single_assay <- function(y) {
                 dat=as.matrix(SummarizedExperiment::assay(y, x))
@@ -65,6 +65,6 @@ compute_pca=function(
           }
           return(compute_pca_single_assay(se))
         })
-    names(pca.all) <- normalisation
+    names(pca.all) <- levels(normalization)
     return(pca.all)
 }
