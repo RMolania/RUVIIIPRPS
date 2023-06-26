@@ -59,24 +59,40 @@ identify_unwanted_variation = function(
         stop('The selected assay is not in the assays names of the SummarizedExperiment class object.\n')
     }
 
-    if( anyNA(se@colData[, cat_var_label]) ){
-        stop(paste0(
-            'There is/are NA in the ',
-            cat_var_label,
-            ', please remove them and re-run the function.\n'))
+    ### Check cat_var_label and cont_var_label
+    sample.annot <- as.data.frame(colData(x = se))
+    all.var.label<- c(cat_var_label, cont_var_label)
+    exist.var.label <- colnames(sample.annot)[colnames(sample.annot) %in% all.var.label]
+    if (!sum(all.var.label %in% exist.var.label) == length(all.var.label)){
+        stop(
+            'Provided variable label from cat_var_label and cont_var_label "',
+            paste0(all.var.label[!all.var.label %in% exist.var.label], collapse = ' & '),
+            '" are not in the colData of the Summarized Experiment object.\n')
     }
-    if( length(unique(se@colData[, cat_var_label])) < 2 ){
-        stop(paste0(
-            'The ',
-            cat_var_label,
-            ', contains a unique variable. Please provide at least 2.\n'))
+
+    ### Check cat or cont var are selected
+    if (is.null(cat_var_label) && is.null(cont_var_label)){
+        stop('Please provide at least cat_var_label or cont_var_label.\n')
     }
-    if( is.numeric(se@colData[, cat_var_label])){
-        stop(paste0(
-            'The ',
-            cat_var_label,
-            ', is numeric, please provide a categorical variable.\n'))
-    }
+
+    # if( anyNA(se@colData[, cat_var_label]) ){
+    #     stop(paste0(
+    #         'There is/are NA in the ',
+    #         cat_var_label,
+    #         ', please remove them and re-run the function.\n'))
+    # }
+    # if( length(unique(se@colData[, cat_var_label])) < 2 ){
+    #     stop(paste0(
+    #         'The ',
+    #         cat_var_label,
+    #         ', contains a unique variable. Please provide at least 2.\n'))
+    # }
+    # if( is.numeric(se@colData[, cat_var_label])){
+    #     stop(paste0(
+    #         'The ',
+    #         cat_var_label,
+    #         ', is numeric, please provide a categorical variable.\n'))
+    # }
 
     ### Check cat_var_label and cont_var_label
     sample.annot <- as.data.frame(colData(x = se))
