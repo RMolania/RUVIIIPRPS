@@ -77,7 +77,7 @@ anova_gene_exp_catvar<-function(
     )
 
     anova.all<- lapply(
-        normalization,
+        levels(normalization),
         function(x){
             ### log transformation
             if(apply.log){
@@ -159,22 +159,22 @@ anova_gene_exp_catvar<-function(
             return(results)
 
         })
-    names(anova.all) <- normalization
+    names(anova.all) <- levels(normalization)
 
         ### Boxplot of the F-test association between the variable and gene expression
         if(boxplot_output){
             ftest.all <- lapply(
-                normalization,
+                levels(normalization),
                 function(x){
                     as.numeric(anova.all[[x]]$anova$statistic)
                 })
-            names(ftest.all) <- normalization
+            names(ftest.all) <- levels(normalization)
             datasets<-fval<-everything<-NULL
             ## length of assays
             assays_nb=length(normalization)
             ftest.all = as.data.frame(ftest.all) %>% pivot_longer( everything(),
                         names_to = 'datasets',values_to = 'fval') %>%
-                        mutate(datasets = factor(datasets,levels=normalization))
+                        mutate(datasets = factor(datasets,levels=levels(normalization)))
             # color
             dataSets.colors <- wes_palette(
                 n = length(normalization),
