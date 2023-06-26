@@ -34,9 +34,9 @@ compute_pca=function(
     }
     ## Assays
     if (!is.null(assay_names)){
-        normalisation=as.factor(unlist(assay_names))
+        normalization=as.factor(unlist(assay_names))
     }else{
-        normalisation=as.factor(names(assays(se)))
+        normalization=as.factor(names(assays(se)))
     }
     pca.all <- lapply(
         levels(normalization),
