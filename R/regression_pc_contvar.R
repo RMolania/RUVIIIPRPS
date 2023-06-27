@@ -70,7 +70,7 @@ regression_pc_contvar<-function(
         scale_color_manual(
             values = c(dataSets.colors),
             name = 'Datasets',
-            labels = normalization) +
+            labels = levels(normalization)) +
         scale_x_continuous(
             breaks = (1:nb_pca_comp),
             labels = c('PC1', paste0('PC1:', 2:nb_pca_comp)) ) +
