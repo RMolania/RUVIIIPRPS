@@ -37,7 +37,7 @@ compute_silhouette<-function(
     }
     # Silhouette coefficients on all assays
     silCoef <- lapply(
-        normalization,
+        levels(normalization),
         function(x){
             silhouette_coef_catvar_single_assay <- function(pca,
                                                             cat_var,
@@ -54,14 +54,14 @@ compute_silhouette<-function(
                 nPCs)
             sil
         })
-    names(silCoef) <- normalization
+    names(silCoef) <- levels(normalization)
     everything<-datasets<-silh.coeff<-NULL
     pcs.silCoef <- as.data.frame(silCoef)
     pcs.silCoef =  pcs.silCoef %>% pivot_longer(
         everything(),
         names_to = 'datasets',
         values_to = 'silh.coeff') %>% mutate(datasets = factor(
-            datasets),levels=normalization)
+            datasets),levels=levels(normalization))
 
     ### Plot
     if (isTRUE(plot)){
@@ -69,7 +69,7 @@ compute_silhouette<-function(
         dataSets.colors <- wes_palette(
             n = length(normalization),
             name = "GrandBudapest1")[seq(1:length(normalization))]
-        names(dataSets.colors)=normalization
+        names(dataSets.colors)=levels(normalization)
         p=ggplot(pcs.silCoef , aes(x = datasets, y = silh.coeff, fill = datasets)) +
             geom_point(aes(colour=datasets)) +
             ylab("Silhouette coefficient") +

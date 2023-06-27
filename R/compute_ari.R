@@ -40,7 +40,7 @@ compute_ari <-function(
     }
     # ARI on all assays
     ari <- lapply(
-        normalization,
+        levels(normalization),
         function(x){
             ari_catvar_single_assay <- function(pca,
                                                 cat_var,
@@ -57,14 +57,14 @@ compute_ari <-function(
                                         nPCs)
             coef
         })
-    names(ari) <- normalization
+    names(ari) <- levels(normalization)
     everything<-datasets<-silh.coeff<-NULL
     pcs.ari <- as.data.frame(ari)
     pcs.ari =  pcs.ari %>% pivot_longer(
         everything(),
         names_to = 'datasets',
         values_to = 'ari') %>% mutate(datasets = factor(
-            datasets),levels=normalization)
+            datasets),levels=levels(normalization))
 
     ### Plot
     if (isTRUE(plot)){

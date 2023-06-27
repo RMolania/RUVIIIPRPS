@@ -41,7 +41,7 @@ plot_RLE<-function(
 
     ### across all samples
     rle.all <- lapply(
-        normalization,
+        levels(normalization),
         function(x){
             rle.comp <- function(expr) {
                 rle.data <- expr - rowMedians(expr)
@@ -64,12 +64,12 @@ plot_RLE<-function(
             rle=rle.comp(expr=expr)
             rle
         })
-        names(rle.all)=normalization
+        names(rle.all)=levels(normalization)
 
         ## Plot RLE
         samples<-rle<-everything<-NULL
         plot.rle <- lapply(
-            normalization,
+            levels(normalization),
             function(x){
                 tmp=rle.all[[x]]$rle
                 rle_plot=as.data.frame(tmp) %>% pivot_longer(everything(),
@@ -92,7 +92,7 @@ plot_RLE<-function(
             p
             })
 
-    names(plot.rle) <- normalization
+    names(plot.rle) <- levels(normalization)
     return(list(rle=rle.all,plot=plot.rle))
 
 }

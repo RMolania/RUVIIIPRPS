@@ -36,7 +36,7 @@ regression_pc_contvar<-function(
     }
     ### Compute the regression
     lreg.pcs<- lapply(
-        normalization,
+        levels(normalization),
         function(x){
             pcs <- pca[[x]]$sing.val$u
             rSquared <- sapply(
@@ -47,7 +47,7 @@ regression_pc_contvar<-function(
                     )$r.squared
                 })
         })
-    names(lreg.pcs) <- normalization
+    names(lreg.pcs) <- levels(normalization)
 
     ### Plot the association between the variable and the PC using the computed regression
     pcs<-datasets<-r.sq<-NULL
@@ -57,12 +57,12 @@ regression_pc_contvar<-function(
     pcs.lnreg = pcs.lnreg %>% pivot_longer( -(assays_nb+1),
     names_to = 'datasets',values_to = 'r.sq') %>%
         mutate(datasets = factor(
-            datasets,levels=normalization))
+            datasets,levels=levels(normalization)))
     # color
     dataSets.colors <- wes_palette(
         n = assays_nb,
         name = "GrandBudapest1")[seq(1:assays_nb)]
-    names(dataSets.colors) <- normalization
+    names(dataSets.colors) <- levels(normalization)
     p=ggplot(pcs.lnreg, aes(x = pcs, y = r.sq, group = datasets)) +
         geom_line(aes(color = datasets), size = 1) +
         geom_point(aes(color = datasets), size = 3) +

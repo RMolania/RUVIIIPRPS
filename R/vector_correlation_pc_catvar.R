@@ -49,7 +49,7 @@ vector_correlation_pc_catvar<-function(
     catvar.dummies <- catvar.dummies[, c(2:ncol(catvar.dummies))]
 
     cca.all<- lapply(
-        normalization,
+        levels(normalization),
         function(x){
             pcs <- pca[[x]]$sing.val$u
             sapply(
@@ -62,7 +62,7 @@ vector_correlation_pc_catvar<-function(
                     1 - prod(1 - cca.fcch$cor^2)
                 })
         })
-    names(cca.all)=normalization
+    names(cca.all)=levels(normalization)
 
 
     ### Plot the association between the variable and the PC using the computed regression
@@ -71,14 +71,14 @@ vector_correlation_pc_catvar<-function(
     pcs.cca = pcs.cca %>% mutate(pcs=c(1:nb_pca_comp)) %>% pivot_longer( -pcs,
                                             names_to = 'datasets',values_to = 'cca.coef') %>%
         mutate(datasets = factor(
-            datasets,levels=normalization))
+            datasets,levels=levels(normalization)))
     ## length of assays
     assays_nb=length(normalization)
     # color
     dataSets.colors <- wes_palette(
         n = assays_nb,
         name = "GrandBudapest1")[seq(1:assays_nb)]
-    names(dataSets.colors) <- normalization
+    names(dataSets.colors) <- levels(normalization)
     p=ggplot(pcs.cca, aes(x = pcs, y = cca.coef, group = datasets)) +
         geom_line(aes(color = datasets), size = 1) +
         geom_point(aes(color = datasets), size = 3) +

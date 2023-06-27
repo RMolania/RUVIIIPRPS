@@ -69,7 +69,7 @@ correlation_gene_exp_contvar<-function(
 
     # Correlation gene expression and continous variable
     cor.all<- lapply(
-        normalization,
+        levels(normalization),
         function(x){
             correlation_gene_exp_contvar_single_assay <- function(expr.data,
                                                  apply.log,
@@ -195,20 +195,20 @@ correlation_gene_exp_contvar<-function(
 
             }
         })
-    names(cor.all) <- normalization
+    names(cor.all) <- levels(normalization)
     cor.all.coeff <- lapply(
-        normalization,
+        levels(normalization),
         function(x){
             cor.all[[x]]$cor[,'correlation']
         })
-    names(cor.all.coeff) <- normalization
+    names(cor.all.coeff) <- levels(normalization)
     everything<-datasets<-corr.coeff<-NULL
     cor.all.coeff <- as.data.frame(cor.all.coeff)
     cor.all.coeff= cor.all.coeff %>% pivot_longer(
         everything(),
         names_to = 'datasets',
         values_to = 'corr.coeff') %>% mutate(datasets = factor(
-            datasets,levels=normalization))
+            datasets,levels=levels(normalization)))
     ### Boxplot of the F-test association between the variable and gene expression
     if(boxplot_output){
         dataSets.colors <- wes_palette(
