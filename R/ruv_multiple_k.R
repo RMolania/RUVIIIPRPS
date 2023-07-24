@@ -16,7 +16,7 @@
 #' @importFrom ruv RUV1 residop
 #' @export
 
-sf.RUV_III_MK <- function(Y, Yrep, M, ctl, k = c(1:20), eta = NULL){
+ruv_multiple_k <- function(Y, Yrep, M, ctl, k = c(1:20), eta = NULL){
 
     ruv.adj.kmax <- ruv_III(
         Y = Y,
