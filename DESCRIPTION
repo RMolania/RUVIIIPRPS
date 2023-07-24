@@ -32,9 +32,7 @@ Imports:
     matrixStats,
     ruv,
     Matrix,
-    Rcpp,
-    RcppArmadillo, 
-    RcppEigen
+    Rcpp
 URL: https://github.com/mtrussart/RUVPRPS
 BugReports: https://github.com/mtrussart/RUVPRPS/issues
 Suggests: 
@@ -43,5 +41,3 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-LinkingTo: 
-    Rcpp
