@@ -5,13 +5,22 @@
 \title{is used to normalise the gene expression (assay) of a SummarizedExperiment class object
 using RUVIII-PRPS method for multiple k values in one go.}
 \usage{
-ruv_multiple_k(Y, Yrep, M, ctl, k = c(1:20), eta = NULL)
+ruv_multiple_k(
+  Y,
+  M,
+  ctl,
+  k = NULL,
+  eta = NULL,
+  include.intercept = TRUE,
+  average = FALSE,
+  fullalpha = NULL,
+  return.info = FALSE,
+  inputcheck = TRUE
+)
 }
 \arguments{
-\item{Y}{A m by n matrix of the Raw gene expression where m is the number of samples and n is the
+\item{Y}{A m by n matrix of the Raw gene expression matrix where m is the number of samples and n is the
 number of features of a SummarizedExperiment variable to be normalised.}
-
-\item{Yrep}{A matrix of the gene expression of the obtained PRPS}
 
 \item{M}{Replicate matrix.}
 
@@ -20,6 +29,18 @@ number of features of a SummarizedExperiment variable to be normalised.}
 \item{k}{A vector containing the range of k - the number of unwanted factors - to be tested.}
 
 \item{eta}{A matrix with n columns, gene-wise (as opposed to sample-wise) covariates. By default is set to NULL.}
+
+\item{include.intercept}{Add an intercept term to eta if it does not include one already. By default is set to TRUE.}
+
+\item{average}{Average replicates after adjustment. By default is set to FALSE.}
+
+\item{fullalpha}{Can be included to speed up execution. By default is set to NULL.}
+
+\item{return.info}{If FALSE, only the adjusted data matrix is returned. If TRUE, additional information
+is returned. By default is set to FALSE.}
+
+\item{inputcheck}{Perform a basic sanity check on the inputs, and issue a warning if there is a problem.
+By default is set to TRUE.}
 }
 \value{
 list List containing the corrected gene expression matrix and the M, alpha and W for each k values tested.
