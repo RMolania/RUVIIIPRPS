@@ -35,14 +35,14 @@ ruv_multiple_k <- function(
         inputcheck = TRUE
 ){
 
-    ruv.adj.kother <- lapply(
+    ruv.adj <- lapply(
         k,
         function(x){
-            ruv.adj.at.other <- ruv_III_prps(
+            ruv.adj.k<- ruv_III_prps(
                 Y,
                 M,
                 ctl,
-                k = k,
+                k = x,
                 eta = eta,
                 include.intercept = include.intercept,
                 average = average,
@@ -51,7 +51,7 @@ ruv_multiple_k <- function(
                 inputcheck = inputcheck
             )
         })
-    names(ruv.adj.kother) <- paste0('RUV_K', k)
-    return(ruv.adj.kother)
+    names(ruv.adj) <- paste0('RUV_K', k)
+    return(ruv.adj)
 }
 
