@@ -7,7 +7,7 @@
 #' number of features of a SummarizedExperiment variable to be normalised.
 #' @param M Replicate matrix.
 #' @param ctl Logical vector of length n of the negative control genes.
-#' @param k A vector containing the range of k - the number of unwanted factors - to be tested.
+#' @param k A single value or a vector of values containing a single k or a range of k - the number of unwanted factors - to be tested.
 #' @param eta A matrix with n columns, gene-wise (as opposed to sample-wise) covariates. By default is set to NULL.
 #' @param include.intercept Add an intercept term to eta if it does not include one already. By default is set to TRUE.
 #' @param average Average replicates after adjustment. By default is set to FALSE.
@@ -22,7 +22,7 @@
 #' @importFrom ruv RUV1 residop
 #' @export
 
-ruv_multiple_k <- function(
+normalise <- function(
         Y,
         M,
         ctl,
@@ -35,8 +35,25 @@ ruv_multiple_k <- function(
         inputcheck = TRUE
 ){
 
-    ruv.adj <- lapply(
-        k,
+    ## Run RUVIII_PRPS for the first k value provided (maybe the only one)
+    ruv.adj<- ruv_III_prps(
+                Y,
+                M,
+                ctl,
+                k = k[1],
+                eta = eta,
+                include.intercept = include.intercept,
+                average = average,
+                fullalpha = fullalpha,
+                return.info = return.info,
+                inputcheck = inputcheck)
+    names(ruv.adj) <- paste0('RUV_K', k[1])
+    return(ruv.adj)
+
+    ## if there are multiple k values provided
+    if (length(k)>1) {
+    ruv.adj.others.k <- lapply(
+        k[2:length(k)],
         function(x){
             ruv.adj.k<- ruv_III_prps(
                 Y,
@@ -51,7 +68,11 @@ ruv_multiple_k <- function(
                 inputcheck = inputcheck
             )
         })
-    names(ruv.adj) <- paste0('RUV_K', k)
+    names(ruv.adj.others.k) <- paste0('RUV_K', k)
+    ruv.adj.allk=append(ruv.adj.others.k, ruv.adj, after = 0)
+    ruv.adj=ruv.adj.allk
+    }
+    ## Return a list containing the adjusted dataset(s) for single k or multiple k values
     return(ruv.adj)
 }
 
