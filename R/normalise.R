@@ -47,6 +47,7 @@ normalise <- function(
                 fullalpha = fullalpha,
                 return.info = return.info,
                 inputcheck = inputcheck)
+    ruv.adj=list(ruv.adj)
     names(ruv.adj) <- paste0('RUV_K', k[1])
     return(ruv.adj)
 
