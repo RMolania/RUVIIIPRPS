@@ -49,7 +49,6 @@ normalise <- function(
                 inputcheck = inputcheck)
     ruv.adj=list(ruv.adj)
     names(ruv.adj) <- paste0('RUV_K', k[1])
-    return(ruv.adj)
 
     ## if there are multiple k values provided
     if (length(k)>1) {
