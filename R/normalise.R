@@ -68,7 +68,7 @@ normalise <- function(
                 inputcheck = inputcheck
             )
         })
-    names(ruv.adj.others.k) <- paste0('RUV_K', k)
+    names(ruv.adj.others.k) <- paste0('RUV_K', k[2:length(k)])
     ruv.adj.allk=append(ruv.adj.others.k, ruv.adj, after = 0)
     ruv.adj=ruv.adj.allk
     }
