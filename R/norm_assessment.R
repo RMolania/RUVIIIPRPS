@@ -29,7 +29,6 @@
 #' @param cont_var_label String or vector of strings of the label of continuous variable(s)
 #' such as library size from colData(se).
 #' @param output_file Path and name of the output file to save the assessments plots in a pdf format.
-#' @param n.cores is the number of cpus used for mclapply parallelization. Default is set to 5.
 #'
 #'
 #' @return list List of assessments plots and metrics used for the assessment
@@ -47,8 +46,7 @@ norm_assessment = function(
         apply.log = FALSE,
         cat_var_label=NULL,
         cont_var_label=NULL,
-        output_file=NULL,
-        n.cores=5
+        output_file=NULL
 ){
     ### Check se and assay names
     if (!class(se)[1] == 'SummarizedExperiment') {
