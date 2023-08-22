@@ -43,7 +43,7 @@
 
 genesVariableCorrelation<-function(
         se.obj,
-        assay.names=NULL,
+        assay.names='All',
         variable,
         apply.log=TRUE,
         method='spearman',
@@ -82,8 +82,8 @@ genesVariableCorrelation<-function(
     }
 
     ## Assays
-    if (!is.null()){
-        assay.names=as.factor(unlist())
+    if (assay.names!='All'){
+        assay.names=as.factor(unlist(assay.names))
     }else{
         assay.names=as.factor(names(assays(se.obj)))
     }
