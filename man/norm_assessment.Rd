@@ -10,8 +10,7 @@ norm_assessment(
   apply.log = FALSE,
   cat_var_label = NULL,
   cont_var_label = NULL,
-  output_file = NULL,
-  n.cores = 5
+  output_file = NULL
 )
 }
 \arguments{
@@ -30,8 +29,6 @@ sample types or batches from colData(se).}
 such as library size from colData(se).}
 
 \item{output_file}{Path and name of the output file to save the assessments plots in a pdf format.}
-
-\item{n.cores}{is the number of cpus used for mclapply parallelization. Default is set to 5.}
 }
 \value{
 list List of assessments plots and metrics used for the assessment

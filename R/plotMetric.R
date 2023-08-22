@@ -1,0 +1,84 @@
+
+#' is used to plot the metric computed on a variable across the assays selected of a
+#' SummarizedExperiment class object.
+#'
+#' @param se.obj A SummarizedExperiment object that will be used.
+#' @param assay.names String or list of strings for the selection of the name
+#' of the assays of the SummarizedExperiment class object.
+#' @param metric Metric being assessed.
+#' @param variable String of the label of a variable such as
+#' sample types or batches from colData(se.obj).
+
+
+plotMetric <- function(
+        se.obj,
+        assay.names,
+        metric=c('gene.pearson.corr.','gene.spearman.corr.','gene.aov.anova','gene.welch.correction.anova','ari','sil','pcs.vect.corr','pcs.lm'),
+        variable
+        ) {
+
+    ## Assays
+    if (!is.null()){
+        assay.names=as.factor(unlist())
+    }else{
+        assay.names=as.factor(names(assays(se.obj)))
+    }
+
+    all.assays.metric <- lapply(
+        levels(assay.names),
+        function(x){
+            se.obj@metadata[[x]][[metric]][[variable]]
+        })
+    everything<-datasets<-corr.coeff<-pcs<-NULL
+    all.assays.metric <- as.data.frame(all.assays.metric)
+
+    if (metric %in% c('pcs.vect.corr')){
+        nb.pca.comp=10
+        all.assays.metric= all.assays.metric %>% mutate(pcs=c(1:nb.pca.comp)) %>% pivot_longer(
+            -pcs,
+            names_to = 'datasets',
+            values_to = {{metric}}) %>% mutate(datasets = factor(
+                datasets,levels=levels(assay.names)))
+    } else if (metric %in% c('pcs.lm')){
+        nb.assays=length(assay.names)
+        all.assays.metric=cbind(all.assays.metric,pcs=(1:10))
+        all.assays.metric= all.assays.metric %>% pivot_longer(
+            -(nb.assays+1),
+            names_to = 'datasets',
+            values_to = {{metric}}) %>% mutate(datasets = factor(
+                datasets,levels=levels(assay.names)))
+    } else {
+        all.assays.metric= all.assays.metric %>% pivot_longer(
+        everything(),
+        names_to = 'datasets',
+        values_to = {{metric}}) %>% mutate(datasets = factor(
+            datasets,levels=levels(assay.names)))
+    }
+
+    if (metric %in% c('gene.pearson.corr.','gene.spearman.corr.','gene.aov.anova','gene.welch.correction.anova')) {
+        type= geom_boxplot()
+        xlabel=''
+    } else if (metric %in% c('ari','silh')){
+        type= geom_point(aes(colour=datasets))
+        xlabel=''
+    } else if (metric %in% c('pcs.vect.corr','pcs.lm')){
+        type= geom_line(aes(color = datasets), size = 1) +
+            geom_point(aes(color = datasets), size = 3)
+        xlabel='PCs'
+    }
+    p=ggplot(all.assays.metric, aes(x = datasets, y = metric, fill = datasets)) +
+        type +
+        ylab(paste0(metric)) +
+        xlab(xlabel) +
+        geom_hline(yintercept=0)+
+        theme(
+            panel.background = element_blank(),
+            axis.line = element_line(colour = 'black', size = 1),
+            axis.title.x = element_text(size = 18),
+            axis.title.y = element_text(size = 18),
+            axis.text.x = element_text(size = 12),
+            axis.text.y = element_text(size = 12))+
+        ggtitle(paste0("Assessment: ",metric," computed on ",variable))
+    return(p)
+}
+

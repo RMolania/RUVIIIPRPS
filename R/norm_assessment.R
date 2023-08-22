@@ -39,6 +39,8 @@
 #' @importFrom SummarizedExperiment assays colData
 #' @export
 
+## remove n.core and merge all variable together
+
 norm_assessment = function(
         se,
         assay_names=NULL,
