@@ -242,6 +242,10 @@ genesVariableCorrelation<-function(
             ## Check if metadata metric already exist
             if(length(se.obj@metadata)==0 ) {
                 se.obj@metadata[['metric']] <- list()
+             }
+            ## Check if metadata metric already exist for this assay
+            if(!'metric' %in% names(se.obj@metadata) ) {
+                se.obj@metadata[['metric']] <- list()
             }
             ## Check if metadata metric already exist for this assay
             if(!x %in% names(se.obj@metadata[['metric']]) ) {

@@ -27,6 +27,9 @@ plotMetric <- function(
         verbose=TRUE
         ) {
 
+    printColoredMessage(message = '------------The plotMetric function starts:',
+                        color = 'white',
+                        verbose = verbose)
     ## Assays
     if (!is.null()){
         assay.names=as.factor(unlist())
@@ -98,6 +101,10 @@ plotMetric <- function(
     if(length(se.obj@metadata)==0 ) {
             se.obj@metadata[['plot']] <- list()
     }
+    ## Check if metadata plot already exist
+    if(!'plot' %in% names(se.obj@metadata) ) {
+        se.obj@metadata[['plot']] <- list()
+    }
     ## Check if metadata plot already exist for this metric
     if(!metric %in% names(se.obj@metadata[['plot']]) ) {
             se.obj@metadata[['plot']][[metric]] <- list()
@@ -105,6 +112,9 @@ plotMetric <- function(
     ## Save the new plot
     se.obj@metadata[['plot']][[metric]][[variable]] <- p
 
+    printColoredMessage(message = '------------The plotMetric function finished.',
+                        color = 'white',
+                        verbose = verbose)
     return(se.obj)
 }
 
