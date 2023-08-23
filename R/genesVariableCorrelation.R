@@ -231,6 +231,7 @@ genesVariableCorrelation<-function(
             #         corr.genes.var = corr.genes.var)
             # }
             # return(results)
+            return(corr.genes.var)
         })
     names(cor.all) <- levels(assay.names)
 
@@ -241,27 +242,15 @@ genesVariableCorrelation<-function(
                                 verbose = verbose)
             if(length(se.obj@metadata)==0 ) {
                 se.obj@metadata[['metric']] <- list()
-                printColoredMessage(message= 'Create metric list',
-                                    color = 'magenta',
-                                    verbose = verbose)
             }
             if(!x %in% names(se.obj@metadata[['metric']]) ) {
                 se.obj@metadata[['metric']][[x]] <- list()
-                printColoredMessage(message= 'Create metric list for assay',
-                                    color = 'magenta',
-                                    verbose = verbose)
             }
             if(!paste0('gene.',method,'.corr.') %in% names(se.obj@metadata[['metric']][[x]])  ) {
                 se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr.')]] <- list()
-                printColoredMessage(message= 'Create metric list for assay, gene corr',
-                                    color = 'magenta',
-                                    verbose = verbose)
             }
             if(! variable %in% names(se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr.')]])  ) {
-                se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr.')]][[variable]] <- corr.genes.var
-                printColoredMessage(message= 'Create metric list for assay, gene corr and variable',
-                                    color = 'magenta',
-                                    verbose = verbose)
+                se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr.')]][[variable]] <- cor.all[[x]]
             }
     }
     printColoredMessage(message= paste0(
