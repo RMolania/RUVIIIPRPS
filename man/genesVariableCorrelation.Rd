@@ -7,7 +7,7 @@ of a SummarizedExperiment class object and a continuous variable (i.e. library s
 \usage{
 genesVariableCorrelation(
   se.obj,
-  assay.names = NULL,
+  assay.names = "All",
   variable,
   apply.log = TRUE,
   method = "spearman",
