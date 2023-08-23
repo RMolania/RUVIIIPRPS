@@ -274,7 +274,8 @@ genesVariableCorrelation<-function(
     se.obj=plotMetric(se.obj,
                       assay.names =assay.names,
                       metric=paste0('gene.',method,'.corr'),
-                      variable=variable)
+                      variable=variable,
+                      verbose=verbose)
 
     printColoredMessage(message = '------------The genesVariableCorrelation function finished.',
                         color = 'white',
