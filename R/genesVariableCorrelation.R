@@ -28,13 +28,12 @@
 #' @param pseudo.count TO BE DEFINED.
 #' @param apply.round TO BE DEFINED.
 #'
-#' @return list List containing the associated plot and the computed correlation on the continuous variable.
+#' @return SummarizedExperiment A SummarizedExperiment object containing the associated plot and the computed correlation on the continuous variable.
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
 #' @importFrom SummarizedExperiment assays assay colData
 #' @importFrom matrixTests row_oneway_equalvar
 #' @importFrom fastDummies dummy_cols
-#' @importFrom wesanderson wes_palette
 #' @importFrom stats cancor var complete.cases
 #' @import ggplot2
 #' @export
@@ -153,104 +152,108 @@ genesVariableCorrelation<-function(
                     corr.genes.var[ , 5, drop = FALSE]
                 )
             }
-                  # ### Plot top and bottom ranked genes
-            # if (plot.top.genes) {
-            #     printColoredMessage(message=paste0(
-            #         '### Plotting top ' ,
-            #         nb.top.genes,
-            #         ' highly correlated genes with the ',
-            #         variable,
-            #         ' variable', '.'
-            #     ),
-            #     color = 'magenta',
-            #     verbose = verbose
-            #     )
-            #     temp.corr <- corr.genes.var[order(corr.genes.var[, 'correlation'],
-            #                                       decreasing = TRUE,
-            #                                       na.last = TRUE) ,]
-            #     ### high positive correlation
-            #     p.pos <- as.data.frame(t(temp.data[row.names(temp.corr)[c(1:nb.top.genes)],]))
-            #     p.pos[ ,'variable'] <- se.obj@colData[, variable]
-            #     p.pos <- p.pos %>% pivot_longer(-variable, names_to = 'genes', values_to = 'expr')
-            #     p.pos <- ggplot(p.pos, aes(x = variable, y = expr)) +
-            #         geom_point() +
-            #         ylab(expression(Log[2]~'gene expression')) +
-            #         xlab(variable) +
-            #         facet_wrap(~genes) +
-            #         ggtitle(paste0(nb.top.genes," Top highly positively correlated genes with ",
-            #                        variable,'\n in the assay ',x))+
-            #         theme(
-            #             panel.background = element_blank(),
-            #             axis.line = element_line(colour = 'black', size = 1),
-            #             axis.title.x = element_text(size = 14),
-            #             axis.title.y = element_text(size = 14),
-            #             axis.text.x = element_text(size = 10),
-            #             axis.text.y = element_text(size = 12),
-            #             legend.text = element_text(size = 10),
-            #             legend.title = element_text(size = 14),
-            #             strip.text.x = element_text(size = 10),
-            #             plot.title = element_text(size = 16)
-            #         )
-            #
-            #     ### low negative correlation
-            #     temp.corr <- corr.genes.var[order(corr.genes.var[, 'correlation'],
-            #                                       decreasing = FALSE,
-            #                                       na.last = TRUE) ,]
-            #     p.neg <- as.data.frame(t(temp.data[row.names(temp.corr)[c(1:nb.top.genes)],]))
-            #     p.neg[ ,'variable'] <- se.obj@colData[, variable]
-            #     p.neg <- p.neg %>% pivot_longer(-variable, names_to = 'genes', values_to = 'expr')
-            #     p.neg <- ggplot(p.neg, aes(x = variable, y = expr)) +
-            #         geom_point() +
-            #         ylab(expression(Log[2]~'gene expression')) +
-            #         xlab(variable) +
-            #         facet_wrap(~genes) +
-            #         ggtitle(paste0(
-            #             'Top highly negatively correlated genes with the variable ',
-            #             variable,'\n in the assay ',x)) +
-            #         theme(
-            #             panel.background = element_blank(),
-            #             axis.line = element_line(colour = 'black', size = 1),
-            #             axis.title.x = element_text(size = 14),
-            #             axis.title.y = element_text(size = 14),
-            #             axis.text.x = element_text(size = 10),
-            #             axis.text.y = element_text(size = 12),
-            #             legend.text = element_text(size = 10),
-            #             legend.title = element_text(size = 14),
-            #             strip.text.x = element_text(size = 10),
-            #             plot.title = element_text(size = 16)
-            #         )
-            #     rm(temp.data)
-            #     rm(temp.corr)
-            #
-            #     results <- list(
-            #         corr.genes.var = corr.genes.var,
-            #         p.pos=p.pos,
-            #         p.neg=p.neg)
-            # } else{
-            #     results <- list(
-            #         corr.genes.var = corr.genes.var)
-            # }
-            # return(results)
-            return(corr.genes.var)
+            ### Plot top and bottom ranked genes
+            if (plot.top.genes) {
+                printColoredMessage(message=paste0(
+                    '### Plotting top ' ,
+                    nb.top.genes,
+                    ' highly correlated genes with the ',
+                    variable,
+                    ' variable', '.'
+                ),
+                color = 'magenta',
+                verbose = verbose
+                )
+                temp.corr <- corr.genes.var[order(corr.genes.var[, 'correlation'],
+                                                  decreasing = TRUE,
+                                                  na.last = TRUE) ,]
+                ### high positive correlation
+                p.pos <- as.data.frame(t(temp.data[row.names(temp.corr)[c(1:nb.top.genes)],]))
+                p.pos[ ,'variable'] <- se.obj@colData[, variable]
+                p.pos <- p.pos %>% pivot_longer(-variable, names_to = 'genes', values_to = 'expr')
+                p.pos <- ggplot(p.pos, aes(x = variable, y = expr)) +
+                    geom_point() +
+                    ylab(expression(Log[2]~'gene expression')) +
+                    xlab(variable) +
+                    facet_wrap(~genes) +
+                    ggtitle(paste0(nb.top.genes," Top highly positively correlated genes with ",
+                                   variable,'\n in the assay ',x))+
+                    theme(
+                        panel.background = element_blank(),
+                        axis.line = element_line(colour = 'black', size = 1),
+                        axis.title.x = element_text(size = 14),
+                        axis.title.y = element_text(size = 14),
+                        axis.text.x = element_text(size = 10),
+                        axis.text.y = element_text(size = 12),
+                        legend.text = element_text(size = 10),
+                        legend.title = element_text(size = 14),
+                        strip.text.x = element_text(size = 10),
+                        plot.title = element_text(size = 16)
+                    )
+
+                ### low negative correlation
+                temp.corr <- corr.genes.var[order(corr.genes.var[, 'correlation'],
+                                                  decreasing = FALSE,
+                                                  na.last = TRUE) ,]
+                p.neg <- as.data.frame(t(temp.data[row.names(temp.corr)[c(1:nb.top.genes)],]))
+                p.neg[ ,'variable'] <- se.obj@colData[, variable]
+                p.neg <- p.neg %>% pivot_longer(-variable, names_to = 'genes', values_to = 'expr')
+                p.neg <- ggplot(p.neg, aes(x = variable, y = expr)) +
+                    geom_point() +
+                    ylab(expression(Log[2]~'gene expression')) +
+                    xlab(variable) +
+                    facet_wrap(~genes) +
+                    ggtitle(paste0(
+                        'Top highly negatively correlated genes with the variable ',
+                        variable,'\n in the assay ',x)) +
+                    theme(
+                        panel.background = element_blank(),
+                        axis.line = element_line(colour = 'black', size = 1),
+                        axis.title.x = element_text(size = 14),
+                        axis.title.y = element_text(size = 14),
+                        axis.text.x = element_text(size = 10),
+                        axis.text.y = element_text(size = 12),
+                        legend.text = element_text(size = 10),
+                        legend.title = element_text(size = 14),
+                        strip.text.x = element_text(size = 10),
+                        plot.title = element_text(size = 16)
+                    )
+                rm(temp.data)
+                rm(temp.corr)
+
+                results <- list(
+                    corr.genes.var = corr.genes.var,
+                    p.pos=p.pos,
+                    p.neg=p.neg)
+            } else{
+                results <- list(
+                    corr.genes.var = corr.genes.var)
+            }
+            return(results)
         })
-    names(cor.all) <- levels(assay.names)
+    names(cor.all$corr.genes.var) <- levels(assay.names)
 
     ### Add results to SummarizedExperiment object
     printColoredMessage(message= '### Saving the correlation results to the metadata of the SummarizedExperiment object.',
                         color = 'magenta',
                         verbose = verbose)
+
     for (x in levels(assay.names)){
+            ## Check if metadata metric already exist
             if(length(se.obj@metadata)==0 ) {
                 se.obj@metadata[['metric']] <- list()
             }
+            ## Check if metadata metric already exist for this assay
             if(!x %in% names(se.obj@metadata[['metric']]) ) {
                 se.obj@metadata[['metric']][[x]] <- list()
             }
-            if(!paste0('gene.',method,'.corr.') %in% names(se.obj@metadata[['metric']][[x]])  ) {
-                se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr.')]] <- list()
+            ## Check if metadata metric already exist for this assay and this metric
+            if(!paste0('gene.',method,'.corr') %in% names(se.obj@metadata[['metric']][[x]])  ) {
+                se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr')]] <- list()
             }
-            if(! variable %in% names(se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr.')]])  ) {
-                se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr.')]][[variable]] <- cor.all[[x]]
+            ## Check if metadata metric already exist for this assay, this metric and this variable
+            if(! variable %in% names(se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr')]])  ) {
+                se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr')]][[variable]] <- cor.all$corr.genes.var[[x]]
             }
     }
     printColoredMessage(message= paste0(
@@ -262,10 +265,16 @@ genesVariableCorrelation<-function(
         color = 'blue',
         verbose = verbose)
 
-
+    ### Add results to SummarizedExperiment object
+    printColoredMessage(message= '### Plotting and Saving the correlation results to the metadata of the SummarizedExperiment object.',
+                        color = 'magenta',
+                        verbose = verbose)
 
     ## Plot and save into se.obj@plot[[gene.cor]][boxplot] or [top.high.smthg]
-
+    se.obj=plotMetric(se.obj,
+                      assay.names =assay.names,
+                      metric=paste0('gene.',method,'.corr'),
+                      variable=variable)
 
     printColoredMessage(message = '------------The genesVariableCorrelation function finished.',
                         color = 'white',

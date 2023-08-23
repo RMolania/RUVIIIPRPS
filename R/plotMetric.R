@@ -9,12 +9,20 @@
 #' @param variable String of the label of a variable such as
 #' sample types or batches from colData(se.obj).
 
+#' @return SummarizedExperiment A SummarizedExperiment object containing the associated plot.
+#' @importFrom dplyr mutate
+#' @importFrom tidyr pivot_longer %>%
+#' @importFrom SummarizedExperiment assays assay colData
+#' @importFrom fastDummies dummy_cols
+#' @import ggplot2
+#' @export
 
 plotMetric <- function(
         se.obj,
         assay.names,
-        metric=c('gene.pearson.corr.','gene.spearman.corr.','gene.aov.anova','gene.welch.correction.anova','ari','sil','pcs.vect.corr','pcs.lm'),
-        variable
+        metric=c('gene.pearson.corr','gene.spearman.corr','gene.aov.anova','gene.welch.correction.anova','ari','sil','pcs.vect.corr','pcs.lm'),
+        variable,
+        verbose=TRUE
         ) {
 
     ## Assays
@@ -27,7 +35,7 @@ plotMetric <- function(
     all.assays.metric <- lapply(
         levels(assay.names),
         function(x){
-            se.obj@metadata[[x]][[metric]][[variable]]
+            se.obj@metadata[['metric']][[x]][[metric]][[variable]]
         })
     everything<-datasets<-corr.coeff<-pcs<-NULL
     all.assays.metric <- as.data.frame(all.assays.metric)
@@ -79,6 +87,22 @@ plotMetric <- function(
             axis.text.x = element_text(size = 12),
             axis.text.y = element_text(size = 12))+
         ggtitle(paste0("Assessment: ",metric," computed on ",variable))
-    return(p)
+
+    ### Add plots to SummarizedExperiment object
+    printColoredMessage(message= '### Saving the plot to the metadata of the SummarizedExperiment object.',
+                        color = 'magenta',
+                        verbose = verbose)
+    ## Check if metadata plot already exist
+    if(length(se.obj@metadata)==0 ) {
+            se.obj@metadata[['plot']] <- list()
+    }
+    ## Check if metadata plot already exist for this metric
+    if(!metric %in% names(se.obj@metadata[['plot']]) ) {
+            se.obj@metadata[['plot']][[metric]] <- list()
+    }
+    ## Save the new plot
+    se.obj@metadata[['plot']][[metric]][[variable]] <- p
+
+    return(se.obj)
 }
 

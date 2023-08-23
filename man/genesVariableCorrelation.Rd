@@ -65,7 +65,7 @@ of the functions, by default it is set to TRUE.}
 \item{apply.round}{TO BE DEFINED.}
 }
 \value{
-list List containing the associated plot and the computed correlation on the continuous variable.
+SummarizedExperiment A SummarizedExperiment object containing the associated plot and the computed correlation on the continuous variable.
 }
 \description{
 is used to compute the correlation between the gene expression (assay)

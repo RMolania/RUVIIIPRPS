@@ -8,9 +8,10 @@ SummarizedExperiment class object.}
 plotMetric(
   se.obj,
   assay.names,
-  metric = c("gene.pearson.corr.", "gene.spearman.corr.", "gene.aov.anova",
+  metric = c("gene.pearson.corr", "gene.spearman.corr", "gene.aov.anova",
     "gene.welch.correction.anova", "ari", "sil", "pcs.vect.corr", "pcs.lm"),
-  variable
+  variable,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -23,6 +24,9 @@ of the assays of the SummarizedExperiment class object.}
 
 \item{variable}{String of the label of a variable such as
 sample types or batches from colData(se.obj).}
+}
+\value{
+SummarizedExperiment A SummarizedExperiment object containing the associated plot.
 }
 \description{
 is used to plot the metric computed on a variable across the assays selected of a
