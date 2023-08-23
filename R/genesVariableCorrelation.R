@@ -236,10 +236,10 @@ genesVariableCorrelation<-function(
     names(cor.all) <- levels(assay.names)
 
     ### Add results to SummarizedExperiment object
+    printColoredMessage(message= '### Saving the correlation results to the metadata of the SummarizedExperiment object.',
+                        color = 'magenta',
+                        verbose = verbose)
     for (x in levels(assay.names)){
-            printColoredMessage(message= '### Saving the correlation results to the metadata of the SummarizedExperiment object.',
-                                color = 'magenta',
-                                verbose = verbose)
             if(length(se.obj@metadata)==0 ) {
                 se.obj@metadata[['metric']] <- list()
             }
