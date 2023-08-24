@@ -7,7 +7,7 @@ SummarizedExperiment class object.}
 \usage{
 plotMetric(
   se.obj,
-  assay.names,
+  assay.names = "All",
   metric = c("gene.pearson.corr", "gene.spearman.corr", "gene.aov.anova",
     "gene.welch.correction.anova", "ari", "sil", "pcs.vect.corr", "pcs.lm"),
   variable,

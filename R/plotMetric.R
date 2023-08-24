@@ -21,7 +21,7 @@
 
 plotMetric <- function(
         se.obj,
-        assay.names,
+        assay.names='All',
         metric=c('gene.pearson.corr','gene.spearman.corr','gene.aov.anova','gene.welch.correction.anova','ari','sil','pcs.vect.corr','pcs.lm'),
         variable,
         verbose=TRUE
@@ -30,11 +30,17 @@ plotMetric <- function(
     printColoredMessage(message = '------------The plotMetric function starts:',
                         color = 'white',
                         verbose = verbose)
+
+    if (!metric %in% c('gene.pearson.corr','gene.spearman.corr','gene.aov.anova','gene.welch.correction.anova','ari','sil','pcs.vect.corr','pcs.lm')) {
+        stop(paste0('The ', metric,'is not suitable. It has to be selected from the gene.pearson.corr, gene.spearman.corr, gene.aov.anova,
+                gene.welch.correction.anova,ari, sil, pcs.vect.corr, pcs.lm metrics.'))
+    }
+
     ## Assays
-    if (!is.null()){
-        assay.names=as.factor(unlist())
-    }else{
+    if(length(assay.names) == 1 && assay.names=='All'){
         assay.names=as.factor(names(assays(se.obj)))
+    }else {
+        assay.names=as.factor(unlist(assay.names))
     }
 
     all.assays.metric <- lapply(
@@ -42,6 +48,7 @@ plotMetric <- function(
         function(x){
             se.obj@metadata[['metric']][[x]][[metric]][[variable]]
         })
+    names(all.assays.metric)=levels(assay.names)
     everything<-datasets<-corr.coeff<-pcs<-NULL
     all.assays.metric <- as.data.frame(all.assays.metric)
 
@@ -68,19 +75,21 @@ plotMetric <- function(
             datasets,levels=levels(assay.names)))
     }
 
-    if (metric %in% c('gene.pearson.corr.','gene.spearman.corr.','gene.aov.anova','gene.welch.correction.anova')) {
-        type= geom_boxplot()
+
+    p=ggplot(all.assays.metric, aes(x = datasets, y = metric, fill = datasets))
+
+    if (metric %in% c('gene.pearson.corr','gene.spearman.corr','gene.aov.anova','gene.welch.correction.anova')) {
+        p=p+ geom_boxplot()
         xlabel=''
     } else if (metric %in% c('ari','silh')){
-        type= geom_point(aes(colour=datasets))
+        p=p+ geom_point(aes(colour=datasets))
         xlabel=''
     } else if (metric %in% c('pcs.vect.corr','pcs.lm')){
-        type= geom_line(aes(color = datasets), size = 1) +
+        p=p+geom_line(aes(color = datasets), size = 1) +
             geom_point(aes(color = datasets), size = 3)
         xlabel='PCs'
     }
-    p=ggplot(all.assays.metric, aes(x = datasets, y = metric, fill = datasets)) +
-        type +
+    p= p +
         ylab(paste0(metric)) +
         xlab(xlabel) +
         geom_hline(yintercept=0)+
@@ -110,6 +119,7 @@ plotMetric <- function(
             se.obj@metadata[['plot']][[metric]] <- list()
     }
     ## Save the new plot
+    se.obj@metadata[['plot']][[metric]][[variable]]<- list()
     se.obj@metadata[['plot']][[metric]][[variable]] <- p
 
     printColoredMessage(message = '------------The plotMetric function finished.',

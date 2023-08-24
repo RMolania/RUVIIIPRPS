@@ -61,9 +61,7 @@ genesVariableCorrelation<-function(
                         color = 'white',
                         verbose = verbose)
     ### Check the assay names and method input
-    if(length(assay.names) > 1){
-        stop('This function works on a single assay.')
-    } else if(!method %in% c('pearson', 'spearman')){
+    if(!method %in% c('pearson', 'spearman')){
         stop('"pearson" and "spearman" are the two supported types for correlations.')
     }
     ### Check se.obj and assay name
@@ -81,10 +79,10 @@ genesVariableCorrelation<-function(
     }
 
     ## Assays
-    if (assay.names!='All'){
-        assay.names=as.factor(unlist(assay.names))
-    }else{
+    if(length(assay.names) == 1 && assay.names=='All'){
         assay.names=as.factor(names(assays(se.obj)))
+    }else {
+        assay.names=as.factor(unlist(assay.names))
     }
 
     # Correlation gene expression and continous variable
@@ -231,7 +229,7 @@ genesVariableCorrelation<-function(
             }
             return(results)
         })
-    names(cor.all$corr.genes.var) <- levels(assay.names)
+    names(cor.all) <- levels(assay.names)
 
     ### Add results to SummarizedExperiment object
     printColoredMessage(message= '### Saving the correlation results to the metadata of the SummarizedExperiment object.',
@@ -257,7 +255,7 @@ genesVariableCorrelation<-function(
             }
             ## Check if metadata metric already exist for this assay, this metric and this variable
             if(! variable %in% names(se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr')]])  ) {
-                se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr')]][[variable]] <- cor.all$corr.genes.var[[x]]
+                se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr')]][[variable]] <- cor.all[[x]][['corr.genes.var']][,'correlation']
             }
     }
     printColoredMessage(message= paste0(
