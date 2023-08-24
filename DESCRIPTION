@@ -1,21 +1,42 @@
 Package: RUVPRPS
-Title: What the Package Does (One Line, Title Case)
+Title: RUV-PRPS: Removing unwanted variation from large-scale RNA sequencing data with PRPS
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Marie", "Trussart", email="trussart.m@wehi.edu.au", role = c("aut", "cre"))
+Description: We propose a strategy, called pseudo-replicates of pseudo-samples (PRPS), for deploying our recently developed normalization method, called removing unwanted variation III (RUV-III), to remove the variation caused by library size, tumor purity and batch effects in TCGA RNA-seq data. RUV-III with PRPS can be used to integrate and normalize other large transcriptomic datasets coming from multiple laboratories or platforms.
+License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Imports: 
     ggplot2,
     SummarizedExperiment,
-    BiocSingular
+    BiocSingular,
+    ggpubr,
+    cowplot,
+    scales,
+    RColorBrewer,
+    grDevices,
+    gridExtra,
+    wesanderson,
+    dplyr,
+    tidyr,
+    parallel,
+    cluster,
+    mclust,
+    matrixTests,
+    fastDummies,
+    kunstomverse,
+    stats,
+    Rfast,
+    matrixStats,
+    ruv,
+    Matrix
 URL: https://github.com/mtrussart/RUVPRPS
 BugReports: https://github.com/mtrussart/RUVPRPS/issues
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+VignetteBuilder: knitr
