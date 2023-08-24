@@ -18,7 +18,7 @@
 #' by default it is set to 0.
 #' @param boxplot.output Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.
 #' @param plot.top.genes Indicates whether to plot the gene expression of the number of genes
-#' from the high or low correlation, by default it is set to TRUE.
+#' from the high or low correlation, by default it is set to FALSE.
 #' @param nb.top.genes Defines the number of genes from the high or low correlation to plot,
 #' by default is set to 3.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
@@ -38,8 +38,8 @@
 #' @import ggplot2
 #' @export
 
-## for this one, we will have plot.top.genes in a facet for multiple assays
-## add the saving into a matrix or sum. exp jjj
+
+## add the saving into a matrix or sum. exp
 
 genesVariableCorrelation<-function(
         se.obj,
@@ -50,7 +50,7 @@ genesVariableCorrelation<-function(
         a = 0.05,
         rho = 0,
         boxplot.output=TRUE,
-        plot.top.genes = TRUE,
+        plot.top.genes = FALSE,
         nb.top.genes = 3,
         assess.se.obj = TRUE,
         remove.na = 'both',
@@ -189,6 +189,7 @@ genesVariableCorrelation<-function(
                         strip.text.x = element_text(size = 10),
                         plot.title = element_text(size = 16)
                     )
+                p.pos
 
                 ### low negative correlation
                 temp.corr <- corr.genes.var[order(corr.genes.var[, 'correlation'],
@@ -217,6 +218,7 @@ genesVariableCorrelation<-function(
                         strip.text.x = element_text(size = 10),
                         plot.title = element_text(size = 16)
                     )
+                p.neg
                 rm(temp.data)
                 rm(temp.corr)
 
@@ -231,6 +233,7 @@ genesVariableCorrelation<-function(
             return(results)
         })
     names(cor.all) <- levels(assay.names)
+
 
     ### Add results to SummarizedExperiment object
     printColoredMessage(message= '### Saving the correlation results to the metadata of the SummarizedExperiment object.',

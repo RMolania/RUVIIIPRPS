@@ -14,7 +14,7 @@ genesVariableCorrelation(
   a = 0.05,
   rho = 0,
   boxplot.output = TRUE,
-  plot.top.genes = TRUE,
+  plot.top.genes = FALSE,
   nb.top.genes = 3,
   assess.se.obj = TRUE,
   remove.na = "both",
@@ -48,7 +48,7 @@ by default it is set to 0.}
 \item{boxplot.output}{Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.}
 
 \item{plot.top.genes}{Indicates whether to plot the gene expression of the number of genes
-from the high or low correlation, by default it is set to TRUE.}
+from the high or low correlation, by default it is set to FALSE.}
 
 \item{nb.top.genes}{Defines the number of genes from the high or low correlation to plot,
 by default is set to 3.}
