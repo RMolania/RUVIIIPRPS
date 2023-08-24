@@ -39,7 +39,7 @@
 #' @export
 
 ## for this one, we will have plot.top.genes in a facet for multiple assays
-## add the saving into a matrix or sum. exp
+## add the saving into a matrix or sum. exp jjj
 
 genesVariableCorrelation<-function(
         se.obj,
