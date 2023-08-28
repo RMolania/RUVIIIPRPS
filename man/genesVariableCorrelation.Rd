@@ -13,6 +13,7 @@ genesVariableCorrelation(
   method = "spearman",
   a = 0.05,
   rho = 0,
+  save.se.obj = TRUE,
   boxplot.output = TRUE,
   plot.top.genes = FALSE,
   nb.top.genes = 3,
@@ -44,6 +45,9 @@ by default it is set to 0.05.}
 
 \item{rho}{The value of the hypothesised correlation to be used in the hypothesis testing,
 by default it is set to 0.}
+
+\item{save.se.obj}{Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+to output the result in a variable. By default it is set to TRUE.}
 
 \item{boxplot.output}{Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.}
 

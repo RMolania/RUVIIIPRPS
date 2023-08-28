@@ -16,6 +16,8 @@
 #' by default it is set to 0.05.
 #' @param rho The value of the hypothesised correlation to be used in the hypothesis testing,
 #' by default it is set to 0.
+#' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+#' to output the result in a variable. By default it is set to TRUE.
 #' @param boxplot.output Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.
 #' @param plot.top.genes Indicates whether to plot the gene expression of the number of genes
 #' from the high or low correlation, by default it is set to FALSE.
@@ -49,6 +51,7 @@ genesVariableCorrelation<-function(
         method='spearman',
         a = 0.05,
         rho = 0,
+        save.se.obj = TRUE,
         boxplot.output=TRUE,
         plot.top.genes = FALSE,
         nb.top.genes = 3,
@@ -235,16 +238,18 @@ genesVariableCorrelation<-function(
     names(cor.all) <- levels(assay.names)
 
 
-    ### Add results to SummarizedExperiment object
-    printColoredMessage(message= '### Saving the correlation results to the metadata of the SummarizedExperiment object.',
+    ### Add results to SummarizedExperiment object or to a matrix
+    if(save.se.obj == TRUE){
+        ### Add results to SummarizedExperiment object
+        printColoredMessage(message= '### Saving the correlation results to the metadata of the SummarizedExperiment object.',
                         color = 'magenta',
                         verbose = verbose)
 
-    for (x in levels(assay.names)){
+        for (x in levels(assay.names)){
             ## Check if metadata metric already exist
             if(length(se.obj@metadata)==0 ) {
                 se.obj@metadata[['metric']] <- list()
-             }
+            }
             ## Check if metadata metric already exist for this assay
             if(!'metric' %in% names(se.obj@metadata) ) {
                 se.obj@metadata[['metric']] <- list()
@@ -261,7 +266,8 @@ genesVariableCorrelation<-function(
             if(! variable %in% names(se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr')]])  ) {
                 se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.corr')]][[variable]] <- cor.all[[x]][['corr.genes.var']][,'correlation']
             }
-    }
+        }
+
     printColoredMessage(message= paste0(
         'The correlation results are saved to metadata@',
         x,
@@ -271,23 +277,25 @@ genesVariableCorrelation<-function(
         color = 'blue',
         verbose = verbose)
 
-    ### Add results to SummarizedExperiment object
+    ## Plot and save into se.obj@plot[[gene.cor]][boxplot] or [top.high.smthg]
     printColoredMessage(message= '### Plotting and Saving the correlation results to the metadata of the SummarizedExperiment object.',
                         color = 'magenta',
                         verbose = verbose)
 
-    ## Plot and save into se.obj@plot[[gene.cor]][boxplot] or [top.high.smthg]
     se.obj=plotMetric(se.obj,
                       assay.names =assay.names,
                       metric=paste0('gene.',method,'.corr'),
                       variable=variable,
                       verbose=verbose)
 
+    return(se.obj = se.obj)
+    } else if(save.se.obj == FALSE){
+        return(corr.genes.var=cor.all[[x]][['corr.genes.var']][,'correlation'])
+    }
+
     printColoredMessage(message = '------------The genesVariableCorrelation function finished.',
                         color = 'white',
                         verbose = verbose)
-    return(se.obj = se.obj)
-
 
 }
 
