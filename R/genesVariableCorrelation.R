@@ -17,7 +17,7 @@
 #' @param rho The value of the hypothesised correlation to be used in the hypothesis testing,
 #' by default it is set to 0.
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-#' to output the result in a variable. By default it is set to TRUE.
+#' to output the result. By default it is set to TRUE.
 #' @param boxplot.output Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.
 #' @param plot.top.genes Indicates whether to plot the gene expression of the number of genes
 #' from the high or low correlation, by default it is set to FALSE.
