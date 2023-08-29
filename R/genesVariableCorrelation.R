@@ -192,7 +192,7 @@ genesVariableCorrelation<-function(
                         strip.text.x = element_text(size = 10),
                         plot.title = element_text(size = 16)
                     )
-                p.pos
+                plot(p.pos)
 
                 ### low negative correlation
                 temp.corr <- corr.genes.var[order(corr.genes.var[, 'correlation'],
@@ -221,7 +221,7 @@ genesVariableCorrelation<-function(
                         strip.text.x = element_text(size = 10),
                         plot.title = element_text(size = 16)
                     )
-                p.neg
+                plot(p.neg)
                 rm(temp.data)
                 rm(temp.corr)
 
