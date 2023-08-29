@@ -1,16 +1,16 @@
 #' is used to compute the correlation between the gene expression (assay)
 #' of a SummarizedExperiment class object and a continuous variable (i.e. library size).
 #'
-#' @param se.obj A SummarizedExperiment object that will be used to compute the correlation
+#' @param se.obj A SummarizedExperiment object that will be used to compute the correlation.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
 #' of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default
 #  all the assays of the SummarizedExperiment class object will be selected.
 #' @param variable String of the label of a continuous variable such as
-#' sample types or batches from colData(se.obj).
+#' library size from colData(se.obj).
 #' @param apply.log Indicates whether to apply a log-transformation to the data. By default
 #' the log transformation will be selected.
 #' @param method A character string indicating which correlation coefficient
-#' is to be used for the test: "pearson", "kendall", or "spearman". By default 'spearman will
+#' is to be used for the test: "pearson", "kendall", or "spearman". By default "spearman" will
 #' be selected.
 #' @param a The significance level used for the confidence intervals in the correlation,
 #' by default it is set to 0.05.
@@ -30,18 +30,16 @@
 #' @param pseudo.count TO BE DEFINED.
 #' @param apply.round TO BE DEFINED.
 #'
-#' @return SummarizedExperiment A SummarizedExperiment object containing the associated plot and the computed correlation on the continuous variable.
-#' @importFrom dplyr mutate
-#' @importFrom tidyr pivot_longer %>%
+#' @return SummarizedExperiment A SummarizedExperiment object containing the associated plot or the computed correlation on the continuous variable.
 #' @importFrom SummarizedExperiment assays assay colData
 #' @importFrom matrixTests row_oneway_equalvar
+#' @importFrom dplyr mutate
+#' @importFrom tidyr pivot_longer %>%
 #' @importFrom fastDummies dummy_cols
 #' @importFrom stats cancor var complete.cases
 #' @import ggplot2
 #' @export
 
-
-## add the saving into a matrix or sum. exp
 
 genesVariableCorrelation<-function(
         se.obj,
@@ -238,9 +236,8 @@ genesVariableCorrelation<-function(
     names(cor.all) <- levels(assay.names)
 
 
-    ### Add results to SummarizedExperiment object or to a matrix
+    ### Add results to the SummarizedExperiment object
     if(save.se.obj == TRUE){
-        ### Add results to SummarizedExperiment object
         printColoredMessage(message= '### Saving the correlation results to the metadata of the SummarizedExperiment object.',
                         color = 'magenta',
                         verbose = verbose)
@@ -268,27 +265,30 @@ genesVariableCorrelation<-function(
             }
         }
 
-    printColoredMessage(message= paste0(
-        'The correlation results are saved to metadata@',
-        x,
-        '$gene.var.corr$',
-        variable,
-        '.'),
-        color = 'blue',
-        verbose = verbose)
+        printColoredMessage(message= paste0(
+            'The correlation results are saved to metadata@',
+            x,
+            '$gene.var.corr$',
+            variable,
+            '.'),
+            color = 'blue',
+            verbose = verbose)
 
-    ## Plot and save into se.obj@plot[[gene.cor]][boxplot] or [top.high.smthg]
-    printColoredMessage(message= '### Plotting and Saving the correlation results to the metadata of the SummarizedExperiment object.',
-                        color = 'magenta',
-                        verbose = verbose)
+        ## Plot and save the plot into se.obj@metadata$plot
+        if (boxplot.output==TRUE) {
+            printColoredMessage(message= '### Plotting and Saving the correlation results to the metadata of the SummarizedExperiment object.',
+                                color = 'magenta',
+                                verbose = verbose)
 
-    se.obj=plotMetric(se.obj,
-                      assay.names =assay.names,
-                      metric=paste0('gene.',method,'.corr'),
-                      variable=variable,
-                      verbose=verbose)
+            se.obj=plotMetric(se.obj,
+                              assay.names =assay.names,
+                              metric=paste0('gene.',method,'.corr'),
+                              variable=variable,
+                              verbose=verbose)
+        }
+        return(se.obj = se.obj)
 
-    return(se.obj = se.obj)
+    ## Return only the correlation result
     } else if(save.se.obj == FALSE){
         return(corr.genes.var=cor.all[[x]][['corr.genes.var']][,'correlation'])
     }

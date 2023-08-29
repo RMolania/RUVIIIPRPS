@@ -17,6 +17,7 @@
 #' @importFrom SummarizedExperiment assays assay colData
 #' @importFrom fastDummies dummy_cols
 #' @import ggplot2
+#' @importFrom wesanderson wes_palette
 #' @export
 
 plotMetric <- function(
