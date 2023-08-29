@@ -47,7 +47,7 @@ by default it is set to 0.05.}
 by default it is set to 0.}
 
 \item{save.se.obj}{Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-to output the result in a variable. By default it is set to TRUE.}
+to output the result. By default it is set to TRUE.}
 
 \item{boxplot.output}{Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.}
 

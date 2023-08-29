@@ -76,7 +76,7 @@ plotMetric <- function(
     }
 
 
-    p=ggplot(all.assays.metric, aes(x = datasets, y = metric, fill = datasets))
+    p=ggplot(all.assays.metric, aes_string(x = 'datasets',y=metric, fill = 'datasets'))
 
     if (metric %in% c('gene.pearson.corr','gene.spearman.corr','gene.aov.anova','gene.welch.correction.anova')) {
         p=p+ geom_boxplot()
@@ -99,8 +99,15 @@ plotMetric <- function(
             axis.title.x = element_text(size = 18),
             axis.title.y = element_text(size = 18),
             axis.text.x = element_text(size = 12),
-            axis.text.y = element_text(size = 12))+
+            axis.text.y = element_blank())+
         ggtitle(paste0("Assessment: ",metric," computed on ",variable))
+    if  (length(levels(assay.names)) <= 4){
+        dataSets.colors <- wes_palette(
+            n = length(levels(assay.names)),
+            name = "GrandBudapest1")[seq(1:length(levels(assay.names)))]
+        p=p+scale_fill_manual(values = dataSets.colors, guide = 'none')
+    }
+
 
     ### Add plots to SummarizedExperiment object
     printColoredMessage(message= '### Saving the plot to the metadata of the SummarizedExperiment object.',
