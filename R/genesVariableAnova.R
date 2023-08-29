@@ -113,7 +113,7 @@ genesVariableAnova <- function(se.obj,
                     variable,
                     ' variable.',
                     ' in the assay ',
-                    x,
+                    x
                 ),
                 color = 'blue',
                 verbose = verbose)
@@ -126,7 +126,9 @@ genesVariableAnova <- function(se.obj,
                 printColoredMessage(message = paste0(
                     'Applying the row_oneway_welch function from the Rfast R package between individual genes and the ',
                     variable,
-                    ' variable.'
+                    ' variable.',
+                    ' in the assay ',
+                    x
                 ),
                 color = 'blue',
                 verbose = verbose)
