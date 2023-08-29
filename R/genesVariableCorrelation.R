@@ -87,7 +87,7 @@ genesVariableCorrelation<-function(
         assay.names=as.factor(unlist(assay.names))
     }
 
-    # Correlation gene expression and continous variable
+    # Correlation gene expression and continuous variable on all assays
     cor.all<- lapply(
         levels(assay.names),
         function(x){
@@ -223,11 +223,11 @@ genesVariableCorrelation<-function(
                 rm(temp.data)
                 rm(temp.corr)
 
-                results <- list(
-                    corr.genes.var = corr.genes.var,
-                    p.pos=p.pos,
-                    p.neg=p.neg)
-            } else{
+                # results <- list(
+                #     corr.genes.var = corr.genes.var,
+                #     p.pos=p.pos,
+                #     p.neg=p.neg)
+            # } else{
                 results <- list(
                     corr.genes.var = corr.genes.var)
             }
@@ -290,7 +290,7 @@ genesVariableCorrelation<-function(
 
     ## Return only the correlation result
     } else if(save.se.obj == FALSE){
-        return(corr.genes.var=cor.all[[x]][['corr.genes.var']][,'correlation'])
+        return(gene.corr.var=cor.all[[x]][['corr.genes.var']][,'correlation'])
     }
 
     printColoredMessage(message = '------------The genesVariableCorrelation function finished.',
