@@ -79,8 +79,11 @@ plotMetric <- function(
 
     p=ggplot(all.assays.metric, aes_string(x = 'datasets',y=metric, fill = 'datasets'))
 
-    if (metric %in% c('gene.pearson.corr','gene.spearman.corr','gene.aov.anova','gene.welch.correction.anova')) {
+    if (metric %in% c('gene.pearson.corr','gene.spearman.corr')){
         p=p+ geom_boxplot()
+        xlabel=''
+    } else if (metric %in% c('gene.aov.anova','gene.welch.correction.anova')) {
+        p=p+ geom_boxplot2()
         xlabel=''
     } else if (metric %in% c('ari','silh')){
         p=p+ geom_point(aes(colour=datasets))
