@@ -120,7 +120,6 @@ genesVariableAnova <- function(se.obj,
                     x = temp.data,
                     g = se.obj@colData[, variable]
                 )
-                row.names(anova.genes.var) <- row.names(se.obj)
             } else if(method == 'welch.correction'){
                 printColoredMessage(message = paste0(
                     'Applying the row_oneway_welch function from the Rfast R package between individual genes and the ',
@@ -134,8 +133,8 @@ genesVariableAnova <- function(se.obj,
                     x = temp.data,
                     g = se.obj@colData[, variable]
                 )
-                row.names(anova.genes.var) <- row.names(se.obj)
             }
+            row.names(anova.genes.var) <- row.names(se.obj)
 
             ## Round the anova statistic obtained to 2 digits
             if(apply.round){
