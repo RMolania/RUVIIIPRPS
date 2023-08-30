@@ -41,7 +41,7 @@ computePCA <- function(se.obj,
                        return.pc.percentage = TRUE,
                        scale = FALSE,
                        center = TRUE,
-                       BSPARAM = bsparam(),
+                       BSPARAM,
                        save.se.obj = TRUE,
                        verbose = TRUE,
                        pseudo.count = 1) {
