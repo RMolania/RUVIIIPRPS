@@ -211,7 +211,8 @@ genesVariableAnova <- function(se.obj,
             ## Check if metadata metric already exist for this assay, this metric and this variable
             if(!variable %in% names(se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.anova')]])  ) {
                 se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.anova')]][[variable]] <- anova.all[[x]][['anova.genes.var']][,'statistic']
-            }
+                row.names(se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.anova')]][[variable]]) <- row.names(se.obj)
+                }
         }
             printColoredMessage(message= paste0(
                 'The anova results are saved to metadata@',
