@@ -111,10 +111,9 @@ genesVariableAnova <- function(se.obj,
                 printColoredMessage(message = paste0(
                     'Applying the row_oneway_equalvar function from the Rfast R package between individual genes and the ',
                     variable,
-                    ' variable.',
-                    ' in the assay ',
-                    x
-                ),
+                    ' variable in the assay ',
+                    x,
+                    '.'),
                 color = 'blue',
                 verbose = verbose)
                 anova.genes.var <- row_oneway_equalvar(
@@ -126,10 +125,9 @@ genesVariableAnova <- function(se.obj,
                 printColoredMessage(message = paste0(
                     'Applying the row_oneway_welch function from the Rfast R package between individual genes and the ',
                     variable,
-                    ' variable.',
-                    ' in the assay ',
-                    x
-                ),
+                    ' variable in the assay ',
+                    x,
+                    '.'),
                 color = 'blue',
                 verbose = verbose)
                 anova.genes.var <- row_oneway_welch(
