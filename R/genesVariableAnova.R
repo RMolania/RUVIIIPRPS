@@ -26,7 +26,8 @@
 #' @param pseudo.count TO BE DEFINED.
 #' @param apply.round TO BE DEFINED.
 #'
-#' @return SummarizedExperiment A SummarizedExperiment object containing the associated plot or the computed correlation on the continuous variable.
+#' @return SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous variable
+#' and if requested the associated boxplot.
 
 #' @importFrom SummarizedExperiment assay assays
 #' @importFrom matrixTests row_oneway_equalvar row_oneway_welch
@@ -210,7 +211,7 @@ genesVariableAnova <- function(se.obj,
             }
             ## Check if metadata metric already exist for this assay, this metric and this variable
             if(!variable %in% names(se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.anova')]])  ) {
-                se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.anova')]][[variable]] <- anova.all[[x]][['anova.genes.var']][,'statistic']
+                se.obj@metadata[['metric']][[x]][[paste0('gene.',method,'.anova')]][[variable]] <- log2(anova.all[[x]][['anova.genes.var']][,'statistic'])
                 }
         }
             printColoredMessage(message= paste0(
@@ -237,7 +238,7 @@ genesVariableAnova <- function(se.obj,
 
             ## Return only the correlation result
         } else if(save.se.obj == FALSE){
-            return(gene.anova.var=anova.all[[x]][['anova.genes.var']][,'statistic'])
+            return(gene.anova.var=log2(anova.all[[x]][['anova.genes.var']][,'statistic']))
         }
 
             printColoredMessage(message = '------------The genesVariableAnova function finished.',

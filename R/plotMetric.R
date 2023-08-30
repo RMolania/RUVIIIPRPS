@@ -37,6 +37,7 @@ plotMetric <- function(
                 gene.welch.correction.anova,ari, sil, pcs.vect.corr, pcs.lm metrics.'))
     }
 
+
     ## Assays
     if(length(assay.names) == 1 && assay.names=='All'){
         assay.names=as.factor(names(assays(se.obj)))
@@ -47,6 +48,9 @@ plotMetric <- function(
     all.assays.metric <- lapply(
         levels(assay.names),
         function(x){
+            if (!variable %in% names(se.obj@metadata[['metric']][[x]][[variable]])) {
+                stop(paste0('The ', metric,'has not been computed yet for the ',variable,' variable and the ',x, ' assay.'))
+            }
             se.obj@metadata[['metric']][[x]][[metric]][[variable]]
         })
     names(all.assays.metric)=levels(assay.names)
@@ -96,14 +100,15 @@ plotMetric <- function(
     p= p +
         ylab(paste0(metric)) +
         xlab(xlabel) +
+        scale_y_continuous()+
         geom_hline(yintercept=0)+
         theme(
             panel.background = element_blank(),
             axis.line = element_line(colour = 'black', size = 1),
-            axis.title.x = element_text(size = 18),
-            axis.title.y = element_text(size = 18),
+            axis.title.x = element_text(size = 14),
+            axis.title.y = element_text(size = 14),
             axis.text.x = element_text(size = 12),
-            axis.text.y = element_blank())+
+            axis.text.y = element_text(size = 12))+
         ggtitle(paste0("Assessment: ",metric," computed on ",variable))
     if  (length(levels(assay.names)) <= 4){
         dataSets.colors <- wes_palette(

@@ -61,7 +61,8 @@ of the functions, by default it is set to TRUE.}
 \item{apply.round}{TO BE DEFINED.}
 }
 \value{
-SummarizedExperiment A SummarizedExperiment object containing the associated plot or the computed correlation on the continuous variable.
+SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous variable
+and if requested the associated boxplot.
 }
 \description{
 is used to compute the differential gene expression analysis between the gene expression (assay)
