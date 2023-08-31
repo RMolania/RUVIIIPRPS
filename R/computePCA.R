@@ -19,7 +19,6 @@
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
-#' @param remove.na TO BE DEFINED.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #' @param pseudo.count TO BE DEFINED.
@@ -46,7 +45,6 @@ computePCA <- function(se.obj,
                        BSPARAM=NULL,
                        save.se.obj = TRUE,
                        assess.se.obj = TRUE,
-                       remove.na = 'both',
                        verbose = TRUE,
                        pseudo.count = 1) {
     printColoredMessage(message = '------------The computePCA function starts:',
@@ -85,7 +83,7 @@ computePCA <- function(se.obj,
         se.obj <- checkSeObj(se.obj = se.obj,
                              assay.names = assay.names,
                              variables = NULL,
-                             remove.na = remove.na,
+                             remove.na = 'measurements',
                              verbose = verbose)
     }
 
@@ -98,7 +96,7 @@ computePCA <- function(se.obj,
 
 
     if (fast.pca) {
-        if (BSPARAM==NULL){
+        if (is.null(BSPARAM)){
             BSPARAM=bsparam()
         }
         ### svd
