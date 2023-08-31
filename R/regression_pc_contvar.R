@@ -19,6 +19,7 @@
 #' @import ggplot2
 #' @export
 
+#PCVariableRegression
 
 regression_pc_contvar<-function(
     pca,

@@ -21,10 +21,10 @@
 #' by default is set to 3.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
 #' @param remove.na TO BE DEFINED.
-#' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
 #' @param pseudo.count TO BE DEFINED.
 #' @param apply.round TO BE DEFINED.
+#' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
+#' of the functions, by default it is set to TRUE.
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous variable
 #' and if requested the associated boxplot.
@@ -48,9 +48,9 @@ genesVariableAnova <- function(se.obj,
                                nb.top.genes = 3,
                                assess.se.obj = TRUE,
                                remove.na = 'both',
-                               verbose = verbose,
                                pseudo.count = 1,
-                               apply.round = TRUE
+                               apply.round = TRUE,
+                               verbose = verbose
 ){
     printColoredMessage(message = '------------The genesVariableAnova function starts:',
                         color = 'white',

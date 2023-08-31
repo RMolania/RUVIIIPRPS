@@ -17,9 +17,9 @@ genesVariableAnova(
   nb.top.genes = 3,
   assess.se.obj = TRUE,
   remove.na = "both",
-  verbose = verbose,
   pseudo.count = 1,
-  apply.round = TRUE
+  apply.round = TRUE,
+  verbose = verbose
 )
 }
 \arguments{
@@ -53,12 +53,12 @@ by default is set to 3.}
 
 \item{remove.na}{TO BE DEFINED.}
 
-\item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
-
 \item{pseudo.count}{TO BE DEFINED.}
 
 \item{apply.round}{TO BE DEFINED.}
+
+\item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
+of the functions, by default it is set to TRUE.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous variable

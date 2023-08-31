@@ -22,6 +22,7 @@
 #' @import ggplot2
 #' @export
 
+#PCVariableCorrelation
 vector_correlation_pc_catvar<-function(
         pca,
         cat_var,

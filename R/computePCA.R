@@ -78,7 +78,7 @@ computePCA <- function(se.obj,
                             verbose = verbose)
     }
 
-    ### Assess the
+    ### Assess the se.obj
     if(assess.se.obj){
         se.obj <- checkSeObj(se.obj = se.obj,
                              assay.names = assay.names,
