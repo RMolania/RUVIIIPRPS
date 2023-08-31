@@ -13,8 +13,10 @@ computePCA(
   return.pc.percentage = TRUE,
   scale = FALSE,
   center = TRUE,
-  BSPARAM,
+  BSPARAM = NULL,
   save.se.obj = TRUE,
+  assess.se.obj = TRUE,
+  remove.na = "both",
   verbose = TRUE,
   pseudo.count = 1
 )
@@ -44,6 +46,10 @@ It is a generic function to center the columns of a numeric matrix, by default i
 
 \item{save.se.obj}{Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 to output the result. By default it is set to TRUE.}
+
+\item{assess.se.obj}{Indicates whether to assess the SummarizedExperiment class object.}
+
+\item{remove.na}{TO BE DEFINED.}
 
 \item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
