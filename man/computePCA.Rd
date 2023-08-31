@@ -21,6 +21,8 @@ computePCA(
 )
 }
 \arguments{
+\item{se.obj}{A SummarizedExperiment object that will be used to compute the PCA.}
+
 \item{assay.names}{Optional string or list of strings for the selection of the name(s)
 of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default}
 
@@ -52,8 +54,6 @@ to output the result. By default it is set to TRUE.}
 of the functions, by default it is set to TRUE.}
 
 \item{pseudo.count}{TO BE DEFINED.}
-
-\item{se}{A SummarizedExperiment object that will be used to compute the PCA.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing the PCA.

@@ -1,6 +1,6 @@
 #' is used to compute PCA of the gene expression (assay) of a SummarizedExperiment class object.
 #'
-#' @param se A SummarizedExperiment object that will be used to compute the PCA.
+#' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
 #' of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default
 #  all the assays of the SummarizedExperiment class object will be selected.
