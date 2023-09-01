@@ -18,7 +18,7 @@ plotPCA(
   strokeColor = "gray30",
   alpha = 0.5,
   assess.se.obj = TRUE,
-  verbose = verbose
+  verbose = TRUE
 )
 }
 \arguments{
