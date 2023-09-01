@@ -27,7 +27,7 @@ plotPCAassay<-function(se.obj,
                         variable,
                         nb.pcs = 3,
                         fast.pca = TRUE,
-                        color,
+                        color=NULL,
                         strokeSize = .2,
                         pointSize = 1.5,
                         strokeColor = 'gray30',
@@ -81,8 +81,10 @@ plotPCAassay<-function(se.obj,
                     axis.title.x = element_text(size = 14),
                     axis.title.y = element_text(size = 14),
                     aspect.ratio=1) +
-                guides(fill = guide_legend(override.aes = list(size = 4))) +
-                scale_fill_manual(name = variable, values = color)
+                guides(fill = guide_legend(override.aes = list(size = 4)))
+            if (!is.null(color)){
+                p=p+scale_fill_manual(name = variable, values = color)
+                }
 
             le <- get_legend(p)
         }else{
@@ -112,7 +114,9 @@ plotPCAassay<-function(se.obj,
                     axis.title.x = element_text(size = 14),
                     axis.title.y = element_text(size = 14),
                     aspect.ratio=1) +
-                scale_fill_manual(values = color, name = variable)
+                if (!is.null(color)){
+                    p=p+scale_fill_manual(name = variable, values = color)
+                }
         }
         p <- p + theme(legend.position = "none")
         xdens <- axis_canvas(p, axis = "x")+

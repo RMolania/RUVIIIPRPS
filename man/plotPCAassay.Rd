@@ -11,7 +11,7 @@ plotPCAassay(
   variable,
   nb.pcs = 3,
   fast.pca = TRUE,
-  color,
+  color = NULL,
   strokeSize = 0.2,
   pointSize = 1.5,
   strokeColor = "gray30",

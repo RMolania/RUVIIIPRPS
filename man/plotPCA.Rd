@@ -9,10 +9,10 @@ plotPCA(
   se.obj,
   assay.names = "All",
   variable,
+  color = NULL,
   fast.pca = TRUE,
   nb.pcs = 3,
   ncol.plot = 4,
-  color,
   strokeSize = 0.2,
   pointSize = 1.5,
   strokeColor = "gray30",
@@ -30,13 +30,13 @@ of the assay(s) of the SummarizedExperiment class object to compute the correlat
 \item{variable}{String of the label of a categorical variable such as
 sample types or batches from colData(se.obj).}
 
+\item{color}{The color of the variable that will be used on the PCA plot}
+
 \item{fast.pca}{TO BE DEFINED.}
 
 \item{nb.pcs}{TO BE DEFINED.}
 
 \item{ncol.plot}{is the argument of gtable for the layout specifying ncol, by default it is set to 4.}
-
-\item{color}{The color of the variable that will be used on the PCA plot}
 
 \item{strokeSize}{geom_point aesthetics}
 
