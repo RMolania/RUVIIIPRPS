@@ -42,17 +42,18 @@ plotPCAassay<-function(se.obj,
     var=se.obj@colData[, variable]
 
     for(i in 1:ncol(pair.pcs)){
-        if (fast.pca) {
-            xlabel=paste0('Fast PC', x, ' (', pc.var[x], '% out of ',pc.var.nb.pcs ,' PCs.)')
-            ylabel=paste0('Fast PC', y, ' (', pc.var[y], '% out of ',pc.var.nb.pcs ,' PCs.)')
-        } else {
-            xlabel=paste0('PC', x, ' (', pc.var[x], '% out of all PCs.)')
-            ylabel=paste0('PC', y, ' (', pc.var[y],'% out of all PCs.)')
-        }
-
         if(i == 1){
             x <- pair.pcs[1,i]
             y <- pair.pcs[2,i]
+
+            if (fast.pca) {
+                xlabel=paste0('Fast PC', x, ' (', pc.var[x], '% out of ',pc.var.nb.pcs ,' PCs.)')
+                ylabel=paste0('Fast PC', y, ' (', pc.var[y], '% out of ',pc.var.nb.pcs ,' PCs.)')
+            } else {
+                xlabel=paste0('PC', x, ' (', pc.var[x], '% out of all PCs.)')
+                ylabel=paste0('PC', y, ' (', pc.var[y],'% out of all PCs.)')
+            }
+
             p <- ggplot(mapping = aes(
                 x = pcs[,x],
                 y = pcs[,y],
@@ -90,6 +91,15 @@ plotPCAassay<-function(se.obj,
         }else{
             x <- pair.pcs[1,i]
             y <- pair.pcs[2,i]
+
+            if (fast.pca) {
+                xlabel=paste0('Fast PC', x, ' (', pc.var[x], '% out of ',pc.var.nb.pcs ,' PCs.)')
+                ylabel=paste0('Fast PC', y, ' (', pc.var[y], '% out of ',pc.var.nb.pcs ,' PCs.)')
+            } else {
+                xlabel=paste0('PC', x, ' (', pc.var[x], '% out of all PCs.)')
+                ylabel=paste0('PC', y, ' (', pc.var[y],'% out of all PCs.)')
+            }
+
             p <- ggplot(mapping = aes(
                 x = pcs[,x],
                 y = pcs[,y],
