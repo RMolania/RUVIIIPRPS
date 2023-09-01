@@ -41,7 +41,7 @@ plotPCA=function(se.obj,
                  strokeColor = 'gray30',
                  alpha = .5,
                  assess.se.obj = TRUE,
-                 verbose = verbose
+                 verbose = TRUE
 ){
     printColoredMessage(message = '------------The plotPCA function starts:',
                         color = 'white',
