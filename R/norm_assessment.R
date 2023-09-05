@@ -142,7 +142,7 @@ norm_assessment = function(
             message("Combined silhouette plot of all categorical variables")
             for (v in 1:(nb_cat_var-1)){
                 for (v2 in ((v+1):nb_cat_var)){
-                    p=RUVPRPS::plot_combined_silh(
+                    p=RUVPRPS::plotCombinedSilhouette(
                         cat.var.assessment[[cat_var_label[v]]][['sil']],
                         cat.var.assessment[[cat_var_label[v2]]][['sil']])
                     Combined_sil_plot[[paste0(cat_var_label[v],"_",cat_var_label[v2])]]=p

@@ -48,7 +48,7 @@ plotMetric <- function(
     all.assays.metric <- lapply(
         levels(assay.names),
         function(x){
-            if (!variable %in% names(se.obj@metadata[['metric']][[x]][[variable]])) {
+            if (!variable %in% names(se.obj@metadata[['metric']][[x]][[metric]])) {
                 stop(paste0('The ', metric,'has not been computed yet for the ',variable,' variable and the ',x, ' assay.'))
             }
             se.obj@metadata[['metric']][[x]][[metric]][[variable]]
@@ -89,7 +89,7 @@ plotMetric <- function(
     } else if (metric %in% c('gene.aov.anova','gene.welch.correction.anova')) {
         p=p+ geom_boxplot2()
         xlabel=''
-    } else if (metric %in% c('ari','silh')){
+    } else if (metric %in% c('ari','sil')){
         p=p+ geom_point(aes(colour=datasets))
         xlabel=''
     } else if (metric %in% c('pcs.vect.corr','pcs.lm')){

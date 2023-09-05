@@ -88,7 +88,7 @@ computeSilhouette<-function(
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]
+                pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u
                 d.matrix <- as.matrix(dist(pca_x[, seq_len(nb.pcs)]))
                 avg=summary(silhouette(
                     as.numeric(as.factor(var)),
