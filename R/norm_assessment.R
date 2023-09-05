@@ -105,7 +105,7 @@ norm_assessment = function(
 
                 ## Compute Silhouette
                 message(paste("Silhouette coefficient based on: ",x,sep=""))
-                silh=RUVPRPS::compute_silhouette(data_pca,
+                silh=RUVPRPS::computeSilhouette(data_pca,
                                                  assay_names = assay_names,
                                                  cat_var=group,
                                                  cat_var_label = x)

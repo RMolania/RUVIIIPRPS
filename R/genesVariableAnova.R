@@ -238,7 +238,7 @@ genesVariableAnova <- function(se.obj,
 
             ## Return only the correlation result
         } else if(save.se.obj == FALSE){
-            return(gene.anova.var=log2(anova.all[[x]][['anova.genes.var']][,'statistic']))
+            return(gene.anova.var=log2(anova.all))
         }
 
             printColoredMessage(message = '------------The genesVariableAnova function finished.',

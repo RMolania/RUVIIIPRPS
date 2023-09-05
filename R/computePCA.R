@@ -233,7 +233,7 @@ computePCA <- function(se.obj,
         }
     ## Return only the correlation result
     }else if(save.se.obj == FALSE){
-    return(PCA=sv.dec.all[[x]])
+    return(PCA=sv.dec.all)
 }
         printColoredMessage(message = '------------The computePCA function finished.',
                             color = 'white',

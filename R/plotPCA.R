@@ -49,7 +49,7 @@ plotPCA=function(se.obj,
 
     ### check the inputs
     if (is.null(nb.pcs)) {
-        stop('To plot the PCA, the number of PCs (nb.pcs) must specified.')
+        stop('To plot the PCA, the number of PCs (nb.pcs) must be specified.')
     } else if (is.null(assay.names)) {
         stop('Please provide at least an assay name.')
     }

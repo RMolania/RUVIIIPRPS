@@ -290,7 +290,7 @@ genesVariableCorrelation<-function(
 
     ## Return only the correlation result
     } else if(save.se.obj == FALSE){
-        return(gene.corr.var=cor.all[[x]][['corr.genes.var']][,'correlation'])
+        return(gene.corr.var=cor.all)
     }
 
     printColoredMessage(message = '------------The genesVariableCorrelation function finished.',
