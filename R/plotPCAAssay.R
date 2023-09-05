@@ -40,6 +40,7 @@ plotPCAassay<-function(se.obj,
     pair.pcs <- combn(ncol(pcs), 2)
     pList <- list()
     var=se.obj@colData[, variable]
+    var.label=paste0(variable)
 
     for(i in 1:ncol(pair.pcs)){
         if(i == 1){
@@ -47,11 +48,11 @@ plotPCAassay<-function(se.obj,
             y <- pair.pcs[2,i]
 
             if (fast.pca) {
-                xlabel=paste0('Fast PC', x, ' (', pc.var[x], '% out of ',pc.var.nb.pcs ,' PCs.)')
-                ylabel=paste0('Fast PC', y, ' (', pc.var[y], '% out of ',pc.var.nb.pcs ,' PCs.)')
+                xlabel=paste0('PC', x, ' (', pc.var[x], '%)')#out of ',pc.var.nb.pcs ,' PCs.)')
+                ylabel=paste0('PC', y, ' (', pc.var[y], '%)')#out of ',pc.var.nb.pcs ,' PCs.)')
             } else {
-                xlabel=paste0('PC', x, ' (', pc.var[x], '% out of all PCs.)')
-                ylabel=paste0('PC', y, ' (', pc.var[y],'% out of all PCs.)')
+                xlabel=paste0('PC', x, ' (', pc.var[x], '%)')
+                ylabel=paste0('PC', y, ' (', pc.var[y],'%)')
             }
 
             p <- ggplot(mapping = aes(
@@ -84,20 +85,19 @@ plotPCAassay<-function(se.obj,
                     aspect.ratio=1) +
                 guides(fill = guide_legend(override.aes = list(size = 4)))
             if (!is.null(color)){
-                p=p+scale_fill_manual(name = variable, values = color)
+                p=p+scale_fill_manual(name = var.label, values = color)
                 }
-
             le <- get_legend(p)
         }else{
             x <- pair.pcs[1,i]
             y <- pair.pcs[2,i]
 
             if (fast.pca) {
-                xlabel=paste0('Fast PC', x, ' (', pc.var[x], '% out of ',pc.var.nb.pcs ,' PCs.)')
-                ylabel=paste0('Fast PC', y, ' (', pc.var[y], '% out of ',pc.var.nb.pcs ,' PCs.)')
+                xlabel=paste0('PC', x, ' (', pc.var[x],  '%)')#out of ',pc.var.nb.pcs ,' PCs.)')
+                ylabel=paste0('PC', y, ' (', pc.var[y],  '%)')#out of ',pc.var.nb.pcs ,' PCs.)')
             } else {
-                xlabel=paste0('PC', x, ' (', pc.var[x], '% out of all PCs.)')
-                ylabel=paste0('PC', y, ' (', pc.var[y],'% out of all PCs.)')
+                xlabel=paste0('PC', x, ' (', pc.var[x], '%)')
+                ylabel=paste0('PC', y, ' (', pc.var[y],'%)')
             }
 
             p <- ggplot(mapping = aes(
@@ -123,9 +123,9 @@ plotPCAassay<-function(se.obj,
                     axis.text.y = element_text(size = 10),
                     axis.title.x = element_text(size = 14),
                     axis.title.y = element_text(size = 14),
-                    aspect.ratio=1) +
+                    aspect.ratio=1)
                 if (!is.null(color)){
-                    p=p+scale_fill_manual(name = variable, values = color)
+                    p=p+scale_fill_manual(name = var.label, values = color)
                 }
         }
         p <- p + theme(legend.position = "none")
@@ -137,8 +137,10 @@ plotPCAassay<-function(se.obj,
                 alpha = 0.7,
                 size = 0.2
             ) +
-            theme(legend.position = "none") +
-            scale_fill_manual(values = color)
+            theme(legend.position = "none")
+            if (!is.null(color)){
+                xdens <- xdens +scale_fill_manual(name = var.label,values = color)
+            }
 
         ydens <- axis_canvas(
             p,
@@ -150,9 +152,11 @@ plotPCAassay<-function(se.obj,
                     fill = var),
                 alpha = 0.7,
                 size = 0.2) +
-            theme(legend.position = "none") +
-            scale_fill_manual(name = variable, values = color) +
+            theme(legend.position = "none")+
             coord_flip()
+            if (!is.null(color)){
+                ydens <- ydens +scale_fill_manual(name = var.label,values = color)
+            }
 
         p1 <- insert_xaxis_grob(
             p,

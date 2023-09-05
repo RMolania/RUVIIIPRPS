@@ -126,10 +126,15 @@ plotPCA=function(se.obj,
                 p=c(p,ppca[[levels(assay.names)[n]]])
             }
         }
+        if (fast.pca) {
+            title=paste0("FastPCA ordered as ", paste(levels(assay.names), collapse = ","))
+        } else{
+            title=paste0("PCA ordered as ", paste(levels(assay.names), collapse = ","))
+        }
         plot=do.call(grid.arrange,
             c(p,
               ncol = ncol.plot,
-           top=paste0("PCA ordered as ", paste(levels(assay.names), collapse = ","))))
+              top=title))
 
         return(plot=as_ggplot(plot))
 }
