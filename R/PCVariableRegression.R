@@ -1,51 +1,53 @@
-#' is used to compute the Silhouette coefficient from the first PC of a SummarizedExperiment class
-#' object given a categorical variable.
+#' is used to compute the linear regression of a continuous variable and the first cumulative PCs
+#' of the gene expression (assay) of a SummarizedExperiment class object.
 #'
 #'
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
 #' of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default
 #  all the assays of the SummarizedExperiment class object will be selected.
-#' @param variable String of the label of a categorical variable such as
-#' sample types or batches from colData(se.obj).
+#' @param variable String of the label of a continuous variable such as
+#' library size from colData(se.obj).
 #' @param fast.pca TO BE DEFINED.
 #' @param nb.pcs TO BE DEFINED.
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
 #' @param plot.output Indicates whether to plot the F-test statistics, by default it is set to TRUE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
+#' @param apply.round TO BE DEFINED.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
-#' @return SummarizedExperiment A SummarizedExperiment object containing the computed silhouette
-#' on the categorical variable.
+#' @return SummarizedExperiment A SummarizedExperiment object containing the computed regression for
+#' the continuous variable.
+#' @importFrom stats lm
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate
 #' @importFrom tidyr pivot_longer %>%
-#' @importFrom stats dist
-#' @importFrom cluster silhouette
 #' @import ggplot2
 #' @export
 
-computeSilhouette<-function(
+PCVariableRegression<-function(
         se.obj,
         assay.names = 'All',
         variable,
-        fast.pca = TRUE,
-        nb.pcs = 3,
+        fast.pca = FALSE,
+        nb.pcs = 10,
         save.se.obj = TRUE,
         plot.output=FALSE,
         assess.se.obj = TRUE,
+        remove.na = 'both',
+        apply.round = TRUE,
         verbose = TRUE
 ){
 
-    printColoredMessage(message = '------------The computeSilhouette function starts:',
+    printColoredMessage(message = '------------The PCVariableRegression function starts:',
                         color = 'white',
                         verbose = verbose)
 
     ### check the inputs
     if (is.null(nb.pcs)) {
-        stop('To compute the Silhouette coefficient, the number of PCs (nb.pcs) must be specified.')
+        stop('To compute the regression, the number of PCs (nb.pcs) must be specified.')
     } else if (is.null(assay.names)) {
         stop('Please provide at least an assay name.')
     }
@@ -55,9 +57,16 @@ computeSilhouette<-function(
         se.obj <- checkSeObj(se.obj = se.obj,
                              assay.names = assay.names,
                              variables = variable,
-                             remove.na = 'both',
+                             remove.na = remove.na,
                              verbose = verbose)
     }
+
+
+    ### Check if the variable provided has a variance of 0:
+    if(var(se.obj[[variable]]) == 0){
+        stop(paste0('The ', variable, ' appears to have no variation.'))
+    }
+    var=se.obj@colData[, variable]
 
     ## Assays
     if(length(assay.names) == 1 && assay.names=='All'){
@@ -65,73 +74,74 @@ computeSilhouette<-function(
     }else {
         assay.names=as.factor(unlist(assay.names))
     }
-    ## Categorical variable
-    var=se.obj@colData[, variable]
-    var.label=paste0(variable)
 
     if (fast.pca) {
-        # Silhouette coefficients on all assays
-        silCoef <- lapply(
+        ### Compute the regression on all assays
+        lreg.pcs<- lapply(
             levels(assay.names),
             function(x){
                 if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]])) {
-                    stop('To compute the Silhouette coefficient,
+                    stop('To compute the regression,
                          the fast PCA must be computed first on the assay ', x, ' .')
                 }
-                ### Silhouette on PCs and categorical variable
+                ### Regression on PCs and continous variable
                 printColoredMessage(message = paste0(
-                    '### Computing Silhouette coefficient based on PCs and the ',
+                    '### Computing regression based on PCs and the ',
                     variable,
                     ' variable.'
                 ),
                 color = 'magenta',
                 verbose = verbose)
                 pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u
-                d.matrix <- as.matrix(dist(pca_x[, seq_len(nb.pcs)]))
-                avg=summary(silhouette(
-                    as.numeric(as.factor(var)),
-                    d.matrix))$avg.width
-                return(avg)
-        })
-        names(silCoef) <- levels(assay.names)
+                rSquared <- sapply(
+                    1:nb.pcs,
+                    function(y) {
+                        lm.ls <- summary(lm(
+                            var ~ pca_x[, 1:y])
+                        )$r.squared
+                    })
+                return(rSquared)
+            })
+        names(lreg.pcs) <- levels(assay.names)
     } else{
-        # Silhouette coefficients on all assays
-        silCoef <- lapply(
+        ### Compute the regression on all assays
+        lreg.pcs<- lapply(
             levels(assay.names),
             function(x){
                 if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]])) {
-                    stop('To compute the Silhouette coefficient,
+                    stop('To compute the regression,
                          the PCA must be computed first on the assay ', x, ' .')
                 }
-                ### Silhouette on PCs and categorical variable
+                ### Regression on PCs and continous variable
                 printColoredMessage(message = paste0(
-                    '### Computing Silhouette coefficient based on PCs and the ',
+                    '### Computing regression based on PCs and the ',
                     variable,
                     ' variable.'
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]
-                d.matrix <- as.matrix(dist(pca_x[, seq_len(nb.pcs)]))
-                avg=summary(silhouette(
-                    as.numeric(as.factor(var)),
-                    d.matrix))$avg.width
-                return(avg)
+                pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u
+                rSquared <- sapply(
+                    1:nb.pcs,
+                    function(y) {
+                        lm.ls <- summary(lm(
+                            cont_var ~ pca_x[, 1:y])
+                        )$r.squared
+                    })
+                return(rSquared)
             })
-        names(silCoef) <- levels(assay.names)
+        names(lreg.pcs) <- levels(assay.names)
     }
 
-    ## Round the anova statistic obtained to 2 digits
-    # if(apply.round){
-    #     silCoef <- cbind(
-    #         round(anova.genes.var[,1:9], digits = 3),
-    #         anova.genes.var[ , 10, drop = FALSE]
-    #     )
-    # }
+    ## Round the regression statistic obtained to 2 digits
+    if(apply.round){
+        lreg.pcs[] <- lapply(lreg.pcs, round,3)
+    }
+
 
     ### Add results to the SummarizedExperiment object
     if(save.se.obj == TRUE){
-        printColoredMessage(message= '### Saving the Silhouette coefficients to the metadata of the SummarizedExperiment object.',
+        printColoredMessage(message= '### Saving the regression results to the metadata of the SummarizedExperiment object.',
                             color = 'magenta',
                             verbose = verbose)
 
@@ -149,32 +159,31 @@ computeSilhouette<-function(
                 se.obj@metadata[['metric']][[x]] <- list()
             }
             ## Check if metadata metric already exist for this assay and this metric
-            if(!'sil' %in% names(se.obj@metadata[['metric']][[x]])  ) {
-                se.obj@metadata[['metric']][[x]][['sil']] <- list()
+            if(!'pcs.lm' %in% names(se.obj@metadata[['metric']][[x]])  ) {
+                se.obj@metadata[['metric']][[x]][['pcs.lm']] <- list()
             }
             ## Check if metadata metric already exist for this assay, this metric and this variable
-            if(!variable %in% names(se.obj@metadata[['metric']][[x]][['sil']])  ) {
-                se.obj@metadata[['metric']][[x]][['sil']][[variable]] <- silCoef[[x]]
+            if(!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.lm']])  ) {
+                se.obj@metadata[['metric']][[x]][['pcs.lm']][[variable]] <- lreg.pcs[[x]]
             }
         }
         printColoredMessage(message= paste0(
-            'The Silhouette coefficients are saved to metadata@',
+            'The anova results are saved to metadata@',
             x,
-            '$sil$',
+            'pcs.lm',
             variable, '.'),
             color = 'blue',
             verbose = verbose)
 
-
         ## Plot and save the plot into se.obj@metadata$plot
         if (plot.output==TRUE) {
-            printColoredMessage(message= '### Plotting and Saving the Silhouette coefficients to the metadata of the SummarizedExperiment object.',
+            printColoredMessage(message= '### Plotting and Saving the regression results to the metadata of the SummarizedExperiment object.',
                                 color = 'magenta',
                                 verbose = verbose)
 
             se.obj=plotMetric(se.obj,
                               assay.names =assay.names,
-                              metric='sil',
+                              metric=paste0('pcs.lm'),
                               variable=variable,
                               verbose=verbose)
         }
@@ -182,12 +191,11 @@ computeSilhouette<-function(
 
         ## Return only the correlation result
     } else if(save.se.obj == FALSE){
-        return(sil=silCoef)
+        return(gene.anova.var=lreg.pcs)
     }
 
-    printColoredMessage(message = '------------The computeSilhouette function finished.',
+    printColoredMessage(message = '------------The PCVariableRegression function finished.',
                         color = 'white',
                         verbose = verbose)
 
 }
-

@@ -93,8 +93,15 @@ plotMetric <- function(
         p=p+ geom_point(aes(colour=datasets))
         xlabel=''
     } else if (metric %in% c('pcs.vect.corr','pcs.lm')){
+        nb.pc=length(se.obj@metadata[['metric']][[1]][[metric]][[variable]])
         p=p+geom_line(aes(color = datasets), size = 1) +
-            geom_point(aes(color = datasets), size = 3)
+            geom_point(aes(color = datasets), size = 3) +
+            scale_x_continuous(
+                breaks = (1:nb.pc),
+                labels = c('PC1', paste0('PC1:', 2:nb.pc)) ) +
+            scale_y_continuous(
+                breaks = scales::pretty_breaks(n = 5),
+                limits = c(0,1))
         xlabel='PCs'
     }
     p= p +
@@ -115,6 +122,9 @@ plotMetric <- function(
             n = length(levels(assay.names)),
             name = "GrandBudapest1")[seq(1:length(levels(assay.names)))]
         p=p+scale_fill_manual(values = dataSets.colors, guide = 'none')
+    }
+    if (metric %in% c('pcs.lm')){
+        p=p+theme(axis.text.x = element_text(size = 12, angle = 35, hjust = 1))
     }
 
 

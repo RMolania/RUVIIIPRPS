@@ -23,7 +23,6 @@
 #' of the functions, by default it is set to TRUE.
 #' @param pseudo.count TO BE DEFINED.
 
-
 #' @return SummarizedExperiment A SummarizedExperiment object containing the PCA.
 #'
 #' @importFrom SummarizedExperiment assay

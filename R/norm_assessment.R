@@ -161,7 +161,7 @@ norm_assessment = function(
 
                 ## Compute regression between library size and PCs
                 message("Linear regression between the first cumulative PC and library size")
-                reg= RUVPRPS::regression_pc_contvar(pca=data_pca,
+                reg= RUVPRPS::PCVariableRegression(pca=data_pca,
                                                     assay_names = assay_names,
                                                     cont_var = group,
                                                     cont_var_label=x)
