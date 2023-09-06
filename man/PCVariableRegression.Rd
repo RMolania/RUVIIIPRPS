@@ -2,8 +2,8 @@
 % Please edit documentation in R/PCVariableRegression.R
 \name{PCVariableRegression}
 \alias{PCVariableRegression}
-\title{is used to compute the linear regression of a continuous variable and the first cumulative PCs
-of the gene expression (assay) of a SummarizedExperiment class object.}
+\title{is used to compute the linear regression between the the first cumulative PCs
+of the gene expression (assay) of a SummarizedExperiment class object and a continuous variable (i.e. library size)}
 \usage{
 PCVariableRegression(
   se.obj,
@@ -12,7 +12,7 @@ PCVariableRegression(
   fast.pca = FALSE,
   nb.pcs = 10,
   save.se.obj = TRUE,
-  plot.output = FALSE,
+  plot.output = TRUE,
   assess.se.obj = TRUE,
   remove.na = "both",
   apply.round = TRUE,
@@ -23,7 +23,7 @@ PCVariableRegression(
 \item{se.obj}{A SummarizedExperiment object that will be used to compute the PCA.}
 
 \item{assay.names}{Optional string or list of strings for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default}
+of the assay(s) of the SummarizedExperiment class object to compute the regression. By default}
 
 \item{variable}{String of the label of a continuous variable such as
 library size from colData(se.obj).}
@@ -48,9 +48,9 @@ of the functions, by default it is set to TRUE.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing the computed regression for
-the continuous variable.
+the continuous variable and if requested the associated plot.
 }
 \description{
-is used to compute the linear regression of a continuous variable and the first cumulative PCs
-of the gene expression (assay) of a SummarizedExperiment class object.
+is used to compute the linear regression between the the first cumulative PCs
+of the gene expression (assay) of a SummarizedExperiment class object and a continuous variable (i.e. library size)
 }

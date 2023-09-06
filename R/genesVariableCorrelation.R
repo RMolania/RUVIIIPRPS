@@ -30,13 +30,17 @@
 #' @param pseudo.count TO BE DEFINED.
 #' @param apply.round TO BE DEFINED.
 #'
-#' @return SummarizedExperiment A SummarizedExperiment object containing the associated plot or the computed correlation on the continuous variable.
+#' @return SummarizedExperiment A SummarizedExperiment object containing the computed correlation on the continuous variable
+#' and if requested the associated plot.
 #' @importFrom SummarizedExperiment assays assay colData
 #' @importFrom matrixTests row_oneway_equalvar
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
 #' @importFrom fastDummies dummy_cols
 #' @importFrom stats cancor var complete.cases
+#' @importFrom stats cor.test p.adjust
+#' @importFrom parallel mclapply
+#' @importFrom Rfast correls transpose
 #' @import ggplot2
 #' @export
 

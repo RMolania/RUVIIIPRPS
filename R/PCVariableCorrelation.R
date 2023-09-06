@@ -1,13 +1,13 @@
-#' is used to compute the linear regression between the the first cumulative PCs
-#' of the gene expression (assay) of a SummarizedExperiment class object and a continuous variable (i.e. library size)
+#' is used to compute the vector correlation between the first cumulative PCs of the gene expression (assay)
+#' of a SummarizedExperiment class object and a categorical variable (i.e. batch).
 #'
 #'
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
-#' of the assay(s) of the SummarizedExperiment class object to compute the regression. By default
+#' of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default
 #  all the assays of the SummarizedExperiment class object will be selected.
-#' @param variable String of the label of a continuous variable such as
-#' library size from colData(se.obj).
+#' @param variable String of the label of a categorical variable such as
+#' sample types or batches from colData(se.obj).
 #' @param fast.pca TO BE DEFINED.
 #' @param nb.pcs TO BE DEFINED.
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
@@ -19,38 +19,41 @@
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
-#' @return SummarizedExperiment A SummarizedExperiment object containing the computed regression for
+#' @return SummarizedExperiment A SummarizedExperiment object containing the computed correlation for
 #' the continuous variable and if requested the associated plot.
-#' @importFrom stats lm
-#' @importFrom wesanderson wes_palette
-#' @importFrom dplyr rename mutate
+#' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
+#' @importFrom SummarizedExperiment assays assay
+#' @importFrom matrixTests row_oneway_equalvar
+#' @importFrom fastDummies dummy_cols
+#' @importFrom wesanderson wes_palette
+#' @importFrom stats cancor
 #' @import ggplot2
 #' @export
 
-PCVariableRegression<-function(
+PCVariableCorrelation<-function(
         se.obj,
         assay.names = 'All',
         variable,
         fast.pca = FALSE,
         nb.pcs = 10,
         save.se.obj = TRUE,
-        plot.output=TRUE,
+        plot.output=FALSE,
         assess.se.obj = TRUE,
         remove.na = 'both',
         apply.round = TRUE,
         verbose = TRUE
 ){
 
-    printColoredMessage(message = '------------The PCVariableRegression function starts:',
+    printColoredMessage(message = '------------The PCVariableCorrelation function starts:',
                         color = 'white',
                         verbose = verbose)
 
-    ### check the inputs
-    if (is.null(nb.pcs)) {
-        stop('To compute the regression, the number of PCs (nb.pcs) must be specified.')
-    } else if (is.null(assay.names)) {
-        stop('Please provide at least an assay name.')
+    ### Check the inputs
+    if (length(unique(se.obj@colData[, variable])) < 2) {
+        stop(paste0('The ', variable,', contains only one variable.'))
+    } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
+        stop(paste0('The ', variable,', is a numeric, but this should a categorical variable'))
     }
 
     ### Assess the se.obj
@@ -62,23 +65,22 @@ PCVariableRegression<-function(
                              verbose = verbose)
     }
 
-
-    ### Check if the variable provided has a variance of 0:
-    if(var(se.obj[[variable]]) == 0){
-        stop(paste0('The ', variable, ' appears to have no variation.'))
-    }
-    var=se.obj@colData[, variable]
-
     ## Assays
     if(length(assay.names) == 1 && assay.names=='All'){
         assay.names=as.factor(names(assays(se.obj)))
     }else {
         assay.names=as.factor(unlist(assay.names))
     }
+    ## Categorical variable
+    var=se.obj@colData[, variable]
+    var.label=paste0(variable)
+
+    catvar.dummies <- dummy_cols(var)
+    catvar.dummies <- catvar.dummies[, c(2:ncol(catvar.dummies))]
 
     if (fast.pca) {
-        ### Compute the regression on all assays
-        lreg.pcs<- lapply(
+        ### Compute the correlation on all assays
+        cca.all<- lapply(
             levels(assay.names),
             function(x){
                 if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]])) {
@@ -94,19 +96,21 @@ PCVariableRegression<-function(
                 color = 'magenta',
                 verbose = verbose)
                 pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u
-                rSquared <- sapply(
+                cca.pcs<- sapply(
                     1:nb.pcs,
-                    function(y) {
-                        lm.ls <- summary(lm(
-                            var ~ pca_x[, 1:y])
-                        )$r.squared
+                    function(y){
+                        ## Canonical correlations
+                        cca <- cancor(
+                            x = pca_x[, 1:y, drop = FALSE],
+                            y = catvar.dummies)
+                        1 - prod(1 - cca$cor^2)
                     })
-                return(rSquared)
+                return(cca.pcs)
             })
-        names(lreg.pcs) <- levels(assay.names)
+        names(cca.all)<- levels(assay.names)
     } else{
-        ### Compute the regression on all assays
-        lreg.pcs<- lapply(
+        ### Compute the correlation on all assays
+        cca.all<- lapply(
             levels(assay.names),
             function(x){
                 if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]])) {
@@ -122,27 +126,28 @@ PCVariableRegression<-function(
                 color = 'magenta',
                 verbose = verbose)
                 pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u
-                rSquared <- sapply(
+                cca.pcs<- sapply(
                     1:nb.pcs,
-                    function(y) {
-                        lm.ls <- summary(lm(
-                            cont_var ~ pca_x[, 1:y])
-                        )$r.squared
+                    function(y){
+                        ## Canonical correlations
+                        cca <- cancor(
+                            x = pca_x[, 1:y, drop = FALSE],
+                            y = catvar.dummies)
+                        1 - prod(1 - cca$cor^2)
                     })
-                return(rSquared)
+                return(cca.pcs)
             })
-        names(lreg.pcs) <- levels(assay.names)
+        names(cca.all)<- levels(assay.names)
     }
 
     ## Round the regression statistic obtained to 2 digits
     if(apply.round){
-        lreg.pcs[] <- lapply(lreg.pcs, round,3)
+        cca.all[] <- lapply(cca.all, round,3)
     }
-
 
     ### Add results to the SummarizedExperiment object
     if(save.se.obj == TRUE){
-        printColoredMessage(message= '### Saving the regression results to the metadata of the SummarizedExperiment object.',
+        printColoredMessage(message= '### Saving the correlation results to the metadata of the SummarizedExperiment object.',
                             color = 'magenta',
                             verbose = verbose)
 
@@ -160,31 +165,31 @@ PCVariableRegression<-function(
                 se.obj@metadata[['metric']][[x]] <- list()
             }
             ## Check if metadata metric already exist for this assay and this metric
-            if(!'pcs.lm' %in% names(se.obj@metadata[['metric']][[x]])  ) {
-                se.obj@metadata[['metric']][[x]][['pcs.lm']] <- list()
+            if(!'pcs.vect.corr' %in% names(se.obj@metadata[['metric']][[x]])  ) {
+                se.obj@metadata[['metric']][[x]][['pcs.vect.corr']] <- list()
             }
             ## Check if metadata metric already exist for this assay, this metric and this variable
-            if(!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.lm']])  ) {
-                se.obj@metadata[['metric']][[x]][['pcs.lm']][[variable]] <- lreg.pcs[[x]]
+            if(!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.vect.corr']])  ) {
+                se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]] <- cca.all[[x]]
             }
         }
         printColoredMessage(message= paste0(
-            'The regression results are saved to metadata@',
+            'The correlation results are saved to metadata@',
             x,
-            '$pcs.lm$',
+            '$pcs.vect.corr$',
             variable, '.'),
             color = 'blue',
             verbose = verbose)
 
         ## Plot and save the plot into se.obj@metadata$plot
         if (plot.output==TRUE) {
-            printColoredMessage(message= '### Plotting and Saving the regression results to the metadata of the SummarizedExperiment object.',
+            printColoredMessage(message= '### Plotting and Saving the correlation results to the metadata of the SummarizedExperiment object.',
                                 color = 'magenta',
                                 verbose = verbose)
 
             se.obj=plotMetric(se.obj,
                               assay.names =assay.names,
-                              metric='pcs.lm',
+                              metric='pcs.vect.corr',
                               variable=variable,
                               verbose=verbose)
         }
@@ -192,10 +197,10 @@ PCVariableRegression<-function(
 
         ## Return only the correlation result
     } else if(save.se.obj == FALSE){
-        return(lreg.pcs=lreg.pcs)
+        return(cca.all=cca.all)
     }
 
-    printColoredMessage(message = '------------The PCVariableRegression function finished.',
+    printColoredMessage(message = '------------The PCVariableCorrelation function finished.',
                         color = 'white',
                         verbose = verbose)
 

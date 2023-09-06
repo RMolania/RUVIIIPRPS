@@ -97,7 +97,7 @@ norm_assessment = function(
                 names(color.group) <- unique(group)
                 message(paste("PCA based on: ",x,sep=""))
                 ### Compute PCA
-                PCA=RUVPRPS::plot_pca(data_pca,
+                PCA=RUVPRPS::plotPCA(data_pca,
                                       assay_names = assay_names,
                                       cat_var=group,
                                       cat_var_label = x,
@@ -119,7 +119,7 @@ norm_assessment = function(
 
                 ## Compute ANOVA
                 message(paste("ANOVA based on: ",x,sep=""))
-                anova=RUVPRPS::anova_gene_exp_catvar(se = se,
+                anova=RUVPRPS::genesVariableAnova(se = se,
                                                      cat_var=group,
                                                      cat_var_label = x,
                                                      assay_names = assay_names,
@@ -127,7 +127,7 @@ norm_assessment = function(
 
                 ## Compute Vector correlation
                 message(paste("Vector correlation with PCs based on: ",x,sep=""))
-                corr=RUVPRPS::vector_correlation_pc_catvar(data_pca,
+                corr=RUVPRPS::PCVariableCorrelation(data_pca,
                                                            cat_var=group,
                                                            cat_var_label = x,
                                                            assay_names=assay_names)
@@ -168,7 +168,7 @@ norm_assessment = function(
 
                 ## Compute Spearman correlation between gene expression and library size
                 message("Spearman correlation between individual gene expression and library size")
-                corr=RUVPRPS::correlation_gene_exp_contvar(se = se,
+                corr=RUVPRPS::genesVariableCorrelation(se = se,
                                                            assay_names = assay_names,
                                                            cont_var = group,
                                                            cont_var_label=x,

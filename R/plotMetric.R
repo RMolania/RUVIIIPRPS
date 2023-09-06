@@ -58,8 +58,8 @@ plotMetric <- function(
     all.assays.metric <- as.data.frame(all.assays.metric)
 
     if (metric %in% c('pcs.vect.corr')){
-        nb.pca.comp=10
-        all.assays.metric= all.assays.metric %>% mutate(pcs=c(1:nb.pca.comp)) %>% pivot_longer(
+        nb.pc=length(se.obj@metadata[['metric']][[1]][[metric]][[variable]])
+        all.assays.metric= all.assays.metric %>% mutate(pcs=c(1:nb.pc)) %>% pivot_longer(
             -pcs,
             names_to = 'datasets',
             values_to = {{metric}}) %>% mutate(datasets = factor(
@@ -81,11 +81,10 @@ plotMetric <- function(
             datasets,levels=levels(assay.names)))
     }
 
-
-    if (!metric %in% c('pcs.lm')){
-        p=ggplot(all.assays.metric, aes_string(x = 'datasets',y=metric, fill = 'datasets'))
-    } else{
+    if (metric %in% c('pcs.vect.corr','pcs.lm')){
         p=ggplot(all.assays.metric, aes_string(x = "pcs",y=metric, group = 'datasets'))
+    } else{
+        p=ggplot(all.assays.metric, aes_string(x = 'datasets',y=metric, fill = 'datasets'))
     }
 
     if (metric %in% c('gene.pearson.corr','gene.spearman.corr')){
@@ -119,13 +118,13 @@ plotMetric <- function(
         dataSets.colors <- wes_palette(
             n = length(levels(assay.names)),
             name = "GrandBudapest1")[seq(1:length(levels(assay.names)))]
-        if (!metric %in% c('pcs.lm')){
-            p=p+scale_fill_manual(values = dataSets.colors, guide = 'none')
-        } else{
+        if (metric %in% c('pcs.vect.corr','pcs.lm')){
             p=p+scale_color_manual(values = dataSets.colors, guide = 'none')
+        } else{
+            p=p+scale_fill_manual(values = dataSets.colors, guide = 'none')
         }
     }
-    if (metric %in% c('pcs.lm')){
+    if (metric %in% c('pcs.vect.corr','pcs.lm')){
         p=p+theme(axis.text.x = element_text(size = 12, angle = 35, hjust = 1),
                   legend.text = element_text(size = 10),
                   legend.title = element_text(size = 14))+
