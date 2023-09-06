@@ -39,6 +39,8 @@ to output the result. By default it is set to TRUE.}
 
 \item{assess.se.obj}{Indicates whether to assess the SummarizedExperiment class object.}
 
+\item{remove.na}{TO BE DEFINED.}
+
 \item{apply.round}{TO BE DEFINED.}
 
 \item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution

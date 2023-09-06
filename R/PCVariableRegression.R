@@ -14,6 +14,7 @@
 #' to output the result. By default it is set to TRUE.
 #' @param plot.output Indicates whether to plot the F-test statistics, by default it is set to TRUE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
+#' @param remove.na TO BE DEFINED.
 #' @param apply.round TO BE DEFINED.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
