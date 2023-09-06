@@ -97,7 +97,7 @@ plotCombinedSilhouette<-function(
 
     df=cbind(all.assays.var1,all.assays.var2)
     everything<-datasets<-Silh1<-Silh2<-NULL
-    colnames(df)=c("datasets","Silh1","levels","datasets","Silh2","levels")
+    colnames(df)=c("datasets","Silh1","datasets","Silh2")
     df=df[,-3]
 
     ## Plot
