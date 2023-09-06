@@ -1,10 +1,10 @@
-#' is used to compute the linear regression of a continuous variable and the first cumulative PCs
-#' of the gene expression (assay) of a SummarizedExperiment class object.
+#' is used to compute the linear regression between the the first cumulative PCs
+#' of the gene expression (assay) of a SummarizedExperiment class object and a continuous variable (i.e. library size)
 #'
 #'
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
-#' of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default
+#' of the assay(s) of the SummarizedExperiment class object to compute the regression. By default
 #  all the assays of the SummarizedExperiment class object will be selected.
 #' @param variable String of the label of a continuous variable such as
 #' library size from colData(se.obj).
@@ -20,7 +20,7 @@
 #' of the functions, by default it is set to TRUE.
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed regression for
-#' the continuous variable.
+#' the continuous variable and if requested the associated plot.
 #' @importFrom stats lm
 #' @importFrom wesanderson wes_palette
 #' @importFrom dplyr rename mutate
@@ -35,7 +35,7 @@ PCVariableRegression<-function(
         fast.pca = FALSE,
         nb.pcs = 10,
         save.se.obj = TRUE,
-        plot.output=FALSE,
+        plot.output=TRUE,
         assess.se.obj = TRUE,
         remove.na = 'both',
         apply.round = TRUE,
@@ -171,7 +171,7 @@ PCVariableRegression<-function(
         printColoredMessage(message= paste0(
             'The anova results are saved to metadata@',
             x,
-            'pcs.lm',
+            '$pcs.lm$',
             variable, '.'),
             color = 'blue',
             verbose = verbose)
@@ -184,7 +184,7 @@ PCVariableRegression<-function(
 
             se.obj=plotMetric(se.obj,
                               assay.names =assay.names,
-                              metric=paste0('pcs.lm'),
+                              metric='pcs.lm',
                               variable=variable,
                               verbose=verbose)
         }

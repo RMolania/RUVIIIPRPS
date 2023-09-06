@@ -65,8 +65,9 @@ plotMetric <- function(
             values_to = {{metric}}) %>% mutate(datasets = factor(
                 datasets,levels=levels(assay.names)))
     } else if (metric %in% c('pcs.lm')){
+        nb.pc=length(se.obj@metadata[['metric']][[1]][[metric]][[variable]])
         nb.assays=length(assay.names)
-        all.assays.metric=cbind(all.assays.metric,pcs=(1:10))
+        all.assays.metric=cbind(all.assays.metric,pcs=(1:nb.pc))
         all.assays.metric= all.assays.metric %>% pivot_longer(
             -(nb.assays+1),
             names_to = 'datasets',
@@ -81,7 +82,11 @@ plotMetric <- function(
     }
 
 
-    p=ggplot(all.assays.metric, aes_string(x = 'datasets',y=metric, fill = 'datasets'))
+    if (!metric %in% c('pcs.lm')){
+        p=ggplot(all.assays.metric, aes_string(x = 'datasets',y=metric, fill = 'datasets'))
+    } else{
+        p=ggplot(all.assays.metric, aes_string(x = "pcs",y=metric, group = 'datasets'))
+    }
 
     if (metric %in% c('gene.pearson.corr','gene.spearman.corr')){
         p=p+ geom_boxplot()
@@ -93,15 +98,8 @@ plotMetric <- function(
         p=p+ geom_point(aes(colour=datasets))
         xlabel=''
     } else if (metric %in% c('pcs.vect.corr','pcs.lm')){
-        nb.pc=length(se.obj@metadata[['metric']][[1]][[metric]][[variable]])
         p=p+geom_line(aes(color = datasets), size = 1) +
-            geom_point(aes(color = datasets), size = 3) +
-            scale_x_continuous(
-                breaks = (1:nb.pc),
-                labels = c('PC1', paste0('PC1:', 2:nb.pc)) ) +
-            scale_y_continuous(
-                breaks = scales::pretty_breaks(n = 5),
-                limits = c(0,1))
+            geom_point(aes(color = datasets), size = 3)
         xlabel='PCs'
     }
     p= p +
@@ -117,14 +115,26 @@ plotMetric <- function(
             axis.text.x = element_text(size = 12),
             axis.text.y = element_text(size = 12))+
         ggtitle(paste0("Assessment: ",metric," computed on ",variable))
-    if  (length(levels(assay.names)) <= 4){
+    if  (length(levels(assay.names)) <= 4 ){
         dataSets.colors <- wes_palette(
             n = length(levels(assay.names)),
             name = "GrandBudapest1")[seq(1:length(levels(assay.names)))]
-        p=p+scale_fill_manual(values = dataSets.colors, guide = 'none')
+        if (!metric %in% c('pcs.lm')){
+            p=p+scale_fill_manual(values = dataSets.colors, guide = 'none')
+        } else{
+            p=p+scale_color_manual(values = dataSets.colors, guide = 'none')
+        }
     }
     if (metric %in% c('pcs.lm')){
-        p=p+theme(axis.text.x = element_text(size = 12, angle = 35, hjust = 1))
+        p=p+theme(axis.text.x = element_text(size = 12, angle = 35, hjust = 1),
+                  legend.text = element_text(size = 10),
+                  legend.title = element_text(size = 14))+
+            scale_x_continuous(
+                breaks = (1:nb.pc),
+                labels = c('PC1', paste0('PC1:', 2:nb.pc)) ) +
+            scale_y_continuous(
+                breaks = scales::pretty_breaks(n = 5),
+                limits = c(0,1))
     }
 
 
