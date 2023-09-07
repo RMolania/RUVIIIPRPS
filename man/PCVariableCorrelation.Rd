@@ -9,10 +9,10 @@ PCVariableCorrelation(
   se.obj,
   assay.names = "All",
   variable,
-  fast.pca = FALSE,
+  fast.pca = TRUE,
   nb.pcs = 10,
   save.se.obj = TRUE,
-  plot.output = FALSE,
+  plot.output = TRUE,
   assess.se.obj = TRUE,
   remove.na = "both",
   apply.round = TRUE,
@@ -35,7 +35,7 @@ sample types or batches from colData(se.obj).}
 \item{save.se.obj}{Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 to output the result. By default it is set to TRUE.}
 
-\item{plot.output}{Indicates whether to plot the F-test statistics, by default it is set to TRUE.}
+\item{plot.output}{Indicates whether to plot the correlation statistics, by default it is set to TRUE.}
 
 \item{assess.se.obj}{Indicates whether to assess the SummarizedExperiment class object.}
 

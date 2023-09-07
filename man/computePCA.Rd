@@ -9,7 +9,7 @@ computePCA(
   assay.names = "All",
   apply.log = TRUE,
   fast.pca = TRUE,
-  nb.pcs = 5,
+  nb.pcs = 10,
   return.pc.percentage = TRUE,
   scale = FALSE,
   center = TRUE,

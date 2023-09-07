@@ -21,6 +21,7 @@
 #' @import ggplot2
 #' @export
 
+
 plotCombinedSilhouette<-function(
                     se.obj,
                     assay.names='All',
@@ -30,6 +31,12 @@ plotCombinedSilhouette<-function(
                     assess.se.obj = TRUE,
                     verbose=TRUE
 ){
+    ## variables = c(variable1,variable2)
+    if (is.null(assay.names)) {
+        stop('Please provide at least an assay name.')
+    } else if (class(se.obj@colData[, variable1]) %in% c('numeric', 'integer')) {
+    stop(paste0('The ', variable1,', is a numeric, but this should a categorical variable'))
+    }
 
 
     printColoredMessage(message = '------------The plotCombinedSilhouette function starts:',

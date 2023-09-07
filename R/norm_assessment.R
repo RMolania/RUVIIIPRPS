@@ -76,7 +76,7 @@ norm_assessment = function(
     }
 
     ### Compute PCA
-    data_pca=RUVPRPS::compute_pca(se,apply.log = apply.log,assay_names = assay_names)
+    data_pca=RUVPRPS::computePCA(se,apply.log = apply.log,assay_names = assay_names)
 
     ## Get all the available assays (i.e. normalizations methods)
     if (!is.null(assay_names)){
@@ -112,7 +112,7 @@ norm_assessment = function(
 
                 ## Compute ARI
                 message(paste("ARI based on: ",x,sep=""))
-                ari=RUVPRPS::compute_ari(data_pca,
+                ari=RUVPRPS::computeAri(data_pca,
                                          assay_names = assay_names,
                                          cat_var=group,
                                          cat_var_label = x)

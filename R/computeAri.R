@@ -1,10 +1,13 @@
-#' is used to compute the Silhouette coefficient from the first PC of a SummarizedExperiment class
+#' is used to compute the adjusted rank index (ARI) from the first PC of a SummarizedExperiment class
 #' object given a categorical variable.
+#'
+#' It can be used to assess how a group of biological samples
+#' are distributed across batches (i.e. example subtypes vs batch), and how batches ### update
 #'
 #'
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
-#' of the assay(s) of the SummarizedExperiment class object to compute the Silhouette coefficients. By default
+#' of the assay(s) of the SummarizedExperiment class object to compute the ARI. By default
 #  all the assays of the SummarizedExperiment class object will be selected.
 #' @param variable String of the label of a categorical variable such as
 #' sample types or batches from colData(se.obj).
@@ -12,25 +15,19 @@
 #' @param nb.pcs TO BE DEFINED.
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
-#' @param plot.output Indicates whether to plot the F-test statistics, by default it is set to TRUE.
+#' @param plot.output Indicates whether to plot the ARI, by default it is set to FALSE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
-#' @return SummarizedExperiment A SummarizedExperiment object containing the computed silhouette
+#' @return SummarizedExperiment A SummarizedExperiment object containing the computed ARI
 #' on the categorical variable.
-#' @importFrom wesanderson wes_palette
-#' @importFrom dplyr rename mutate
-#' @importFrom tidyr pivot_longer %>%
-#' @importFrom stats dist
-#' @importFrom cluster silhouette
+#' @importFrom mclust mclustBIC Mclust adjustedRandIndex
 #' @import ggplot2
 #' @export
+#'
 
-### Check if the class of the variable
-## deal with PCA and remove NA from variable
-
-computeSilhouette<-function(
+computeAri <-function(
         se.obj,
         assay.names = 'All',
         variable,
@@ -42,15 +39,17 @@ computeSilhouette<-function(
         verbose = TRUE
 ){
 
-    printColoredMessage(message = '------------The computeSilhouette function starts:',
+    printColoredMessage(message = '------------The computeAri function starts:',
                         color = 'white',
                         verbose = verbose)
 
     ### check the inputs
     if (is.null(nb.pcs)) {
-        stop('To compute the Silhouette coefficient, the number of PCs (nb.pcs) must be specified.')
+        stop('To compute the ARI, the number of PCs (nb.pcs) must be specified.')
     } else if (is.null(assay.names)) {
         stop('Please provide at least an assay name.')
+    } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
+        stop(paste0('The ', variable,', is a numeric, but this should a categorical variable'))
     }
 
     ### Assess the se.obj
@@ -74,68 +73,62 @@ computeSilhouette<-function(
     var.label=paste0(variable)
 
     if (fast.pca) {
-        # Silhouette coefficients on all assays
-        silCoef <- lapply(
+        # ARI on all assays
+        ari <- lapply(
             levels(assay.names),
             function(x){
                 if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]])) {
-                    stop('To compute the Silhouette coefficient,
+                    stop('To compute the ARI,
                          the fast PCA must be computed first on the assay ', x, ' .')
                 }
                 ### Silhouette on PCs and categorical variable
                 printColoredMessage(message = paste0(
-                    '### Computing Silhouette coefficient based on PCs and the ',
+                    '### Computing ARI based on PCs and the ',
                     variable,
                     ' variable.'
                 ),
                 color = 'magenta',
                 verbose = verbose)
                 pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u
-                d.matrix <- as.matrix(dist(pca_x[, seq_len(nb.pcs)]))
-                avg=summary(silhouette(
-                    as.numeric(as.factor(var)),
-                    d.matrix))$avg.width
-                return(avg)
+                BIC <- mclustBIC(data = pca_x)
+                mod <- Mclust(data = pca_x, x = BIC)
+                ari=adjustedRandIndex(
+                    mod$classification,
+                    var)
+                return(ari)
         })
-        names(silCoef) <- levels(assay.names)
+        names(ari) <- levels(assay.names)
     } else{
-        # Silhouette coefficients on all assays
-        silCoef <- lapply(
+        # ARI on all assays
+        ari <- lapply(
             levels(assay.names),
             function(x){
                 if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]])) {
-                    stop('To compute the Silhouette coefficient,
+                    stop('To compute the ARI,
                          the PCA must be computed first on the assay ', x, ' .')
                 }
                 ### Silhouette on PCs and categorical variable
                 printColoredMessage(message = paste0(
-                    '### Computing Silhouette coefficient based on PCs and the ',
+                    '### Computing ARI based on PCs and the ',
                     variable,
                     ' variable.'
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]
-                d.matrix <- as.matrix(dist(pca_x[, seq_len(nb.pcs)]))
-                avg=summary(silhouette(
-                    as.numeric(as.factor(var)),
-                    d.matrix))$avg.width
-                return(avg)
-            })
-        names(silCoef) <- levels(assay.names)
+                pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u
+                BIC <- mclustBIC(data = pca_x)
+                mod <- Mclust(data = pca_x, x = BIC)
+                ari=adjustedRandIndex(
+                    mod$classification,
+                    var)
+                return(ari)
+        })
+        names(ari) <- levels(assay.names)
     }
-
-    ## Round the anova statistic obtained to 2 digits
-    # if(apply.round){
-    #     silCoef <- cbind(
-    #         round(anova.genes.var[,1:9], digits = 3),
-    #         anova.genes.var[ , 10, drop = FALSE]
-    #     )
-    # }
 
     ### Add results to the SummarizedExperiment object
     if(save.se.obj == TRUE){
-        printColoredMessage(message= '### Saving the Silhouette coefficients to the metadata of the SummarizedExperiment object.',
+        printColoredMessage(message= '### Saving the ARI to the metadata of the SummarizedExperiment object.',
                             color = 'magenta',
                             verbose = verbose)
 
@@ -154,17 +147,17 @@ computeSilhouette<-function(
             }
             ## Check if metadata metric already exist for this assay and this metric
             if(!'sil' %in% names(se.obj@metadata[['metric']][[x]])  ) {
-                se.obj@metadata[['metric']][[x]][['sil']] <- list()
+                se.obj@metadata[['metric']][[x]][['ari']] <- list()
             }
             ## Check if metadata metric already exist for this assay, this metric and this variable
-            if(!variable %in% names(se.obj@metadata[['metric']][[x]][['sil']])  ) {
-                se.obj@metadata[['metric']][[x]][['sil']][[variable]] <- silCoef[[x]]
+            if(!variable %in% names(se.obj@metadata[['metric']][[x]][['ari']])  ) {
+                se.obj@metadata[['metric']][[x]][['ari']][[variable]] <- ari[[x]]
             }
         }
         printColoredMessage(message= paste0(
             'The Silhouette coefficients are saved to metadata@',
             x,
-            '$sil$',
+            '$ari$',
             variable, '.'),
             color = 'blue',
             verbose = verbose)
@@ -172,13 +165,13 @@ computeSilhouette<-function(
 
         ## Plot and save the plot into se.obj@metadata$plot
         if (plot.output==TRUE) {
-            printColoredMessage(message= '### Plotting and Saving the Silhouette coefficients to the metadata of the SummarizedExperiment object.',
+            printColoredMessage(message= '### Plotting and Saving the ARI to the metadata of the SummarizedExperiment object.',
                                 color = 'magenta',
                                 verbose = verbose)
 
             se.obj=plotMetric(se.obj,
                               assay.names =assay.names,
-                              metric='sil',
+                              metric='ari',
                               variable=variable,
                               verbose=verbose)
         }
@@ -186,12 +179,12 @@ computeSilhouette<-function(
 
         ## Return only the correlation result
     } else if(save.se.obj == FALSE){
-        return(sil=silCoef)
+        return(ari=ari)
     }
 
-    printColoredMessage(message = '------------The computeSilhouette function finished.',
+    printColoredMessage(message = '------------The computeAri function finished.',
                         color = 'white',
                         verbose = verbose)
 
-}
 
+}
