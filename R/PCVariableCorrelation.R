@@ -38,7 +38,7 @@ PCVariableCorrelation<-function(
         fast.pca = FALSE,
         nb.pcs = 10,
         save.se.obj = TRUE,
-        plot.output=FALSE,
+        plot.output=TRUE,
         assess.se.obj = TRUE,
         remove.na = 'both',
         apply.round = TRUE,
