@@ -12,7 +12,7 @@
 #' @param nb.pcs TO BE DEFINED.
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
-#' @param plot.output Indicates whether to plot the F-test statistics, by default it is set to TRUE.
+#' @param plot.output Indicates whether to plot the correlation statistics, by default it is set to TRUE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
 #' @param remove.na TO BE DEFINED.
 #' @param apply.round TO BE DEFINED.
@@ -31,11 +31,12 @@
 #' @import ggplot2
 #' @export
 
+## deal with PCA and remove NA from variable
 PCVariableCorrelation<-function(
         se.obj,
         assay.names = 'All',
         variable,
-        fast.pca = FALSE,
+        fast.pca = TRUE,
         nb.pcs = 10,
         save.se.obj = TRUE,
         plot.output=TRUE,
