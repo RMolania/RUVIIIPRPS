@@ -12,16 +12,13 @@
 #' @param nb.pcs TO BE DEFINED.
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
-#' @param plot.output Indicates whether to plot the F-test statistics, by default it is set to TRUE.
+#' @param plot.output Indicates whether to plot the Silhouette coefficients, by default it is set to FALSE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed silhouette
 #' on the categorical variable.
-#' @importFrom wesanderson wes_palette
-#' @importFrom dplyr rename mutate
-#' @importFrom tidyr pivot_longer %>%
 #' @importFrom stats dist
 #' @importFrom cluster silhouette
 #' @import ggplot2
@@ -51,6 +48,8 @@ computeSilhouette<-function(
         stop('To compute the Silhouette coefficient, the number of PCs (nb.pcs) must be specified.')
     } else if (is.null(assay.names)) {
         stop('Please provide at least an assay name.')
+    } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
+            stop(paste0('The ', variable,', is a numeric, but this should a categorical variable'))
     }
 
     ### Assess the se.obj
@@ -124,14 +123,6 @@ computeSilhouette<-function(
             })
         names(silCoef) <- levels(assay.names)
     }
-
-    ## Round the anova statistic obtained to 2 digits
-    # if(apply.round){
-    #     silCoef <- cbind(
-    #         round(anova.genes.var[,1:9], digits = 3),
-    #         anova.genes.var[ , 10, drop = FALSE]
-    #     )
-    # }
 
     ### Add results to the SummarizedExperiment object
     if(save.se.obj == TRUE){
