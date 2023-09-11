@@ -67,7 +67,13 @@ genesVariableCorrelation<-function(
                         color = 'white',
                         verbose = verbose)
     ### Check the assay names and method input
-    if(!method %in% c('pearson', 'spearman')){
+    if (is.null(variable)) {
+        stop('Please provide a variable.')
+    } else if (!class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
+            stop(paste0('The ', variable,', is not numeric, but this should a continuous variable'))
+    } else if (is.null(assay.names)) {
+        stop('Please provide at least an assay name.')
+    } else if(!method %in% c('pearson', 'spearman')){
         stop('"pearson" and "spearman" are the two supported types for correlations.')
     }
     ### Check se.obj and assay name

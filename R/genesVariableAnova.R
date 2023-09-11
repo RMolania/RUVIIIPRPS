@@ -56,7 +56,11 @@ genesVariableAnova <- function(se.obj,
                         color = 'white',
                         verbose = verbose)
     ### Check the inputs
-    if (length(unique(se.obj@colData[, variable])) < 2) {
+    if (is.null(variable)) {
+        stop('Please provide a variable.')
+    } else if (is.null(assay.names)) {
+        stop('Please provide at least an assay name.')
+    } else if (length(unique(se.obj@colData[, variable])) < 2) {
         stop(paste0('The ', variable,', contains only one variable.'))
     } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
         stop(paste0('The ', variable,', is a numeric, but this should a categorical variable'))

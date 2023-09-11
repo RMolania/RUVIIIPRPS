@@ -48,10 +48,14 @@ PCVariableRegression<-function(
                         verbose = verbose)
 
     ### check the inputs
-    if (is.null(nb.pcs)) {
-        stop('To compute the regression, the number of PCs (nb.pcs) must be specified.')
-    } else if (is.null(assay.names)) {
+    if (is.null(assay.names)) {
         stop('Please provide at least an assay name.')
+    } else if (is.null(variable)) {
+        stop('Please provide a variable.')
+    } else if (!class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
+        stop(paste0('The ', variable,', is not numeric, but this should a continuous variable'))
+    } else if (is.null(nb.pcs)) {
+        stop('To compute the regression, the number of PCs (nb.pcs) must be specified.')
     }
 
     ### Assess the se.obj

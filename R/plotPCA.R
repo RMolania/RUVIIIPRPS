@@ -52,6 +52,10 @@ plotPCA=function(se.obj,
         stop('To plot the PCA, the number of PCs (nb.pcs) must be specified.')
     } else if (is.null(assay.names)) {
         stop('Please provide at least an assay name.')
+    } else if (is.null(variable)) {
+        stop('Please provide a variable.')
+    } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
+        stop(paste0('The ', variable,', is a numeric, but this should a categorical variable'))
     }
 
     ### Assess the se.obj

@@ -33,7 +33,7 @@ plotMetric <- function(
                         verbose = verbose)
 
     if (!metric %in% c('gene.pearson.corr','gene.spearman.corr','gene.aov.anova','gene.welch.correction.anova','ari','sil','pcs.vect.corr','pcs.lm')) {
-        stop(paste0('The ', metric,'is not suitable. It has to be selected from the gene.pearson.corr, gene.spearman.corr, gene.aov.anova,
+        stop(paste0('The ', metric,' is not suitable. It has to be selected from the gene.pearson.corr, gene.spearman.corr, gene.aov.anova,
                 gene.welch.correction.anova,ari, sil, pcs.vect.corr, pcs.lm metrics.'))
     }
 
@@ -49,7 +49,7 @@ plotMetric <- function(
         levels(assay.names),
         function(x){
             if (!variable %in% names(se.obj@metadata[['metric']][[x]][[metric]])) {
-                stop(paste0('The ', metric,'has not been computed yet for the ',variable,' variable and the ',x, ' assay.'))
+                stop(paste0('The ', metric,' has not been computed yet for the ',variable,' variable and the ',x, ' assay.'))
             }
             se.obj@metadata[['metric']][[x]][[metric]][[variable]]
         })
@@ -93,8 +93,8 @@ plotMetric <- function(
     } else if (metric %in% c('gene.aov.anova','gene.welch.correction.anova')) {
         p=p+ geom_boxplot2()
         xlabel=''
-    } else if (metric %in% c('ari','sil')){
-        p=p+ geom_point(aes(colour=datasets))
+    } else if (metric %in% c('sil','ari')){
+        p=p+ geom_point(aes(color=datasets))
         xlabel=''
     } else if (metric %in% c('pcs.vect.corr','pcs.lm')){
         p=p+geom_line(aes(color = datasets), size = 1) +
@@ -118,7 +118,7 @@ plotMetric <- function(
         dataSets.colors <- wes_palette(
             n = length(levels(assay.names)),
             name = "GrandBudapest1")[seq(1:length(levels(assay.names)))]
-        if (metric %in% c('pcs.vect.corr','pcs.lm')){
+        if (metric %in% c('pcs.vect.corr','pcs.lm','ari','sil')){
             p=p+scale_color_manual(values = dataSets.colors, guide = 'none')
         } else{
             p=p+scale_fill_manual(values = dataSets.colors, guide = 'none')
@@ -134,6 +134,11 @@ plotMetric <- function(
             scale_y_continuous(
                 breaks = scales::pretty_breaks(n = 5),
                 limits = c(0,1))
+    } else if (metric %in% c('ari','sil')){
+        p=p+theme(axis.text.x = element_text(size = 12, angle = 35, hjust = 1),
+                  legend.position="none",
+                  legend.text = element_text(size = 10),
+                  legend.title = element_text(size = 14))
     }
 
 
