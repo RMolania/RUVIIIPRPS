@@ -4,7 +4,7 @@
 #' @param se.obj A summarized experiment object.
 #' @param assay.names A name or names of the assays in summarized experiment object.
 #' @param variables A name or names of the variables in the sample annotation of the summarized experiment object.
-#' @param remove.na 'both', 'measurements', 'sample.annotation', 'none'
+#' @param remove.na 'both', 'measurements', 'sample.annotation', 'none' TO BE DEFINED WHAT EACH DOES
 #' @param verbose whether to show the messages or not.
 #' @importFrom SummarizedExperiment assays assay colData
 #' @importFrom stats cancor var complete.cases
