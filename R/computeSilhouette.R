@@ -52,6 +52,7 @@ computeSilhouette<-function(
     }
 
     ### Assess the se.obj
+    rm.pca=FALSE
     if (assess.se.obj){
         se.obj.orig=se.obj
         se.obj <- checkSeObj(se.obj = se.obj,
