@@ -52,18 +52,12 @@ computeSilhouette<-function(
     }
 
     ### Assess the se.obj
-    rm.pca=FALSE
     if (assess.se.obj){
-        se.obj.orig=se.obj
         se.obj <- checkSeObj(se.obj = se.obj,
                              assay.names = assay.names,
                              variables = variable,
                              remove.na = 'both',
                              verbose = verbose)
-        if (ncol(se.obj)!=ncol(se.obj.orig)){
-            rm.pca=TRUE
-            keep.samples <- complete.cases(colData(se.obj)[, variable, drop = FALSE])
-        }
     }
 
     ## Assays
@@ -94,10 +88,7 @@ computeSilhouette<-function(
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u
-                    if (isTRUE(rm.pca)){
-                        pca_x=pca_x[keep.samples]
-                    }
+                pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u[colnames(se.obj),]
                 d.matrix <- as.matrix(dist(pca_x[, seq_len(nb.pcs)]))
                 avg=summary(silhouette(
                     as.numeric(as.factor(var)),
@@ -122,7 +113,7 @@ computeSilhouette<-function(
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]
+                pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u[colnames(se.obj),]
                 d.matrix <- as.matrix(dist(pca_x[, seq_len(nb.pcs)]))
                 avg=summary(silhouette(
                     as.numeric(as.factor(var)),
