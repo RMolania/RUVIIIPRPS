@@ -24,7 +24,6 @@
 #' @import ggplot2
 #' @export
 
-### Check if the class of the variable
 ## deal with PCA and remove NA from variable
 
 computeSilhouette<-function(
@@ -48,19 +47,22 @@ computeSilhouette<-function(
         stop('To compute the Silhouette coefficient, the number of PCs (nb.pcs) must be specified.')
     } else if (is.null(assay.names)) {
         stop('Please provide at least an assay name.')
-    } else if (is.null(variable)) {
-        stop('Please provide a variable.')
     } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
             stop(paste0('The ', variable,', is a numeric, but this should a categorical variable'))
     }
 
     ### Assess the se.obj
     if (assess.se.obj){
+        se.obj.orig=se.obj
         se.obj <- checkSeObj(se.obj = se.obj,
                              assay.names = assay.names,
                              variables = variable,
                              remove.na = 'both',
                              verbose = verbose)
+        if (ncol(se.obj)!=ncol(se.obj.orig)){
+            rm.pca=TRUE
+            keep.samples <- complete.cases(colData(se.obj)[, variable, drop = FALSE])
+        }
     }
 
     ## Assays
@@ -92,6 +94,9 @@ computeSilhouette<-function(
                 color = 'magenta',
                 verbose = verbose)
                 pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u
+                    if (isTRUE(rm.pca)){
+                        pca_x=pca_x[keep.samples]
+                    }
                 d.matrix <- as.matrix(dist(pca_x[, seq_len(nb.pcs)]))
                 avg=summary(silhouette(
                     as.numeric(as.factor(var)),

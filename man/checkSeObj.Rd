@@ -19,7 +19,7 @@ checkSeObj(
 
 \item{variables}{A name or names of the variables in the sample annotation of the summarized experiment object.}
 
-\item{remove.na}{'both', 'measurements', 'sample.annotation', 'none'}
+\item{remove.na}{'both', 'measurements', 'sample.annotation', 'none' TO BE DEFINED WHAT EACH DOES}
 
 \item{verbose}{whether to show the messages or not.}
 }
