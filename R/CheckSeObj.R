@@ -328,8 +328,9 @@ checkSeObj <- function(se.obj,
                     )
                     ncol.a <- ncol(se.obj)
                     #keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
-                    tmp=colData(se.obj)[, variables, drop = FALSE]
+                    tmp=as.data.frame(colData(se.obj)[, variables, drop = FALSE])
                     keep.samples <- complete.cases(tmp)
+                    rm(tmp)
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {
@@ -362,8 +363,9 @@ checkSeObj <- function(se.obj,
                     )
                     ncol.a <- ncol(se.obj)
                     #keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
-                    tmp=colData(se.obj)[, variables, drop = FALSE]
+                    tmp=as.data.frame(colData(se.obj)[, variables, drop = FALSE])
                     keep.samples <- complete.cases(tmp)
+                    rm(tmp)
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {
@@ -463,8 +465,9 @@ checkSeObj <- function(se.obj,
                     )
                     ncol.a <- ncol(se.obj)
                     #keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
-                    tmp=colData(se.obj)[, variables, drop = FALSE]
+                    tmp=as.data.frame(colData(se.obj)[, variables, drop = FALSE])
                     keep.samples <- complete.cases(tmp)
+                    rm(tmp)
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {
