@@ -24,8 +24,6 @@
 #' @import ggplot2
 #' @export
 
-## deal with PCA and remove NA from variable
-
 computeSilhouette<-function(
         se.obj,
         assay.names = 'All',

@@ -7,7 +7,7 @@
 #' @param remove.na 'both', 'measurements', 'sample.annotation', 'none' TO BE DEFINED WHAT EACH DOES
 #' @param verbose whether to show the messages or not.
 #' @importFrom SummarizedExperiment assays assay colData
-#' @importFrom stats cancor var complete.cases
+#' @importFrom stats complete.cases
 #' @import ggplot2
 #' @export
 
@@ -327,7 +327,9 @@ checkSeObj <- function(se.obj,
                         verbose = verbose
                     )
                     ncol.a <- ncol(se.obj)
-                    keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
+                    #keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
+                    tmp=colData(se.obj)[, variables, drop = FALSE]
+                    keep.samples <- complete.cases(tmp)
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {
@@ -359,7 +361,9 @@ checkSeObj <- function(se.obj,
                         verbose = verbose
                     )
                     ncol.a <- ncol(se.obj)
-                    keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
+                    #keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
+                    tmp=colData(se.obj)[, variables, drop = FALSE]
+                    keep.samples <- complete.cases(tmp)
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {
@@ -458,7 +462,9 @@ checkSeObj <- function(se.obj,
                         verbose = verbose
                     )
                     ncol.a <- ncol(se.obj)
-                    keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
+                    #keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
+                    tmp=colData(se.obj)[, variables, drop = FALSE]
+                    keep.samples <- complete.cases(tmp)
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {
