@@ -14,6 +14,7 @@
 #' to output the result. By default it is set to TRUE.
 #' @param plot.output Indicates whether to plot the Silhouette coefficients, by default it is set to FALSE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
+#' @param apply.round TO BE DEFINED.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
@@ -33,6 +34,7 @@ computeSilhouette<-function(
         save.se.obj = TRUE,
         plot.output=FALSE,
         assess.se.obj = TRUE,
+        apply.round = TRUE,
         verbose = TRUE
 ){
 
@@ -120,6 +122,12 @@ computeSilhouette<-function(
             })
         names(silCoef) <- levels(assay.names)
     }
+
+    ## Round the regression statistic obtained to 4 digits
+    if(apply.round){
+        silCoef[] <- lapply(silCoef, round,4)
+    }
+
 
     ### Add results to the SummarizedExperiment object
     if(save.se.obj == TRUE){

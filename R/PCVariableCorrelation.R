@@ -100,7 +100,7 @@ PCVariableCorrelation<-function(
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u
+                pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u[colnames(se.obj),]
                 cca.pcs<- sapply(
                     1:nb.pcs,
                     function(y){
@@ -130,7 +130,7 @@ PCVariableCorrelation<-function(
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u
+                pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u[colnames(se.obj),]
                 cca.pcs<- sapply(
                     1:nb.pcs,
                     function(y){

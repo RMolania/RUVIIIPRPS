@@ -17,6 +17,7 @@
 #' to output the result. By default it is set to TRUE.
 #' @param plot.output Indicates whether to plot the ARI, by default it is set to FALSE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
+#' @param apply.round TO BE DEFINED.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
@@ -36,6 +37,7 @@ computeAri <-function(
         save.se.obj = TRUE,
         plot.output=FALSE,
         assess.se.obj = TRUE,
+        apply.round = TRUE,
         verbose = TRUE
 ){
 
@@ -91,7 +93,7 @@ computeAri <-function(
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u
+                pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u[colnames(se.obj),]
                 BIC <- mclustBIC(data = pca_x)
                 mod <- Mclust(data = pca_x, x = BIC)
                 ari=adjustedRandIndex(
@@ -117,7 +119,7 @@ computeAri <-function(
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u
+                pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u[colnames(se.obj),]
                 BIC <- mclustBIC(data = pca_x)
                 mod <- Mclust(data = pca_x, x = BIC)
                 ari=adjustedRandIndex(
@@ -126,6 +128,11 @@ computeAri <-function(
                 return(ari)
         })
         names(ari) <- levels(assay.names)
+    }
+
+    ## Round the regression statistic obtained to 4 digits
+    if(apply.round){
+        ari[] <- lapply(ari, round,4)
     }
 
     ### Add results to the SummarizedExperiment object

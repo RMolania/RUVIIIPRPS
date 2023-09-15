@@ -14,6 +14,7 @@ computeSilhouette(
   save.se.obj = TRUE,
   plot.output = FALSE,
   assess.se.obj = TRUE,
+  apply.round = TRUE,
   verbose = TRUE
 )
 }
@@ -36,6 +37,8 @@ to output the result. By default it is set to TRUE.}
 \item{plot.output}{Indicates whether to plot the Silhouette coefficients, by default it is set to FALSE.}
 
 \item{assess.se.obj}{Indicates whether to assess the SummarizedExperiment class object.}
+
+\item{apply.round}{TO BE DEFINED.}
 
 \item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}

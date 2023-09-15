@@ -327,10 +327,7 @@ checkSeObj <- function(se.obj,
                         verbose = verbose
                     )
                     ncol.a <- ncol(se.obj)
-                    #keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
-                    tmp=as.data.frame(colData(se.obj)[, variables, drop = FALSE])
-                    keep.samples <- complete.cases(tmp)
-                    rm(tmp)
+                    keep.samples <- complete.cases(as.data.frame(colData(se.obj)[, variables, drop = FALSE]))
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {
@@ -362,10 +359,7 @@ checkSeObj <- function(se.obj,
                         verbose = verbose
                     )
                     ncol.a <- ncol(se.obj)
-                    #keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
-                    tmp=as.data.frame(colData(se.obj)[, variables, drop = FALSE])
-                    keep.samples <- complete.cases(tmp)
-                    rm(tmp)
+                    keep.samples <- complete.cases(as.data.frame(colData(se.obj)[, variables, drop = FALSE]))
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {
@@ -464,10 +458,7 @@ checkSeObj <- function(se.obj,
                         verbose = verbose
                     )
                     ncol.a <- ncol(se.obj)
-                    #keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
-                    tmp=as.data.frame(colData(se.obj)[, variables, drop = FALSE])
-                    keep.samples <- complete.cases(tmp)
-                    rm(tmp)
+                    keep.samples <- complete.cases(as.data.frame(colData(se.obj)[, variables, drop = FALSE]))
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {
