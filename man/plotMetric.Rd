@@ -9,7 +9,8 @@ plotMetric(
   se.obj,
   assay.names = "All",
   metric = c("gene.pearson.corr", "gene.spearman.corr", "gene.aov.anova",
-    "gene.welch.correction.anova", "ari", "sil", "pcs.vect.corr", "pcs.lm"),
+    "gene.welch.correction.anova", "ari", "pcs.vect.corr", "pcs.lm", "sil.euclidean",
+    "sil.maximum", "sil.manhattan", "sil.canberra", "sil.binary", "sil.minkowski"),
   variable,
   verbose = TRUE
 )

@@ -8,13 +8,17 @@
 #  all the assays of the SummarizedExperiment class object will be selected.
 #' @param variable String of the label of a categorical variable such as
 #' sample types or batches from colData(se.obj).
-#' @param fast.pca TO BE DEFINED.
-#' @param nb.pcs TO BE DEFINED.
+#' @param method A character string indicating which method
+#' is to be used for the differential analysis: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski".
+#' By default "euclidean" will be selected.
+#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
+#' to speed up the process, by default is set to 'TRUE'.
+#' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 3.
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
 #' @param plot.output Indicates whether to plot the Silhouette coefficients, by default it is set to FALSE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
-#' @param apply.round TO BE DEFINED.
+#' @param apply.round Logical. Indicates whether to round the ARI results,by default it is set to TRUE.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
@@ -29,6 +33,7 @@ computeSilhouette<-function(
         se.obj,
         assay.names = 'All',
         variable,
+        method = 'euclidian',
         fast.pca = TRUE,
         nb.pcs = 3,
         save.se.obj = TRUE,
@@ -49,6 +54,8 @@ computeSilhouette<-function(
         stop('Please provide at least an assay name.')
     } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
             stop(paste0('The ', variable,', is a numeric, but this should a categorical variable'))
+    } else if(!method %in% c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski") ){
+        stop('"euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski" are the two supported types for Silhouette.')
     }
 
     ### Assess the se.obj
@@ -89,7 +96,8 @@ computeSilhouette<-function(
                 color = 'magenta',
                 verbose = verbose)
                 pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u[colnames(se.obj),]
-                d.matrix <- as.matrix(dist(pca_x[, seq_len(nb.pcs)]))
+
+                d.matrix <- as.matrix(dist(pca_x[, seq_len(nb.pcs)],method = method ))
                 avg=summary(silhouette(
                     as.numeric(as.factor(var)),
                     d.matrix))$avg.width
@@ -149,18 +157,20 @@ computeSilhouette<-function(
                 se.obj@metadata[['metric']][[x]] <- list()
             }
             ## Check if metadata metric already exist for this assay and this metric
-            if(!'sil' %in% names(se.obj@metadata[['metric']][[x]])  ) {
-                se.obj@metadata[['metric']][[x]][['sil']] <- list()
+            if(!paste0('sil.',method) %in% names(se.obj@metadata[['metric']][[x]])  ) {
+                se.obj@metadata[['metric']][[x]][[paste0('sil.',method)]] <- list()
             }
             ## Check if metadata metric already exist for this assay, this metric and this variable
-            if(!variable %in% names(se.obj@metadata[['metric']][[x]][['sil']])  ) {
-                se.obj@metadata[['metric']][[x]][['sil']][[variable]] <- silCoef[[x]]
+            if(!variable %in% names(se.obj@metadata[['metric']][[x]][[paste0('sil.',method)]])  ) {
+                se.obj@metadata[['metric']][[x]][[paste0('sil.',method)]][[variable]] <- silCoef[[x]]
             }
         }
         printColoredMessage(message= paste0(
             'The Silhouette coefficients are saved to metadata@',
             x,
-            '$sil$',
+            '$sil.',
+            method,
+            "$",
             variable, '.'),
             color = 'blue',
             verbose = verbose)

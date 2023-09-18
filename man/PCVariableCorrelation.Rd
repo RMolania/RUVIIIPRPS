@@ -28,9 +28,10 @@ of the assay(s) of the SummarizedExperiment class object to compute the correlat
 \item{variable}{String of the label of a categorical variable such as
 sample types or batches from colData(se.obj).}
 
-\item{fast.pca}{TO BE DEFINED.}
+\item{fast.pca}{Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
+to speed up the process, by default is set to 'TRUE'.}
 
-\item{nb.pcs}{TO BE DEFINED.}
+\item{nb.pcs}{Numeric. The number of few first cumulative PCs, by default is set to 10.}
 
 \item{save.se.obj}{Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 to output the result. By default it is set to TRUE.}
@@ -41,7 +42,7 @@ to output the result. By default it is set to TRUE.}
 
 \item{remove.na}{TO BE DEFINED.}
 
-\item{apply.round}{TO BE DEFINED.}
+\item{apply.round}{Logical. Indicates whether to round the ARI results, by default it is set to TRUE.}
 
 \item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}

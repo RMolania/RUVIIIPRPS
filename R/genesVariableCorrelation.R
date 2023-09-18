@@ -27,8 +27,9 @@
 #' @param remove.na TO BE DEFINED.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
-#' @param pseudo.count TO BE DEFINED.
-#' @param apply.round TO BE DEFINED.
+#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+#' by default it is set to 1.
+#' @param apply.round Logical. Indicates whether to round the ARI results, by default it is set to TRUE.
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed correlation on the continuous variable
 #' and if requested the associated plot.

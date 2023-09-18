@@ -3,7 +3,7 @@
 export(PCVariableCorrelation)
 export(PCVariableRegression)
 export(checkSeObj)
-export(computeAri)
+export(computeARI)
 export(computePCA)
 export(computeSilhouette)
 export(create_prps)

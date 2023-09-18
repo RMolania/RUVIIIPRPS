@@ -8,14 +8,15 @@
 #  all the assays of the SummarizedExperiment class object will be selected.
 #' @param variable String of the label of a continuous variable such as
 #' library size from colData(se.obj).
-#' @param fast.pca TO BE DEFINED.
-#' @param nb.pcs TO BE DEFINED.
+#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
+#' to speed up the process, by default is set to 'TRUE'.
+#' @param nb.pcs Numeric. The number of few first cumulative PCs, by default is set to 10.
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
 #' @param plot.output Indicates whether to plot the regression statistics, by default it is set to TRUE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
 #' @param remove.na TO BE DEFINED.
-#' @param apply.round TO BE DEFINED.
+#' @param apply.round Logical. Indicates whether to round the ARI results, by default it is set to TRUE.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'

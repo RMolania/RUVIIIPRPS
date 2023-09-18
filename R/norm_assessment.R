@@ -112,7 +112,7 @@ norm_assessment = function(
 
                 ## Compute ARI
                 message(paste("ARI based on: ",x,sep=""))
-                ari=RUVPRPS::computeAri(data_pca,
+                ari=RUVPRPS::computeARI(data_pca,
                                          assay_names = assay_names,
                                          cat_var=group,
                                          cat_var_label = x)

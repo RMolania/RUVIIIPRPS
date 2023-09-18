@@ -21,8 +21,9 @@
 #' by default is set to 3.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
 #' @param remove.na TO BE DEFINED.
-#' @param pseudo.count TO BE DEFINED.
-#' @param apply.round TO BE DEFINED.
+#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+#' by default it is set to 1.
+#' @param apply.round Logical. Indicates whether to round the ARI results, by default it is set to TRUE.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'

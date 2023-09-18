@@ -23,7 +23,9 @@
 plotMetric <- function(
         se.obj,
         assay.names='All',
-        metric=c('gene.pearson.corr','gene.spearman.corr','gene.aov.anova','gene.welch.correction.anova','ari','sil','pcs.vect.corr','pcs.lm'),
+        metric=c('gene.pearson.corr','gene.spearman.corr','gene.aov.anova','gene.welch.correction.anova','ari',
+                 'pcs.vect.corr','pcs.lm','sil.euclidean', 'sil.maximum', 'sil.manhattan', 'sil.canberra',
+                 'sil.binary', 'sil.minkowski'),
         variable,
         verbose=TRUE
         ) {
@@ -32,9 +34,12 @@ plotMetric <- function(
                         color = 'white',
                         verbose = verbose)
 
-    if (!metric %in% c('gene.pearson.corr','gene.spearman.corr','gene.aov.anova','gene.welch.correction.anova','ari','sil','pcs.vect.corr','pcs.lm')) {
+    if (!metric %in% c('gene.pearson.corr','gene.spearman.corr','gene.aov.anova','gene.welch.correction.anova','ari',
+                       'pcs.vect.corr','pcs.lm','sil.euclidean', 'sil.maximum', 'sil.manhattan', 'sil.canberra',
+                       'sil.binary', 'sil.minkowski')) {
         stop(paste0('The ', metric,' is not suitable. It has to be selected from the gene.pearson.corr, gene.spearman.corr, gene.aov.anova,
-                gene.welch.correction.anova,ari, sil, pcs.vect.corr, pcs.lm metrics.'))
+                gene.welch.correction.anova,ari,pcs.vect.corr, pcs.lm, sil.euclidean, sil.maximum, sil.manhattan,
+                sil.canberra, sil.binary, sil.minkowski metrics.'))
     }
 
 
@@ -93,7 +98,8 @@ plotMetric <- function(
     } else if (metric %in% c('gene.aov.anova','gene.welch.correction.anova')) {
         p=p+ geom_boxplot2()
         xlabel=''
-    } else if (metric %in% c('sil','ari')){
+    } else if (metric %in% c('sil.euclidean', 'sil.maximum', 'sil.manhattan', 'sil.canberra',
+                             'sil.binary', 'sil.minkowski','ari')){
         p=p+ geom_point(aes(color=datasets))
         xlabel=''
     } else if (metric %in% c('pcs.vect.corr','pcs.lm')){
@@ -118,7 +124,8 @@ plotMetric <- function(
         dataSets.colors <- wes_palette(
             n = length(levels(assay.names)),
             name = "GrandBudapest1")[seq(1:length(levels(assay.names)))]
-        if (metric %in% c('pcs.vect.corr','pcs.lm','ari','sil')){
+        if (metric %in% c('pcs.vect.corr','pcs.lm','ari','sil.euclidean', 'sil.maximum', 'sil.manhattan',
+                          'sil.canberra','sil.binary', 'sil.minkowski')){
             p=p+scale_color_manual(values = dataSets.colors, guide = 'none')
         } else{
             p=p+scale_fill_manual(values = dataSets.colors, guide = 'none')
@@ -134,7 +141,8 @@ plotMetric <- function(
             scale_y_continuous(
                 breaks = scales::pretty_breaks(n = 5),
                 limits = c(0,1))
-    } else if (metric %in% c('ari','sil')){
+    } else if (metric %in% c('ari','sil.euclidean', 'sil.maximum', 'sil.manhattan', 'sil.canberra',
+                             'sil.binary', 'sil.minkowski')){
         p=p+theme(axis.text.x = element_text(size = 12, angle = 35, hjust = 1),
                   legend.position="none",
                   legend.text = element_text(size = 10),

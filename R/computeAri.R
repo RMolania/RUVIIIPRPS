@@ -1,4 +1,4 @@
-#' is used to compute the adjusted rank index (ARI) from the first PC of a SummarizedExperiment class
+#' is used to compute the adjusted rand index (ARI) from the first PC of a SummarizedExperiment class
 #' object given a categorical variable.
 #'
 #' It can be used to assess how a group of biological samples
@@ -11,13 +11,14 @@
 #  all the assays of the SummarizedExperiment class object will be selected.
 #' @param variable String of the label of a categorical variable such as
 #' sample types or batches from colData(se.obj).
-#' @param fast.pca TO BE DEFINED.
-#' @param nb.pcs TO BE DEFINED.
+#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
+#' to speed up the process, by default is set to 'TRUE'.
+#' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 3.
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
 #' @param plot.output Indicates whether to plot the ARI, by default it is set to FALSE.
-#' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
-#' @param apply.round TO BE DEFINED.
+#' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object, by default it is set to TRUE.
+#' @param apply.round Logical. Indicates whether to round the ARI results, by default it is set to TRUE.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
@@ -28,7 +29,7 @@
 #' @export
 #'
 
-computeAri <-function(
+computeARI <-function(
         se.obj,
         assay.names = 'All',
         variable,

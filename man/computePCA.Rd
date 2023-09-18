@@ -29,9 +29,10 @@ of the assay(s) of the SummarizedExperiment class object to compute the correlat
 \item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
 
-\item{fast.pca}{TO BE DEFINED.}
+\item{fast.pca}{logical. Indicates whether to calculate a specific number of PCs instead of the full range
+to speed up the process, by default is set to 'TRUE'.}
 
-\item{nb.pcs}{TO BE DEFINED.}
+\item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
 
 \item{return.pc.percentage}{TO BE DEFINED.}
 
@@ -43,7 +44,7 @@ It is a generic function to scale the columns of a numeric matrix, by default it
 to the number of columns of the gene expression (assay) of a SummarizedExperiment class object.
 It is a generic function to center the columns of a numeric matrix, by default is set to 'TRUE'.}
 
-\item{BSPARAM}{TO BE DEFINED.}
+\item{BSPARAM}{A BiocParallelParam object specifying how parallelization should be performed.}
 
 \item{save.se.obj}{Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 to output the result. By default it is set to TRUE.}
@@ -53,7 +54,8 @@ to output the result. By default it is set to TRUE.}
 \item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
 
-\item{pseudo.count}{TO BE DEFINED.}
+\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+by default it is set to 1.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing the PCA.

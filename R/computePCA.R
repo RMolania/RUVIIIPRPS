@@ -6,8 +6,9 @@
 #  all the assays of the SummarizedExperiment class object will be selected.
 #' @param apply.log Indicates whether to apply a log-transformation to the data. By default
 #' no transformation will be selected.
-#' @param fast.pca TO BE DEFINED.
-#' @param nb.pcs TO BE DEFINED.
+#' @param fast.pca logical. Indicates whether to calculate a specific number of PCs instead of the full range
+#' to speed up the process, by default is set to 'TRUE'.
+#' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.
 #' @param return.pc.percentage TO BE DEFINED.
 #' @param scale Either a logical value or a numeric-alike vector of length equal
 #' to the number of columns of the gene expression (assay) of a SummarizedExperiment class object.
@@ -15,13 +16,14 @@
 #' @param center Either a logical value or a numeric-alike vector of length equal
 #' to the number of columns of the gene expression (assay) of a SummarizedExperiment class object.
 #' It is a generic function to center the columns of a numeric matrix, by default is set to 'TRUE'.
-#' @param BSPARAM TO BE DEFINED.
+#' @param BSPARAM A BiocParallelParam object specifying how parallelization should be performed.
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
-#' @param pseudo.count TO BE DEFINED.
+#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+#' by default it is set to 1.
 
 #' @return SummarizedExperiment A SummarizedExperiment object containing the PCA.
 #'
