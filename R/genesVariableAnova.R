@@ -184,6 +184,7 @@ genesVariableAnova <- function(se.obj,
                 plot(p.high)
                 rm(temp.data)
                 rm(temp.anova)
+                results<-NULL
                 results <- list(
                     anova.genes.var =  anova.genes.var)
             }

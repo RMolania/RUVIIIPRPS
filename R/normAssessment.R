@@ -154,7 +154,6 @@ normAssessment = function(
                                      variable=x,
                                      color = color.group,
                                      fast.pca=fast.pca,
-                                     nb.pcs=nb.pcs,
                                      assess.se.obj = assess.se.obj,
                                      verbose = verbose)
                 return(PCA)

@@ -233,12 +233,7 @@ genesVariableCorrelation<-function(
                 plot(p.neg)
                 rm(temp.data)
                 rm(temp.corr)
-
-                # results <- list(
-                #     corr.genes.var = corr.genes.var,
-                #     p.pos=p.pos,
-                #     p.neg=p.neg)
-            # } else{
+                results<-NULL
                 results <- list(
                     corr.genes.var = corr.genes.var)
             }
