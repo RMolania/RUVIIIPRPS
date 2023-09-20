@@ -24,6 +24,7 @@
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed ARI
 #' on the categorical variable.
+#' @importFrom SummarizedExperiment assays assay
 #' @importFrom mclust mclustBIC Mclust adjustedRandIndex
 #' @import ggplot2
 #' @export

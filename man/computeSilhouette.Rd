@@ -29,8 +29,8 @@ of the assay(s) of the SummarizedExperiment class object to compute the Silhouet
 sample types or batches from colData(se.obj).}
 
 \item{method}{A character string indicating which method
-is to be used for the differential analysis: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski".
-By default "euclidean" will be selected.}
+is to be used for the differential analysis: 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.
+By default 'euclidean' will be selected.}
 
 \item{fast.pca}{Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
 to speed up the process, by default is set to 'TRUE'.}

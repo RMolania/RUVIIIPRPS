@@ -9,8 +9,8 @@
 #' @param variable String of the label of a categorical variable such as
 #' sample types or batches from colData(se.obj).
 #' @param method A character string indicating which method
-#' is to be used for the differential analysis: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski".
-#' By default "euclidean" will be selected.
+#' is to be used for the differential analysis: 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.
+#' By default 'euclidean' will be selected.
 #' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
 #' to speed up the process, by default is set to 'TRUE'.
 #' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 3.
@@ -24,6 +24,7 @@
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed silhouette
 #' on the categorical variable.
+#' @importFrom SummarizedExperiment assays assay
 #' @importFrom stats dist
 #' @importFrom cluster silhouette
 #' @import ggplot2
@@ -54,8 +55,8 @@ computeSilhouette<-function(
         stop('Please provide at least an assay name.')
     } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
             stop(paste0('The ', variable,', is a numeric, but this should a categorical variable'))
-    } else if(!method %in% c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski") ){
-        stop('"euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski" are the two supported types for Silhouette.')
+    } else if(!method %in% c('euclidian', 'maximum', 'manhattan', 'canberra', 'binary', 'minkowski') ){
+        stop("'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski' are the two supported types for Silhouette.")
     }
 
     ### Assess the se.obj
