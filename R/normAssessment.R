@@ -134,7 +134,7 @@ normAssessment = function(
             function(x){
                 ## PCA Color
                 group=as.factor(se.obj@colData[, x])
-                if (group<=11){
+                if (length(unique(group))<=11){
                     colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
                     color.group<- colfunc(length(unique(group)))
                     names(color.group) <- unique(group)
