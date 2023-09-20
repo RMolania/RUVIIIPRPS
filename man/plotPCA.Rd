@@ -25,7 +25,7 @@ plotPCA(
 \item{se.obj}{A SummarizedExperiment object that will be used to compute the PCA.}
 
 \item{assay.names}{Optional string or list of strings for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default}
+of the assay(s) of the SummarizedExperiment class object to plot the PCA. By default}
 
 \item{variable}{String of the label of a categorical variable such as
 sample types or batches from colData(se.obj).}
