@@ -97,7 +97,7 @@ plotRLE<-function(
                     names_to = 'samples',values_to = 'rle') %>%
                     mutate(samples = factor(samples))
                 p=ggplot(rle_plot, aes(x = samples,y=rle)) +
-                geom_boxplot2(width=0.01,lwd=0.5,alpha=0.2) +
+                geom_boxplot2(width=0.01,lwd=0.5,outlier.alpha=0.2) +
                 ylab('RLE') +
                 xlab('') +
                 coord_cartesian(ylim=c(-6,6))+
@@ -144,6 +144,7 @@ plotRLE<-function(
             'The RLE plots are saved to metadata@$plot$rle'),
             color = 'blue',
             verbose = verbose)
+        return(se.obj = se.obj)
     } else if(save.se.obj == FALSE){
         return(plot=plot.rle)
     }
