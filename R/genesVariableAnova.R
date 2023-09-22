@@ -184,10 +184,10 @@ genesVariableAnova <- function(se.obj,
                 plot(p.high)
                 rm(temp.data)
                 rm(temp.anova)
-                results<-NULL
-                results <- list(
-                    anova.genes.var =  anova.genes.var)
             }
+            results<-NULL
+            results <- list(
+                anova.genes.var =  anova.genes.var)
             return(results)
         })
     names(anova.all) <- levels(assay.names)
