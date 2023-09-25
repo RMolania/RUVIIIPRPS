@@ -17,6 +17,7 @@
 #' @return list List of the computed RLE and the associated plot
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
+#' @importFrom kunstomverse geom_boxplot2
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom matrixStats rowMedians colMedians colIQRs
 #' @importFrom stats median
@@ -96,8 +97,8 @@ plotRLE<-function(
                     names_to = 'samples',values_to = 'rle') %>%
                     mutate(samples = factor(samples))
                 p=ggplot(rle_plot, aes(x = samples,y=rle)) +
-                #geom_boxplot2(width.errorbar =0.01,outlier.alpha=0.2) +
-                    geom_boxplot(width=0.01,lwd=0.5,alpha=0.2)+
+                geom_boxplot2(width.errorbar =0.01,outlier.alpha=0.2) +
+                    #geom_boxplot(width=0.01,lwd=0.5,alpha=0.2)+
                 ylab('RLE') +
                 xlab('') +
                 coord_cartesian(ylim=c(-6,6))+
