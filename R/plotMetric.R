@@ -14,6 +14,7 @@
 #' @return SummarizedExperiment A SummarizedExperiment object containing the associated plot.
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
+#' @importFrom kunstomverse geom_boxplot2
 #' @importFrom SummarizedExperiment assays assay colData
 #' @importFrom fastDummies dummy_cols
 #' @import ggplot2

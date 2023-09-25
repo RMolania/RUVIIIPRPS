@@ -83,6 +83,9 @@ normAssessment = function(
 
 
     ### Categorical, continuous, biological variables
+    categorical.uv <-NULL
+    continuous.uv <-NULL
+
     if (!is.null(variables)){
         uv.class <- sapply(
             variables,
@@ -90,9 +93,6 @@ normAssessment = function(
         )
         categorical.uv <- names(uv.class[which(uv.class %in% c('character', 'factor'))])
         continuous.uv <- variables[!variables %in% categorical.uv]
-    } else {
-        categorical.uv <-NULL
-        continuous.uv <-NULL
     }
 
     ## Assays
@@ -119,8 +119,8 @@ normAssessment = function(
                                verbose = verbose)
 
     ################# Categorical variable ################
-    if (!is.null(categorical.uv)){
-        nb.cat.var=length(categorical.uv)
+    nb.cat.var=length(categorical.uv)
+    if (nb.cat.var!=0){
         ## PCA plotting
         PCA.plots<- lapply(
             categorical.uv,
@@ -239,8 +239,8 @@ normAssessment = function(
     }
 
     ################# Continous variable ################
-    if (!is.null(continuous.uv)){
-        nb.cont.var=length(continuous.uv)
+    nb.cont.var=length(continuous.uv)
+    if (nb.cont.var!=0){
         ## Computing other metrics
         for (x in continuous.uv){
             ## Compute regression between library size and PCs
@@ -278,7 +278,6 @@ normAssessment = function(
     }
 
     ########## RLE plot ############
-    # RLE
     # se.obj=RUVPRPS::plotRLE(se.obj=se.obj,
     #                         assay.names = assay.names,
     #                         apply.log=apply.log)
@@ -291,31 +290,33 @@ normAssessment = function(
             verbose = verbose)
         pdf(output_file)
         ## Categorical variable
-        if (!is.null(categorical.uv)){
+        if (nb.cat.var!=0){
             for (v in 1:(nb.cat.var)){
                 plot(PCA.plots[[categorical.uv[v]]])
                 plot(se.obj@metadata[['plot']][['gene.aov.anova']][[categorical.uv[v]]])
                 plot(se.obj@metadata[['plot']][['pcs.vect.corr']][[categorical.uv[v]]])
             }
             ## Combined silhouette
-            p <- lapply(names(CombinedSilPlot),
+            if (nb.cat.var>1){
+                p <- lapply(names(CombinedSilPlot),
                         function(x){
                             plot(CombinedSilPlot[[x]])
                         })
+            }
         }
         ## Continuous variable
-        if (!is.null(continuous.uv)){
+        if (nb.cont.var!=0){
             for (v in 1:(nb.cont.var)){
-                plot(se.obj@metadata[['plot']][['pcs.lm']][[categorical.uv[v]]])
-                plot(se.obj@metadata[['plot']][['gene.spearman.corr']][[categorical.uv[v]]])
+                plot(se.obj@metadata[['plot']][['pcs.lm']][[continuous.uv[v]]])
+                plot(se.obj@metadata[['plot']][['gene.spearman.corr']][[continuous.uv[v]]])
             }
         }
         ## RLE plot
-        lreg.pcs<- lapply(
-            levels(assay.names),
-            function(x){
-                #plot(se.obj@metadata[['plot']][['rle']][[x]])
-            })
+        # lreg.pcs<- lapply(
+        #     levels(assay.names),
+        #     function(x){
+        # plot(se.obj@metadata[['plot']][['rle']][[x]])
+        #    })
         dev.off()
     }
     printColoredMessage(message = '------------The normAssessment function finished.',

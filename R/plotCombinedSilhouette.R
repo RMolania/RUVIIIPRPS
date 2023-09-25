@@ -108,8 +108,8 @@ plotCombinedSilhouette<-function(
     ## Plot
     p=ggplot(df,aes(Silh1,Silh2,colour=datasets)) +
         geom_point(aes(color = datasets), size = 3) +
-        xlab(paste('Silhouette based on ',method,' computed on ',variable1,sep="")) +
-        ylab (paste('Silhouette based on ',method,' computed on ',variable2,sep="")) +
+        xlab(paste('Silhouette based on ',variable1,sep="")) +
+        ylab (paste('Silhouette based on ',variable2,sep="")) +
         theme(
         panel.background = element_blank(),
         axis.line = element_line(colour = 'black', size = 1),
