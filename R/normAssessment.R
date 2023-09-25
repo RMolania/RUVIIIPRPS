@@ -23,8 +23,7 @@
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
 #' of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default
 #  all the assays of the SummarizedExperiment class object will be selected.
-#' @param bio.variable String of the label of a categorical variable, from colData(se.obj) that specify major biological groups.
-#' @param uv.variables String or vector of strings of the label of continuous or categorical variable(s)
+#' @param variables String or vector of strings of the label of continuous or categorical variable(s)
 #' such as samples types, batch or library size from colData(se).
 #' @param apply.log Indicates whether to apply a log-transformation to the data. By default
 #' no transformation will be selected.
@@ -53,8 +52,7 @@ normAssessment = function(
         se.obj,
         assay.names = 'All',
         apply.log = TRUE,
-        bio.variable=NULL,
-        uv.variables=NULL,
+        variables=NULL,
         output_file=NULL,
         fast.pca = TRUE,
         nb.pcs = 10,
@@ -85,19 +83,13 @@ normAssessment = function(
 
 
     ### Categorical, continuous, biological variables
-    if (!is.null(uv.variables)){
+    if (!is.null(variables)){
         uv.class <- sapply(
-            uv.variables,
+            variables,
             function(x) class(colData(se.obj)[[x]])
         )
         categorical.uv <- names(uv.class[which(uv.class %in% c('character', 'factor'))])
-        continuous.uv <- uv.variables[!uv.variables %in% categorical.uv]
-        if(!is.null(bio.variable)){
-            categorical.uv <-c(bio.variable,categorical.uv)
-        }
-    } else if(!is.null(bio.variable)){
-                categorical.uv <-bio.variable
-                continuous.uv <-NULL
+        continuous.uv <- variables[!variables %in% categorical.uv]
     } else {
         categorical.uv <-NULL
         continuous.uv <-NULL
@@ -118,13 +110,13 @@ normAssessment = function(
     color = 'magenta',
     verbose = verbose)
     se.obj=RUVPRPS::computePCA(se.obj=se.obj,
-                                 assay.names = assay.names,
-                                 apply.log = apply.log,
-                                 pseudo.count = pseudo.count,
-                                 fast.pca = fast.pca,
-                                 nb.pcs = nb.pcs,
-                                 assess.se.obj = assess.se.obj,
-                                 verbose = verbose)
+                               assay.names = assay.names,
+                               apply.log = apply.log,
+                               pseudo.count = pseudo.count,
+                               fast.pca = fast.pca,
+                               nb.pcs = nb.pcs,
+                               assess.se.obj = assess.se.obj,
+                               verbose = verbose)
 
     ################# Categorical variable ################
     if (!is.null(categorical.uv)){
@@ -157,72 +149,72 @@ normAssessment = function(
                                      assess.se.obj = assess.se.obj,
                                      verbose = verbose)
                 return(PCA)
-        })
+            })
         names(PCA.plots)=categorical.uv
 
         ## Computing other metrics
         for (x in categorical.uv){
-                ## Compute Silhouette
-                printColoredMessage(message = paste0(
-                    '### Computing Silhouette based on the ',
-                    x,
-                    ' variable.'
-                ),
-                color = 'magenta',
-                verbose = verbose)
-                se.obj=RUVPRPS::computeSilhouette(se.obj=se.obj,
-                                                assay.names = assay.names,
-                                                variable=x,
-                                                fast.pca=fast.pca,
-                                                assess.se.obj = assess.se.obj,
-                                                verbose = verbose)
+            ## Compute Silhouette
+            printColoredMessage(message = paste0(
+                '### Computing Silhouette based on the ',
+                x,
+                ' variable.'
+            ),
+            color = 'magenta',
+            verbose = verbose)
+            se.obj=RUVPRPS::computeSilhouette(se.obj=se.obj,
+                                              assay.names = assay.names,
+                                              variable=x,
+                                              fast.pca=fast.pca,
+                                              assess.se.obj = assess.se.obj,
+                                              verbose = verbose)
 
-                ## Compute ARI
-                printColoredMessage(message = paste0(
-                    '### Computing ARI based on the ',
-                    x,
-                    ' variable.'
-                ),
-                color = 'magenta',
-                verbose = verbose)
-                se.obj=RUVPRPS::computeARI(se.obj=se.obj,
-                                        assay.names = assay.names,
-                                        variable=x,
-                                        fast.pca=fast.pca,
-                                        assess.se.obj = assess.se.obj,
-                                        verbose = verbose)
+            ## Compute ARI
+            printColoredMessage(message = paste0(
+                '### Computing ARI based on the ',
+                x,
+                ' variable.'
+            ),
+            color = 'magenta',
+            verbose = verbose)
+            se.obj=RUVPRPS::computeARI(se.obj=se.obj,
+                                       assay.names = assay.names,
+                                       variable=x,
+                                       fast.pca=fast.pca,
+                                       assess.se.obj = assess.se.obj,
+                                       verbose = verbose)
 
-                ## Compute ANOVA
-                printColoredMessage(message = paste0(
-                    '### Computing ANOVA based on the ',
-                    x,
-                    ' variable.'
-                ),
-                color = 'magenta',
-                verbose = verbose)
-                se.obj=RUVPRPS::genesVariableAnova(se.obj=se.obj,
+            ## Compute ANOVA
+            printColoredMessage(message = paste0(
+                '### Computing ANOVA based on the ',
+                x,
+                ' variable.'
+            ),
+            color = 'magenta',
+            verbose = verbose)
+            se.obj=RUVPRPS::genesVariableAnova(se.obj=se.obj,
+                                               assay.names = assay.names,
+                                               variable=x,
+                                               apply.log=apply.log,
+                                               pseudo.count = pseudo.count,
+                                               assess.se.obj = assess.se.obj,
+                                               verbose = verbose)
+
+            ## Compute Vector correlation
+            printColoredMessage(message = paste0(
+                '### Computing Vector Correlation between the first cumulative PCs and the ',
+                x,
+                ' variable.'
+            ),
+            color = 'magenta',
+            verbose = verbose)
+            se.obj=RUVPRPS::PCVariableCorrelation(se.obj=se.obj,
                                                   assay.names = assay.names,
                                                   variable=x,
-                                                  apply.log=apply.log,
-                                                  pseudo.count = pseudo.count,
+                                                  fast.pca=fast.pca,
+                                                  nb.pcs=nb.pcs,
                                                   assess.se.obj = assess.se.obj,
                                                   verbose = verbose)
-
-                ## Compute Vector correlation
-                printColoredMessage(message = paste0(
-                    '### Computing Vector Correlation between the first cumulative PCs and the ',
-                    x,
-                    ' variable.'
-                ),
-                color = 'magenta',
-                verbose = verbose)
-                se.obj=RUVPRPS::PCVariableCorrelation(se.obj=se.obj,
-                                                    assay.names = assay.names,
-                                                    variable=x,
-                                                    fast.pca=fast.pca,
-                                                    nb.pcs=nb.pcs,
-                                                    assess.se.obj = assess.se.obj,
-                                                    verbose = verbose)
         }
 
         ## Plot combined silhouette based on all pairs of cat var
@@ -230,8 +222,8 @@ normAssessment = function(
         if (nb.cat.var>1){
             printColoredMessage(message = paste0(
                 '### Plotting all combined silhouette plots of all categorical variables'),
-            color = 'magenta',
-            verbose = verbose)
+                color = 'magenta',
+                verbose = verbose)
             for (v in 1:(nb.cat.var-1)){
                 for (v2 in ((v+1):nb.cat.var)){
                     p=RUVPRPS::plotCombinedSilhouette(se.obj=se.obj,
@@ -288,8 +280,8 @@ normAssessment = function(
     ########## RLE plot ############
     # RLE
     se.obj=RUVPRPS::plotRLE(se.obj=se.obj,
-                          assay.names = assay.names,
-                          apply.log=apply.log)
+                            assay.names = assay.names,
+                            apply.log=apply.log)
 
     ################## Generate pdf file to save the plots #####################
     if (!is.null(output_file)){
