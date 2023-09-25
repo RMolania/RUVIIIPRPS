@@ -293,7 +293,7 @@ normAssessment = function(
         ## Categorical variable
         if (!is.null(categorical.uv)){
             for (v in 1:(nb.cat.var)){
-                plot(PCA.plots[[v]])
+                plot(PCA.plots[[categorical.uv[v]]])
                 plot(se.obj@metadata[['plot']][['gene.aov.anova']][[categorical.uv[v]]])
                 plot(se.obj@metadata[['plot']][['pcs.vect.corr']][[categorical.uv[v]]])
             }
