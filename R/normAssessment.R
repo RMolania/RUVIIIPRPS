@@ -279,9 +279,9 @@ normAssessment = function(
 
     ########## RLE plot ############
     # RLE
-    se.obj=RUVPRPS::plotRLE(se.obj=se.obj,
-                            assay.names = assay.names,
-                            apply.log=apply.log)
+    # se.obj=RUVPRPS::plotRLE(se.obj=se.obj,
+    #                         assay.names = assay.names,
+    #                         apply.log=apply.log)
 
     ################## Generate pdf file to save the plots #####################
     if (!is.null(output_file)){
@@ -314,7 +314,7 @@ normAssessment = function(
         lreg.pcs<- lapply(
             levels(assay.names),
             function(x){
-                plot(se.obj@metadata[['plot']][['rle']][[x]])
+                #plot(se.obj@metadata[['plot']][['rle']][[x]])
             })
         dev.off()
     }
