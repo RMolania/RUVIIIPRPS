@@ -180,7 +180,7 @@ PCVariableCorrelation<-function(
             }
         }
         printColoredMessage(message= paste0(
-            'The correlation results are saved to metadata@',
+            'The correlation results are saved to metadata@metric$',
             x,
             '$pcs.vect.corr$',
             variable, '.'),

@@ -175,7 +175,7 @@ PCVariableRegression<-function(
             }
         }
         printColoredMessage(message= paste0(
-            'The regression results are saved to metadata@',
+            'The regression results are saved to metadata@metric$',
             x,
             '$pcs.lm$',
             variable, '.'),

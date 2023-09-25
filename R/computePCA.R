@@ -113,7 +113,7 @@ computePCA <- function(se.obj,
             verbose = verbose
         )
         printColoredMessage(
-            message = paste0('Obtaning the first ', nb.pcs, ' PCs.'),
+            message = paste0('Obtaining the first ', nb.pcs, ' PCs.'),
             color = 'blue',
             verbose = verbose
         )
@@ -216,20 +216,27 @@ computePCA <- function(se.obj,
                     ## Check if metadata metric already exist for this assay and this metric
                     if(!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]])  ) {
                         se.obj@metadata[['metric']][[x]][['fastPCA']] <- sv.dec.all[[x]]
+                        printColoredMessage(message= paste0(
+                            'The PCA results are saved to metadata@metric$',
+                            x,
+                            '$fastPCA$.'),
+                            color = 'blue',
+                            verbose = verbose)
                     }
 
             } else {
                     ## Check if metadata metric already exist for this assay and this metric
                     if(!'PCA' %in% names(se.obj@metadata[['metric']][[x]])  ) {
                         se.obj@metadata[['metric']][[x]][['PCA']] <- sv.dec.all[[x]]
+                        printColoredMessage(message= paste0(
+                            'The PCA results are saved to metadata@metric$',
+                            x,
+                            '$PCA$.'),
+                            color = 'blue',
+                            verbose = verbose)
                     }
             }
-                printColoredMessage(message= paste0(
-                    'The PCA results are saved to metadata@',
-                    x,
-                    '$PCA$.'),
-                    color = 'blue',
-                    verbose = verbose)
+
 
         }
     ## Return only the correlation result
