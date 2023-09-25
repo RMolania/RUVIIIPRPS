@@ -13,7 +13,7 @@ normAssessment(
   output_file = NULL,
   fast.pca = TRUE,
   nb.pcs = 10,
-  assess.se.obj = TRUE,
+  assess.se.obj = FALSE,
   verbose = TRUE,
   pseudo.count = 1
 )

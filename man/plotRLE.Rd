@@ -6,7 +6,7 @@
 \usage{
 plotRLE(
   se.obj,
-  assay.names = NULL,
+  assay.names = "All",
   apply.log = FALSE,
   pseudo.count = 1,
   save.se.obj = TRUE,
