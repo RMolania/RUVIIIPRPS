@@ -287,7 +287,7 @@ normAssessment = function(
 
     ########## RLE plot ############
     # RLE
-    rle=RUVPRPS::plotRLE(se.obj=se.obj,
+    se.obj=RUVPRPS::plotRLE(se.obj=se.obj,
                           assay.names = assay.names,
                           apply.log=apply.log)
 
@@ -322,7 +322,7 @@ normAssessment = function(
         lreg.pcs<- lapply(
             levels(assay.names),
             function(x){
-                plot(rle$plot[[x]])
+                plot(se.obj@metadata[['plot']][['rle']][[x]])
             })
         dev.off()
     }
