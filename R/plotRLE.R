@@ -98,7 +98,7 @@ plotRLE<-function(
                     mutate(samples = factor(samples))
                 p=ggplot(rle_plot, aes(x = samples,y=rle)) +
                 #geom_boxplot2(width.errorbar =0.01,outlier.alpha=0.2) +
-                    geom_boxplot(width=0.01,lwd=0.5,alpha=0.2)
+                    geom_boxplot(width=0.01,lwd=0.5,alpha=0.2)+
                 ylab('RLE') +
                 xlab('') +
                 coord_cartesian(ylim=c(-6,6))+
