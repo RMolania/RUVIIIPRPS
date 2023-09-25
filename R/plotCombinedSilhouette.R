@@ -10,6 +10,9 @@
 #' sample types or batches from colData(se.obj).
 #' @param variable2 String of the label of a categorical variable such as
 #' sample types or batches from colData(se.obj).
+#' @param method A character string indicating which method
+#' is to be used for the differential analysis: 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.
+#' By default 'euclidean' will be selected.
 #' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
 #' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
@@ -27,6 +30,7 @@ plotCombinedSilhouette<-function(
                     assay.names='All',
                     variable1,
                     variable2,
+                    method='euclidean',
                     save.se.obj = TRUE,
                     assess.se.obj = TRUE,
                     verbose=TRUE
@@ -74,10 +78,10 @@ plotCombinedSilhouette<-function(
     all.assays.var1 <- lapply(
         levels(assay.names),
         function(x){
-            if (!variable1 %in% names(se.obj@metadata[['metric']][[x]][['sil']])) {
-                stop(paste0('The Silhouette has not been computed yet for the ',variable1,' variable and the ',x, ' assay.'))
+            if (!variable1 %in% names(se.obj@metadata[['metric']][[x]][[paste0('sil.',method)]])) {
+                stop(paste0('The Silhouette based on ',method,' has not been computed yet for the ',variable1,' variable and the ',x, ' assay.'))
             }
-            se.obj@metadata[['metric']][[x]][['sil']][[variable1]]
+            se.obj@metadata[['metric']][[x]][[paste0('sil.',method)]][[variable1]]
         })
     names(all.assays.var1)=levels(assay.names)
     all.assays.var1 <- as.data.frame(all.assays.var1)
@@ -89,10 +93,10 @@ plotCombinedSilhouette<-function(
     all.assays.var2 <- lapply(
         levels(assay.names),
         function(x){
-            if (!variable2 %in% names(se.obj@metadata[['metric']][[x]][['sil']])) {
-                stop(paste0('The Silhouette has not been computed yet for the ',variable2,' variable and the ',x, ' assay.'))
+            if (!variable2 %in% names(se.obj@metadata[['metric']][[x]][[paste0('sil.',method)]])) {
+                stop(paste0('The Silhouette based on ',method,' has not been computed yet for the ',variable2,' variable and the ',x, ' assay.'))
             }
-            se.obj@metadata[['metric']][[x]][['sil']][[variable2]]
+            se.obj@metadata[['metric']][[x]][[paste0('sil.',method)]][[variable2]]
         })
     names(all.assays.var2)=levels(assay.names)
     all.assays.var2 <- as.data.frame(all.assays.var2)
@@ -110,8 +114,8 @@ plotCombinedSilhouette<-function(
     ## Plot
     p=ggplot(df,aes(Silh1,Silh2,colour=datasets)) +
         geom_point(aes(color = datasets), size = 3) +
-        xlab(paste('Silhouette based on ',var1.label,sep="")) +
-        ylab (paste('Silhouette based on ',var2.label,sep="")) +
+        xlab(paste('Silhouette based on ',method,' computed on ',var1.label,sep="")) +
+        ylab (paste('Silhouette based on ',method,' computed on ',var2.label,sep="")) +
         theme(
         panel.background = element_blank(),
         axis.line = element_line(colour = 'black', size = 1),

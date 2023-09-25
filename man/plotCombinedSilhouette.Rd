@@ -10,6 +10,7 @@ plotCombinedSilhouette(
   assay.names = "All",
   variable1,
   variable2,
+  method = "euclidean",
   save.se.obj = TRUE,
   assess.se.obj = TRUE,
   verbose = TRUE
@@ -26,6 +27,10 @@ sample types or batches from colData(se.obj).}
 
 \item{variable2}{String of the label of a categorical variable such as
 sample types or batches from colData(se.obj).}
+
+\item{method}{A character string indicating which method
+is to be used for the differential analysis: 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.
+By default 'euclidean' will be selected.}
 
 \item{save.se.obj}{Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 to output the result. By default it is set to TRUE.}
