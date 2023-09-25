@@ -233,10 +233,10 @@ genesVariableCorrelation<-function(
                 plot(p.neg)
                 rm(temp.data)
                 rm(temp.corr)
-                results<-NULL
-                results <- list(
-                    corr.genes.var = corr.genes.var)
             }
+            results<-NULL
+            results <- list(
+                corr.genes.var = corr.genes.var)
             return(results)
         })
     names(cor.all) <- levels(assay.names)
