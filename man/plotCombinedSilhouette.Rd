@@ -10,7 +10,7 @@ plotCombinedSilhouette(
   assay.names = "All",
   variable1,
   variable2,
-  method = "euclidean",
+  method = "euclidian",
   save.se.obj = TRUE,
   assess.se.obj = TRUE,
   verbose = TRUE

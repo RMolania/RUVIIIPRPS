@@ -30,7 +30,7 @@ plotCombinedSilhouette<-function(
                     assay.names='All',
                     variable1,
                     variable2,
-                    method='euclidean',
+                    method='euclidian',
                     save.se.obj = TRUE,
                     assess.se.obj = TRUE,
                     verbose=TRUE
@@ -67,12 +67,6 @@ plotCombinedSilhouette<-function(
     }else {
         assay.names=as.factor(unlist(assay.names))
     }
-
-    ## Categorical variables
-    var1=se.obj@colData[, variable1]
-    var1.label=paste0(variable1)
-    var2=se.obj@colData[, variable2]
-    var2.label=paste0(variable2)
 
     ## Merge two silh coeffs
     all.assays.var1 <- lapply(
@@ -114,8 +108,8 @@ plotCombinedSilhouette<-function(
     ## Plot
     p=ggplot(df,aes(Silh1,Silh2,colour=datasets)) +
         geom_point(aes(color = datasets), size = 3) +
-        xlab(paste('Silhouette based on ',method,' computed on ',var1.label,sep="")) +
-        ylab (paste('Silhouette based on ',method,' computed on ',var2.label,sep="")) +
+        xlab(paste('Silhouette based on ',method,' computed on ',variable1,sep="")) +
+        ylab (paste('Silhouette based on ',method,' computed on ',variable2,sep="")) +
         theme(
         panel.background = element_blank(),
         axis.line = element_line(colour = 'black', size = 1),

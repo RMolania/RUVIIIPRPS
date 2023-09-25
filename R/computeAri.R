@@ -166,7 +166,7 @@ computeARI <-function(
             }
         }
         printColoredMessage(message= paste0(
-            'The Silhouette coefficients are saved to metadata@',
+            'The ARI is saved to metadata@',
             x,
             '$ari$',
             variable, '.'),
