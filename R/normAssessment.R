@@ -41,6 +41,7 @@
 #' @return  SummarizedExperiment A SummarizedExperiment object containing all the assessments plots and metrics.
 #' If specified it will generate a pdf containing the assessments plots and metrics used for the assessment.
 #' @importFrom RColorBrewer brewer.pal
+#' @importFrom kunstomverse geom_boxplot2
 #' @importFrom grDevices colorRampPalette dev.off pdf
 #' @importFrom gridExtra grid.arrange
 #' @importFrom SummarizedExperiment assays colData
@@ -304,19 +305,19 @@ normAssessment = function(
                         })
             }
         }
-        ## Continuous variable
+        # Continuous variable
         if (nb.cont.var!=0){
             for (v in 1:(nb.cont.var)){
                 plot(se.obj@metadata[['plot']][['pcs.lm']][[continuous.uv[v]]])
                 plot(se.obj@metadata[['plot']][['gene.spearman.corr']][[continuous.uv[v]]])
             }
         }
-        ## RLE plot
-        # lreg.pcs<- lapply(
-        #     levels(assay.names),
-        #     function(x){
-        # plot(se.obj@metadata[['plot']][['rle']][[x]])
-        #    })
+        # RLE plot
+        lreg.pcs<- lapply(
+            levels(assay.names),
+            function(x){
+        plot(se.obj@metadata[['plot']][['rle']][[x]])
+           })
         dev.off()
     }
     printColoredMessage(message = '------------The normAssessment function finished.',
