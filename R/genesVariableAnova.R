@@ -34,6 +34,7 @@
 #' @importFrom matrixTests row_oneway_equalvar row_oneway_welch
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
+#' @importFrom kunstomverse geom_boxplot2
 #' @importFrom stats anova
 #' @import ggplot2
 #'
