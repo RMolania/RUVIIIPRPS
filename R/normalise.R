@@ -3,6 +3,10 @@
 #' using RUVIII-PRPS method for multiple k values in one go.
 #'
 #'
+#' @param se.obj A SummarizedExperiment object that will be used to computer fastRUV-III
+#' @param assay.name String for the selection of the name of the assay data
+#' of the SummarizedExperiment class object
+#' @param replicate.data TO BE DEFINED
 #' @param Y A m by n matrix of the Raw gene expression matrix where m is the number of samples and n is the
 #' number of features of a SummarizedExperiment variable to be normalised.
 #' @param M Replicate matrix.
@@ -23,6 +27,9 @@
 #' @export
 
 normalise <- function(
+        se.obj,
+        assay.name,
+        replicate.data,
         Y,
         M,
         ctl,
@@ -32,30 +39,39 @@ normalise <- function(
         average = FALSE,
         fullalpha = NULL,
         return.info = FALSE,
-        inputcheck = TRUE
+        inputcheck = TRUE,
+        assess.se.obj = TRUE,
+        remove.na = 'measurements',
+        save.se.obj = TRUE,
+        verbose = TRUE
 ){
+    printColoredMessage(message = '------------The normalise function starts:',
+                        color = 'white',
+                        verbose = verbose)
 
-    ## Run RUVIII_PRPS for the first k value provided (maybe the only one)
-    ruv.adj<- ruv_III_prps(
-                Y,
-                M,
-                ctl,
-                k = k[1],
-                eta = eta,
-                include.intercept = include.intercept,
-                average = average,
-                fullalpha = fullalpha,
-                return.info = return.info,
-                inputcheck = inputcheck)
-    ruv.adj=list(ruv.adj)
-    names(ruv.adj) <- paste0('RUV_K', k[1])
+    if(k == 0 || is.null(k)){
+        stop('k cannot be 0. This means no adjustment will be made.')
+    } else if(min(table(colnames(replicate.data))) == 1){
+        stop('There are only replicated samples of a single sample in the replicate.data')
+    }
 
-    ## if there are multiple k values provided
-    if (length(k)>1) {
-    ruv.adj.others.k <- lapply(
-        k[2:length(k)],
-        function(x){
-            ruv.adj.k<- ruv_III_prps(
+    # check the SummarizedExperiment ####
+    if (assess.se.obj) {
+        se.obj <- checkSeObj(
+            se.obj = se.obj,
+            assay.names = assay.name,
+            variables = NULL,
+            remove.na = remove.na,
+            verbose = verbose
+        )
+    }
+    ## Run RUVIII_PRPS for all k value provided and save them into the se.obj
+    if (save.se.obj) {
+        for (x in k[1:length(k)]){
+            se.obj<- ruvIII(
+                se.obj,
+                assay.name,
+                replicate.data,
                 Y,
                 M,
                 ctl,
@@ -65,14 +81,96 @@ normalise <- function(
                 average = average,
                 fullalpha = fullalpha,
                 return.info = return.info,
-                inputcheck = inputcheck
-            )
-        })
-    names(ruv.adj.others.k) <- paste0('RUV_K', k[2:length(k)])
-    ruv.adj.allk=append(ruv.adj.others.k, ruv.adj, after = 0)
-    ruv.adj=ruv.adj.allk
+                inputcheck = inputcheck,
+                assess.se.obj = assess.se.obj,
+                remove.na = remove.na,
+                save.se.obj = save.se.obj,
+                verbose = verbose)
+        }
+        return(se.obj)
+
+    ## Run RUVIII_PRPS for all k value provided and output the Y
+    } else if (!return.info & !save.se.obj) {
+        ## Run RUVIII_PRPS for the first k value provided
+        Y.adj=ruvIII(
+            se.obj,
+            assay.name,
+            replicate.data,
+            Y,
+            M,
+            ctl,
+            k = k[1],
+            eta = eta,
+            include.intercept = include.intercept,
+            average = average,
+            fullalpha = fullalpha,
+            return.info = return.info,
+            inputcheck = inputcheck,
+            assess.se.obj = assess.se.obj,
+            remove.na = remove.na,
+            save.se.obj = save.se.obj,
+            verbose = verbose)
+        ruv.adj=list(Y.adj)
+        names(ruv.adj) <- paste0('RUVIII_K:', k[1], '_Data:', assay.name)
+
+        ## if there are multiple k values provided
+        if (length(k)>1) {
+            ruv.adj.others.k <- lapply(
+                k[2:length(k)],
+                function(x){
+                Y.adj.k<- ruvIII(
+                    se.obj,
+                    assay.name,
+                    replicate.data,
+                    M,
+                    k = x,
+                    eta = eta,
+                    include.intercept = include.intercept,
+                    average = average,
+                    fullalpha = fullalpha,
+                    return.info = return.info,
+                    inputcheck = inputcheck,
+                    assess.se.obj = assess.se.obj,
+                    remove.na = remove.na,
+                    save.se.obj = save.se.obj,
+                    verbose = verbose)
+            })
+            names(ruv.adj.others.k) <- paste0('RUV_K', k[2:length(k)], '_Data:', assay.name)
+            ruv.adj.allk=append(ruv.adj.others.k, ruv.adj, after = 0)
+            ruv.adj=ruv.adj.allk
+        }
+        ## Return a list containing the adjusted dataset(s) for single k or multiple k values
+        return(ruv.adj)
+
+    ## Run RUVIII_PRPS for all k value provided and output all the return info
+    } else if (return.info & !save.se.obj) {
+        return.info.k <- lapply(
+            k,
+            function(x){
+                Y.adj.k<- ruvIII(
+                    se.obj,
+                    assay.name,
+                    replicate.data,
+                    M,
+                    k = x,
+                    eta = eta,
+                    include.intercept = include.intercept,
+                    average = average,
+                    fullalpha = fullalpha,
+                    return.info = return.info,
+                    inputcheck = inputcheck,
+                    assess.se.obj = assess.se.obj,
+                    remove.na = remove.na,
+                    save.se.obj = save.se.obj,
+                    verbose = verbose)
+            })
+            names(return.info.k) <- paste0('RUV_K', k[2:length(k)], '_Data:', assay.name)
+            ## Return a list containing the info for the adjusted dataset(s) for single k or multiple k values
+            return(return.info.k)
     }
-    ## Return a list containing the adjusted dataset(s) for single k or multiple k values
-    return(ruv.adj)
+
+    printColoredMessage(message = '------------The normalise function finished:',
+                        color = 'white',
+                        verbose = verbose)
 }
 

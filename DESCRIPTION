@@ -31,7 +31,8 @@ Imports:
     Rfast,
     matrixStats,
     ruv,
-    Matrix
+    Matrix,
+    DelayedArray
 URL: https://github.com/mtrussart/RUVPRPS
 BugReports: https://github.com/mtrussart/RUVPRPS/issues
 Suggests: 

@@ -6,6 +6,9 @@
 using RUVIII-PRPS method for multiple k values in one go.}
 \usage{
 normalise(
+  se.obj,
+  assay.name,
+  replicate.data,
   Y,
   M,
   ctl,
@@ -15,10 +18,21 @@ normalise(
   average = FALSE,
   fullalpha = NULL,
   return.info = FALSE,
-  inputcheck = TRUE
+  inputcheck = TRUE,
+  assess.se.obj = TRUE,
+  remove.na = "measurements",
+  save.se.obj = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
+\item{se.obj}{A SummarizedExperiment object that will be used to computer fastRUV-III}
+
+\item{assay.name}{String for the selection of the name of the assay data
+of the SummarizedExperiment class object}
+
+\item{replicate.data}{TO BE DEFINED}
+
 \item{Y}{A m by n matrix of the Raw gene expression matrix where m is the number of samples and n is the
 number of features of a SummarizedExperiment variable to be normalised.}
 
