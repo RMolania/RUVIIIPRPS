@@ -8,16 +8,17 @@
 #  all the assays of the SummarizedExperiment class object will be selected.
 #' @param variable String of the label of a categorical variable such as
 #' sample types or batches from colData(se.obj).
-#' @param fast.pca TO BE DEFINED.
-#' @param nb.pcs TO BE DEFINED.
+#' @param fast.pca Logical. Indicates whether to calculate a specific number of PCs instead of the full range
+#' to speed up the process, by default is set to 'TRUE'.
+#' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.
 #' @param ncol.plot is the argument of gtable for the layout specifying ncol, by default it is set to 4.
 #' @param color The color of the variable that will be used on the PCA plot
 #' @param strokeSize geom_point aesthetics
 #' @param pointSize geom_point aesthetics
 #' @param strokeColor geom_point aesthetics
 #' @param alpha geom_point aesthetics
-#' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
-#' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
 #' @return plot PCA plot of the data colored by one variable

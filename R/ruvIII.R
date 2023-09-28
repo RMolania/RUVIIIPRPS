@@ -11,18 +11,18 @@
 #' @param ctl Logical vector of length n of the negative control genes.
 #' @param k The number of unwanted factors to use.
 #' @param eta A matrix with n columns, gene-wise (as opposed to sample-wise) covariates. By default is set to NULL.
-#' @param include.intercept Add an intercept term to eta if it does not include one already. By default is set to TRUE.
-#' @param average Average replicates after adjustment. By default is set to FALSE.
+#' @param include.intercept Logical. Add an intercept term to eta if it does not include one already. By default is set to TRUE.
+#' @param average Logical. Average replicates after adjustment. By default is set to FALSE.
 #' @param fullalpha Can be included to speed up execution. By default is set to NULL.
-#' @param return.info If FALSE, only the adjusted data matrix is returned. If TRUE, additional information
+#' @param return.info Logical. If FALSE, only the adjusted data matrix is returned. If TRUE, additional information
 #' is returned. By default is set to FALSE.
-#' @param inputcheck Perform a basic sanity check on the inputs, and issue a warning if there is a problem.
+#' @param inputcheck Logical. Perform a basic sanity check on the inputs, and issue a warning if there is a problem.
 #' By default is set to TRUE.
-#' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' @param remove.na TO BE DEFINED.
-#' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
-#' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the normalised gene expression

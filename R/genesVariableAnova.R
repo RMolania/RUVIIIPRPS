@@ -7,24 +7,24 @@
 #  all the assays of the SummarizedExperiment class object will be selected.
 #' @param variable String of the label of a categorical variable such as
 #' sample types or batches from colData(se.obj).
-#' @param apply.log Indicates whether to apply a log-transformation to the data. By default
+#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
 #' the log transformation will be selected.
 #' @param method A character string indicating which method
 #' is to be used for the differential analysis: "aov" or "welch.correction". By default "aov" will
 #' be selected.
-#' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
-#' @param boxplot.output Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.
-#' @param plot.top.genes Indicates whether to plot the gene expression of the number of genes
+#' @param boxplot.output Logical. Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.
+#' @param plot.top.genes Logical. Indicates whether to plot the gene expression of the number of genes
 #' from the top listing of anova by default it is set to FALSE.
 #' @param nb.top.genes Defines the number of genes from the top or bottom listing of anova to plot,
 #' by default is set to 3.
-#' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' @param remove.na TO BE DEFINED.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
 #' @param apply.round Logical. Indicates whether to round the ARI results, by default it is set to TRUE.
-#' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous variable

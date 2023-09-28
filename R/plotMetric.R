@@ -8,7 +8,7 @@
 #' @param metric Metric being assessed.
 #' @param variable String of the label of a variable such as
 #' sample types or batches from colData(se.obj).
-#' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 
 #' @return SummarizedExperiment A SummarizedExperiment object containing the associated plot.

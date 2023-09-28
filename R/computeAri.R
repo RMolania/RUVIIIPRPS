@@ -14,12 +14,12 @@
 #' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
 #' to speed up the process, by default is set to 'TRUE'.
 #' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 3.
-#' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
-#' @param plot.output Indicates whether to plot the ARI, by default it is set to FALSE.
-#' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object, by default it is set to TRUE.
+#' @param plot.output Logical. Indicates whether to plot the ARI, by default it is set to FALSE.
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is set to TRUE.
 #' @param apply.round Logical. Indicates whether to round the ARI results, by default it is set to TRUE.
-#' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed ARI

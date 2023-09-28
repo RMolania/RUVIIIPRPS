@@ -13,10 +13,10 @@
 #' @param method A character string indicating which method
 #' is to be used for the differential analysis: 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.
 #' By default 'euclidean' will be selected.
-#' @param save.se.obj Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
-#' @param assess.se.obj Indicates whether to assess the SummarizedExperiment class object.
-#' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 
 #' @return plot Combined plot of the silhouette coefficient on the two categorical variables.

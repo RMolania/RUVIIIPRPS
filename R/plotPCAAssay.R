@@ -5,8 +5,9 @@
 #' @param pca_x The PCA of a SummarizedExperiment object that will be used to plot.
 #' @param variable String of the label of a categorical variable such as
 #' sample types or batches from colData(se.obj).
-#' @param nb.pcs TO BE DEFINED.
-#' @param fast.pca TO BE DEFINED.
+#' @param fast.pca Logical. Indicates whether to calculate a specific number of PCs instead of the full range
+#' to speed up the process, by default is set to 'TRUE'.
+#' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.
 #' @param color The color of the variable that will be used on the PCA plot
 #' @param strokeSize geom_point aesthetics
 #' @param pointSize geom_point aesthetics
