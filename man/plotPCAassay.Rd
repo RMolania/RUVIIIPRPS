@@ -26,9 +26,10 @@ plotPCAassay(
 \item{variable}{String of the label of a categorical variable such as
 sample types or batches from colData(se.obj).}
 
-\item{nb.pcs}{TO BE DEFINED.}
+\item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
 
-\item{fast.pca}{TO BE DEFINED.}
+\item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range
+to speed up the process, by default is set to 'TRUE'.}
 
 \item{color}{The color of the variable that will be used on the PCA plot}
 

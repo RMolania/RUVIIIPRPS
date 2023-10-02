@@ -21,9 +21,9 @@ normAssessment(
 \item{se.obj}{A SummarizedExperiment object that will be used to compute the PCA.}
 
 \item{assay.names}{Optional string or list of strings for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default}
+of the assay(s) of the SummarizedExperiment class object. By default}
 
-\item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
 
 \item{variables}{String or vector of strings of the label of continuous or categorical variable(s)
@@ -31,14 +31,14 @@ such as samples types, batch or library size from colData(se).}
 
 \item{output_file}{Path and name of the output file to save the assessments plots in a pdf format.}
 
-\item{fast.pca}{logical. Indicates whether to calculate a specific number of PCs instead of the full range
+\item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range
 to speed up the process, by default is set to 'TRUE'.}
 
 \item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
 
-\item{assess.se.obj}{Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
-\item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,

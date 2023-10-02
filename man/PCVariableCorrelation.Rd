@@ -33,12 +33,12 @@ to speed up the process, by default is set to 'TRUE'.}
 
 \item{nb.pcs}{Numeric. The number of few first cumulative PCs, by default is set to 10.}
 
-\item{save.se.obj}{Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 to output the result. By default it is set to TRUE.}
 
-\item{plot.output}{Indicates whether to plot the correlation statistics, by default it is set to TRUE.}
+\item{plot.output}{Logical. Indicates whether to plot the correlation statistics, by default it is set to TRUE.}
 
-\item{assess.se.obj}{Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
 \item{remove.na}{TO BE DEFINED.}
 

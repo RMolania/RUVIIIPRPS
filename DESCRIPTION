@@ -32,7 +32,8 @@ Imports:
     matrixStats,
     ruv,
     Matrix,
-    DelayedArray
+    DelayedArray,
+    DescTools
 URL: https://github.com/mtrussart/RUVPRPS
 BugReports: https://github.com/mtrussart/RUVPRPS/issues
 Suggests: 

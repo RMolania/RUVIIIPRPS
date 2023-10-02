@@ -26,7 +26,7 @@ of the assays of the SummarizedExperiment class object.}
 \item{variable}{String of the label of a variable such as
 sample types or batches from colData(se.obj).}
 
-\item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
 }
 \value{

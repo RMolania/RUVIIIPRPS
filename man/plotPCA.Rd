@@ -32,9 +32,10 @@ sample types or batches from colData(se.obj).}
 
 \item{color}{The color of the variable that will be used on the PCA plot}
 
-\item{fast.pca}{TO BE DEFINED.}
+\item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range
+to speed up the process, by default is set to 'TRUE'.}
 
-\item{nb.pcs}{TO BE DEFINED.}
+\item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
 
 \item{ncol.plot}{is the argument of gtable for the layout specifying ncol, by default it is set to 4.}
 
@@ -46,9 +47,9 @@ sample types or batches from colData(se.obj).}
 
 \item{alpha}{geom_point aesthetics}
 
-\item{assess.se.obj}{Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
-\item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
 }
 \value{

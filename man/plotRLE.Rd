@@ -20,18 +20,18 @@ plotRLE(
 \item{assay.names}{Optional string or list of strings for the selection of the name(s)
 of the assay(s) of the SummarizedExperiment class object to plot RLE. By default}
 
-\item{apply.log}{Indicates whether to apply a log-transformation to the data. By default
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
 
-\item{save.se.obj}{Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 to output the result. By default it is set to TRUE.}
 
-\item{assess.se.obj}{Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
-\item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
 }
 \value{

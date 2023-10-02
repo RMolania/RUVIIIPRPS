@@ -44,26 +44,26 @@ number of features of a SummarizedExperiment variable to be normalised.}
 
 \item{eta}{A matrix with n columns, gene-wise (as opposed to sample-wise) covariates. By default is set to NULL.}
 
-\item{include.intercept}{Add an intercept term to eta if it does not include one already. By default is set to TRUE.}
+\item{include.intercept}{Logical. Add an intercept term to eta if it does not include one already. By default is set to TRUE.}
 
-\item{average}{Average replicates after adjustment. By default is set to FALSE.}
+\item{average}{Logical. Average replicates after adjustment. By default is set to FALSE.}
 
 \item{fullalpha}{Can be included to speed up execution. By default is set to NULL.}
 
-\item{return.info}{If FALSE, only the adjusted data matrix is returned. If TRUE, additional information
+\item{return.info}{Logical. If FALSE, only the adjusted data matrix is returned. If TRUE, additional information
 is returned. By default is set to FALSE.}
 
-\item{inputcheck}{Perform a basic sanity check on the inputs, and issue a warning if there is a problem.
+\item{inputcheck}{Logical. Perform a basic sanity check on the inputs, and issue a warning if there is a problem.
 By default is set to TRUE.}
 
-\item{assess.se.obj}{Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
 \item{remove.na}{TO BE DEFINED.}
 
-\item{save.se.obj}{Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 to output the result. By default it is set to TRUE.}
 
-\item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
 }
 \value{
