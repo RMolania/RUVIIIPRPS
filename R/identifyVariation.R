@@ -23,8 +23,7 @@
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
 #' of the assay(s) of the SummarizedExperiment class object to identify the variation. By default
 #  all the assays of the SummarizedExperiment class object will be selected.
-#' @param bio.variable String of the label of a categorical variable, from colData(se.obj) that specify major biological groups.
-#' @param uv.variables String or vector of strings of the label of continuous or categorical variable(s)
+#' @param variables String or vector of strings of the label of continuous or categorical variable(s)
 #' such as samples types, batch or library size from colData(se).
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
 #' no transformation will be selected.
@@ -51,8 +50,7 @@ identifyVariation = function(
         se.obj,
         assay.names = 'All',
         apply.log = TRUE,
-        bio.variable=NULL,
-        uv.variables=NULL,
+        variables=NULL,
         output_file=NULL,
         fast.pca = TRUE,
         nb.pcs = 10,
@@ -84,23 +82,18 @@ identifyVariation = function(
 
 
     ### Categorical, continuous, biological variables
-    if (!is.null(uv.variables)){
+    categorical.uv <-NULL
+    continuous.uv <-NULL
+
+    if (!is.null(variables)){
         uv.class <- sapply(
-            uv.variables,
+            variables,
             function(x) class(colData(se.obj)[[x]])
         )
         categorical.uv <- names(uv.class[which(uv.class %in% c('character', 'factor'))])
-        continuous.uv <- uv.variables[!uv.variables %in% categorical.uv]
-        if(!is.null(bio.variable)){
-            categorical.uv <-c(bio.variable,categorical.uv)
-        }
-    } else if(!is.null(bio.variable)){
-        categorical.uv <-bio.variable
-        continuous.uv <-NULL
-    } else {
-        categorical.uv <-NULL
-        continuous.uv <-NULL
+        continuous.uv <- variables[!variables %in% categorical.uv]
     }
+
 
     ## Assays
     if(length(assay.names) == 1 && assay.names=='All'){
@@ -113,8 +106,7 @@ identifyVariation = function(
     se.obj=RUVPRPS::normAssessment(se.obj=se.obj,
                                    assay.names = assay.names,
                                    apply.log = apply.log,
-                                   bio.variable=bio.variable,
-                                   uv.variables=uv.variables,
+                                   variables=variables,
                                    output_file=output_file,
                                    fast.pca = fast.pca,
                                    nb.pcs = nb.pcs,
