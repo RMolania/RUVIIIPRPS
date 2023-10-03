@@ -8,8 +8,7 @@ identifyVariation(
   se.obj,
   assay.names = "All",
   apply.log = TRUE,
-  bio.variable = NULL,
-  uv.variables = NULL,
+  variables = NULL,
   output_file = NULL,
   fast.pca = TRUE,
   nb.pcs = 10,
@@ -27,9 +26,7 @@ of the assay(s) of the SummarizedExperiment class object to identify the variati
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
 
-\item{bio.variable}{String of the label of a categorical variable, from colData(se.obj) that specify major biological groups.}
-
-\item{uv.variables}{String or vector of strings of the label of continuous or categorical variable(s)
+\item{variables}{String or vector of strings of the label of continuous or categorical variable(s)
 such as samples types, batch or library size from colData(se).}
 
 \item{output_file}{Path and name of the output file to save the assessments plots in a pdf format.}
