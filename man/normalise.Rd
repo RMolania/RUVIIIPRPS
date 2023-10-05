@@ -9,7 +9,6 @@ normalise(
   se.obj,
   assay.name,
   replicate.data,
-  Y,
   M,
   ctl,
   k = NULL,
@@ -32,9 +31,6 @@ normalise(
 of the SummarizedExperiment class object}
 
 \item{replicate.data}{TO BE DEFINED}
-
-\item{Y}{A m by n matrix of the Raw gene expression matrix where m is the number of samples and n is the
-number of features of a SummarizedExperiment variable to be normalised.}
 
 \item{M}{Replicate matrix.}
 

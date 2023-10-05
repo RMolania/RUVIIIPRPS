@@ -5,8 +5,6 @@
 #' @param assay.name String for the selection of the name of the assay data
 #' of the SummarizedExperiment class object
 #' @param replicate.data TO BE DEFINED
-#' @param Y A m by n matrix of the Raw gene expression matrix where m is the number of samples and n is the
-#' number of features of a SummarizedExperiment variable to be normalised.
 #' @param M Replicate matrix.
 #' @param ctl Logical vector of length n of the negative control genes.
 #' @param k The number of unwanted factors to use.
@@ -41,9 +39,8 @@ ruvIII<-function(
         se.obj,
         assay.name,
         replicate.data,
-        Y,
         M,
-        ctl,
+        ctl, # ncg
         k = NULL,
         eta = NULL,
         include.intercept = TRUE,
@@ -93,13 +90,16 @@ ruvIII<-function(
         return(A - BtBB_inv_tBA)
     }
 
+    ## Get the expression data
+    Y=se.obj@assays@data[[assay.name]]
+
     # data preparation ####
     if (is.data.frame(Y) ) {
         Y <- data.matrix(Y)
     } else if (is.data.frame(replicate.data)){
         replicate.data = data.matrix(replicate.data)
     }
-    m <- nrow(Y)
+    m <- nrow(replicate.data)
     m1 = m
     n <- ncol(Y)
     M <- replicate.matrix(M)

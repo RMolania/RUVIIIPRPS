@@ -7,8 +7,6 @@
 #' @param assay.name String for the selection of the name of the assay data
 #' of the SummarizedExperiment class object
 #' @param replicate.data TO BE DEFINED
-#' @param Y A m by n matrix of the Raw gene expression matrix where m is the number of samples and n is the
-#' number of features of a SummarizedExperiment variable to be normalised.
 #' @param M Replicate matrix.
 #' @param ctl Logical vector of length n of the negative control genes.
 #' @param k A single value or a vector of values containing a single k or a range of k - the number of unwanted factors - to be tested.
@@ -37,7 +35,6 @@ normalise <- function(
         se.obj,
         assay.name,
         replicate.data,
-        Y,
         M,
         ctl,
         k = NULL,
@@ -79,7 +76,6 @@ normalise <- function(
                 se.obj,
                 assay.name,
                 replicate.data,
-                Y,
                 M,
                 ctl,
                 k = x,
@@ -103,7 +99,6 @@ normalise <- function(
             se.obj,
             assay.name,
             replicate.data,
-            Y,
             M,
             ctl,
             k = k[1],

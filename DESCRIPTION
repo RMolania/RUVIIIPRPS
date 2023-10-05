@@ -33,11 +33,11 @@ Imports:
     ruv,
     Matrix,
     DelayedArray,
-    DescTools
+    DescTools,
+    knitr
 URL: https://github.com/mtrussart/RUVPRPS
 BugReports: https://github.com/mtrussart/RUVPRPS/issues
 Suggests: 
-    knitr,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
