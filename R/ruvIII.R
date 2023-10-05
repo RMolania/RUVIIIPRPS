@@ -91,7 +91,7 @@ ruvIII<-function(
     }
 
     ## Get the expression data
-    Y=y(se.obj@assays@data[[assay.name]])
+    Y=t(se.obj@assays@data[[assay.name]])
 
     # data preparation ####
     if (is.data.frame(Y) ) {
