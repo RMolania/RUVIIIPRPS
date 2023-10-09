@@ -1,5 +1,5 @@
 #' is used to create pseudo-replicates of pseudo samples of a SummarizedExperiment class object
-#' using RUVIII-PRPS method with a supervised approach using the biological subtype given by the user.
+#' using RUVIII-PRPS method with a supervised approach using the 'uv.variables' and 'bio.variable' given.
 #'
 #' We will create distinct group of pseudo-replicates for each source of unwanted variation defined in the 'uv.variables' argument.
 #' To correct for batch effect defined in the 'uv.variables' argument, several group of pseudo-samples
@@ -20,10 +20,11 @@
 #' @param uv.variables String or vector of strings of the label of continuous or categorical variable(s)
 #' such as samples types, batch or library size from colData(se) that will be used to define PRPS.
 #' @param min.sample.prps TO BE DEFINED.
-#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data.
+#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
+#' By default it is set to TRUE.
 #' @param assess.cor.variables Logical. Indicates whether to assess the assess the association between variables
 #' using Spearman correlation.
 #' @param cont.coef TO BE DEFINED.
@@ -34,7 +35,8 @@
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed
 #' during the execution of the functions, by default it is set to TRUE.
 
-#' @return List containging all the prps defined.
+#' @return SummarizedExperiment or a List A SummarizedExperiment object or a list containing
+#' all the prps defined.
 #' @importFrom SummarizedExperiment assay colData
 #' @export
 

@@ -1,4 +1,4 @@
-#' is used to create PRPS for a continuous sources of unwanted variation.
+#' is used to create PRPS for a continuous variable as source of unwanted variation.
 #'
 #'
 #' @param se.obj A summarized experiment object.
@@ -10,6 +10,7 @@
 #' @param uv.variable String of the label of a continuous or categorical variable.
 #' @param min.sample.prps Numeric. The minimum number of homogeneous biological groups to create pseudo-sample.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
+#' By default it is set to TRUE.
 #' @param remove.na TO BE DEFINED.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' object 'se.obj' or to output the result, by default it is set to TRUE.
@@ -172,16 +173,42 @@ prpsForContinuousUV <- function(se.obj,
     )
     # saving the output ####
     if (save.se.obj) {
-        se.obj@metadata[['PRPS']][[paste0('bio:',
-                                          bio.variable,
-                                          '||',
-                                          'uv:',
-                                          uv.variable,
-                                          '||',
-                                          'data:',
-                                          assay.name)]] <- prps.sets
-        return(se.obj)
-    } else{
+        ## Check if metadata PRPS already exists
+        if(length(se.obj@metadata)==0 ) {
+            se.obj@metadata[['PRPS']] <- list()
+        }
+        ## Check if metadata PRPS already exists
+        if(!'PRPS' %in% names(se.obj@metadata) ) {
+            se.obj@metadata[['PRPS']] <- list()
+        }
+        ## Check if metadata PRPS already exist for supervised
+        if(!'supervised' %in% names(se.obj@metadata[['PRPS']]) ) {
+            se.obj@metadata[['metric']][['supervised']] <- list()
+        }
+
+        ## Check if metadata PRPS already exist for supervised
+        if(!paste0('bio:', bio.variable,'||','uv:',uv.variable,'||','data:',assay.name) %in% names(se.obj@metadata[['PRPS']][['supervised']])) {
+            se.obj@metadata[['PRPS']][['supervised']][[paste0('bio:', bio.variable,'||','uv:',uv.variable,'||','data:',assay.name)]]<- list()
+        } else {
+            se.obj@metadata[['PRPS']][['supervised']][[paste0('bio:',
+                                                          bio.variable,
+                                                          '||',
+                                                          'uv:',
+                                                          uv.variable,
+                                                          '||',
+                                                          'data:',
+                                                          assay.name)]] <- prps.sets
+        }
+
+    printColoredMessage(message= paste0(
+        'The PRPS are saved to metadata@PRPS$supervised',
+        paste0('$bio:', bio.variable,'||','uv:',uv.variable,'||','data:',assay.name),
+        '.'),
+        color = 'blue',
+        verbose = verbose)
+    return(se.obj)
+
+    }else{
         return(prps.sets)
     }
     printColoredMessage(message = '------------The prpsForContinuousUV function finished.',

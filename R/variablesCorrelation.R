@@ -21,7 +21,6 @@
 #' @export
 
 variablesCorrelation <- function(
-#checkVariables <- function(
         se.obj,
         assay.name = NULL,
         bio.variables,

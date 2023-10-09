@@ -3,7 +3,7 @@
 \name{supervisedPRPS}
 \alias{supervisedPRPS}
 \title{is used to create pseudo-replicates of pseudo samples of a SummarizedExperiment class object
-using RUVIII-PRPS method with a supervised approach using the biological subtype given by the user.}
+using RUVIII-PRPS method with a supervised approach using the 'uv.variables' and 'bio.variable' given.}
 \usage{
 supervisedPRPS(
   se.obj,
@@ -35,12 +35,13 @@ such as samples types, batch or library size from colData(se) that will be used 
 
 \item{min.sample.prps}{TO BE DEFINED.}
 
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.
+By default it is set to TRUE.}
 
 \item{assess.cor.variables}{Logical. Indicates whether to assess the assess the association between variables
 using Spearman correlation.}
@@ -58,7 +59,8 @@ class object 'se.obj' or to output the result, by default it is set to TRUE.}
 during the execution of the functions, by default it is set to TRUE.}
 }
 \value{
-List containging all the prps defined.
+SummarizedExperiment or a List A SummarizedExperiment object or a list containing
+all the prps defined.
 }
 \description{
 We will create distinct group of pseudo-replicates for each source of unwanted variation defined in the 'uv.variables' argument.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/prpsForContinuousUV.R
 \name{prpsForContinuousUV}
 \alias{prpsForContinuousUV}
-\title{is used to create PRPS for a continuous sources of unwanted variation.}
+\title{is used to create PRPS for a continuous variable as source of unwanted variation.}
 \usage{
 prpsForContinuousUV(
   se.obj,
@@ -34,7 +34,8 @@ such as samples types from colData(se).}
 
 \item{min.sample.prps}{Numeric. The minimum number of homogeneous biological groups to create pseudo-sample.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.
+By default it is set to TRUE.}
 
 \item{remove.na}{TO BE DEFINED.}
 
@@ -48,5 +49,5 @@ messages displayed during the execution of the functions, by default it is set t
 SummarizedExperiment A SummarizedExperiment object containing the PRPS data or just PRPS data.
 }
 \description{
-is used to create PRPS for a continuous sources of unwanted variation.
+is used to create PRPS for a continuous variable as source of unwanted variation.
 }

@@ -34,7 +34,11 @@ Imports:
     Matrix,
     DelayedArray,
     DescTools,
-    knitr
+    knitr,
+    preprocessCore,
+    edgeR,
+    EDASeq,
+    DESeq2
 URL: https://github.com/mtrussart/RUVPRPS
 BugReports: https://github.com/mtrussart/RUVPRPS/issues
 Suggests: 

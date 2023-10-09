@@ -2,7 +2,7 @@
 % Please edit documentation in R/prpsForCategoricalUV.R
 \name{prpsForCategoricalUV}
 \alias{prpsForCategoricalUV}
-\title{is used to create PRPS for a categorical sources of unwanted variation.}
+\title{is used to create PRPS for a categorical variable as source of unwanted variation.}
 \usage{
 prpsForCategoricalUV(
   se.obj,
@@ -37,7 +37,8 @@ such as samples types from colData(se).}
 
 \item{remove.na}{TO BE DEFINED.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.
+By default it is set to TRUE.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 object 'se.obj' or to output the result, by default it is set to TRUE.}
@@ -48,5 +49,5 @@ object 'se.obj' or to output the result, by default it is set to TRUE.}
 SummarizedExperiment A SummarizedExperiment object containing the PRPS data or just PRPS data.
 }
 \description{
-is used to create PRPS for a categorical sources of unwanted variation.
+is used to create PRPS for a categorical variable as source of unwanted variation.
 }
