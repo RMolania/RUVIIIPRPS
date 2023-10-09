@@ -2,13 +2,13 @@
 #' using RUVIII-PRPS method with a supervised approach using the 'uv.variables' and 'bio.variable' given.
 #'
 #' We will create distinct group of pseudo-replicates for each source of unwanted variation defined in the 'uv.variables' argument.
-#' To correct for batch effect defined in the 'uv.variables' argument, several group of pseudo-samples
-#' will be created by averaging the samples of the same biological subtype in each batch. Then those
+#' For example to correct for batch effect if defined in the 'uv.variables' argument, several group of pseudo-samples
+#' will be created by averaging the samples of the same biological subtype defined in 'bio.variable' in each batch. Then those
 #' pseudo-samples will be defined as pseudo-replicates.
-#' To correct for library size defined in the 'luv.variables' argument, several group of pseudo-samples
+#' For example to correct for library size if defined in the 'uv.variables' argument, several group of pseudo-samples
 #' will be created by averaging the top and bottom-ranked samples by library size of the same biological subtype in each batch.
 #' Then those pseudo-samples will be defined as pseudo-replicates.
-#' Similarly to correct for purity defined in the 'purity' argument, several group of pseudo-samples
+#' Similarly to correct for purity if defined in the 'purity' argument, several group of pseudo-samples
 #' will be created by averaging the top and bottom-ranked samples by purity of the same biological subtype in each batch.
 #' Then those pseudo-samples will be defined as pseudo-replicates.
 #'
