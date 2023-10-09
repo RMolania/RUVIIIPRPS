@@ -68,7 +68,7 @@ prpsForContinuousUV <- function(se.obj,
     # finding possible biological groups for PRPS ####
     printColoredMessage(
         message = paste0(
-            '### Finding biolical groups with at least (2* min.sample.prps) ',
+            '### Finding biological groups with at least (2* min.sample.prps) ',
             2 * min.sample.prps,
             ' samples.'
         ),
@@ -107,7 +107,7 @@ prpsForContinuousUV <- function(se.obj,
         )
     }
     printColoredMessage(
-        message = '### Data preparation beofre creating PRPS.',
+        message = '### Data preparation before creating PRPS.',
         color = 'magenta',
         verbose = verbose
     )
@@ -160,7 +160,7 @@ prpsForContinuousUV <- function(se.obj,
     prps.sets <- do.call(cbind, prps.sets)
     printColoredMessage(
         message = paste0(
-            'In totall ',
+            'In total ',
             length(unique(colnames(prps.sets))),
             ' PRPS sets with ',
             ncol(prps.sets),

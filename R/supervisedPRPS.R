@@ -15,6 +15,7 @@
 #'
 #' @param se.obj A summarized experiment object.
 #' @param assay.name String for the selection of the name of the assay of the SummarizedExperiment class object used to define PRPS.
+#' We recommend to use the raw data assay.
 #' @param bio.variable String of the label of a categorical variable that specifies major biological groups
 #' such as samples types from colData(se).
 #' @param uv.variables String or vector of strings of the label of continuous or categorical variable(s)
