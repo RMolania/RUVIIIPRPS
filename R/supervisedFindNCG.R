@@ -34,9 +34,10 @@
 
 #' @return SummarizedExperiment or a List A SummarizedExperiment object or a list containing
 #' all the negative control genes defined.
-
+#' @importFrom matrixTests row_oneway_equalvar
 #' @importFrom SummarizedExperiment assay
 #' @importFrom stats as.formula
+#' @importFrom Rfast correls
 #' @export
 
 supervisedFindNGC <- function(
@@ -47,8 +48,8 @@ supervisedFindNGC <- function(
         no.ncg = 1000,
         apply.log = TRUE,
         pseudo.count = 1,
-        regress.out.uv.variables = NULL,
-        regress.out.bio.variables = NULL,
+        regress.out.uv.variables = FALSE,
+        regress.out.bio.variables = FALSE,
         apply.normalization=FALSE,
         normalization = 'CPM',
         corr.method = "pearson",
@@ -98,7 +99,7 @@ supervisedFindNGC <- function(
         expr.data <- assay(se.obj, assay.name)
     }
     ####
-    if(!is.null(regress.out.uv.variables)){
+    if(isTRUE(regress.out.uv.variables)){
         expr.data.reg.uv <- transpose(expr.data)
         uv.variables.all <- paste('se.obj', uv.variables, sep = '$')
         y <- lm(as.formula(paste(
@@ -109,7 +110,7 @@ supervisedFindNGC <- function(
         expr.data.reg.uv <- transpose(y$residuals)
         colnames(expr.data.reg.uv) <- colnames(se.obj)
         row.names(expr.data.reg.uv) <- row.names(se.obj)
-    } else if(!is.null(regress.out.bio.variables)){
+    } else if(isTRUE(regress.out.bio.variables)){
         expr.data.reg.bio <- transpose(expr.data)
         bio.variables.all <- paste('se.obj', bio.variables, sep = '$')
         y <- lm(as.formula(paste(
@@ -146,9 +147,10 @@ supervisedFindNGC <- function(
                                   }))
     categorical.uv <- uv.variables[uv.var.class %in% c('factor', 'character')]
     continuous.uv <- uv.variables[uv.var.class %in% c('numeric', 'integer')]
+    all.tests <- NULL
     ###
     if(!is.null(categorical.uv)){
-        if(!is.null(regress.out.bio.variables)){
+        if(isTRUE(regress.out.bio.variables)){
             data.to.use <- expr.data.reg.bio
         } else{
             data.to.use <- expr.data
@@ -156,7 +158,7 @@ supervisedFindNGC <- function(
         ### gene-batch anova
         printColoredMessage(
             message = paste0(
-                'Performing ANOVA between indival gene ',
+                'Performing ANOVA between individual gene ',
                 'expression and each categorical source of unwanted variation:',
                 paste0(categorical.uv, collapse = '&'),
                 '.'
@@ -179,16 +181,17 @@ supervisedFindNGC <- function(
             })
         names(anova.gene.uv) <- categorical.uv
         rm(data.to.use)
+        all.tests <- c('anova.gene.uv')
     }
     if(!is.null(continuous.uv)){
-        if(!is.null(regress.out.bio.variables)){
+        if(isTRUE(regress.out.bio.variables)){
             data.to.use <- expr.data.reg.bio
         } else{
             data.to.use <- expr.data
         }
         printColoredMessage(
             message = paste0(
-                'Performing Spearman correlation between indival gene ',
+                'Performing Spearman correlation between individual gene ',
                 'expression and each continuous source of unwanted variation:',
                 paste0(continuous.uv, collapse = '&'),
                 '.'
@@ -214,10 +217,11 @@ supervisedFindNGC <- function(
             })
         names(corr.genes.uv) <- continuous.uv
         rm(data.to.use)
+        all.tests <- c(all.tests, 'corr.genes.uv')
     }
 
     ## step2: not highly affected by biology ####
-    printColoredMessage(message = '### Finding genes that are not highly affected by biological',
+    printColoredMessage(message = '### Finding genes that are not highly affected by biology',
                         color = 'magenta',
                         verbose = verbose)
     bio.var.class <- unlist(lapply(
@@ -231,7 +235,7 @@ supervisedFindNGC <- function(
     if(!is.null(continuous.bio)){
         if(isTRUE(apply.normalization)){
             data.to.use <- expr.data.nor
-        } else if(!is.null(regress.out.uv.variables)){
+        } else if(isTRUE(regress.out.uv.variables)){
             data.to.use <- expr.data.reg.uv
         } else{
             data.to.use <- expr.data
@@ -239,7 +243,7 @@ supervisedFindNGC <- function(
         ### gene-batch anova
         printColoredMessage(
             message = paste0(
-                'Performing ANOVA between indival gene ',
+                'Performing ANOVA between individual gene ',
                 'expression and each categorical source of unwanted variation:',
                 paste0(categorical.uv, collapse = '&'),
                 '.'
@@ -264,18 +268,19 @@ supervisedFindNGC <- function(
                 corr.genes.var
             })
         names(corr.genes.bio) <- continuous.bio
+        all.tests <- c(all.tests, 'corr.genes.bio')
     }
     if(!is.null(continuous.uv)){
         if(isTRUE(normalization)){
             data.to.use <- expr.data.nor
-        } else if(!is.null(regress.out.uv.variables)){
+        } else if(isTRUE(regress.out.uv.variables)){
             data.to.use <- expr.data.reg.uv
         } else{
             data.to.use <- expr.data
         }
         printColoredMessage(
             message = paste0(
-                'Performing Spearman correlation between indival gene ',
+                'Performing Spearman correlation between individual gene ',
                 'expression and each continuous source of unwanted variation:',
                 paste0(continuous.uv, collapse = '&'),
                 '.'
@@ -297,21 +302,22 @@ supervisedFindNGC <- function(
                 anova.gene
             })
         names(anova.gene.bio) <- categorical.bio
+        all.tests <- c(all.tests,'anova.gene.bio')
     }
     # step3: final selection ####
-    all.tests <- c('anova.gene.bio', 'anova.gene.uv', 'corr.genes.bio', 'corr.genes.uv')
+    #all.tests <- c('anova.gene.bio', 'anova.gene.uv', 'corr.genes.bio', 'corr.genes.uv')
     ncg.selected <- lapply(
         all.tests,
         function(x){
-            temp <- get(x)
-            if(!is.null(temp)){
-                ranks.data <- lapply(
-                    1:length(temp),
-                    function(y){
-                        temp[[y]]$ranked.genes
-                    })
-                do.call(cbind, ranks.data)
-            }
+                temp <- get(x)
+                if(!is.null(temp)){
+                    ranks.data <- lapply(
+                        1:length(temp),
+                        function(y){
+                            temp[[y]]$ranked.genes
+                        })
+                    do.call(cbind, ranks.data)
+                }
         })
     ncg.selected <- do.call(cbind, ncg.selected)
     ncg.selected <- rank(-apply(ncg.selected, 1, prod))

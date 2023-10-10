@@ -25,7 +25,8 @@ supervisedPRPS(
 \arguments{
 \item{se.obj}{A summarized experiment object.}
 
-\item{assay.name}{String for the selection of the name of the assay of the SummarizedExperiment class object used to define PRPS.}
+\item{assay.name}{String for the selection of the name of the assay of the SummarizedExperiment class object used to define PRPS.
+We recommend to use the raw data assay.}
 
 \item{bio.variable}{String of the label of a categorical variable that specifies major biological groups
 such as samples types from colData(se).}
