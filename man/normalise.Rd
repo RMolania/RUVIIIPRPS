@@ -3,24 +3,38 @@
 \name{normalise}
 \alias{normalise}
 \title{is used to normalise the gene expression (assay) of a SummarizedExperiment class object
-using RUVIII-PRPS method for multiple k values in one go.}
+using RUVIII-PRPS method.
+The steps involves:
+\itemize{
+\item Creation of the Pseudo-Replicates of Pseudo-Samples (PRPS)
+\item Define Negative Controls Genes (NCG)
+\item Run RUVIII-PRPS for multiple k values (the dimension of the unwanted variation).
+}}
 \usage{
 normalise(
   se.obj,
   assay.name,
-  replicate.data,
-  M,
-  ctl,
+  bio.variable.prps,
+  uv.variables.prps,
+  min.sample.prps = 3,
+  assess.cor.variables.prps = TRUE,
+  bio.variables.ncg,
+  uv.variables.ncg,
+  no.ncg = 1000,
+  regress.out.uv.variables.ncg = FALSE,
+  regress.out.bio.variables.ncg = FALSE,
+  apply.normalization.ncg = FALSE,
+  normalization.ncg = "CPM",
   k = NULL,
   eta = NULL,
   include.intercept = TRUE,
-  average = FALSE,
+  apply.average.rep = FALSE,
   fullalpha = NULL,
-  return.info = FALSE,
   inputcheck = TRUE,
+  apply.log = TRUE,
+  pseudo.count = 1,
   assess.se.obj = TRUE,
-  remove.na = "measurements",
-  save.se.obj = TRUE,
+  remove.na = "both",
   verbose = TRUE
 )
 }
@@ -30,11 +44,34 @@ normalise(
 \item{assay.name}{String for the selection of the name of the assay data
 of the SummarizedExperiment class object}
 
-\item{replicate.data}{TO BE DEFINED}
+\item{bio.variable.prps}{String of the label of a categorical variable that specifies major biological groups
+such as samples types from colData(se) that will be used to define PRPS.}
 
-\item{M}{Replicate matrix.}
+\item{uv.variables.prps}{String or vector of strings of the label of continuous or categorical variable(s)
+such as samples types, batch or library size from colData(se) that will be used to define PRPS.}
 
-\item{ctl}{Logical vector of length n of the negative control genes.}
+\item{min.sample.prps}{TO BE DEFINED that will be used to define PRPS.}
+
+\item{assess.cor.variables.prps}{Logical. Indicates whether to assess the assess the association between variables
+using Spearman correlation to define PRPS.}
+
+\item{bio.variables.ncg}{String or vector of strings of the label of a categorical variable that specifies major biological groups
+such as samples types from colData(se) that will be used to find the negative controls.}
+
+\item{uv.variables.ncg}{String or vector of strings of the label of continuous or categorical variable(s)
+such as samples types, batch or library size from colData(se) that will be used to find the negative controls.}
+
+\item{no.ncg}{Logical, TO BE BETTER DEFINED. if TRUE then a sample annotation the initially contains column names of the assays.???}
+
+\item{regress.out.uv.variables.ncg}{TO BE DEFINED.}
+
+\item{regress.out.bio.variables.ncg}{TO BE DEFINED.}
+
+\item{apply.normalization.ncg}{Logical Indicates whether to apply a normalization method when providing the raw data assay to define NCG.
+By default it is set to FALSE.}
+
+\item{normalization.ncg}{String defining the normalization method to use from 'CPM', 'TMM', 'upper', 'full', 'median', 'VST',
+and 'Quantile'to define NCG. By default it is set to 'CPM'.}
 
 \item{k}{A single value or a vector of values containing a single k or a range of k - the number of unwanted factors - to be tested.}
 
@@ -42,30 +79,37 @@ of the SummarizedExperiment class object}
 
 \item{include.intercept}{Logical. Add an intercept term to eta if it does not include one already. By default is set to TRUE.}
 
-\item{average}{Average replicates after adjustment. By default is set to FALSE.}
+\item{apply.average.rep}{Average replicates after adjustment. By default is set to FALSE.}
 
 \item{fullalpha}{Can be included to speed up execution. By default is set to NULL.}
-
-\item{return.info}{If FALSE, only the adjusted data matrix is returned. If TRUE, additional information
-is returned. By default is set to FALSE.}
 
 \item{inputcheck}{Perform a basic sanity check on the inputs, and issue a warning if there is a problem.
 By default is set to TRUE.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
+
+\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+by default it is set to 1.}
+
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.
+By default it is set to TRUE.}
 
 \item{remove.na}{TO BE DEFINED.}
-
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-to output the result. By default it is set to TRUE.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
 }
 \value{
-list List containing the corrected gene expression matrix and the M, alpha and W for each k values tested.
+SummarizedExperiment A SummarizedExperiment object containing the normalised gene expression
+into a new assay (RUVIII_K), as well as the PRPS created and the negative control genes
 }
 \description{
 is used to normalise the gene expression (assay) of a SummarizedExperiment class object
-using RUVIII-PRPS method for multiple k values in one go.
+using RUVIII-PRPS method.
+The steps involves:
+\itemize{
+\item Creation of the Pseudo-Replicates of Pseudo-Samples (PRPS)
+\item Define Negative Controls Genes (NCG)
+\item Run RUVIII-PRPS for multiple k values (the dimension of the unwanted variation).
+}
 }

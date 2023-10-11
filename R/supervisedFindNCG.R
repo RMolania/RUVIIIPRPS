@@ -147,7 +147,8 @@ supervisedFindNGC <- function(
                                   }))
     categorical.uv <- uv.variables[uv.var.class %in% c('factor', 'character')]
     continuous.uv <- uv.variables[uv.var.class %in% c('numeric', 'integer')]
-    all.tests <- NULL
+    all.tests <- list()
+    ind=1
     ###
     if(!is.null(categorical.uv)){
         if(isTRUE(regress.out.bio.variables)){
@@ -181,7 +182,9 @@ supervisedFindNGC <- function(
             })
         names(anova.gene.uv) <- categorical.uv
         rm(data.to.use)
-        all.tests <- c('anova.gene.uv')
+        all.tests[[ind]] <- anova.gene.uv
+        names(all.tests) <- ('anova.gene.uv')
+        ind=ind+1
     }
     if(!is.null(continuous.uv)){
         if(isTRUE(regress.out.bio.variables)){
@@ -217,7 +220,9 @@ supervisedFindNGC <- function(
             })
         names(corr.genes.uv) <- continuous.uv
         rm(data.to.use)
-        all.tests <- c(all.tests, 'corr.genes.uv')
+        all.tests[[ind]] <-corr.genes.uv
+        names(all.tests)[[ind]] <- 'corr.genes.uv'
+        ind=ind+1
     }
 
     ## step2: not highly affected by biology ####
@@ -268,7 +273,9 @@ supervisedFindNGC <- function(
                 corr.genes.var
             })
         names(corr.genes.bio) <- continuous.bio
-        all.tests <- c(all.tests, 'corr.genes.bio')
+        all.tests[[ind]] <-corr.genes.bio
+        names(all.tests)[[ind]] <- 'corr.genes.bio'
+        ind=ind+1
     }
     if(!is.null(continuous.uv)){
         if(isTRUE(normalization)){
@@ -302,22 +309,23 @@ supervisedFindNGC <- function(
                 anova.gene
             })
         names(anova.gene.bio) <- categorical.bio
-        all.tests <- c(all.tests,'anova.gene.bio')
+        all.tests[[ind]] <-anova.gene.bio
+        names(all.tests)[[ind]] <- 'anova.gene.bio'
     }
     # step3: final selection ####
     #all.tests <- c('anova.gene.bio', 'anova.gene.uv', 'corr.genes.bio', 'corr.genes.uv')
     ncg.selected <- lapply(
-        all.tests,
+        names(all.tests),
         function(x){
-                temp <- get(x)
-                if(!is.null(temp)){
+                temp <- all.tests[[x]]
+                #if(!is.null(temp)){
                     ranks.data <- lapply(
-                        1:length(temp),
+                        names(temp),
                         function(y){
                             temp[[y]]$ranked.genes
                         })
                     do.call(cbind, ranks.data)
-                }
+                #}
         })
     ncg.selected <- do.call(cbind, ncg.selected)
     ncg.selected <- rank(-apply(ncg.selected, 1, prod))

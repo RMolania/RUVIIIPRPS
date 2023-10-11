@@ -182,7 +182,7 @@ prpsForCategoricalUV <- function(se.obj,
         }
         ## Check if metadata PRPS already exist for supervised
         if(!'supervised' %in% names(se.obj@metadata[['PRPS']]) ) {
-            se.obj@metadata[['metric']][['supervised']] <- list()
+            se.obj@metadata[['PRPS']][['supervised']] <- list()
         }
 
         ## Check if metadata PRPS already exist for supervised

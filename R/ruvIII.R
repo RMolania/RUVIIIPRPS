@@ -1,16 +1,18 @@
-#' is used to normalise the gene expression (assay) of a SummarizedExperiment class object
-#' using the RUVIII-PRPS method.
+#' is used to run the RUVIII-PRPS method for a given assay and given k.
 #'
 #' @param se.obj A SummarizedExperiment object that will be used to computer fastRUV-III
 #' @param assay.name String for the selection of the name of the assay data
 #' of the SummarizedExperiment class object
+#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
+#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+#' by default it is set to 1.
 #' @param replicate.data TO BE DEFINED
 #' @param M Replicate matrix.
 #' @param ctl Logical vector of length n of the negative control genes.
 #' @param k The number of unwanted factors to use.
 #' @param eta A matrix with n columns, gene-wise (as opposed to sample-wise) covariates. By default is set to NULL.
 #' @param include.intercept Logical. Add an intercept term to eta if it does not include one already. By default is set to TRUE.
-#' @param average Logical. Average replicates after adjustment. By default is set to FALSE.
+#' @param apply.average.rep Logical. Average replicates after adjustment. By default is set to FALSE.
 #' @param fullalpha Can be included to speed up execution. By default is set to NULL.
 #' @param return.info Logical. If FALSE, only the adjusted data matrix is returned. If TRUE, additional information
 #' is returned. By default is set to FALSE.
@@ -38,13 +40,15 @@
 ruvIII<-function(
         se.obj,
         assay.name,
+        apply.log=TRUE,
+        pseudo.count = 1,
         replicate.data,
         M,
         ctl, # ncg
         k = NULL,
         eta = NULL,
         include.intercept = TRUE,
-        average = FALSE,
+        apply.average.rep = FALSE,
         fullalpha = NULL,
         return.info = FALSE,
         inputcheck = TRUE,
@@ -82,16 +86,22 @@ ruvIII<-function(
         return(ctl2)
     }
     fast.residop <- function(A, B){
-        tBB = DelayedArray::t(B) %*% B
-        tBB_inv = Matrix::solve(tBB)
+        tBB = t(B) %*% B
+        tBB_inv = solve(tBB)
         BtBB_inv = B %*% tBB_inv
-        tBA = DelayedArray::t(B) %*% A
+        tBA = t(B) %*% A
         BtBB_inv_tBA = BtBB_inv %*% tBA
         return(A - BtBB_inv_tBA)
     }
 
     ## Get the expression data
-    Y=t(se.obj@assays@data[[assay.name]])
+    # data transformation ####
+    if(apply.log){
+        expr.data <- log2(assay(se.obj, assay.name) + pseudo.count)
+    }else{
+        expr.data <- assay(se.obj, assay.name)
+    }
+    Y=t(expr.data)
 
     # data preparation ####
     if (is.data.frame(Y) ) {
@@ -102,6 +112,7 @@ ruvIII<-function(
     m <- nrow(replicate.data)
     m1 = m
     n <- ncol(Y)
+    M=row.names(t(cbind(expr.data,replicate.data)))
     M <- replicate.matrix(M)
     ctl <- tological(ctl, n)
 
@@ -118,7 +129,7 @@ ruvIII<-function(
     }
     # run RUV1 ####
     Y <- RUV1(Y, eta, ctl, include.intercept = include.intercept)
-    replicate.data = RUV1(replicate.data, eta, ctl, include.intercept = include.intercept)
+    #replicate.data = RUV1(replicate.data, eta, ctl, include.intercept = include.intercept)
     # data standardization ####
     mu <- colMeans(Y)
     mu.mat <- rep(1, m) %*% t(mu)
@@ -158,7 +169,7 @@ ruvIII<-function(
         newY <- Y - W %*% alpha
     }
     # average replicates ####
-    if (average)
+    if (apply.average.rep)
         newY <- ((1/apply(M, 2, sum)) * t(M)) %*% newY
 
     # Return data sets ####
