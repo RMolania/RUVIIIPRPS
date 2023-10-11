@@ -9,6 +9,9 @@
 #' @param se.obj A SummarizedExperiment object that will be used to computer fastRUV-III
 #' @param assay.name String for the selection of the name of the assay data
 #' of the SummarizedExperiment class object
+#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
+#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+#' by default it is set to 1.
 #' @param bio.variable.prps String of the label of a categorical variable that specifies major biological groups
 #' such as samples types from colData(se) that will be used to define PRPS.
 #' @param uv.variables.prps String or vector of strings of the label of continuous or categorical variable(s)
@@ -34,9 +37,6 @@
 #' @param fullalpha Can be included to speed up execution. By default is set to NULL.
 #' @param inputcheck Perform a basic sanity check on the inputs, and issue a warning if there is a problem.
 #' By default is set to TRUE.
-#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
-#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-#' by default it is set to 1.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' By default it is set to TRUE.
 #' @param remove.na TO BE DEFINED.
@@ -53,6 +53,8 @@
 normalise <- function(
         se.obj,
         assay.name,
+        apply.log = TRUE,
+        pseudo.count = 1,
         bio.variable.prps,
         uv.variables.prps,
         min.sample.prps = 3,
@@ -70,8 +72,6 @@ normalise <- function(
         apply.average.rep = FALSE,
         fullalpha = NULL,
         inputcheck = TRUE,
-        apply.log = TRUE,
-        pseudo.count = 1,
         assess.se.obj = TRUE,
         remove.na = 'both',
         verbose = TRUE
