@@ -7,7 +7,6 @@
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
 #' @param replicate.data TO BE DEFINED
-#' @param M Replicate matrix.
 #' @param ctl Logical vector of length n of the negative control genes.
 #' @param k The number of unwanted factors to use.
 #' @param eta A matrix with n columns, gene-wise (as opposed to sample-wise) covariates. By default is set to NULL.
@@ -43,7 +42,6 @@ ruvIII<-function(
         apply.log=TRUE,
         pseudo.count = 1,
         replicate.data,
-        M,
         ctl, # ncg
         k = NULL,
         eta = NULL,

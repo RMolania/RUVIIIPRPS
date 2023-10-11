@@ -8,7 +8,6 @@
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
 #' @param replicate.data TO BE DEFINED
-#' @param M Replicate matrix.
 #' @param ctl Logical vector of length n of the negative control genes.
 #' @param k A single value or a vector of values containing a single k or a range of k - the number of unwanted factors - to be tested.
 #' @param eta A matrix with n columns, gene-wise (as opposed to sample-wise) covariates. By default is set to NULL.
@@ -38,7 +37,6 @@ ruvIIIMultipleK <- function(
         apply.log=TRUE,
         pseudo.count = 1,
         replicate.data,
-        M,
         ctl,
         k = NULL,
         eta = NULL,
@@ -76,13 +74,12 @@ ruvIIIMultipleK <- function(
     if (save.se.obj) {
         for (x in k[1:length(k)]){
             se.obj<- ruvIII(
-                se.obj,
-                assay.name,
-                apply.log=TRUE,
-                pseudo.count = 1,
-                replicate.data,
-                M,
-                ctl,
+                se.obj = se.obj,
+                assay.name=assay.name,
+                apply.log=apply.log,
+                pseudo.count = pseudo.count,
+                replicate.data=replicate.data,
+                ctl=ctl,
                 k = x,
                 eta = eta,
                 include.intercept = include.intercept,
@@ -101,13 +98,11 @@ ruvIIIMultipleK <- function(
     } else if (!return.info & !save.se.obj) {
         ## Run RUVIII_PRPS for the first k value provided
         Y.adj=ruvIII(
-            se.obj,
-            assay.name,
-            apply.log=TRUE,
-            pseudo.count = 1,
-            replicate.data,
-            M,
-            ctl,
+            se.obj = se.obj,
+            assay.name=assay.name,
+            apply.log=apply.log,
+            pseudo.count = pseudo.count,
+            replicate.data=replicate.data,
             k = k[1],
             eta = eta,
             include.intercept = include.intercept,
@@ -128,12 +123,11 @@ ruvIIIMultipleK <- function(
                 k[2:length(k)],
                 function(x){
                 Y.adj.k<- ruvIII(
-                    se.obj,
-                    assay.name,
-                    apply.log=TRUE,
-                    pseudo.count = 1,
-                    replicate.data,
-                    M,
+                    se.obj = se.obj,
+                    assay.name=assay.name,
+                    apply.log=apply.log,
+                    pseudo.count = pseudo.count,
+                    replicate.data=replicate.data,
                     k = x,
                     eta = eta,
                     include.intercept = include.intercept,
@@ -159,12 +153,11 @@ ruvIIIMultipleK <- function(
             k,
             function(x){
                 Y.adj.k<- ruvIII(
-                    se.obj,
-                    assay.name,
-                    apply.log=TRUE,
-                    pseudo.count = 1,
-                    replicate.data,
-                    M,
+                    se.obj = se.obj,
+                    assay.name=assay.name,
+                    apply.log=apply.log,
+                    pseudo.count = pseudo.count,
+                    replicate.data=replicate.data,
                     k = x,
                     eta = eta,
                     include.intercept = include.intercept,

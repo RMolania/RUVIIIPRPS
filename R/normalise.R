@@ -108,6 +108,8 @@ normalise <- function(
     replicate.data=t(do.call(cbind,se.obj@metadata[['PRPS']][['supervised']]))
     ruvIIIMultipleK(se.obj=se.obj,
                     assay.name=assay.name,
+                    apply.log=apply.log,
+                    pseudo.count = pseudo.count,
                     replicate.data=replicate.data,
                     ctl=se.obj@metadata[['NCG']],
                     k = k,

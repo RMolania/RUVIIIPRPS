@@ -14,6 +14,8 @@ The steps involves:
 normalise(
   se.obj,
   assay.name,
+  apply.log = TRUE,
+  pseudo.count = 1,
   bio.variable.prps,
   uv.variables.prps,
   min.sample.prps = 3,
@@ -31,8 +33,6 @@ normalise(
   apply.average.rep = FALSE,
   fullalpha = NULL,
   inputcheck = TRUE,
-  apply.log = TRUE,
-  pseudo.count = 1,
   assess.se.obj = TRUE,
   remove.na = "both",
   verbose = TRUE
@@ -43,6 +43,11 @@ normalise(
 
 \item{assay.name}{String for the selection of the name of the assay data
 of the SummarizedExperiment class object}
+
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
+
+\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+by default it is set to 1.}
 
 \item{bio.variable.prps}{String of the label of a categorical variable that specifies major biological groups
 such as samples types from colData(se) that will be used to define PRPS.}
@@ -85,11 +90,6 @@ and 'Quantile'to define NCG. By default it is set to 'CPM'.}
 
 \item{inputcheck}{Perform a basic sanity check on the inputs, and issue a warning if there is a problem.
 By default is set to TRUE.}
-
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
-
-\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-by default it is set to 1.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.
 By default it is set to TRUE.}

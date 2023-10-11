@@ -10,7 +10,6 @@ ruvIIIMultipleK(
   apply.log = TRUE,
   pseudo.count = 1,
   replicate.data,
-  M,
   ctl,
   k = NULL,
   eta = NULL,
@@ -37,8 +36,6 @@ of the SummarizedExperiment class object}
 by default it is set to 1.}
 
 \item{replicate.data}{TO BE DEFINED}
-
-\item{M}{Replicate matrix.}
 
 \item{ctl}{Logical vector of length n of the negative control genes.}
 
