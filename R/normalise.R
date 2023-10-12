@@ -1,5 +1,6 @@
 #' is used to normalise the gene expression (assay) of a SummarizedExperiment class object
 #' using RUVIII-PRPS method.
+#'
 #' The steps involves:
 #' - Creation of the Pseudo-Replicates of Pseudo-Samples (PRPS)
 #' - Define Negative Controls Genes (NCG)
@@ -52,7 +53,7 @@
 #'
 normalise <- function(
         se.obj,
-        assay.name,
+        assay.name = NULL,
         apply.log = TRUE,
         pseudo.count = 1,
         bio.variable.prps,
@@ -83,8 +84,8 @@ normalise <- function(
     ### Assess the input
     if(k == 0 || is.null(k)){
         stop('k cannot be 0. This means no adjustment will be made.')
-    } else if(min(table(colnames(replicate.data))) == 1){
-        stop('There are only replicated samples of a single sample in the replicate.data')
+    } else if(is.null(assay.name)){
+        stop('No assay name has been provided.')
     }
     if (length(assay.name) > 1) {
         stop('The function can only take a single assay.name.')
