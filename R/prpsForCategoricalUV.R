@@ -124,7 +124,7 @@ prpsForCategoricalUV <- function(se.obj,
                         rowMeans(expre.data[, index.sample])
                     })
                 colnames(ps.matrix) <- rep(
-                    paste(row.names(bio.batch.table)[y], uv.variable, sep = '||'),
+                    paste(uv.variable, row.names(bio.batch.table)[y], sep = '||'),
                     ncol(ps.matrix))
                 ps.matrix
             })

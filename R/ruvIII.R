@@ -33,7 +33,7 @@
 #' @importFrom Matrix solve
 #' @importFrom SummarizedExperiment assay SummarizedExperiment
 #' @importFrom ruv replicate.matrix RUV1
-#' @importFrom BiocSingular runSVD
+#' @importFrom BiocSingular runSVD bsparam
 #' @export
 
 
@@ -109,11 +109,12 @@ ruvIII<-function(
     } else if (is.data.frame(replicate.data)){
         replicate.data = data.matrix(replicate.data)
     }
-    #m <- nrow(replicate.data)
-    m <- nrow(Y)
-    m1 = m
+    m <- nrow(replicate.data)
+    #m <- nrow(Y)
+    m1=nrow(Y)
+    #m1 = m
     n <- ncol(Y)
-    M=row.names(t(cbind(t(replicate.data))))
+    M=row.names(replicate.data)
     M <- replicate.matrix(M)
     ctl <- tological(ctl, n)
 
@@ -133,7 +134,7 @@ ruvIII<-function(
     replicate.data = RUV1(replicate.data, eta, ctl, include.intercept = include.intercept)
     # data standardization ####
     mu <- colMeans(Y)
-    mu.mat <- rep(1, m) %*% t(mu)
+    mu.mat <- rep(1, m1) %*% t(mu)
     Y.stand <- Y - mu.mat
     #BSPARAM=bsparam()
 
@@ -155,6 +156,9 @@ ruvIII<-function(
         if (is.null(fullalpha) ) {
             Y0 = fast.residop(replicate.data, M)
             k.eigVec = min(m - ncol(M), sum(ctl))
+            if (is.null(BSPARAM)){
+                BSPARAM=bsparam()
+            }
             eigVec = runSVD(
                 x = Y0,
                 k = k,
