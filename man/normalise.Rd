@@ -3,17 +3,11 @@
 \name{normalise}
 \alias{normalise}
 \title{is used to normalise the gene expression (assay) of a SummarizedExperiment class object
-using RUVIII-PRPS method.
-The steps involves:
-\itemize{
-\item Creation of the Pseudo-Replicates of Pseudo-Samples (PRPS)
-\item Define Negative Controls Genes (NCG)
-\item Run RUVIII-PRPS for multiple k values (the dimension of the unwanted variation).
-}}
+using RUVIII-PRPS method.}
 \usage{
 normalise(
   se.obj,
-  assay.name,
+  assay.name = NULL,
   apply.log = TRUE,
   pseudo.count = 1,
   bio.variable.prps,
@@ -104,8 +98,6 @@ SummarizedExperiment A SummarizedExperiment object containing the normalised gen
 into a new assay (RUVIII_K), as well as the PRPS created and the negative control genes
 }
 \description{
-is used to normalise the gene expression (assay) of a SummarizedExperiment class object
-using RUVIII-PRPS method.
 The steps involves:
 \itemize{
 \item Creation of the Pseudo-Replicates of Pseudo-Samples (PRPS)
