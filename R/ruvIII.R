@@ -43,7 +43,7 @@ ruvIII<-function(
         apply.log=TRUE,
         pseudo.count = 1,
         replicate.data,
-        ctl, # ncg,
+        ctl,
         BSPARAM,
         k = NULL,
         eta = NULL,
@@ -113,7 +113,7 @@ ruvIII<-function(
     m <- nrow(Y)
     m1 = m
     n <- ncol(Y)
-    M=row.names(t(cbind(expr.data,t(replicate.data))))
+    M=row.names(t(cbind(t(replicate.data))))
     M <- replicate.matrix(M)
     ctl <- tological(ctl, n)
 

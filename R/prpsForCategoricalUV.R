@@ -188,8 +188,8 @@ prpsForCategoricalUV <- function(se.obj,
         ## Check if metadata PRPS already exist for supervised
         if(!paste0('bio:', bio.variable,'||','uv:',uv.variable,'||','data:',assay.name) %in% names(se.obj@metadata[['PRPS']][['supervised']])) {
             se.obj@metadata[['PRPS']][['supervised']][[paste0('bio:', bio.variable,'||','uv:',uv.variable,'||','data:',assay.name)]]<- list()
-        } else {
-            se.obj@metadata[['PRPS']][['supervised']][[paste0('bio:',
+        }
+        se.obj@metadata[['PRPS']][['supervised']][[paste0('bio:',
                                                               bio.variable,
                                                               '||',
                                                               'uv:',
@@ -197,7 +197,7 @@ prpsForCategoricalUV <- function(se.obj,
                                                               '||',
                                                               'data:',
                                                               assay.name)]] <- prps.sets
-        }
+
 
         printColoredMessage(message= paste0(
             'The PRPS are saved to metadata@PRPS$supervised',
