@@ -345,9 +345,9 @@ supervisedFindNGC <- function(
         ## Check if metadata NCG already exists
         if(!'NCG' %in% names(se.obj@metadata)) {
             se.obj@metadata[['NCG']] <- list()
-        } else {
-            se.obj@metadata[['NCG']] <-ncg.selected
         }
+        se.obj@metadata[['NCG']] <-ncg.selected
+
 
         printColoredMessage(message=
             'The NCG are saved to metadata@NCG.',

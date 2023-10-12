@@ -80,6 +80,21 @@ normalise <- function(
                         color = 'white',
                         verbose = verbose)
 
+    ### Assess the input
+    if(k == 0 || is.null(k)){
+        stop('k cannot be 0. This means no adjustment will be made.')
+    } else if(min(table(colnames(replicate.data))) == 1){
+        stop('There are only replicated samples of a single sample in the replicate.data')
+    }
+
+    if (length(assay.name) > 1) {
+        stop('The function can only take a single assay.name.')
+    } else if (is.null(bio.variable)) {
+        stop('The function requires some known bioloical groups. if not possible, please use the un-supervised_prps function.')
+    } else if (is.null(uv.variables)) {
+        stop('The function requires known sources of unwanted variation groups.')
+    }
+
     ########### Creation of PRPS ###########
     se.obj= supervisedPRPS(se.obj=se.obj,
                        assay.name=assay.name,

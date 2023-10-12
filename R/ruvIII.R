@@ -107,10 +107,11 @@ ruvIII<-function(
     } else if (is.data.frame(replicate.data)){
         replicate.data = data.matrix(replicate.data)
     }
-    m <- nrow(replicate.data)
+    #m <- nrow(replicate.data)
+    m <- nrow(Y)
     m1 = m
     n <- ncol(Y)
-    M=row.names(t(cbind(expr.data,replicate.data)))
+    M=row.names(t(cbind(expr.data,t(replicate.data))))
     M <- replicate.matrix(M)
     ctl <- tological(ctl, n)
 
@@ -127,12 +128,12 @@ ruvIII<-function(
     }
     # run RUV1 ####
     Y <- RUV1(Y, eta, ctl, include.intercept = include.intercept)
-    #replicate.data = RUV1(replicate.data, eta, ctl, include.intercept = include.intercept)
+    replicate.data = RUV1(replicate.data, eta, ctl, include.intercept = include.intercept)
     # data standardization ####
     mu <- colMeans(Y)
     mu.mat <- rep(1, m) %*% t(mu)
     Y.stand <- Y - mu.mat
-    BSPARAM=bsparam()
+    #BSPARAM=bsparam()
 
     # RUVIII normalization ####
     printColoredMessage(
