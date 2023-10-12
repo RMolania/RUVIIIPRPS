@@ -11,6 +11,7 @@ ruvIII(
   pseudo.count = 1,
   replicate.data,
   ctl,
+  BSPARAM,
   k = NULL,
   eta = NULL,
   include.intercept = TRUE,
@@ -38,6 +39,8 @@ by default it is set to 1.}
 \item{replicate.data}{TO BE DEFINED}
 
 \item{ctl}{Logical vector of length n of the negative control genes.}
+
+\item{BSPARAM}{TO BE DEFINED.}
 
 \item{k}{The number of unwanted factors to use.}
 

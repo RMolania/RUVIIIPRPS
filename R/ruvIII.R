@@ -8,6 +8,7 @@
 #' by default it is set to 1.
 #' @param replicate.data TO BE DEFINED
 #' @param ctl Logical vector of length n of the negative control genes.
+#' @param BSPARAM TO BE DEFINED.
 #' @param k The number of unwanted factors to use.
 #' @param eta A matrix with n columns, gene-wise (as opposed to sample-wise) covariates. By default is set to NULL.
 #' @param include.intercept Logical. Add an intercept term to eta if it does not include one already. By default is set to TRUE.
@@ -42,7 +43,8 @@ ruvIII<-function(
         apply.log=TRUE,
         pseudo.count = 1,
         replicate.data,
-        ctl, # ncg
+        ctl, # ncg,
+        BSPARAM,
         k = NULL,
         eta = NULL,
         include.intercept = TRUE,
