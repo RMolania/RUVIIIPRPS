@@ -157,13 +157,11 @@ computeARI <-function(
                 se.obj@metadata[['metric']][[x]] <- list()
             }
             ## Check if metadata metric already exist for this assay and this metric
-            if(!'sil' %in% names(se.obj@metadata[['metric']][[x]])  ) {
+            if(!'ari' %in% names(se.obj@metadata[['metric']][[x]])  ) {
                 se.obj@metadata[['metric']][[x]][['ari']] <- list()
             }
-            ## Check if metadata metric already exist for this assay, this metric and this variable
-            if(!variable %in% names(se.obj@metadata[['metric']][[x]][['ari']])  ) {
-                se.obj@metadata[['metric']][[x]][['ari']][[variable]] <- ari[[x]]
-            }
+            se.obj@metadata[['metric']][[x]][['ari']][[variable]] <- ari[[x]]
+
         }
         printColoredMessage(message= paste0(
             'The ARI is saved to metadata@metric$',

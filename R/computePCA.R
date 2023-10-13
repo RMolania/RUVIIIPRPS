@@ -214,7 +214,7 @@ computePCA <- function(se.obj,
 
             if (fast.pca) {
                     ## Check if metadata metric already exist for this assay and this metric
-                    if(!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]])  ) {
+                    #if(!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]])  ) {
                         se.obj@metadata[['metric']][[x]][['fastPCA']] <- sv.dec.all[[x]]
                         printColoredMessage(message= paste0(
                             'The PCA results are saved to metadata@metric$',
@@ -222,11 +222,11 @@ computePCA <- function(se.obj,
                             '$fastPCA$.'),
                             color = 'blue',
                             verbose = verbose)
-                    }
+                    #}
 
             } else {
                     ## Check if metadata metric already exist for this assay and this metric
-                    if(!'PCA' %in% names(se.obj@metadata[['metric']][[x]])  ) {
+                    #if(!'PCA' %in% names(se.obj@metadata[['metric']][[x]])  ) {
                         se.obj@metadata[['metric']][[x]][['PCA']] <- sv.dec.all[[x]]
                         printColoredMessage(message= paste0(
                             'The PCA results are saved to metadata@metric$',
@@ -234,7 +234,7 @@ computePCA <- function(se.obj,
                             '$PCA$.'),
                             color = 'blue',
                             verbose = verbose)
-                    }
+                    #}
             }
 
 
