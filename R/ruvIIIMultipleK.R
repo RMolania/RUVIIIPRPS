@@ -50,7 +50,7 @@ ruvIIIMultipleK <- function(
         save.se.obj = TRUE,
         verbose = TRUE
 ){
-    printColoredMessage(message = '------------The normalise function starts:',
+    printColoredMessage(message = '------------The ruvIIIMultipleK function starts:',
                         color = 'white',
                         verbose = verbose)
 
@@ -92,6 +92,9 @@ ruvIIIMultipleK <- function(
                 save.se.obj = save.se.obj,
                 verbose = verbose)
         }
+        printColoredMessage(message = '------------The ruvIIIMultipleK function finished:',
+                            color = 'white',
+                            verbose = verbose)
         return(se.obj)
 
     ## Run RUVIII_PRPS for all k value provided and output the Y
@@ -145,6 +148,9 @@ ruvIIIMultipleK <- function(
             ruv.adj=ruv.adj.allk
         }
         ## Return a list containing the adjusted dataset(s) for single k or multiple k values
+        printColoredMessage(message = '------------The ruvIIIMultipleK function finished:',
+                            color = 'white',
+                            verbose = verbose)
         return(ruv.adj)
 
     ## Run RUVIII_PRPS for all k value provided and output all the return info
@@ -171,12 +177,12 @@ ruvIIIMultipleK <- function(
                     verbose = verbose)
             })
             names(return.info.k) <- paste0('RUV_K', k[2:length(k)], '_Data:', assay.name)
+            printColoredMessage(message = '------------The ruvIIIMultipleK function finished:',
+                                color = 'white',
+                                verbose = verbose)
             ## Return a list containing the info for the adjusted dataset(s) for single k or multiple k values
             return(return.info.k)
     }
 
-    printColoredMessage(message = '------------The normalise function finished:',
-                        color = 'white',
-                        verbose = verbose)
 }
 
