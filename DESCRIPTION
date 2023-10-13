@@ -38,7 +38,8 @@ Imports:
     preprocessCore,
     edgeR,
     EDASeq,
-    DESeq2
+    DESeq2,
+    graphics
 URL: https://github.com/mtrussart/RUVPRPS
 BugReports: https://github.com/mtrussart/RUVPRPS/issues
 Suggests: 
