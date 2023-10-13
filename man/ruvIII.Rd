@@ -11,7 +11,7 @@ ruvIII(
   pseudo.count = 1,
   replicate.data,
   ctl,
-  BSPARAM,
+  BSPARAM = NULL,
   k = NULL,
   eta = NULL,
   include.intercept = TRUE,

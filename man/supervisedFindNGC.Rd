@@ -25,6 +25,8 @@ supervisedFindNGC(
   assess.se.obj = TRUE,
   assess.variables = TRUE,
   remove.na = "both",
+  plot.output = TRUE,
+  fast.pca = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE
 )
@@ -72,6 +74,11 @@ By default it is set to TRUE.}
 \item{assess.variables}{Logical. TO BE DEFINED.}
 
 \item{remove.na}{TO BE DEFINED.}
+
+\item{plot.output}{Logical. Indicates whether to plot the PCA of the defined NCG colored by the categorical variables, by default it is set to TRUE.}
+
+\item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range
+to speed up the process, by default is set to 'TRUE'.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment
 class object 'se.obj' or to output the result, by default it is set to TRUE.}

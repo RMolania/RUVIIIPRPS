@@ -27,6 +27,9 @@
 #' By default it is set to TRUE.
 #' @param assess.variables Logical. TO BE DEFINED.
 #' @param remove.na TO BE DEFINED.
+#' @param plot.output Logical. Indicates whether to plot the PCA of the defined NCG colored by the categorical variables, by default it is set to TRUE.
+#' @param fast.pca Logical. Indicates whether to calculate a specific number of PCs instead of the full range
+#' to speed up the process, by default is set to 'TRUE'.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment
 #' class object 'se.obj' or to output the result, by default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed
@@ -38,6 +41,7 @@
 #' @importFrom SummarizedExperiment assay
 #' @importFrom stats as.formula
 #' @importFrom Rfast correls
+#' @importFrom graphics frame
 #' @export
 
 supervisedFindNGC <- function(
@@ -59,6 +63,8 @@ supervisedFindNGC <- function(
         assess.se.obj = TRUE,
         assess.variables = TRUE,
         remove.na = 'both',
+        plot.output=TRUE,
+        fast.pca = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
         ){
@@ -330,6 +336,112 @@ supervisedFindNGC <- function(
     ncg.selected <- do.call(cbind, ncg.selected)
     ncg.selected <- rank(-apply(ncg.selected, 1, prod))
     ncg.selected <- ncg.selected < no.ncg + 1
+
+
+    #### Ploting output
+
+    if (plot.output==TRUE && !is.null(categorical.uv)){
+
+        ### Compute PCA
+        if (fast.pca) {
+            ## Check if metadata metric already exist for this assay and this metric
+            if(!'fastPCA' %in% names(se.obj@metadata[['metric']][[v]])  ) {
+                printColoredMessage(message = paste0(
+                    '### Computing fastPCA.'
+                ),
+                color = 'magenta',
+                verbose = verbose)
+                se.obj=RUVPRPS::computePCA(se.obj=se.obj,
+                                           assay.names = assay.name,
+                                           apply.log = apply.log,
+                                           pseudo.count = pseudo.count,
+                                           fast.pca = fast.pca,
+                                           nb.pcs = 10,
+                                           assess.se.obj = assess.se.obj,
+                                           verbose = verbose)
+            }
+
+        } else {
+            if (!'PCA' %in% names(se.obj@metadata[['metric']][[assay.name]])  ) {
+                printColoredMessage(message = paste0(
+                    '### Computing PCA.'
+                ),
+                color = 'magenta',
+                verbose = verbose)
+                se.obj=RUVPRPS::computePCA(se.obj=se.obj,
+                                           assay.names = assay.name,
+                                           apply.log = apply.log,
+                                           pseudo.count = pseudo.count,
+                                           fast.pca = fast.pca,
+                                           nb.pcs = 10,
+                                           assess.se.obj = assess.se.obj,
+                                           verbose = verbose)
+            }
+        }
+
+        ## PCA plotting
+        printColoredMessage(message= '### Plotting PCA of the NCG colored by the categorical variables.',
+                            color = 'magenta',
+                            verbose = verbose)
+
+        PCA.plots<- lapply(
+                categorical.uv,
+                function(x){
+                    ## PCA Color
+                    group=as.factor(se.obj@colData[, x])
+                    if (length(unique(group))<=11){
+                        colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
+                        color.group<- colfunc(length(unique(group)))
+                        names(color.group) <- unique(group)
+                    } else {color.group=NULL}
+
+                    ### Plot PCA
+                    printColoredMessage(message = paste0(
+                        '### Plotting PCA based on the ',
+                        x,
+                        ' variable.'
+                    ),
+                    color = 'magenta',
+                    verbose = verbose)
+                    PCA=RUVPRPS::plotPCA(se.obj=se.obj,
+                                         assay.names = assay.name,
+                                         variable=x,
+                                         color = color.group,
+                                         fast.pca=fast.pca,
+                                         assess.se.obj = assess.se.obj,
+                                         verbose = verbose)
+                    return(PCA)
+        })
+        names(PCA.plots)=categorical.uv
+
+        ## Categorical variable
+        nb.cat.var=length(categorical.uv)
+        p=frame()
+        for (v in 1:(nb.cat.var)){
+            p=p+plot(PCA.plots[[categorical.uv[v]]])
+        }
+        p
+
+        ### Add plots to SummarizedExperiment object
+        printColoredMessage(message= '### Saving the NCG plot to the metadata of the SummarizedExperiment object.',
+                            color = 'magenta',
+                            verbose = verbose)
+        ## Check if metadata plot already exist
+        if(length(se.obj@metadata)==0 ) {
+            se.obj@metadata[['plot']] <- list()
+        }
+        ## Check if metadata plot already exist
+        if(!'plot' %in% names(se.obj@metadata) ) {
+            se.obj@metadata[['plot']] <- list()
+        }
+        ## Check if metadata plot already exist for this metric
+        if(!'NCG' %in% names(se.obj@metadata[['plot']]) ) {
+            se.obj@metadata[['plot']][['NCG']] <- list()
+        }
+        ## Save the new plot
+        se.obj@metadata[['plot']][['NCG']]<- p
+
+    }
 
 
     ### Add results to the SummarizedExperiment object
