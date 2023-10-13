@@ -418,7 +418,7 @@ supervisedFindNGC <- function(
         nb.cat.var=length(cat.var)
         p=frame()
         for (v in 1:(nb.cat.var)){
-            p=p+plot(PCA.plots[[categorical.uv[v]]])
+            p=p+plot(PCA.plots[[cat.var[v]]])
         }
         p
 
