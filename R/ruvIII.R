@@ -159,13 +159,14 @@ ruvIII<-function(
             if (is.null(BSPARAM)){
                 BSPARAM=bsparam()
             }
-            eigVec = runSVD(
-                x = Y0,
-                k = k,
-                BSPARAM = BSPARAM,
-                center = FALSE,
-                scale = FALSE
-            )$u
+            # eigVec = runSVD(
+            #     x = Y0,
+            #     k = k,
+            #     BSPARAM = BSPARAM,
+            #     center = FALSE,
+            #     scale = FALSE
+            # )$u
+            eigVec = eigen(Y0 %*% DelayedArray::t(Y0), symmetric = TRUE)$vectors
             fullalpha = t(eigVec[, seq_len(k.eigVec), drop = FALSE]) %*% replicate.data
         }
         alpha <- fullalpha[1:min(k, nrow(fullalpha)), , drop = FALSE]
