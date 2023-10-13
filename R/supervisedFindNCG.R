@@ -345,7 +345,7 @@ supervisedFindNGC <- function(
         ### Compute PCA
         if (fast.pca) {
             ## Check if metadata metric already exist for this assay and this metric
-            if(!'fastPCA' %in% names(se.obj@metadata[['metric']][[v]])  ) {
+            if(!'fastPCA' %in% names(se.obj@metadata[['metric']][[assay.name]])  ) {
                 printColoredMessage(message = paste0(
                     '### Computing fastPCA.'
                 ),
