@@ -140,5 +140,6 @@ normalise <- function(
     printColoredMessage(message = '------------The normalise function finished.',
                         color = 'white',
                         verbose = verbose)
+    return(se.obj)
 }
 
