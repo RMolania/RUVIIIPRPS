@@ -144,7 +144,7 @@ supervisedFindNGC <- function(
 
     # finding negative control genes ####
     ## step1: highly affected by unwanted variation ####
-    printColoredMessage(message = '### Finding genes that are highly affected by unwnated variation:',
+    printColoredMessage(message = '### Finding genes that are highly affected by unwanted variation:',
                         color = 'magenta',
                         verbose = verbose)
     uv.var.class <- unlist(lapply(uv.variables,
@@ -339,8 +339,8 @@ supervisedFindNGC <- function(
 
 
     #### Ploting output
-
-    if (plot.output==TRUE && !is.null(categorical.uv)){
+    cat.var=c(categorical.bio,categorical.uv)
+    if (plot.output==TRUE && !is.null(cat.var)){
 
         ### Compute PCA
         if (fast.pca) {
@@ -385,7 +385,7 @@ supervisedFindNGC <- function(
                             verbose = verbose)
 
         PCA.plots<- lapply(
-                categorical.uv,
+            cat.var,
                 function(x){
                     ## PCA Color
                     group=as.factor(se.obj@colData[, x])
@@ -412,10 +412,10 @@ supervisedFindNGC <- function(
                                          verbose = verbose)
                     return(PCA)
         })
-        names(PCA.plots)=categorical.uv
+        names(PCA.plots)=cat.var
 
         ## Categorical variable
-        nb.cat.var=length(categorical.uv)
+        nb.cat.var=length(cat.var)
         p=frame()
         for (v in 1:(nb.cat.var)){
             p=p+plot(PCA.plots[[categorical.uv[v]]])
