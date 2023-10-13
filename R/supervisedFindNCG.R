@@ -38,6 +38,7 @@
 #' @return SummarizedExperiment or a List A SummarizedExperiment object or a list containing
 #' all the negative control genes defined.
 #' @importFrom matrixTests row_oneway_equalvar
+#' @importFrom ggpubr as_ggplot
 #' @importFrom SummarizedExperiment assay
 #' @importFrom stats as.formula
 #' @importFrom Rfast correls
@@ -357,7 +358,7 @@ supervisedFindNGC <- function(
                                            pseudo.count = pseudo.count,
                                            fast.pca = fast.pca,
                                            nb.pcs = 10,
-                                           assess.se.obj = assess.se.obj,
+                                           assess.se.obj = FALSE,
                                            verbose = verbose)
             }
 
@@ -374,7 +375,7 @@ supervisedFindNGC <- function(
                                            pseudo.count = pseudo.count,
                                            fast.pca = fast.pca,
                                            nb.pcs = 10,
-                                           assess.se.obj = assess.se.obj,
+                                           assess.se.obj = FALSE,
                                            verbose = verbose)
             }
         }
@@ -413,14 +414,7 @@ supervisedFindNGC <- function(
                     return(PCA)
         })
         names(PCA.plots)=cat.var
-
-        ## Categorical variable
-        nb.cat.var=length(cat.var)
-        p=frame()
-        for (v in 1:(nb.cat.var)){
-            p=p+plot(PCA.plots[[cat.var[v]]])
-        }
-        p
+        plot=do.call(grid.arrange,c(PCA.plots))
 
         ### Add plots to SummarizedExperiment object
         printColoredMessage(message= '### Saving the NCG plot to the metadata of the SummarizedExperiment object.',
@@ -439,14 +433,14 @@ supervisedFindNGC <- function(
             se.obj@metadata[['plot']][['NCG']] <- list()
         }
         ## Save the new plot
-        se.obj@metadata[['plot']][['NCG']]<- p
+        se.obj@metadata[['plot']][['NCG']]<-as_ggplot(plot)
 
     }
 
 
     ### Add results to the SummarizedExperiment object
     if(save.se.obj == TRUE){
-        printColoredMessage(message= '### Saving the NCG to the metadata of the SummarizedExperiment object.',
+        printColoredMessage(message= '### Saving the NCG vector to the metadata of the SummarizedExperiment object.',
                             color = 'magenta',
                             verbose = verbose)
 
