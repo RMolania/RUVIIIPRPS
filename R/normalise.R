@@ -82,7 +82,7 @@ normalise <- function(
                         verbose = verbose)
 
     ### Assess the input
-    if(k == 0 || is.null(k)){
+    if(is.null(k)){
         stop('k cannot be 0. This means no adjustment will be made.')
     } else if(is.null(assay.name)){
         stop('No assay name has been provided.')
