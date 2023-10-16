@@ -181,7 +181,7 @@ ruvIII<-function(
     # Return data sets ####
     if (save.se.obj) {
         ### Saving the norm data into a new assay
-        new.assay.name <- paste0('RUV_K_', k, '_Data_', assay.name)
+        new.assay.name <- paste0('RUV_K_', k, '_on_', assay.name)
         if(!new.assay.name %in% (names(se.obj@assays@data)) ){
             se.obj@assays@data[[new.assay.name]] <- t(newY)
         }
