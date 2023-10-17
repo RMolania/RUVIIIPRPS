@@ -159,15 +159,16 @@ ruvIII<-function(
             if (is.null(BSPARAM)){
                 BSPARAM=bsparam()
             }
-            # eigVec = runSVD(
-            #     x = Y0,
-            #     k = k,
-            #     BSPARAM = BSPARAM,
-            #     center = FALSE,
-            #     scale = FALSE
-            # )$u
-            eigVec = eigen(Y0 %*% t(Y0), symmetric = TRUE)$vectors
-            fullalpha = t(eigVec[, seq_len(k.eigVec), drop = FALSE]) %*% replicate.data
+            eigVec = runSVD(
+                x = Y0,
+                k = k,
+                BSPARAM = BSPARAM,
+                center = FALSE,
+                scale = FALSE
+            )$u
+            # eigVec = eigen(Y0 %*% t(Y0), symmetric = TRUE)$vectors
+            # fullalpha = t(eigVec[, seq_len(k.eigVec), drop = FALSE]) %*% replicate.data
+            fullalpha = t(eigVec) %*% replicate.data
         }
         alpha <- fullalpha[1:min(k, nrow(fullalpha)), , drop = FALSE]
         ac <- alpha[, ctl, drop = FALSE]
@@ -181,7 +182,7 @@ ruvIII<-function(
     # Return data sets ####
     if (save.se.obj) {
         ### Saving the norm data into a new assay
-        new.assay.name <- paste0('RUV_K_', k, '_on_', assay.name)
+        new.assay.name <- paste0('RUV_K', k, '_on_', assay.name)
         if(!new.assay.name %in% (names(se.obj@assays@data)) ){
             se.obj@assays@data[[new.assay.name]] <- t(newY)
         }
