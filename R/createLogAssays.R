@@ -46,7 +46,7 @@ createLogAssays <- function(se.obj,
             color = 'blue',
             verbose = verbose )
         ### Saving the log data into a new assay
-        new.assay.name <- paste0('Log_', x)
+        new.assay.name <- paste0('Log', x)
         if(!new.assay.name %in% (names(se.obj@assays@data)) ){
             se.obj@assays@data[[new.assay.name]] <- temp.data
         }
