@@ -20,6 +20,12 @@
 #' @param assess.cor.variables.prps Logical. Indicates whether to assess the assess the association between variables
 #' using Spearman correlation to define PRPS.
 #' @param min.sample.prps TO BE DEFINED that will be used to define PRPS.
+#' @param norm.assay.name.ncg String for the selection of the name of the assay of the SummarizedExperiment class object to use
+#' to define NCG. If you don't provide any assay, we recommend to set apply.normalization to TRUE.
+#' @param apply.normalization.ncg Logical Indicates whether to apply a normalization method to define NCG if the 'norm.assay.name.ncg'
+#' wasn't provided. By default it is set to FALSE.
+#' @param normalization.ncg String defining the normalization method to use from 'CPM', 'TMM', 'upper', 'full', 'median', 'VST',
+#' and 'Quantile'to define NCG. By default it is set to 'CPM'.
 #' @param bio.variables.ncg String or vector of strings of the label of a categorical variable that specifies major biological groups
 #' such as samples types from colData(se) that will be used to find the negative controls.
 #' @param uv.variables.ncg String or vector of strings of the label of continuous or categorical variable(s)
@@ -27,10 +33,6 @@
 #' @param no.ncg Logical, TO BE BETTER DEFINED. if TRUE then a sample annotation the initially contains column names of the assays.???
 #' @param regress.out.uv.variables.ncg TO BE DEFINED.
 #' @param regress.out.bio.variables.ncg TO BE DEFINED.
-#' @param apply.normalization.ncg Logical Indicates whether to apply a normalization method when providing the raw data assay to define NCG.
-#' By default it is set to FALSE.
-#' @param normalization.ncg String defining the normalization method to use from 'CPM', 'TMM', 'upper', 'full', 'median', 'VST',
-#' and 'Quantile'to define NCG. By default it is set to 'CPM'.
 #' @param k A single value or a vector of values containing a single k or a range of k - the number of unwanted factors - to be tested.
 #' @param eta A matrix with n columns, gene-wise (as opposed to sample-wise) covariates. By default is set to NULL.
 #' @param include.intercept Logical. Add an intercept term to eta if it does not include one already. By default is set to TRUE.
@@ -60,13 +62,14 @@ normalise <- function(
         uv.variables.prps,
         min.sample.prps = 3,
         assess.cor.variables.prps = TRUE,
+        norm.assay.name.ncg,
+        apply.normalization.ncg=FALSE,
+        normalization.ncg = 'CPM',
         bio.variables.ncg,
         uv.variables.ncg,
         no.ncg = 1000,
         regress.out.uv.variables.ncg = FALSE,
         regress.out.bio.variables.ncg = FALSE,
-        apply.normalization.ncg=FALSE,
-        normalization.ncg = 'CPM',
         k = NULL,
         eta = NULL,
         include.intercept = TRUE,
