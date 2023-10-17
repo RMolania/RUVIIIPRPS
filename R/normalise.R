@@ -94,6 +94,11 @@ normalise <- function(
         stop('The function can only take a single assay.name.')
     }
 
+    if (missing(norm.assay.name.ncg)) {
+        stop('norm.assay.name.ncg is empty. Please select an assay to use for the Negative Control Genes selection or
+        set norm.assay.name.ncg to NULL and set apply.normalization.ncg to TRUE.')
+    }
+
 
     ########### Creation of PRPS ###########
     se.obj= supervisedPRPS(se.obj=se.obj,
