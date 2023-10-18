@@ -342,7 +342,7 @@ supervisedFindNGC <- function(
     #### Ploting output
     cat.var=c(categorical.bio,categorical.uv)
     if (plot.output==TRUE && !is.null(cat.var)){
-        se.ncg.selected=se[ncg.selected,]
+        se.ncg.selected=se.obj[ncg.selected,]
         ### Compute PCA
         if (fast.pca) {
                 se.ncg.selected=RUVPRPS::computePCA(se.obj=se.ncg.selected,
