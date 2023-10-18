@@ -345,13 +345,6 @@ supervisedFindNGC <- function(
         se.ncg.selected=se[ncg.selected,]
         ### Compute PCA
         if (fast.pca) {
-            ## Check if metadata metric already exist for this assay and this metric
-            if(!'fastPCA' %in% names(se.obj@metadata[['metric']][[assay.name]])  ) {
-                printColoredMessage(message = paste0(
-                    '### Computing fastPCA.'
-                ),
-                color = 'magenta',
-                verbose = verbose)
                 se.ncg.selected=RUVPRPS::computePCA(se.obj=se.ncg.selected,
                                            assay.names = assay.name,
                                            apply.log = apply.log,
@@ -360,15 +353,8 @@ supervisedFindNGC <- function(
                                            nb.pcs = 10,
                                            assess.se.obj = FALSE,
                                            verbose = verbose)
-            }
 
         } else {
-            if (!'PCA' %in% names(se.obj@metadata[['metric']][[assay.name]])  ) {
-                printColoredMessage(message = paste0(
-                    '### Computing PCA.'
-                ),
-                color = 'magenta',
-                verbose = verbose)
                 se.ncg.selected=RUVPRPS::computePCA(se.obj=se.ncg.selected,
                                            assay.names = assay.name,
                                            apply.log = apply.log,
@@ -377,7 +363,6 @@ supervisedFindNGC <- function(
                                            nb.pcs = 10,
                                            assess.se.obj = FALSE,
                                            verbose = verbose)
-            }
         }
 
         ## PCA plotting
@@ -404,7 +389,7 @@ supervisedFindNGC <- function(
                     ),
                     color = 'magenta',
                     verbose = verbose)
-                    PCA=RUVPRPS::plotPCA(se.obj=se.ncg.selected[,nega],
+                    PCA=RUVPRPS::plotPCA(se.obj=se.ncg.selected,
                                          assay.names = assay.name,
                                          variable=x,
                                          color = color.group,
