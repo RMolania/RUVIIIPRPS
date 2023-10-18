@@ -173,7 +173,8 @@ computePCA <- function(se.obj,
                                          center = center,
                                          scale = scale
                                      ))
-
+                                 rownames(sv.dec$u) <- colnames(se.obj)
+                                 rownames(sv.dec$v) <- row.names(se.obj)
                                  if(return.pc.percentage){
                                      percentage  <-
                                          sv.dec$d ^ 2 / sum(sv.dec$d ^ 2) * 100
