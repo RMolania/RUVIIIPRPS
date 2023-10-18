@@ -155,7 +155,7 @@ ruvIII<-function(
     } else {
         if (is.null(fullalpha) ) {
             Y0 = fast.residop(replicate.data, M)
-            k.eigVec = min(m - ncol(M), sum(ctl))
+            #k.eigVec = min(m - ncol(M), sum(ctl))
             if (is.null(BSPARAM)){
                 BSPARAM=bsparam()
             }

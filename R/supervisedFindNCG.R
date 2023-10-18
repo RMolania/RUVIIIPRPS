@@ -342,7 +342,7 @@ supervisedFindNGC <- function(
     #### Ploting output
     cat.var=c(categorical.bio,categorical.uv)
     if (plot.output==TRUE && !is.null(cat.var)){
-
+        se.ncg.selected=se[ncg.selected,]
         ### Compute PCA
         if (fast.pca) {
             ## Check if metadata metric already exist for this assay and this metric
@@ -352,7 +352,7 @@ supervisedFindNGC <- function(
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                se.obj=RUVPRPS::computePCA(se.obj=se.obj,
+                se.ncg.selected=RUVPRPS::computePCA(se.obj=se.ncg.selected,
                                            assay.names = assay.name,
                                            apply.log = apply.log,
                                            pseudo.count = pseudo.count,
@@ -369,7 +369,7 @@ supervisedFindNGC <- function(
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                se.obj=RUVPRPS::computePCA(se.obj=se.obj,
+                se.ncg.selected=RUVPRPS::computePCA(se.obj=se.ncg.selected,
                                            assay.names = assay.name,
                                            apply.log = apply.log,
                                            pseudo.count = pseudo.count,
@@ -389,7 +389,7 @@ supervisedFindNGC <- function(
             cat.var,
                 function(x){
                     ## PCA Color
-                    group=as.factor(se.obj@colData[, x])
+                    group=as.factor(se.ncg.selected@colData[, x])
                     if (length(unique(group))<=11){
                         colfunc <- colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
                         color.group<- colfunc(length(unique(group)))
@@ -404,7 +404,7 @@ supervisedFindNGC <- function(
                     ),
                     color = 'magenta',
                     verbose = verbose)
-                    PCA=RUVPRPS::plotPCA(se.obj=se.obj,
+                    PCA=RUVPRPS::plotPCA(se.obj=se.ncg.selected[,nega],
                                          assay.names = assay.name,
                                          variable=x,
                                          color = color.group,
