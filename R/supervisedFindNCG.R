@@ -276,7 +276,7 @@ supervisedFindNGC <- function(
                 corr.genes.var <- cbind(round(x = corr.genes.var[, 1:4], digits = 2),
                           corr.genes.var[, 5, drop = FALSE])
                 row.names(corr.genes.var) <- row.names(data.to.use)
-                corr.genes.var$ranked.genes <- rank(abs(corr.genes.var[, 'correlation']))
+                corr.genes.var$ranked.genes <- rank(-abs(corr.genes.var[, 'correlation']))
                 corr.genes.var
             })
         names(corr.genes.bio) <- continuous.bio
@@ -312,7 +312,7 @@ supervisedFindNGC <- function(
                 anova.gene <- as.data.frame(
                     row_oneway_equalvar(x = data.to.use,
                                         g = se.obj@colData[, x]))
-                anova.gene$ranked.genes <- rank(anova.gene[, 'statistic'])
+                anova.gene$ranked.genes <- rank(-anova.gene[, 'statistic'])
                 anova.gene
             })
         names(anova.gene.bio) <- categorical.bio
