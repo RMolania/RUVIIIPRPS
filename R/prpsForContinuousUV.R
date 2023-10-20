@@ -121,7 +121,7 @@ prpsForContinuousUV <- function(se.obj,
         expre.data <- log2(assay(se.obj, assay.name) + pseudo.count)
     } else{
         printColoredMessage(
-            message = 'The assay data will be used wihtout any transformation.',
+            message = 'The assay data will be used without any transformation.',
             color = 'blue',
             verbose = verbose
         )
