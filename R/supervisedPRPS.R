@@ -20,6 +20,8 @@
 #' such as samples types from colData(se).
 #' @param uv.variables String or vector of strings of the label of continuous or categorical variable(s)
 #' such as samples types, batch or library size from colData(se) that will be used to define PRPS.
+#' @param batch.variable String of the label of a categorical variable that specifies major batch groups
+#' such as plates from colData(se).
 #' @param min.sample.prps TO BE DEFINED.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
@@ -33,12 +35,16 @@
 #' @param remove.na TO BE DEFINED.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment
 #' class object 'se.obj' or to output the result, by default it is set to TRUE.
+#' @param plot.output Logical. Indicates whether to plot the PRPS map define by the 'bio.variable'
+#' colored by the categorical variables, by default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed
 #' during the execution of the functions, by default it is set to TRUE.
 
 #' @return SummarizedExperiment or a List A SummarizedExperiment object or a list containing
 #' all the prps defined.
 #' @importFrom SummarizedExperiment assay colData
+#' @importFrom dplyr count
+#' @importFrom tidyr %>%
 #' @export
 
 supervisedPRPS <- function(
@@ -46,6 +52,7 @@ supervisedPRPS <- function(
         assay.name,
         bio.variable,
         uv.variables,
+        batch.variable=NULL,
         min.sample.prps = 3,
         apply.log = TRUE,
         pseudo.count = 1,
@@ -55,6 +62,7 @@ supervisedPRPS <- function(
         spearman.coef = c(0.7, 0.7),
         remove.na = 'both',
         save.se.obj = TRUE,
+        plot.output=TRUE,
         verbose = TRUE
         ) {
     printColoredMessage(message = '------------The supervisedPRPS function starts.',
@@ -152,6 +160,7 @@ supervisedPRPS <- function(
                         assay.name = assay.name,
                         uv.variable = x,
                         bio.variable = bio.variable,
+                        batch.variable = batch.variable,
                         min.sample.prps = min.sample.prps,
                         apply.log = apply.log,
                         assess.se.obj = FALSE,
@@ -170,6 +179,7 @@ supervisedPRPS <- function(
                     assay.name = assay.name,
                     uv.variable = x,
                     bio.variable = bio.variable,
+                    batch.variable = batch.variable,
                     min.sample.prps = min.sample.prps,
                     apply.log = apply.log,
                     assess.se.obj = FALSE,
@@ -181,7 +191,71 @@ supervisedPRPS <- function(
             }
         }
     }
-    #######
+
+    #### Ploting output
+    if (plot.output==TRUE && (length(categorical.uv) > 0)){
+        ## PRPS map plotting
+        printColoredMessage(message= '### Plotting PRPS map for each uv categorical variable.',
+                            color = 'magenta',
+                            verbose = verbose)
+        # Plot for each categorical variable
+        catvar<-biology<-use<-n<-NULL
+        plot.all<- lapply(
+            categorical.uv,
+            function(var){
+                info <- as.data.frame(SummarizedExperiment::colData(se.obj))
+                info$catvar <- as.factor(paste0(info[,var]))
+                info$biology <- as.factor(paste0(info[,bio.variable]))
+                df_count <- info %>%
+                    count(catvar, biology)
+                df_count$use <- 'unselected'
+                df_count$use[df_count$n >= min.sample.prps] <- 'Selected'
+                p=ggplot(df_count, aes(x = catvar, y = biology)) +
+                    geom_count(aes(color = use)) +
+                    geom_text(aes(
+                        label = n,
+                        hjust = 0.5,
+                        vjust = 0.5
+                    )) +
+                    xlab(paste0(var)) +
+                    ylab('Biological groups') +
+                    theme_bw()+
+                    theme(
+                        axis.line = element_line(colour = 'black', size = .85),
+                        axis.title.x = element_text(size = 18),
+                        axis.title.y = element_text(size = 0),
+                        axis.text.x = element_text(size = 10,angle = 45,hjust = 1),
+                        axis.text.y = element_text(size = 12, angle = 45, hjust = 1),
+                        legend.position = 'none')
+                p
+            })
+        names(plot.all)=categorical.uv
+
+        ### Add plots to SummarizedExperiment object
+        printColoredMessage(message= '### Saving the PRPS map plot to the metadata of the SummarizedExperiment object.',
+                            color = 'magenta',
+                            verbose = verbose)
+        ## Check if metadata plot already exist
+        if(length(se.obj@metadata)==0 ) {
+            se.obj@metadata[['plot']] <- list()
+        }
+        ## Check if metadata plot already exist
+        if(!'plot' %in% names(se.obj@metadata) ) {
+            se.obj@metadata[['plot']] <- list()
+        }
+        ## Check if metadata plot already exist for this metric
+        if(!'PRPS' %in% names(se.obj@metadata[['plot']]) ) {
+            se.obj@metadata[['plot']][['PRPS']] <- list()
+        }
+
+        for (v in categorical.uv){
+            ## Save the new plot
+            se.obj@metadata[['plot']][['PRPS']][[v]]<-plot.all[[v]]
+        }
+
+    }
+
+    ####### Save output
     if(save.se.obj){
         return(se.obj)
     }else{

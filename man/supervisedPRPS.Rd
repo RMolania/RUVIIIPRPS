@@ -10,6 +10,7 @@ supervisedPRPS(
   assay.name,
   bio.variable,
   uv.variables,
+  batch.variable = NULL,
   min.sample.prps = 3,
   apply.log = TRUE,
   pseudo.count = 1,
@@ -34,6 +35,9 @@ such as samples types from colData(se).}
 
 \item{uv.variables}{String or vector of strings of the label of continuous or categorical variable(s)
 such as samples types, batch or library size from colData(se) that will be used to define PRPS.}
+
+\item{batch.variable}{String of the label of a categorical variable that specifies major batch groups
+such as plates from colData(se).}
 
 \item{min.sample.prps}{TO BE DEFINED.}
 
