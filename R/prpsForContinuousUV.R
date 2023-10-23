@@ -7,6 +7,8 @@
 #' @param pseudo.count Numeric. A pseudo count to add to each gene before applying log.
 #' @param bio.variable String of the label of a categorical variable that specifies major biological groups
 #' such as samples types from colData(se).
+#' @param batch.variable String of the label of a categorical variable that specifies major batch groups
+#' such as plates from colData(se).
 #' @param uv.variable String of the label of a continuous or categorical variable.
 #' @param min.sample.prps Numeric. The minimum number of homogeneous biological groups to create pseudo-sample.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
@@ -31,6 +33,7 @@ prpsForContinuousUV <- function(se.obj,
                                 pseudo.count = 1,
                                 uv.variable,
                                 bio.variable,
+                                batch.variable=NULL,
                                 min.sample.prps = 3,
                                 assess.se.obj = TRUE,
                                 remove.na = 'both',
@@ -54,7 +57,10 @@ prpsForContinuousUV <- function(se.obj,
         stop(paste('The variable ', uv.variable, ' should be a numeric or integer variable.'))
     } else if(!class(se.obj[[bio.variable]]) %in% c('factor', 'character')){
         stop(paste('The variable ', bio.variable, ' should be a factor or character variable.'))
+    } else if(!is.null(batch.variable) && !class(se.obj[[batch.variable]]) %in% c('factor', 'character')){
+        stop(paste('The variable ', batch.variable, ' should be a factor or character variable.'))
     }
+
     # check the SummarizedExperiment ####
     if (assess.se.obj) {
         se.obj <- checkSeObj(
@@ -75,37 +81,37 @@ prpsForContinuousUV <- function(se.obj,
         color = 'magenta',
         verbose = verbose
     )
-    bio.cont.prps <- findRepeatingPatterns(vector = colData(se.obj)[[bio.variable]],
-                                           n = 2 * min.sample.prps)
-    if (length(bio.cont.prps) == 1) {
-        printColoredMessage(
-            message = paste0(
-                'There are a ',
-                length(bio.cont.prps) ,
-                ' homogeneous biological group that contains at least (2* min.sample.prps) ',
-                2 * min.sample.prps,
-                ' samples.'
-            ),
-            color = 'blue',
-            verbose = verbose
-        )
-    } else if (length(bio.cont.prps) > 0) {
-        printColoredMessage(
-            message = paste0(
-                'There are ',
-                length(bio.cont.prps) ,
-                ' homogeneous biological groups that each contains at least (2*min.sample.prps) ',
-                2 * min.sample.prps,
-                ' samples.'
-            ),
-            color = 'white',
-            verbose = verbose
-        )
-    } else{
-        stop(
-            'There is not enough samples to create PRPS for contenious sources of unwanted variation.'
-        )
-    }
+    # bio.cont.prps <- findRepeatingPatterns(vector = colData(se.obj)[[bio.variable]],
+    #                                        n = 2 * min.sample.prps)
+    # if (length(bio.cont.prps) == 1) {
+    #     printColoredMessage(
+    #         message = paste0(
+    #             'There are a ',
+    #             length(bio.cont.prps) ,
+    #             ' homogeneous biological group that contains at least (2* min.sample.prps) ',
+    #             2 * min.sample.prps,
+    #             ' samples.'
+    #         ),
+    #         color = 'blue',
+    #         verbose = verbose
+    #     )
+    # } else if (length(bio.cont.prps) > 0) {
+    #     printColoredMessage(
+    #         message = paste0(
+    #             'There are ',
+    #             length(bio.cont.prps) ,
+    #             ' homogeneous biological groups that each contains at least (2*min.sample.prps) ',
+    #             2 * min.sample.prps,
+    #             ' samples.'
+    #         ),
+    #         color = 'white',
+    #         verbose = verbose
+    #     )
+    # } else{
+    #     stop(
+    #         'There is not enough samples to create PRPS for contenious sources of unwanted variation.'
+    #     )
+    #}
     printColoredMessage(
         message = '### Data preparation before creating PRPS.',
         color = 'magenta',
@@ -128,21 +134,26 @@ prpsForContinuousUV <- function(se.obj,
         expre.data <- assay(se.obj, assay.name)
     }
     # creating PRPS ####
-    printColoredMessage(message = '### Creating a PRPS set with two PS for each individual homogeneous biological group.',
-                        color = 'magenta',
-                        verbose = verbose)
-    se.obj <- se.obj[, se.obj[[bio.variable]] %in% bio.cont.prps]
+    # printColoredMessage(message = '### Creating a PRPS set with two PS for each individual homogeneous biological group.',
+    #                     color = 'magenta',
+    #                     verbose = verbose)
+    #se.obj <- se.obj[, se.obj[[bio.variable]] %in% bio.cont.prps]
+    batch<-bio<-NULL
     se.obj$sOrder <- c(1:ncol(se.obj))
     sample.annot <- as.data.frame(colData(se.obj))
+    # ### Select only the samples which have a number of samples per bio and batch group >= min.sample.prps
     sample.annot.temp <-
-        sample.annot[, c('sOrder', uv.variable, bio.variable)]
-    top <- sample.annot.temp %>%
-        arrange(desc(!!sym(uv.variable))) %>%
-        group_by(!!sym(bio.variable)) %>%
+        sample.annot[, c('sOrder', uv.variable, bio.variable,batch.variable)]
+    colnames(sample.annot.temp)=c('sOrder',uv.variable,'bio','batch')
+    top= sample.annot.temp %>%
+        mutate(bio.batch=paste0(batch, "_", bio))%>%
+        arrange(desc(!!sym(uv.variable))) %>% #sorting by descending order
+        group_by(!!sym("bio.batch")) %>%
         slice(1:min.sample.prps)
     bot <- sample.annot.temp %>%
+        mutate(bio.batch=paste0(batch, "_", bio)) %>%
         arrange(!!sym(uv.variable)) %>%
-        group_by(!!sym(bio.variable)) %>%
+        group_by(!!sym("bio.batch")) %>%
         slice(1:min.sample.prps)
     prps.sets <- vector('list', length = ceiling(nrow(bot) / min.sample.prps))
     prps.sets <- lapply(
@@ -154,7 +165,7 @@ prpsForContinuousUV <- function(se.obj,
             colnames(ps.all) <- rep(paste0(
                                            uv.variable,
                                            '||',
-                                           unique(top[[bio.variable]][y])), 2)
+                                           unique(top[["bio.batch"]][y])), 2)
             ps.all
         })
     prps.sets <- do.call(cbind, prps.sets)
