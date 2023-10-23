@@ -19,6 +19,7 @@ supervisedPRPS(
   spearman.coef = c(0.7, 0.7),
   remove.na = "both",
   save.se.obj = TRUE,
+  plot.output = TRUE,
   verbose = TRUE
 )
 }
@@ -55,6 +56,9 @@ using Spearman correlation.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment
 class object 'se.obj' or to output the result, by default it is set to TRUE.}
+
+\item{plot.output}{Logical. Indicates whether to plot the PRPS map define by the 'bio.variable'
+colored by the categorical variables, by default it is set to TRUE.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed
 during the execution of the functions, by default it is set to TRUE.}

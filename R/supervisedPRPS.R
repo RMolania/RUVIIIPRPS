@@ -173,7 +173,7 @@ supervisedPRPS <- function(
                     min.sample.prps = min.sample.prps,
                     apply.log = apply.log,
                     assess.se.obj = FALSE,
-                    save.se.obj = save.se.obj,
+                    save.se.obj = TRUE,
                     pseudo.count = pseudo.count,
                     remove.na = remove.na,
                     verbose = verbose

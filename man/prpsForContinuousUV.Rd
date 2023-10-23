@@ -11,6 +11,7 @@ prpsForContinuousUV(
   pseudo.count = 1,
   uv.variable,
   bio.variable,
+  batch.variable = NULL,
   min.sample.prps = 3,
   assess.se.obj = TRUE,
   remove.na = "both",
@@ -31,6 +32,9 @@ prpsForContinuousUV(
 
 \item{bio.variable}{String of the label of a categorical variable that specifies major biological groups
 such as samples types from colData(se).}
+
+\item{batch.variable}{String of the label of a categorical variable that specifies major batch groups
+such as plates from colData(se).}
 
 \item{min.sample.prps}{Numeric. The minimum number of homogeneous biological groups to create pseudo-sample.}
 
