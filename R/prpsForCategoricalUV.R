@@ -88,7 +88,7 @@ prpsForCategoricalUV <- function(se.obj,
         expre.data <- assay(se.obj, assay.name)
     }
 
-    if(!is.null(bio.variable)){
+    #if(!is.null(bio.variable)){
         ### Table of biological variable and unwanted variable
         bio.batch.table <- table(
             colData(se.obj)[[bio.variable]],
@@ -124,32 +124,32 @@ prpsForCategoricalUV <- function(se.obj,
                         rowMeans(expre.data[, index.sample])
                     })
                 colnames(ps.matrix) <- rep(
-                    paste(uv.variable, row.names(bio.batch.table)[y], sep = '||'),
+                    paste(uv.variable, row.names(bio.batch.table)[y] ,sep = '||'),
                     ncol(ps.matrix))
                 ps.matrix
             })
         prps.sets <- do.call(cbind, prps.sets)
 
-    } else {
-        batches <- findRepeatingPatterns(
-            vector = colData(se.obj)[[uv.variable]],
-            n = min.sample.prps
-            )
-        if(length(batches) > 1){
-            prps.sets <- sapply(
-                batches,
-                function(x){
-                    index.sample <- colData(se.obj)[[uv.variable]] == x
-                    if(sum(index.sample) >= min.sample.prps){
-                        ps.matrix <- as.matrix(rowMeans(expre.data[, index.sample]))
-                        colnames(ps.matrix) <- paste('batch', x , sep = '||')
-                        return(ps.matrix)
-                    }
-                })
-        } else{
-            stop('There are not enough samples to create PRPS across the batches.')
-        }
-    }
+    # } else {
+    #     batches <- findRepeatingPatterns(
+    #         vector = colData(se.obj)[[uv.variable]],
+    #         n = min.sample.prps
+    #         )
+    #     if(length(batches) > 1){
+    #         prps.sets <- sapply(
+    #             batches,
+    #             function(x){
+    #                 index.sample <- colData(se.obj)[[uv.variable]] == x
+    #                 if(sum(index.sample) >= min.sample.prps){
+    #                     ps.matrix <- as.matrix(rowMeans(expre.data[, index.sample]))
+    #                     colnames(ps.matrix) <- paste('batch', x , sep = '||')
+    #                     return(ps.matrix)
+    #                 }
+    #             })
+    #     } else{
+    #         stop('There are not enough samples to create PRPS across the batches.')
+    #     }
+    # }
     printColoredMessage(
         message = paste0(
             length(unique(colnames(
@@ -169,7 +169,7 @@ prpsForCategoricalUV <- function(se.obj,
         bio.batch.table.to.plot[bio.batch.table.to.plot < min.sample.prps] <- 'No'
         print(kable(bio.batch.table.to.plot))
     }
-    # saving the output ####
+
     # saving the output ####
     if (save.se.obj) {
         ## Check if metadata PRPS already exists
