@@ -177,7 +177,7 @@ prpsForContinuousUV <- function(se.obj,
             length(unique(colnames(prps.sets))),
             ' PRPS sets with ',
             ncol(prps.sets),
-            ' the total number of pseudo-samples are created for the removal of  ',
+            ' the total number of pseudo-samples are created for the removal of ',
             uv.variable,
             ' effects.'
         ),
