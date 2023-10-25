@@ -22,7 +22,7 @@
 #' @return SummarizedExperiment A SummarizedExperiment object containing the PRPS data or just PRPS data.
 #'
 #' @importFrom SummarizedExperiment assay
-#' @importFrom dplyr group_by arrange slice desc
+#' @importFrom dplyr group_by arrange slice desc add_count filter
 #' @importFrom tidyr %>%
 #' @import ggplot2
 #' @export
@@ -138,21 +138,23 @@ prpsForContinuousUV <- function(se.obj,
     #                     color = 'magenta',
     #                     verbose = verbose)
     #se.obj <- se.obj[, se.obj[[bio.variable]] %in% bio.cont.prps]
-    batch<-bio<-NULL
+    bio.batch<-batch<-bio<-n<-NULL
     se.obj$sOrder <- c(1:ncol(se.obj))
     sample.annot <- as.data.frame(colData(se.obj))
     # ### Select only the samples which have a number of samples per bio and batch group >= min.sample.prps
     sample.annot.temp <-
         sample.annot[, c('sOrder', uv.variable, bio.variable,batch.variable)]
     colnames(sample.annot.temp)=c('sOrder',uv.variable,'bio','batch')
-    top= sample.annot.temp %>%
+    sample.annot.temp=sample.annot.temp %>%
         mutate(bio.batch=paste0(batch, "_", bio))%>%
+        add_count(bio.batch) %>%
+        filter(n >=2*min.sample.prps)
+    top= sample.annot.temp %>%
         arrange(desc(!!sym(uv.variable))) %>% #sorting by descending order
         group_by(!!sym("bio.batch")) %>%
         slice(1:min.sample.prps)
     bot <- sample.annot.temp %>%
-        mutate(bio.batch=paste0(batch, "_", bio)) %>%
-        arrange(!!sym(uv.variable)) %>%
+        arrange(!!sym(uv.variable)) %>% #sorting by descending order
         group_by(!!sym("bio.batch")) %>%
         slice(1:min.sample.prps)
     prps.sets <- vector('list', length = ceiling(nrow(bot) / min.sample.prps))
