@@ -82,7 +82,7 @@ prpsForCategoricalUV <- function(se.obj,
                             verbose = verbose)
         expre.data <- log2(assay(se.obj, assay.name) + pseudo.count)
     } else{
-        printColoredMessage(message = 'The assay data will be used for PRPS wihtout any transformation.',
+        printColoredMessage(message = 'The assay data will be used for PRPS without any transformation.',
                             color = 'blue',
                             verbose = verbose)
         expre.data <- assay(se.obj, assay.name)
