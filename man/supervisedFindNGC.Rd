@@ -23,7 +23,7 @@ supervisedFindNGC(
   rho = 0,
   anova.method = "aov",
   assess.se.obj = TRUE,
-  assess.variables = TRUE,
+  assess.variables = FALSE,
   remove.na = "both",
   plot.output = TRUE,
   fast.pca = TRUE,
