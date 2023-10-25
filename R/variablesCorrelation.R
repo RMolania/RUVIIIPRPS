@@ -77,6 +77,10 @@ variablesCorrelation <- function(
             verbose = verbose
         )
     }
+    printColoredMessage(message = '------------The variableCorrelation function starts.',
+                        color = 'white',
+                        verbose = verbose)
+
     ### Checking unwanted variation variables
     if (length(uv.variables) > 0) {
         ## classes of uv variables and variation
@@ -786,7 +790,7 @@ variablesCorrelation <- function(
         }
     }
     ### Checking biological variables
-    printColoredMessage(message = '------------The checkVariables function finished.',
+    printColoredMessage(message = '------------The variableCorrelation function finished.',
                           color = 'white',
                           verbose = verbose)
     #### output
