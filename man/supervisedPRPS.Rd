@@ -12,6 +12,7 @@ supervisedPRPS(
   uv.variables,
   batch.variable,
   min.sample.prps = 3,
+  min.sample.cont.prps = 10,
   apply.log = TRUE,
   pseudo.count = 1,
   assess.se.obj = TRUE,
@@ -40,6 +41,8 @@ such as samples types, batch or library size from colData(se) that will be used 
 such as plates from colData(se).}
 
 \item{min.sample.prps}{TO BE DEFINED.}
+
+\item{min.sample.cont.prps}{TO BE DEFINED.}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
 

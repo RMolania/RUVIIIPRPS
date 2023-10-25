@@ -12,7 +12,7 @@ prpsForContinuousUV(
   uv.variable,
   bio.variable,
   batch.variable = NULL,
-  min.sample.prps = 3,
+  min.sample.prps = 10,
   assess.se.obj = TRUE,
   remove.na = "both",
   save.se.obj = TRUE,
