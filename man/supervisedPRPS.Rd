@@ -15,7 +15,7 @@ supervisedPRPS(
   apply.log = TRUE,
   pseudo.count = 1,
   assess.se.obj = TRUE,
-  assess.cor.variables = TRUE,
+  assess.cor.variables = FALSE,
   cont.coef = c(0.7, 0.7),
   spearman.coef = c(0.7, 0.7),
   remove.na = "both",
