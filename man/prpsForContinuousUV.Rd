@@ -12,7 +12,8 @@ prpsForContinuousUV(
   uv.variable,
   bio.variable,
   batch.variable = NULL,
-  min.sample.prps = 10,
+  min.sample.prps = 3,
+  min.sample.per.batch = 10,
   assess.se.obj = TRUE,
   remove.na = "both",
   save.se.obj = TRUE,
@@ -37,6 +38,8 @@ such as samples types from colData(se).}
 such as plates from colData(se).}
 
 \item{min.sample.prps}{Numeric. The minimum number of homogeneous biological groups to create pseudo-sample.}
+
+\item{min.sample.per.batch}{Numeric. The minimum number of homogeneous biological and batch groups combined to create pseudo-sample.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.
 By default it is set to TRUE.}

@@ -11,6 +11,7 @@
 #' such as plates from colData(se).
 #' @param uv.variable String of the label of a continuous or categorical variable.
 #' @param min.sample.prps Numeric. The minimum number of homogeneous biological groups to create pseudo-sample.
+#' @param min.sample.per.batch Numeric. The minimum number of homogeneous biological and batch groups combined to create pseudo-sample.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' By default it is set to TRUE.
 #' @param remove.na TO BE DEFINED.
@@ -34,7 +35,8 @@ prpsForContinuousUV <- function(se.obj,
                                 uv.variable,
                                 bio.variable,
                                 batch.variable=NULL,
-                                min.sample.prps = 10,
+                                min.sample.prps = 3,
+                                min.sample.per.batch=10,
                                 assess.se.obj = TRUE,
                                 remove.na = 'both',
                                 save.se.obj = TRUE,
@@ -142,7 +144,7 @@ prpsForContinuousUV <- function(se.obj,
     ### CREATION OF PRPS
     # creating PS ####
     printColoredMessage(message = paste0("### Creating PS by defining homogeneous biological group that contains at least",
-                                         2 * min.sample.prps, " (2* min.sample.prps) of samples combining ",
+                                         min.sample.per.batch, " (min.sample.per.batch) of samples combining ",
                                          bio.variable," and ",batch.variable, "."),
                         color = 'magenta',
                         verbose = verbose)
@@ -156,7 +158,7 @@ prpsForContinuousUV <- function(se.obj,
     sample.annot.temp=sample.annot.temp %>%
         mutate(bio.batch=paste0(batch, "_", bio))%>%
         add_count(bio.batch) %>%
-        filter(n >=2*min.sample.prps)
+        filter(n >=min.sample.per.batch)
     top= sample.annot.temp %>%
         arrange(desc(!!sym(uv.variable))) %>% #sorting by descending order
         group_by(!!sym("bio.batch")) %>%

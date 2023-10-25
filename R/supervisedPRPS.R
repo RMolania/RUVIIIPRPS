@@ -23,7 +23,7 @@
 #' @param batch.variable String of the label of a categorical variable that specifies major batch groups
 #' such as plates from colData(se).
 #' @param min.sample.prps TO BE DEFINED.
-#' @param min.sample.cont.prps TO BE DEFINED.
+#' @param min.sample.per.batch TO BE DEFINED.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
@@ -55,7 +55,7 @@ supervisedPRPS <- function(
         uv.variables,
         batch.variable,
         min.sample.prps = 3,
-        min.sample.cont.prps = 10,
+        min.sample.per.batch = 10,
         apply.log = TRUE,
         pseudo.count = 1,
         assess.se.obj = TRUE,
@@ -169,7 +169,8 @@ supervisedPRPS <- function(
                         uv.variable = x,
                         bio.variable = bio.variable,
                         batch.variable = batch.variable,
-                        min.sample.prps = min.sample.cont.prps,
+                        min.sample.prps = min.sample.prps,
+                        min.sample.per.batch=min.sample.per.batch,
                         apply.log = apply.log,
                         assess.se.obj = FALSE,
                         save.se.obj = save.se.obj,
@@ -189,6 +190,7 @@ supervisedPRPS <- function(
                     bio.variable = bio.variable,
                     batch.variable = batch.variable,
                     min.sample.prps = min.sample.prps,
+                    min.sample.per.batch=min.sample.per.batch,
                     apply.log = apply.log,
                     assess.se.obj = FALSE,
                     save.se.obj = TRUE,

@@ -22,7 +22,7 @@
 #' @param assess.cor.variables.prps Logical. Indicates whether to assess the assess the association between variables
 #' using Spearman correlation to define PRPS.
 #' @param min.sample.prps TO BE DEFINED that will be used to define PRPS.
-#' @param min.sample.cont.prps TO BE DEFINED.
+#' @param min.sample.per.batch.prps TO BE DEFINED.
 #' @param norm.assay.name.ncg String for the selection of the name of the assay of the SummarizedExperiment class object to use
 #' to define NCG. If you don't provide any assay, we recommend to set apply.normalization to TRUE.
 #' @param apply.normalization.ncg Logical Indicates whether to apply a normalization method to define NCG if the 'norm.assay.name.ncg'
@@ -65,7 +65,7 @@ normalise <- function(
         uv.variables.prps,
         batch.variable.prps,
         min.sample.prps = 3,
-        min.sample.cont.prps = 10,
+        min.sample.per.batch.prps=12,
         assess.cor.variables.prps = TRUE,
         norm.assay.name.ncg,
         apply.normalization.ncg=FALSE,
@@ -112,6 +112,7 @@ normalise <- function(
                        uv.variables=uv.variables.prps,
                        batch.variable = batch.variable.prps,
                        min.sample.prps = min.sample.prps,
+                       min.sample.per.batch=min.sample.per.batch.prps,
                        assess.cor.variables = assess.cor.variables.prps,
                        save.se.obj = TRUE,
                        verbose = verbose)

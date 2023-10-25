@@ -14,7 +14,7 @@ normalise(
   uv.variables.prps,
   batch.variable.prps,
   min.sample.prps = 3,
-  min.sample.cont.prps = 10,
+  min.sample.per.batch.prps = 12,
   assess.cor.variables.prps = TRUE,
   norm.assay.name.ncg,
   apply.normalization.ncg = FALSE,
@@ -57,7 +57,7 @@ such as plates from colData(se).}
 
 \item{min.sample.prps}{TO BE DEFINED that will be used to define PRPS.}
 
-\item{min.sample.cont.prps}{TO BE DEFINED.}
+\item{min.sample.per.batch.prps}{TO BE DEFINED.}
 
 \item{assess.cor.variables.prps}{Logical. Indicates whether to assess the assess the association between variables
 using Spearman correlation to define PRPS.}
