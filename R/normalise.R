@@ -65,7 +65,7 @@ normalise <- function(
         uv.variables.prps,
         batch.variable.prps,
         min.sample.prps = 3,
-        min.sample.prps = 10,
+        min.sample.cont.prps = 10,
         assess.cor.variables.prps = TRUE,
         norm.assay.name.ncg,
         apply.normalization.ncg=FALSE,
