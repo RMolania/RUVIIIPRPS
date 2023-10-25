@@ -62,7 +62,7 @@ supervisedFindNGC <- function(
         rho = 0,
         anova.method = 'aov',
         assess.se.obj = TRUE,
-        assess.variables = TRUE,
+        assess.variables = FALSE,
         remove.na = 'both',
         plot.output=TRUE,
         fast.pca = TRUE,
@@ -83,29 +83,31 @@ supervisedFindNGC <- function(
             verbose = verbose
         )
     }
-    # check the variables ####
-    if (assess.variables) {
-        se.obj <- variablesCorrelation(
-            se.obj = se.obj,
-            bio.variables = bio.variables,
-            uv.variables = uv.variables,
-            cont.coef= c(0.95, 0.95),
-            spearman.coef = c(0.95, 0.95),
-            assess.se.obj = TRUE,
-            remove.na = 'none',
-            verbose = verbose
-        )
-        bio.variables <- se.obj$bio.variables
-        uv.variables <- se.obj$uv.variables
-        se.obj <- se.obj$se.obj
-    }
+    # # check the variables ####
+    # ######### THIS PARt NEED to BE tEStED ############
+    # if (assess.variables) {
+    #     se.obj <- variablesCorrelation(
+    #         se.obj = se.obj,
+    #         bio.variables = bio.variables,
+    #         uv.variables = uv.variables,
+    #         cont.coef= c(0.95, 0.95),
+    #         spearman.coef = c(0.95, 0.95),
+    #         assess.se.obj = TRUE,
+    #         remove.na = 'none',
+    #         verbose = verbose
+    #     )
+    #     bio.variables <- se.obj$bio.variables
+    #     uv.variables <- se.obj$uv.variables
+    #     se.obj <- se.obj$se.obj
+    # }
     # data transformation ####
     if(apply.log){
         expr.data <- log2(assay(se.obj, assay.name) + pseudo.count)
     }else{
         expr.data <- assay(se.obj, assay.name)
     }
-    ####
+
+    # ######### THIS PARt NEED to BE tEStED ############
     if(isTRUE(regress.out.uv.variables)){
         expr.data.reg.uv <- transpose(expr.data)
         uv.variables.all <- paste('se.obj', uv.variables, sep = '$')
@@ -440,12 +442,16 @@ supervisedFindNGC <- function(
             'The NCG are saved to metadata@NCG.',
             color = 'blue',
             verbose = verbose)
+        printColoredMessage(message = '------------The supervisedFindNGC function finished.',
+                            color = 'white',
+                            verbose = verbose)
         return(se.obj)
     } else{
+        printColoredMessage(message = '------------The supervisedFindNGC function finished.',
+                            color = 'white',
+                            verbose = verbose)
         return(ncg.selected)
     }
 
-    printColoredMessage(message = '------------The supervisedFindNGC function finished.',
-                        color = 'white',
-                        verbose = verbose)
+
 }
