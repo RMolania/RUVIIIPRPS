@@ -130,6 +130,7 @@ prpsForCategoricalUV <- function(se.obj,
             })
         prps.sets <- do.call(cbind, prps.sets)
 
+        # ######### THIS PARt NEED to BE tEStED ############
     # } else {
     #     batches <- findRepeatingPatterns(
     #         vector = colData(se.obj)[[uv.variable]],

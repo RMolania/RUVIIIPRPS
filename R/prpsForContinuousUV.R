@@ -81,6 +81,7 @@ prpsForContinuousUV <- function(se.obj,
         color = 'magenta',
         verbose = verbose
     )
+    # ######### THIS PARt NEED to BE tEStED ############
     # bio.cont.prps <- findRepeatingPatterns(vector = colData(se.obj)[[bio.variable]],
     #                                        n = 2 * min.sample.prps)
     # if (length(bio.cont.prps) == 1) {
@@ -133,11 +134,18 @@ prpsForContinuousUV <- function(se.obj,
         )
         expre.data <- assay(se.obj, assay.name)
     }
-    # creating PRPS ####
-    # printColoredMessage(message = '### Creating a PRPS set with two PS for each individual homogeneous biological group.',
-    #                     color = 'magenta',
-    #                     verbose = verbose)
+
+
+    # ######### THIS PARt NEED to BE tEStED ############
     #se.obj <- se.obj[, se.obj[[bio.variable]] %in% bio.cont.prps]
+
+    ### CREATION OF PRPS
+    # creating PS ####
+    printColoredMessage(message = paste0("### Creating PS by defining homogeneous biological group that contains
+                                            at least (2* min.sample.prps) of samples combining ",
+                                         bio.variable," and ",batch.variable, "."),
+                        color = 'magenta',
+                        verbose = verbose)
     bio.batch<-batch<-bio<-n<-NULL
     se.obj$sOrder <- c(1:ncol(se.obj))
     sample.annot <- as.data.frame(colData(se.obj))
@@ -157,6 +165,12 @@ prpsForContinuousUV <- function(se.obj,
         arrange(!!sym(uv.variable)) %>% #sorting by descending order
         group_by(!!sym("bio.batch")) %>%
         slice(1:min.sample.prps)
+
+    # creating PRPS ####
+    printColoredMessage(message = paste0('### Creating a PRPS set with two PS for each individual homogeneous biological
+                                         group previously defined.'),
+                                         color = 'magenta',
+                                         verbose = verbose)
     prps.sets <- vector('list', length = ceiling(nrow(bot) / min.sample.prps))
     prps.sets <- lapply(
         seq(1, nrow(bot), min.sample.prps),

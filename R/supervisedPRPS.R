@@ -57,7 +57,7 @@ supervisedPRPS <- function(
         apply.log = TRUE,
         pseudo.count = 1,
         assess.se.obj = TRUE,
-        assess.cor.variables = TRUE,
+        assess.cor.variables = FALSE,
         cont.coef = c(0.7, 0.7),
         spearman.coef = c(0.7, 0.7),
         remove.na = 'both',
@@ -69,29 +69,32 @@ supervisedPRPS <- function(
                           color = 'white',
                           verbose = verbose)
     ### Assess the input
-    if (length(assay.name) > 1) {
-        stop('The function can only take a single assay.name.')
+    if (length(assay.name) > 1 || is.null(assay.name)) {
+        stop('Please provide a single assay.name.')
     } else if (is.null(bio.variable)) {
-        stop('The function requires some known bioloical groups. if not possible, please use the un-supervised_prps function.')
+        stop('The function requires some known biological groups.')
     } else if (is.null(uv.variables)) {
         stop('The function requires known sources of unwanted variation groups.')
     }
     ### Assess the input
-    if(assess.cor.variables){
-        se.obj <- variablesCorrelation(
-            se.obj = se.obj,
-            assay.name = assay.name,
-            bio.variables = bio.variable,
-            uv.variables = uv.variables,
-            cont.coef = cont.coef,
-            spearman.coef = spearman.coef,
-            remove.na = remove.na,
-            verbose = verbose)
-        uv.variables <- se.obj$uv.variables
-        bio.variable <- se.obj$bio.variable
-        se.obj <- se.obj$se.obj
-    }
-    ### categorical and contentious variables
+    # ######### THIS PARt NEED to BE tEStED ############
+    # if(assess.cor.variables){
+    #     se.obj <- variablesCorrelation(
+    #         se.obj = se.obj,
+    #         assay.name = assay.name,
+    #         bio.variables = bio.variable,
+    #         uv.variables = uv.variables,
+    #         cont.coef = cont.coef,
+    #         spearman.coef = spearman.coef,
+    #         assess.se.obj = FALSE,
+    #         remove.na = remove.na,
+    #         verbose = verbose)
+    #     uv.variables <- se.obj$uv.variables
+    #     bio.variable <- se.obj$bio.variable
+    #     se.obj <- se.obj$se.obj
+    # }
+
+    ### Define categorical and continuous variables
     uv.class <- sapply(
         uv.variables,
         function(x) class(colData(se.obj)[[x]])
