@@ -49,7 +49,7 @@
 
 supervisedPRPS <- function(
         se.obj,
-        assay.name= 'All',
+        assay.name
         bio.variable,
         uv.variables,
         batch.variable=NULL,
