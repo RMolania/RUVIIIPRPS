@@ -260,8 +260,14 @@ supervisedPRPS <- function(
 
     ####### Save output
     if(save.se.obj){
+        printColoredMessage(message = '------------The supervised.prps function finished.',
+                            color = 'white',
+                            verbose = verbose)
         return(se.obj)
     }else{
+        printColoredMessage(message = '------------The supervised.prps function finished.',
+                            color = 'white',
+                            verbose = verbose)
         if(length(continuous.uv) > 0 & length(categorical.uv) > 0){
             return(list(
                 categorical.uv.prps = categorical.uv.prps,
@@ -280,9 +286,7 @@ supervisedPRPS <- function(
             ))
         }
     }
-    printColoredMessage(message = '------------The supervised.prps function finished.',
-                        color = 'white',
-                        verbose = verbose)
+
 }
 
 

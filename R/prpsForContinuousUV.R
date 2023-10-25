@@ -71,17 +71,17 @@ prpsForContinuousUV <- function(se.obj,
             verbose = verbose
         )
     }
-    # finding possible biological groups for PRPS ####
-    printColoredMessage(
-        message = paste0(
-            '### Finding biological groups with at least (2* min.sample.prps) ',
-            2 * min.sample.prps,
-            ' samples.'
-        ),
-        color = 'magenta',
-        verbose = verbose
-    )
     # ######### THIS PARt NEED to BE tEStED ############
+    # # finding possible biological groups for PRPS ####
+    # printColoredMessage(
+    #     message = paste0(
+    #         '### Finding biological groups with at least (2* min.sample.prps) ',
+    #         2 * min.sample.prps,
+    #         ' samples.'
+    #     ),
+    #     color = 'magenta',
+    #     verbose = verbose
+    # )
     # bio.cont.prps <- findRepeatingPatterns(vector = colData(se.obj)[[bio.variable]],
     #                                        n = 2 * min.sample.prps)
     # if (length(bio.cont.prps) == 1) {
@@ -141,8 +141,8 @@ prpsForContinuousUV <- function(se.obj,
 
     ### CREATION OF PRPS
     # creating PS ####
-    printColoredMessage(message = paste0("### Creating PS by defining homogeneous biological group that contains
-                                            at least (2* min.sample.prps) of samples combining ",
+    printColoredMessage(message = paste0("### Creating PS by defining homogeneous biological group that contains at least (2* min.sample.prps)",
+                                         2 * min.sample.prps," of samples combining ",
                                          bio.variable," and ",batch.variable, "."),
                         color = 'magenta',
                         verbose = verbose)
@@ -167,8 +167,7 @@ prpsForContinuousUV <- function(se.obj,
         slice(1:min.sample.prps)
 
     # creating PRPS ####
-    printColoredMessage(message = paste0('### Creating a PRPS set with two PS for each individual homogeneous biological
-                                         group previously defined.'),
+    printColoredMessage(message = paste0('### Creating a PRPS set with two PS for each individual homogeneous biological group previously defined.'),
                                          color = 'magenta',
                                          verbose = verbose)
     prps.sets <- vector('list', length = ceiling(nrow(bot) / min.sample.prps))
@@ -233,12 +232,17 @@ prpsForContinuousUV <- function(se.obj,
         '.'),
         color = 'blue',
         verbose = verbose)
-    return(se.obj)
 
-    }else{
-        return(prps.sets)
-    }
     printColoredMessage(message = '------------The prpsForContinuousUV function finished.',
                         color = 'white',
                         verbose = verbose)
+    return(se.obj)
+
+    }else{
+        printColoredMessage(message = '------------The prpsForContinuousUV function finished.',
+                            color = 'white',
+                            verbose = verbose)
+        return(prps.sets)
+    }
+
 }

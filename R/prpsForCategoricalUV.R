@@ -206,13 +206,17 @@ prpsForCategoricalUV <- function(se.obj,
             '.'),
             color = 'blue',
             verbose = verbose)
+        printColoredMessage(message = '------------The prpsForCategoricalUV function finished.',
+                            color = 'white',
+                            verbose = verbose)
         return(se.obj)
     } else{
+        printColoredMessage(message = '------------The prpsForCategoricalUV function finished.',
+                            color = 'white',
+                            verbose = verbose)
         return(prps.sets)
     }
-    printColoredMessage(message = '------------The prpsForCategoricalUV function finished.',
-                        color = 'white',
-                        verbose = verbose)
+
 }
 
 
