@@ -220,7 +220,7 @@ computePCA <- function(se.obj,
                         printColoredMessage(message= paste0(
                             'The PCA results are saved to metadata@metric$',
                             x,
-                            '$fastPCA$.'),
+                            '$fastPCA.'),
                             color = 'blue',
                             verbose = verbose)
                     #}
@@ -232,7 +232,7 @@ computePCA <- function(se.obj,
                         printColoredMessage(message= paste0(
                             'The PCA results are saved to metadata@metric$',
                             x,
-                            '$PCA$.'),
+                            '$PCA.'),
                             color = 'blue',
                             verbose = verbose)
                     #}
