@@ -10,7 +10,7 @@ supervisedPRPS(
   assay.name,
   bio.variable,
   uv.variables,
-  batch.variable = NULL,
+  batch.variable,
   min.sample.prps = 3,
   apply.log = TRUE,
   pseudo.count = 1,

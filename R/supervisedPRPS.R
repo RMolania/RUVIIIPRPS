@@ -52,7 +52,7 @@ supervisedPRPS <- function(
         assay.name,
         bio.variable,
         uv.variables,
-        batch.variable=NULL,
+        batch.variable,
         min.sample.prps = 3,
         apply.log = TRUE,
         pseudo.count = 1,
@@ -75,7 +75,10 @@ supervisedPRPS <- function(
         stop('The function requires some known biological groups.')
     } else if (is.null(uv.variables)) {
         stop('The function requires known sources of unwanted variation groups.')
+    } else if (is.null(batch.variable)) {
+        stop('The function requires a batch variable.')
     }
+
     ### Assess the input
     # ######### THIS PARt NEED to BE tEStED ############
     # if(assess.cor.variables){

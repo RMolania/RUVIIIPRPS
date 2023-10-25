@@ -17,6 +17,8 @@
 #' such as samples types from colData(se) that will be used to define PRPS.
 #' @param uv.variables.prps String or vector of strings of the label of continuous or categorical variable(s)
 #' such as samples types, batch or library size from colData(se) that will be used to define PRPS.
+#' @param batch.variable.prps String of the label of a categorical variable that specifies major batch groups
+#' such as plates from colData(se).
 #' @param assess.cor.variables.prps Logical. Indicates whether to assess the assess the association between variables
 #' using Spearman correlation to define PRPS.
 #' @param min.sample.prps TO BE DEFINED that will be used to define PRPS.
@@ -60,6 +62,7 @@ normalise <- function(
         pseudo.count = 1,
         bio.variable.prps,
         uv.variables.prps,
+        batch.variable.prps,
         min.sample.prps = 3,
         assess.cor.variables.prps = TRUE,
         norm.assay.name.ncg,
@@ -105,6 +108,7 @@ normalise <- function(
                        assay.name=assay.name,
                        bio.variable= bio.variable.prps,
                        uv.variables=uv.variables.prps,
+                       batch.variable = batch.variable.prps,
                        min.sample.prps = min.sample.prps,
                        assess.cor.variables = assess.cor.variables.prps,
                        save.se.obj = TRUE,

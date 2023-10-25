@@ -12,6 +12,7 @@ normalise(
   pseudo.count = 1,
   bio.variable.prps,
   uv.variables.prps,
+  batch.variable.prps,
   min.sample.prps = 3,
   assess.cor.variables.prps = TRUE,
   norm.assay.name.ncg,
@@ -49,6 +50,9 @@ such as samples types from colData(se) that will be used to define PRPS.}
 
 \item{uv.variables.prps}{String or vector of strings of the label of continuous or categorical variable(s)
 such as samples types, batch or library size from colData(se) that will be used to define PRPS.}
+
+\item{batch.variable.prps}{String of the label of a categorical variable that specifies major batch groups
+such as plates from colData(se).}
 
 \item{min.sample.prps}{TO BE DEFINED that will be used to define PRPS.}
 
