@@ -396,7 +396,7 @@ supervisedFindNGC <- function(
                                          variable=x,
                                          color = color.group,
                                          fast.pca=fast.pca,
-                                         assess.se.obj = assess.se.obj,
+                                         assess.se.obj = FALSE,
                                          verbose = verbose)
                     return(PCA)
         })
