@@ -132,7 +132,7 @@ PCVariableRegression<-function(
                     1:nb.pcs,
                     function(y) {
                         lm.ls <- summary(lm(
-                            cont_var ~ pca_x[, 1:y])
+                            var ~ pca_x[, 1:y])
                         )$r.squared
                     })
                 return(rSquared)
