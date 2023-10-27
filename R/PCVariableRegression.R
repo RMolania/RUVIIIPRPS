@@ -170,9 +170,9 @@ PCVariableRegression<-function(
                 se.obj@metadata[['metric']][[x]][['pcs.lm']] <- list()
             }
             ## Check if metadata metric already exist for this assay, this metric and this variable
-            if(!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.lm']])  ) {
+            #if(!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.lm']])  ) {
                 se.obj@metadata[['metric']][[x]][['pcs.lm']][[variable]] <- lreg.pcs[[x]]
-            }
+            #}
         }
         printColoredMessage(message= paste0(
             'The regression results are saved to metadata@metric$',
