@@ -138,8 +138,9 @@ plotRLE<-function(
             ## Check if metadata plot already exist for this metric
             if(!x %in% names(se.obj@metadata[['plot']]) ) {
                 ## Save the new plot
-                se.obj@metadata[['plot']][['rle']][[x]] <- plot.rle[[x]]
+                se.obj@metadata[['plot']][['rle']][[x]] <- list()
             }
+            se.obj@metadata[['plot']][['rle']][[x]] <- plot.rle[[x]]
         }
         printColoredMessage(message= paste0(
             'The RLE plots are saved to metadata@$plot$rle'),

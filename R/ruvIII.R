@@ -184,8 +184,9 @@ ruvIII<-function(
         ### Saving the norm data into a new assay
         new.assay.name <- paste0('RUV_K', k, '_on_', assay.name)
         if(!new.assay.name %in% (names(se.obj@assays@data)) ){
-            se.obj@assays@data[[new.assay.name]] <- t(newY)
+            se.obj@assays@data[[new.assay.name]] <- list()
         }
+        se.obj@assays@data[[new.assay.name]] <- t(newY)
         printColoredMessage(message= paste0(
             'The normalized data ', new.assay.name, ' is saved into a new assay of the SummarizedExperiment object.'),
             color = 'blue',
@@ -208,12 +209,14 @@ ruvIII<-function(
             }
             ## Check if metadata RUVIII already exist for this assay for W
             if(!'W'%in% names(se.obj@metadata[['RUVIII']][[new.assay.name]]) ) {
-                se.obj@metadata[['RUVIII']][[new.assay.name]][['W']]  <- W
+                se.obj@metadata[['RUVIII']][[new.assay.name]][['W']]  <- list()
             }
             ## Check if metadata RUVIII already exist for this assay for fullalpha
             if(!'fullalpha'%in% names(se.obj@metadata[['RUVIII']][[new.assay.name]]) ) {
-                se.obj@metadata[['RUVIII']][[new.assay.name]] [['fullalpha']] <- fullalpha
+                se.obj@metadata[['RUVIII']][[new.assay.name]] [['fullalpha']] <- list()
             }
+            se.obj@metadata[['RUVIII']][[new.assay.name]][['W']]  <- W
+            se.obj@metadata[['RUVIII']][[new.assay.name]] [['fullalpha']] <- fullalpha
         }
         return(se.obj)
     } else if(!return.info & !save.se.obj){

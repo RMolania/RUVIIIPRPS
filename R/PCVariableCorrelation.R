@@ -175,9 +175,9 @@ PCVariableCorrelation<-function(
                 se.obj@metadata[['metric']][[x]][['pcs.vect.corr']] <- list()
             }
             ## Check if metadata metric already exist for this assay, this metric and this variable
-            if(!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.vect.corr']])  ) {
+            #if(!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.vect.corr']])  ) {
                 se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]] <- cca.all[[x]]
-            }
+            #}
         }
         printColoredMessage(message= paste0(
             'The correlation results are saved to metadata@metric$',

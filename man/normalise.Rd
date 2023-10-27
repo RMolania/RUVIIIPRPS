@@ -14,7 +14,7 @@ normalise(
   uv.variables.prps,
   batch.variable.prps,
   min.sample.prps = 3,
-  min.sample.per.batch.prps = 12,
+  min.sample.per.batch.prps = 10,
   assess.cor.variables.prps = TRUE,
   norm.assay.name.ncg,
   apply.normalization.ncg = FALSE,
