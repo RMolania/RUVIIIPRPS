@@ -8,7 +8,6 @@
 #' by default it is set to 1.
 #' @param replicate.data TO BE DEFINED
 #' @param ctl Logical vector of length n of the negative control genes.
-#' @param BSPARAM TO BE DEFINED.
 #' @param k The number of unwanted factors to use.
 #' @param eta A matrix with n columns, gene-wise (as opposed to sample-wise) covariates. By default is set to NULL.
 #' @param include.intercept Logical. Add an intercept term to eta if it does not include one already. By default is set to TRUE.
@@ -44,7 +43,6 @@ ruvIII<-function(
         pseudo.count = 1,
         replicate.data,
         ctl,
-        BSPARAM=NULL,
         k = NULL,
         eta = NULL,
         include.intercept = TRUE,
@@ -85,14 +83,6 @@ ruvIII<-function(
         ctl2[ctl] <- TRUE
         return(ctl2)
     }
-    fast.residop <- function(A, B){
-        tBB = t(B) %*% B
-        tBB_inv = solve(tBB)
-        BtBB_inv = B %*% tBB_inv
-        tBA = t(B) %*% A
-        BtBB_inv_tBA = BtBB_inv %*% tBA
-        return(A - BtBB_inv_tBA)
-    }
 
     ## Get the expression data
     # data transformation ####
@@ -106,16 +96,10 @@ ruvIII<-function(
     # data preparation ####
     if (is.data.frame(Y) ) {
         Y <- data.matrix(Y)
-    } else if (is.data.frame(replicate.data)){
-        replicate.data = data.matrix(replicate.data)
     }
-    m <- nrow(replicate.data)
-    #m <- nrow(Y)
-    m1=nrow(Y)
-    #m1 = m
+    m <- nrow(Y)
     n <- ncol(Y)
-    M=row.names(replicate.data)
-    M <- replicate.matrix(M)
+    M <- replicate.matrix(row.names(replicate.data))
     ctl <- tological(ctl, n)
 
     if (inputcheck) {
@@ -131,18 +115,17 @@ ruvIII<-function(
     }
     # run RUV1 ####
     Y <- RUV1(Y, eta, ctl, include.intercept = include.intercept)
-    replicate.data = RUV1(replicate.data, eta, ctl, include.intercept = include.intercept)
     # data standardization ####
     mu <- colMeans(Y)
-    mu.mat <- rep(1, m1) %*% t(mu)
+    mu.mat <- rep(1, m) %*% t(mu)
     Y.stand <- Y - mu.mat
-    #BSPARAM=bsparam()
 
     # RUVIII normalization ####
     printColoredMessage(
         message = '### Performing the RUVIII normalization',
         color = 'magenta',
         verbose = verbose)
+
     if (ncol(M) >= m){
         newY <- Y
     } else if (is.null(k)) {
@@ -154,21 +137,8 @@ ruvIII<-function(
         fullalpha <- NULL
     } else {
         if (is.null(fullalpha) ) {
-            Y0 = fast.residop(replicate.data, M)
-            #k.eigVec = min(m - ncol(M), sum(ctl))
-            if (is.null(BSPARAM)){
-                BSPARAM=bsparam()
-            }
-            eigVec = runSVD(
-                x = Y0,
-                k = k,
-                BSPARAM = BSPARAM,
-                center = FALSE,
-                scale = FALSE
-            )$u
-            # eigVec = eigen(Y0 %*% t(Y0), symmetric = TRUE)$vectors
-            # fullalpha = t(eigVec[, seq_len(k.eigVec), drop = FALSE]) %*% replicate.data
-            fullalpha = t(eigVec) %*% replicate.data
+            Y0 = residop(Y, M)
+            fullalpha <- t(svd(Y0 %*% t(Y0))$u[, 1:min(m - ncol(M), sum(ctl)), drop = FALSE]) %*% Y
         }
         alpha <- fullalpha[1:min(k, nrow(fullalpha)), , drop = FALSE]
         ac <- alpha[, ctl, drop = FALSE]

@@ -63,46 +63,6 @@ identifyVariation = function(
                         verbose = verbose)
 
 
-    ### Assess the se.obj
-    if(assess.se.obj){
-        se.obj <- checkSeObj(se.obj = se.obj,
-                             assay.names = assay.names,
-                             variables = NULL,
-                             remove.na = 'measurements',
-                             verbose = verbose)
-    }
-
-
-    ### check the inputs of PCA
-    if (fast.pca & is.null(nb.pcs)) {
-        stop('To perform fast PCA, the number of PCs (nb.pcs) must specified.')
-    } else if (fast.pca & nb.pcs == 0) {
-        stop('To perform fast PCA, the number of PCs (nb.pcs) must specified.')
-    }
-
-
-    ### Categorical, continuous, biological variables
-    categorical.uv <-NULL
-    continuous.uv <-NULL
-
-    if (!is.null(variables)){
-        uv.class <- sapply(
-            variables,
-            function(x) class(colData(se.obj)[[x]])
-        )
-        categorical.uv <- names(uv.class[which(uv.class %in% c('character', 'factor'))])
-        continuous.uv <- variables[!variables %in% categorical.uv]
-    }
-
-
-    ## Assays
-    if(length(assay.names) == 1 && assay.names=='All'){
-        assay.names=as.factor(names(assays(se.obj)))
-    }else {
-        assay.names=as.factor(unlist(assay.names))
-    }
-
-
     se.obj=RUVIIIPRPS::normAssessment(se.obj=se.obj,
                                    assay.names = assay.names,
                                    apply.log = apply.log,
