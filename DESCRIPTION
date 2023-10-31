@@ -40,8 +40,8 @@ Imports:
     EDASeq,
     DESeq2,
     graphics
-URL: https://github.com/mtrussart/RUVPRPSIII
-BugReports: https://github.com/mtrussart/RUVPRPSIII/issues
+URL: https://github.com/mtrussart/RUVIIIPRPS
+BugReports: https://github.com/mtrussart/RUVIIIPRPS/issues
 Suggests: 
     rmarkdown,
     testthat (>= 3.0.0)
