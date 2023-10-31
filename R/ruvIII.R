@@ -155,7 +155,7 @@ ruvIII<-function(
         if(!new.assay.name %in% (names(se.obj@assays@data)) ){
             se.obj@assays@data[[new.assay.name]] <- list()
         }
-        se.obj@assays@data[[new.assay.name]] <- t(newY)
+        se.obj@assays@data[[new.assay.name]] <- t(newY[1:ncol(expr.data), ])
         printColoredMessage(message= paste0(
             'The normalized data ', new.assay.name, ' is saved into a new assay of the SummarizedExperiment object.'),
             color = 'blue',
