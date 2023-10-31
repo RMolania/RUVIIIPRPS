@@ -31,8 +31,7 @@
 #' @importFrom BiocSingular bsparam
 #' @importFrom Matrix solve
 #' @importFrom SummarizedExperiment assay SummarizedExperiment
-#' @importFrom ruv replicate.matrix RUV1
-#' @importFrom BiocSingular runSVD bsparam
+#' @importFrom ruv replicate.matrix RUV1 residop
 #' @export
 
 
@@ -91,7 +90,7 @@ ruvIII<-function(
     }else{
         expr.data <- assay(se.obj, assay.name)
     }
-    Y=t(expr.data)
+    Y=rbind(t(expr.data),replicate.data)
 
     # data preparation ####
     if (is.data.frame(Y) ) {
@@ -99,7 +98,7 @@ ruvIII<-function(
     }
     m <- nrow(Y)
     n <- ncol(Y)
-    M <- replicate.matrix(row.names(replicate.data))
+    M <- replicate.matrix(row.names(Y))
     ctl <- tological(ctl, n)
 
     if (inputcheck) {
