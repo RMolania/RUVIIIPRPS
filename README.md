@@ -13,7 +13,7 @@ Molania R, Foroutan M, Gagnon-Bartsch JA, Gandolfo LC, Jain A, Sinha A, Olshansk
 
 ##  RUVIII-PRPS Installation
 
-After installing the dependent libraries, RUVPRPS can be installed by running the following lines
+After installing the dependent libraries, RUVIII-PRPS can be installed by running the following lines
 
 ``` r
 library(devtools)
@@ -22,7 +22,7 @@ install_github('mtrussart/RUVIIIPRPS')
 
 ## Using RUVIII-PRPS to remove unwanted variation from large-scale RNA sequencing data
 
-RUVPRPS is a novel strategy using pseudo-replicates of pseudo-samples (PRPS) to normalize RNA-seq data in situations when technical replicate are not available or well-designed. 
+RUVIII-PRPS is a novel strategy using pseudo-replicates of pseudo-samples (PRPS) to normalize RNA-seq data in situations when technical replicate are not available or well-designed. 
 We provided a vignette Introduction_to_RUVIII-PRPS.Rmd that explains step by step how to load and normalise datasets and also how to visualise the diagnostic plots before and after normalisation.
 
 Please follow the instructions and refer to the following vignette to visualise and normalise your dataset:

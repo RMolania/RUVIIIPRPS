@@ -110,7 +110,7 @@ normAssessment = function(
     ),
     color = 'magenta',
     verbose = verbose)
-    se.obj=RUVPRPS::computePCA(se.obj=se.obj,
+    se.obj=RUVIIIPRPS::computePCA(se.obj=se.obj,
                                assay.names = assay.names,
                                apply.log = apply.log,
                                pseudo.count = pseudo.count,
@@ -142,7 +142,7 @@ normAssessment = function(
                 ),
                 color = 'magenta',
                 verbose = verbose)
-                PCA=RUVPRPS::plotPCA(se.obj=se.obj,
+                PCA=RUVIIIPRPS::plotPCA(se.obj=se.obj,
                                      assay.names = assay.names,
                                      variable=x,
                                      color = color.group,
@@ -163,7 +163,7 @@ normAssessment = function(
             ),
             color = 'magenta',
             verbose = verbose)
-            se.obj=RUVPRPS::computeSilhouette(se.obj=se.obj,
+            se.obj=RUVIIIPRPS::computeSilhouette(se.obj=se.obj,
                                               assay.names = assay.names,
                                               variable=x,
                                               fast.pca=fast.pca,
@@ -178,7 +178,7 @@ normAssessment = function(
             ),
             color = 'magenta',
             verbose = verbose)
-            se.obj=RUVPRPS::computeARI(se.obj=se.obj,
+            se.obj=RUVIIIPRPS::computeARI(se.obj=se.obj,
                                        assay.names = assay.names,
                                        variable=x,
                                        fast.pca=fast.pca,
@@ -193,7 +193,7 @@ normAssessment = function(
             ),
             color = 'magenta',
             verbose = verbose)
-            se.obj=RUVPRPS::genesVariableAnova(se.obj=se.obj,
+            se.obj=RUVIIIPRPS::genesVariableAnova(se.obj=se.obj,
                                                assay.names = assay.names,
                                                variable=x,
                                                apply.log=apply.log,
@@ -209,7 +209,7 @@ normAssessment = function(
             ),
             color = 'magenta',
             verbose = verbose)
-            se.obj=RUVPRPS::PCVariableCorrelation(se.obj=se.obj,
+            se.obj=RUVIIIPRPS::PCVariableCorrelation(se.obj=se.obj,
                                                   assay.names = assay.names,
                                                   variable=x,
                                                   fast.pca=fast.pca,
@@ -227,7 +227,7 @@ normAssessment = function(
                 verbose = verbose)
             for (v in 1:(nb.cat.var-1)){
                 for (v2 in ((v+1):nb.cat.var)){
-                    p=RUVPRPS::plotCombinedSilhouette(se.obj=se.obj,
+                    p=RUVIIIPRPS::plotCombinedSilhouette(se.obj=se.obj,
                                                       assay.names = assay.names,
                                                       variable1=categorical.uv[v],
                                                       variable2=categorical.uv[v2],
@@ -252,7 +252,7 @@ normAssessment = function(
             ),
             color = 'magenta',
             verbose = verbose)
-            se.obj=RUVPRPS::PCVariableRegression(se.obj,
+            se.obj=RUVIIIPRPS::PCVariableRegression(se.obj,
                                                  assay.names = assay.names,
                                                  variable=x,
                                                  fast.pca=fast.pca,
@@ -268,7 +268,7 @@ normAssessment = function(
             ),
             color = 'magenta',
             verbose = verbose)
-            se.obj=RUVPRPS::genesVariableCorrelation(se.obj,
+            se.obj=RUVIIIPRPS::genesVariableCorrelation(se.obj,
                                                      assay.names = assay.names,
                                                      variable=x,
                                                      apply.log=apply.log,
@@ -279,7 +279,7 @@ normAssessment = function(
     }
 
     ########## RLE plot ############
-    se.obj=RUVPRPS::plotRLE(se.obj=se.obj,
+    se.obj=RUVIIIPRPS::plotRLE(se.obj=se.obj,
                             assay.names = assay.names,
                             apply.log=apply.log)
 

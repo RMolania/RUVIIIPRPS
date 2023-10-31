@@ -103,7 +103,7 @@ identifyVariation = function(
     }
 
 
-    se.obj=RUVPRPS::normAssessment(se.obj=se.obj,
+    se.obj=RUVIIIPRPS::normAssessment(se.obj=se.obj,
                                    assay.names = assay.names,
                                    apply.log = apply.log,
                                    variables=variables,

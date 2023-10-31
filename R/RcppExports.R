@@ -2,26 +2,26 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 fastResidop <- function(A, B) {
-    .Call('_RUVPRPS_fastResidop', PACKAGE = 'RUVPRPS', A, B)
+    .Call('_RUVIIIPRPS_fastResidop', PACKAGE = 'RUVIIIPRPS', A, B)
 }
 
 fastResidop2 <- function(A, B) {
-    .Call('_RUVPRPS_fastResidop2', PACKAGE = 'RUVPRPS', A, B)
+    .Call('_RUVIIIPRPS_fastResidop2', PACKAGE = 'RUVIIIPRPS', A, B)
 }
 
 matrixMult <- function(A, B) {
-    .Call('_RUVPRPS_matrixMult', PACKAGE = 'RUVPRPS', A, B)
+    .Call('_RUVIIIPRPS_matrixMult', PACKAGE = 'RUVIIIPRPS', A, B)
 }
 
 matSubtraction <- function(A, B) {
-    .Call('_RUVPRPS_matSubtraction', PACKAGE = 'RUVPRPS', A, B)
+    .Call('_RUVIIIPRPS_matSubtraction', PACKAGE = 'RUVIIIPRPS', A, B)
 }
 
 matTranspose <- function(A) {
-    .Call('_RUVPRPS_matTranspose', PACKAGE = 'RUVPRPS', A)
+    .Call('_RUVIIIPRPS_matTranspose', PACKAGE = 'RUVIIIPRPS', A)
 }
 
 matInverse <- function(A) {
-    .Call('_RUVPRPS_matInverse', PACKAGE = 'RUVPRPS', A)
+    .Call('_RUVIIIPRPS_matInverse', PACKAGE = 'RUVIIIPRPS', A)
 }
 

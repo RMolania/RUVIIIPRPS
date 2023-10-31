@@ -82,7 +82,7 @@ applyOtherNormalizations <- function(
                 method,
                 ' method from the edgeR R package, and then performing log2 transformation.'), color = 'blue', verbose = verbose)
         }
-        norm.data <- edgeR::normLibSizes(object = assay(x = se.obj, i = assay.name))
+        norm.data <- normLibSizes(object = assay(x = se.obj, i = assay.name))
         norm.data <- log2(norm.data + pseudo.count)
     } else if(method == "TMM" & apply.log == FALSE){
         if(verbose){
@@ -91,7 +91,7 @@ applyOtherNormalizations <- function(
                 color = 'blue',
                 verbose = verbose)
         }
-        norm.data <- edgeR::normLibSizes(object = assay(x = se.obj, i = assay.name))
+        norm.data <- normLibSizes(object = assay(x = se.obj, i = assay.name))
         norm.data
     } else if (method %in% c("median", "upper", "full") & apply.log == TRUE){
         if(verbose){
@@ -163,9 +163,5 @@ applyOtherNormalizations <- function(
         color = 'blue',
         verbose = verbose)
     return(se.obj)
-    printColoredMessage(
-        message = '------------The otherNormalizations function finished.',
-        color = 'white',
-        verbose = verbose
-    )
+
 }

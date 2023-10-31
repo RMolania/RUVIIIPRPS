@@ -347,7 +347,7 @@ supervisedFindNGC <- function(
         se.ncg.selected=se.obj[ncg.selected,]
         ### Compute PCA
         if (fast.pca) {
-                se.ncg.selected=RUVPRPS::computePCA(se.obj=se.ncg.selected,
+                se.ncg.selected=RUVIIIPRPS::computePCA(se.obj=se.ncg.selected,
                                            assay.names = assay.name,
                                            apply.log = apply.log,
                                            pseudo.count = pseudo.count,
@@ -357,7 +357,7 @@ supervisedFindNGC <- function(
                                            verbose = verbose)
 
         } else {
-                se.ncg.selected=RUVPRPS::computePCA(se.obj=se.ncg.selected,
+                se.ncg.selected=RUVIIIPRPS::computePCA(se.obj=se.ncg.selected,
                                            assay.names = assay.name,
                                            apply.log = apply.log,
                                            pseudo.count = pseudo.count,
@@ -391,7 +391,7 @@ supervisedFindNGC <- function(
                     ),
                     color = 'magenta',
                     verbose = verbose)
-                    PCA=RUVPRPS::plotPCA(se.obj=se.ncg.selected,
+                    PCA=RUVIIIPRPS::plotPCA(se.obj=se.ncg.selected,
                                          assay.names = assay.name,
                                          variable=x,
                                          color = color.group,
