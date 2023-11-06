@@ -123,9 +123,7 @@ prpsForCategoricalUV <- function(se.obj,
                             colData(se.obj)[[uv.variable]] == z
                         rowMeans(expre.data[, index.sample])
                     })
-                colnames(ps.matrix) <- rep(
-                    paste(uv.variable, row.names(bio.batch.table)[y] ,sep = '||'),
-                    ncol(ps.matrix))
+                colnames(ps.matrix) <- paste(uv.variable, row.names(bio.batch.table)[y] ,colnames(ps.matrix),sep = '||')
                 ps.matrix
             })
         prps.sets <- do.call(cbind, prps.sets)
