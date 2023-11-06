@@ -177,12 +177,11 @@ prpsForContinuousUV <- function(se.obj,
         seq(1, nrow(bot), min.sample.prps),
         function(y) {
             index <- y:((min.sample.prps + y) - 1)
-            ps.all <- cbind(rowMeans(expre.data[, top[['sOrder']][index]]),
-                      rowMeans(expre.data[, bot[['sOrder']][index]]))
+            ps.all <- cbind(rowMeans(expre.data[, bot[['sOrder']][index]]),
+                            rowMeans(expre.data[, top[['sOrder']][index]]))
             colnames(ps.all) <- rep(paste0(
-                                           uv.variable,
-                                           '||',
-                                           unique(top[["bio.batch"]][y])), 2)
+                unique(top[["bio.batch"]][y]),
+                "-LS"), 2)
             ps.all
         })
     prps.sets <- do.call(cbind, prps.sets)
