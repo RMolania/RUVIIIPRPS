@@ -113,7 +113,6 @@ normalise <- function(
                        batch.variable = batch.variable.prps,
                        min.sample.prps = min.sample.prps,
                        min.sample.per.batch=min.sample.per.batch.prps,
-                       assess.cor.variables = assess.cor.variables.prps,
                        apply.log = apply.log,
                        pseudo.count = pseudo.count,
                        assess.se.obj = assess.se.obj,
