@@ -56,9 +56,9 @@ ruvIIIMultipleK <- function(
 
     if(is.null(k)){
         stop('k cannot be 0. This means no adjustment will be made.')
-    } else if(min(table(rownames(replicate.data))) == 1){
-        stop('There are only replicated samples of a single sample in the replicate.data')
-    }
+    } #else if(min(table(rownames(replicate.data))) == 1){
+    #     stop('There are only replicated samples of a single sample in the replicate.data')
+    # }
 
     # check the SummarizedExperiment ####
     if (assess.se.obj) {
