@@ -114,6 +114,10 @@ normalise <- function(
                        min.sample.prps = min.sample.prps,
                        min.sample.per.batch=min.sample.per.batch.prps,
                        assess.cor.variables = assess.cor.variables.prps,
+                       apply.log = apply.log,
+                       pseudo.count = pseudo.count,
+                       assess.se.obj = assess.se.obj,
+                       assess.cor.variables = assess.cor.variables.prps,
                        save.se.obj = TRUE,
                        verbose = verbose)
 
@@ -128,6 +132,9 @@ normalise <- function(
                          regress.out.bio.variables = regress.out.bio.variables.ncg,
                          apply.normalization=apply.normalization.ncg,
                          normalization =  normalization.ncg,
+                         assess.se.obj = assess.se.obj,
+                         apply.log = apply.log,
+                         pseudo.count = pseudo.count,
                          save.se.obj = TRUE,
                          verbose = verbose)
 
