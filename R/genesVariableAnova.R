@@ -52,7 +52,7 @@ genesVariableAnova <- function(se.obj,
                                remove.na = 'both',
                                pseudo.count = 1,
                                apply.round = TRUE,
-                               verbose = verbose
+                               verbose = TRUE
 ){
     printColoredMessage(message = '------------The genesVariableAnova function starts:',
                         color = 'white',
