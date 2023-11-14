@@ -125,8 +125,10 @@ plotMetric <- function(
         dataSets.colors <- wes_palette(
             n = length(levels(assay.names)),
             name = "GrandBudapest1")[seq(1:length(levels(assay.names)))]
-        if (metric %in% c('pcs.vect.corr','pcs.lm','ari','sil.euclidean', 'sil.maximum', 'sil.manhattan',
+        if (metric %in% c('ari','sil.euclidean', 'sil.maximum', 'sil.manhattan',
                           'sil.canberra','sil.binary', 'sil.minkowski')){
+            p=p+scale_color_manual(values = dataSets.colors, guide = 'none')
+        } else if (metric %in% c('pcs.vect.corr','pcs.lm')){
             p=p+scale_color_manual(values = dataSets.colors, guide = 'none')
         } else{
             p=p+scale_fill_manual(values = dataSets.colors, guide = 'none')
