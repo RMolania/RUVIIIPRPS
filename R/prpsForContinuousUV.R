@@ -51,6 +51,8 @@ prpsForContinuousUV <- function(se.obj,
         stop('The function can only take a single uv.variable variable.')
     } else if (length(bio.variable) > 1) {
         stop('The function can only take a single bio.variable.')
+    } else if (length(batch.variable) > 1) {
+        stop('The function can only take a single batch.variable.')
     } else if (min.sample.prps < 1) {
         stop('The minimum value for the min_sample_prps is 1.')
     } else if(var(se.obj[[uv.variable]]) == 0 ){
