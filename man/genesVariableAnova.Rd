@@ -19,7 +19,7 @@ genesVariableAnova(
   remove.na = "both",
   pseudo.count = 1,
   apply.round = TRUE,
-  verbose = verbose
+  verbose = TRUE
 )
 }
 \arguments{

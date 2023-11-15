@@ -2,7 +2,8 @@
 % Please edit documentation in R/CheckSeObj.R
 \name{checkSeObj}
 \alias{checkSeObj}
-\title{is used to check summarized experiment object.}
+\title{is used to check the SummarizedExperiment class object and if selected to exclude some of the samples or genes that
+contains NA or missing values from the analysis.}
 \usage{
 checkSeObj(
   se.obj,
@@ -13,16 +14,26 @@ checkSeObj(
 )
 }
 \arguments{
-\item{se.obj}{A summarized experiment object.}
+\item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{A name or names of the assays in summarized experiment object.}
+\item{assay.names}{String for the selection of the name, or names of the assay of the SummarizedExperiment class object.
+By default it is set to 'All'.}
 
-\item{variables}{A name or names of the variables in the sample annotation of the summarized experiment object.}
+\item{variables}{String. A name or names of the variables in the sample annotation of the SummarizedExperiment class object.
+By default it is set to 'All'.}
 
-\item{remove.na}{'both', 'measurements', 'sample.annotation', 'none' TO BE DEFINED WHAT EACH DOES}
+\item{remove.na}{String. Indicates whether to remove NA or missing values from either the 'assays', 'sample.annotation', 'both' or 'none'.
+If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
+samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
+'both'.}
 
-\item{verbose}{whether to show the messages or not.}
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed
+during the execution of the functions, by default it is set to TRUE.}
+}
+\value{
+a SummarizedExperiment object
 }
 \description{
-is used to check summarized experiment object.
+is used to check the SummarizedExperiment class object and if selected to exclude some of the samples or genes that
+contains NA or missing values from the analysis.
 }

@@ -2,24 +2,26 @@
 % Please edit documentation in R/variablesCorrelation.R
 \name{variablesCorrelation}
 \alias{variablesCorrelation}
-\title{is used to assess the association between variables of a SummarizedExperiment object using Spearman correlation.}
+\title{is used to assess the association between variables of a SummarizedExperiment object using correlation, and keep only the variable
+that has the highest number of factor for the categorical variables, and only the variable that has the highest variance for the
+continuous variables from the remaining analysis.}
 \usage{
 variablesCorrelation(
   se.obj,
-  assay.name = NULL,
+  assay.name,
   bio.variables,
   uv.variables,
-  cont.coef = c(0.7, 0.7),
-  spearman.coef = c(0.7, 0.7),
+  cat.cor.coef = c(0.85, 0.85),
+  cont.cor.coef = c(0.85, 0.85),
   assess.se.obj = TRUE,
   remove.na = "sample.annotation",
   verbose = TRUE
 )
 }
 \arguments{
-\item{se.obj}{A summarized experiment object.}
+\item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.name}{String for the selection of the name of the assay of the SummarizedExperiment class object used to define PRPS.}
+\item{assay.name}{String for the selection of the name of the assay of the SummarizedExperiment class object.}
 
 \item{bio.variables}{String of the label of (a) categorical variable(s) that specifies major biological groups
 such as samples types from colData(se).}
@@ -27,20 +29,41 @@ such as samples types from colData(se).}
 \item{uv.variables}{String or vector of strings of the label of continuous or categorical variable(s)
 such as samples types, batch or library size from colData(se) that will be used to define PRPS.}
 
-\item{cont.coef}{TO BE DEFINED.}
+\item{cat.cor.coef}{Vector of two numerical values. Indicates the minimum cut-off of the correlation coefficient between each pair of
+categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
+The correlation is computed by the function ContCoef from the DescTools package. If the correlation of a pair of variable is higher than
+the cut-off, then only the variable that has the highest number of factor will be kept and the other one will be excluded from the
+remaining analysis. By default they are both set to 0.85.}
 
-\item{spearman.coef}{Vector of two numeric values. Each value is the cut-off to consider there is an association
-between the variables based on the Spearman correlation coefficient. The first one is used for the 'uv.variables' and the second for 'bio.variables'.}
+\item{cont.cor.coef}{Vector of two numerical values. Indicates the minimum cut-off of the Spearman correlation coefficient between each pair of
+continuous variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
+If the correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest variance will
+be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.85.}
 
 \item{assess.se.obj}{Logical. Whether to assess the SummarizedExperiment object or not.}
 
-\item{remove.na}{To remove NA or missing values from either the assays or sample annotation or both.}
+\item{remove.na}{String. Indicates whether to remove NA or missing values from either the 'sample.annotation', 'both' or 'none'.
+If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
+samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
+'sample.annotation'.}
 
-\item{verbose}{Logical. Whether to show the messages of the functions or not.}
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed
+during the execution of the functions, by default it is set to TRUE.}
 }
 \value{
 a SummarizedExperiment object and the selected 'uv.variables' and 'bio.variables'.
 }
 \description{
-is used to assess the association between variables of a SummarizedExperiment object using Spearman correlation.
+For each pair of categorical variables from 'uv.variables' and each pair of categorical variables from 'bio.variables',
+the correlation is computed using the function ContCoef from the DescTools package.
+For each pair of continuous variables from 'uv.variables' and each pair of continuous variables from 'bio.variables',
+the correlation is computed using Spearman correlation.
+The user defines a minimum cut-off of the correlation coefficient between each pair of categorical variables in the 'cat.cor.coef'
+for the unwanted variables, followed by the minimum cut-off of the correlation coefficient for the biological variables. If the
+correlation of a pair of those variables is higher than the minimum cut-off, only the variable that has the highest number of factor will
+be kept and the other one will be excluded from the remaining analysis.
+The user defines a minimum cut-off of the correlation coefficient between each pair of continuous variables in the 'cont.cor.coef'
+for the unwanted variables, followed by the minimum cut-off of the correlation coefficient for the biological variables.
+If the correlation of a pair of variable is higher than the minimum cut-off, only the variable that has the highest number of factor
+will be kept and the other one will be excluded from the remaining analysis.
 }

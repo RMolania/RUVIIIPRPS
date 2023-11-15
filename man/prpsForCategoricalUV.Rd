@@ -9,7 +9,7 @@ prpsForCategoricalUV(
   assay.name,
   uv.variable,
   bio.variable,
-  min.sample.prps = 3,
+  min.sample.for.prps = 3,
   apply.log = TRUE,
   pseudo.count = 1,
   remove.na = "both",
@@ -19,23 +19,28 @@ prpsForCategoricalUV(
 )
 }
 \arguments{
-\item{se.obj}{A summarized experiment object.}
+\item{se.obj}{A SummarizedExperiment object that will be used to create PRPS.}
 
-\item{assay.name}{A name of the assays in summarized experiment object.}
+\item{assay.name}{String for the selection of the name of the assay of the SummarizedExperiment class object.}
 
 \item{uv.variable}{String of the label of a continuous or categorical variable.
-such as samples types, batch or library size from colData(se) that will be used to define PRPS.}
+such as samples types or batch from colData(se) that will be used to define PRPS.}
 
 \item{bio.variable}{String of the label of a categorical variable that specifies major biological groups
 such as samples types from colData(se).}
 
-\item{min.sample.prps}{Numeric. The minimum number of homogeneous biological groups to create pseudo-sample.}
+\item{min.sample.for.prps}{Numeric. Indicates the minimum number of samples to create one pseudo-sample,
+by default it is set to 3.}
 
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
 
-\item{pseudo.count}{Numeric. A pseudo count to add to each gene before applying log.}
+\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+by default it is set to 1.}
 
-\item{remove.na}{TO BE DEFINED.}
+\item{remove.na}{String. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
+'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
+samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
+'both'.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.
 By default it is set to TRUE.}
@@ -49,5 +54,8 @@ object 'se.obj' or to output the result, by default it is set to TRUE.}
 SummarizedExperiment A SummarizedExperiment object containing the PRPS data or just PRPS data.
 }
 \description{
-is used to create PRPS for a categorical variable as source of unwanted variation.
+We will create distinct group of pseudo-replicates for each source of unwanted variation defined in the 'uv.variables' argument.
+For example to correct for batch effect if defined in the 'uv.variables' argument, several group of pseudo-samples
+will be created by averaging the samples of the same biological subtype defined in 'bio.variable' in each batch. Then those
+pseudo-samples will be defined as pseudo-replicates which constitutes a PRPS set.
 }

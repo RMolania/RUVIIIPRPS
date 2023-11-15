@@ -7,15 +7,15 @@ using RUVIII-PRPS method.}
 \usage{
 normalise(
   se.obj,
-  assay.name = NULL,
+  assay.name,
   apply.log = TRUE,
   pseudo.count = 1,
   bio.variable.prps,
   uv.variables.prps,
   batch.variable.prps,
-  min.sample.prps = 3,
-  min.sample.per.batch.prps = 10,
-  assess.cor.variables.prps = TRUE,
+  min.sample.for.prps = 3,
+  min.sample.per.batch.prps = 6,
+  assess.cor.variables.prps = FALSE,
   norm.assay.name.ncg,
   apply.normalization.ncg = FALSE,
   normalization.ncg = "CPM",
@@ -36,10 +36,9 @@ normalise(
 )
 }
 \arguments{
-\item{se.obj}{A SummarizedExperiment object that will be used to computer fastRUV-III}
+\item{se.obj}{A SummarizedExperiment object that will be used to compute the RUV-III.}
 
-\item{assay.name}{String for the selection of the name of the assay data
-of the SummarizedExperiment class object}
+\item{assay.name}{String for the selection of the name of the assay data of the SummarizedExperiment class object}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
 
@@ -55,12 +54,15 @@ such as samples types, batch or library size from colData(se) that will be used 
 \item{batch.variable.prps}{String of the label of a categorical variable that specifies major batch groups
 such as plates from colData(se).}
 
-\item{min.sample.prps}{TO BE DEFINED that will be used to define PRPS.}
+\item{min.sample.for.prps}{Numeric. Indicates the minimum number of samples to create one pseudo-sample,
+by default it is set to 3.}
 
-\item{min.sample.per.batch.prps}{TO BE DEFINED.}
+\item{min.sample.per.batch.prps}{Numeric. Indicates the minimum number of homogeneous biological samples within each batch
+to create a PRPS set for each continuous variable. The minimum should be '2*min.sample.for.prps'. By default it is set to 6.}
 
-\item{assess.cor.variables.prps}{Logical. Indicates whether to assess the assess the association between variables
-using Spearman correlation to define PRPS.}
+\item{assess.cor.variables.prps}{Logical. Indicates whether to assess the association between pairs of categorical variables
+and/or pairs of continuous variables in order to select only one of the variable of a pair of highly correlated
+variables.}
 
 \item{norm.assay.name.ncg}{String for the selection of the name of the assay of the SummarizedExperiment class object to use
 to define NCG. If you don't provide any assay, we recommend to set apply.normalization to TRUE.}
