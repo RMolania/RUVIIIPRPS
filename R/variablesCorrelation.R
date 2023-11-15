@@ -7,15 +7,16 @@
 #' For each pair of continuous variables from 'uv.variables' and each pair of continuous variables from 'bio.variables',
 #' the correlation is computed using Spearman correlation.
 #' The user defines a minimum cut-off of the correlation coefficient between each pair of categorical variables in the 'cat.cor.coef'
-#' for the unwanted variables, followed by the minimum cut-off of the correlation coefficient for the biological variables.
+#' for the unwanted variables, followed by the minimum cut-off of the correlation coefficient for the biological variables. If the
+#' correlation of a pair of those variables is higher than the minimum cut-off, only the variable that has the highest number of factor will
+#' be kept and the other one will be excluded from the remaining analysis.
 #' The user defines a minimum cut-off of the correlation coefficient between each pair of continuous variables in the 'cont.cor.coef'
 #' for the unwanted variables, followed by the minimum cut-off of the correlation coefficient for the biological variables.
 #' If the correlation of a pair of variable is higher than the minimum cut-off, only the variable that has the highest number of factor
 #' will be kept and the other one will be excluded from the remaining analysis.
 #'
-#' @param se.obj A summarized experiment object.
-#' @param assay.name String for the selection of the name of the assay of the SummarizedExperiment class object used to define PRPS.
-#' By default it is set to
+#' @param se.obj A SummarizedExperiment object.
+#' @param assay.name String for the selection of the name of the assay of the SummarizedExperiment class object.
 #' @param bio.variables String of the label of (a) categorical variable(s) that specifies major biological groups
 #' such as samples types from colData(se).
 #' @param uv.variables String or vector of strings of the label of continuous or categorical variable(s)
@@ -46,7 +47,7 @@
 
 variablesCorrelation <- function(
         se.obj,
-        assay.name = NULL,
+        assay.name,
         bio.variables,
         uv.variables,
         cat.cor.coef = c(0.85, 0.85),
