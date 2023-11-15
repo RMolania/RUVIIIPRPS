@@ -1,17 +1,41 @@
-#' is used to assess the association between variables of a SummarizedExperiment object using Spearman correlation.
+#' is used to assess the association between variables of a SummarizedExperiment object using correlation, and keep only the variable
+#' that has the highest number of factor for the categorical variables, and only the variable that has the highest variance for the
+#' continuous variables from the remaining analysis.
+#'
+#' For each pair of categorical variables from 'uv.variables' and each pair of categorical variables from 'bio.variables',
+#' the correlation is computed using the function ContCoef from the DescTools package.
+#' For each pair of continuous variables from 'uv.variables' and each pair of continuous variables from 'bio.variables',
+#' the correlation is computed using Spearman correlation.
+#' The user defines a minimum cut-off of the correlation coefficient between each pair of categorical variables in the 'cat.cor.coef'
+#' for the unwanted variables, followed by the minimum cut-off of the correlation coefficient for the biological variables.
+#' The user defines a minimum cut-off of the correlation coefficient between each pair of continuous variables in the 'cont.cor.coef'
+#' for the unwanted variables, followed by the minimum cut-off of the correlation coefficient for the biological variables.
+#' If the correlation of a pair of variable is higher than the minimum cut-off, only the variable that has the highest number of factor
+#' will be kept and the other one will be excluded from the remaining analysis.
 #'
 #' @param se.obj A summarized experiment object.
 #' @param assay.name String for the selection of the name of the assay of the SummarizedExperiment class object used to define PRPS.
+#' By default it is set to
 #' @param bio.variables String of the label of (a) categorical variable(s) that specifies major biological groups
 #' such as samples types from colData(se).
 #' @param uv.variables String or vector of strings of the label of continuous or categorical variable(s)
 #' such as samples types, batch or library size from colData(se) that will be used to define PRPS.
-#' @param cont.coef TO BE DEFINED.
-#' @param spearman.coef Vector of two numeric values. Each value is the cut-off to consider there is an association
-#' between the variables based on the Spearman correlation coefficient. The first one is used for the 'uv.variables' and the second for 'bio.variables'.
+#' @param cat.cor.coef Vector of two numerical values. Indicates the minimum cut-off of the correlation coefficient between each pair of
+#' categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
+#' The correlation is computed by the function ContCoef from the DescTools package. If the correlation of a pair of variable is higher than
+#' the cut-off, then only the variable that has the highest number of factor will be kept and the other one will be excluded from the
+#' remaining analysis. By default they are both set to 0.85.
+#' @param cont.cor.coef Vector of two numerical values. Indicates the minimum cut-off of the Spearman correlation coefficient between each pair of
+#' continuous variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
+#' If the correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest variance will
+#' be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.85.
 #' @param assess.se.obj Logical. Whether to assess the SummarizedExperiment object or not.
-#' @param remove.na To remove NA or missing values from either the assays or sample annotation or both.
-#' @param verbose Logical. Whether to show the messages of the functions or not.
+#' @param remove.na String. Indicates whether to remove NA or missing values from either the 'sample.annotation', 'both' or 'none'.
+#' If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
+#' samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
+#' 'sample.annotation'.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed
+#' during the execution of the functions, by default it is set to TRUE.
 
 #' @return a SummarizedExperiment object and the selected 'uv.variables' and 'bio.variables'.
 
@@ -25,8 +49,8 @@ variablesCorrelation <- function(
         assay.name = NULL,
         bio.variables,
         uv.variables,
-        cont.coef = c(0.7, 0.7),
-        spearman.coef = c(0.7, 0.7),
+        cat.cor.coef = c(0.85, 0.85),
+        cont.cor.coef = c(0.85, 0.85),
         assess.se.obj = TRUE,
         remove.na = 'sample.annotation',
         verbose = TRUE) {
@@ -39,12 +63,12 @@ variablesCorrelation <- function(
                           verbose = verbose)
     if (is.null(bio.variables) & is.null(uv.variables)) {
         stop('Both bio.variables and uv.variables are empty, please provide at least one of them')
-    } else if (max(cont.coef) > 1) {
-        stop('The cont.coef argument cannot be more than 1.')
-    } else if (max(spearman.coef) > 1) {
-        stop('The spearman.coef argument cannot be more than 1.')
-    } else if (length(cont.coef) == 1 | length(cont.coef) == 1) {
-        stop( 'Please provide correlation coefs for both unwanted and biological variatiion.')
+    } else if (max(cat.cor.coef) > 1) {
+        stop('The cat.cor.coef argument cannot be more than 1.')
+    } else if (max(cont.cor.coef) > 1) {
+        stop('The cont.cor.coef argument cannot be more than 1.')
+    } else if (length(cat.cor.coef) == 1 | length(cat.cor.coef) == 1) {
+        stop( 'Please provide two correlation coefs for both unwanted and biological variation.')
     } else if (length(intersect(bio.variables, uv.variables)) != 0) {
         stop(if (length(intersect(bio.variables, uv.variables)) == 1) {
             paste0(
@@ -67,7 +91,7 @@ variablesCorrelation <- function(
         })
     }
 
-    ### Checking summarized experiment objects
+    ### Checking summarized experiment object
     if (assess.se.obj) {
         se.obj <- checkSeObj(
             se.obj = se.obj,
@@ -81,7 +105,7 @@ variablesCorrelation <- function(
                         color = 'white',
                         verbose = verbose)
 
-    ### Checking unwanted variation variables
+    ### Compute correlation for the unwanted variation variables
     if (length(uv.variables) > 0) {
         ## classes of uv variables and variation
         printColoredMessage(
@@ -168,7 +192,7 @@ variablesCorrelation <- function(
                                         if (length(unique(colData(se.obj)[[x]])) == 1) {
                                             stop(
                                                 paste0(
-                                                    'The Unwanted variable "uv.variables" must contain at least two groups.',
+                                                    'The unwanted variable "uv.variables" must contain at least two groups.',
                                                     'However the variable ',
                                                     x,
                                                     ' contains only one group:',
@@ -237,11 +261,11 @@ variablesCorrelation <- function(
             all.pairs <- combn(categorical.uv , 2)
             remove.cat.uv.variable <- lapply(1:ncol(all.pairs),
                                              function(x) {
-                                                 cont.coef <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
+                                                 cat.cor.coef <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
                                                                                    y = se.obj[[all.pairs[, x][2]]])
-                                                 cont.coef <-
-                                                     round(x = cont.coef, digits = 3)
-                                                 if (cont.coef > cont.coef[1]) {
+                                                 cat.cor.coef <-
+                                                     round(x = cat.cor.coef, digits = 3)
+                                                 if (cat.cor.coef > cat.cor.coef[1]) {
                                                      printColoredMessage(
                                                          paste0(
                                                              'The variables ',
@@ -249,8 +273,8 @@ variablesCorrelation <- function(
                                                              ' and ',
                                                              all.pairs[, x][2],
                                                              ' are highly associated (corr.coef: ~',
-                                                             cont.coef,
-                                                             '). The one with higher groups number for PRPS will be selected.'
+                                                             cat.cor.coef,
+                                                             '). The one with the higher number of factors will be selected.'
                                                          ),
                                                          color = 'blue',
                                                          verbose = verbose
@@ -272,7 +296,7 @@ variablesCorrelation <- function(
                                                              ' and ',
                                                              all.pairs[, x][2],
                                                              ' are not highly associated (corr.coef:',
-                                                             cont.coef,
+                                                             cat.cor.coef,
                                                              ').'
                                                          ),
                                                          color = 'blue',
@@ -293,7 +317,7 @@ variablesCorrelation <- function(
                         paste0(
                             'Finally, the variable ',
                             paste0(categorical.uv, collapse = ' & '),
-                            ' is selected as source of categorical unwanted variation for creating PRPS.'
+                            ' is selected as source of categorical unwanted variation to create PRPS.'
                         ),
                     color = 'blue',
                     verbose = verbose
@@ -304,7 +328,7 @@ variablesCorrelation <- function(
                         paste0(
                             'Finally, the variables ',
                             paste0(categorical.uv, collapse = ' & '),
-                            ' are selected as sources of categorical unwanted variation for creating PRPS.'
+                            ' are selected as sources of categorical unwanted variation to create PRPS.'
                         ),
                     color = 'blue',
                     verbose = verbose
@@ -316,7 +340,7 @@ variablesCorrelation <- function(
                     paste0(
                         'Finally, the variable ',
                         paste0(categorical.uv, collapse = ' & '),
-                        ' is selected as source of categorical unwanted variation for creating PRPS.'
+                        ' is selected as source of categorical unwanted variation to create PRPS.'
                     ),
                 color = 'blue',
                 verbose = verbose
@@ -348,7 +372,7 @@ variablesCorrelation <- function(
                                                       ))[[4]]
                                                   corr.coef <-
                                                       round(x = abs(corr.coef), digits = 3)
-                                                  if (corr.coef > spearman.coef[1]) {
+                                                  if (corr.coef > cont.cor.coef[1]) {
                                                       printColoredMessage(
                                                           message =
                                                               paste0(
@@ -358,7 +382,7 @@ variablesCorrelation <- function(
                                                                   all.pairs[, x][2],
                                                                   ' are highly correlated (spearman.corr.coef:',
                                                                   corr.coef,
-                                                                  '). The one with the higest variance will be selected for creating PRPS.'
+                                                                  '). The one with the higest variance will be selected to create PRPS.'
                                                               ),
                                                           color = 'blue',
                                                           verbose = verbose
@@ -404,7 +428,7 @@ variablesCorrelation <- function(
                         paste0(
                             'Finally, the variable ',
                             paste0(continuous.uv, collapse = ' & '),
-                            ' is selected as continuous source of unwanted variation for creating PRPS.'
+                            ' is selected as continuous source of unwanted variation to create PRPS.'
                         ),
                     color = 'blue',
                     verbose = verbose
@@ -416,7 +440,7 @@ variablesCorrelation <- function(
                         paste0(
                             'Finally, the variables ',
                             paste0(continuous.uv, collapse = ' & '),
-                            ' are selected as continuous sources of unwanted variation for creating PRPS.'
+                            ' are selected as continuous sources of unwanted variation to create PRPS.'
                         ),
                     color = 'blue',
                     verbose = verbose
@@ -428,7 +452,7 @@ variablesCorrelation <- function(
                     paste0(
                         'Finally, the variable ',
                         paste0(continuous.uv, collapse = ' & '),
-                        ' is selected as continuous source of unwanted variation for creating PRPS.'
+                        ' is selected as continuous source of unwanted variation to create PRPS.'
                     ),
                 color = 'blue',
                 verbose = verbose
@@ -590,11 +614,11 @@ variablesCorrelation <- function(
             all.pairs <- combn(categorical.bio , 2)
             remove.cat.bio.variable <- lapply(1:ncol(all.pairs),
                                               function(x) {
-                                                  cont.coef <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
+                                                  cat.cor.coef <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
                                                                                     y = se.obj[[all.pairs[, x][2]]])
-                                                  cont.coef <-
-                                                      round(x = cont.coef, digits = 3)
-                                                  if (cont.coef > cont.coef[2]) {
+                                                  cat.cor.coef <-
+                                                      round(x = cat.cor.coef, digits = 3)
+                                                  if (cat.cor.coef > cat.cor.coef[2]) {
                                                       printColoredMessage(
                                                           paste0(
                                                               'The variables ',
@@ -602,8 +626,8 @@ variablesCorrelation <- function(
                                                               ' and ',
                                                               all.pairs[, x][2],
                                                               ' are highly associated (corr.coef: ~',
-                                                              cont.coef,
-                                                              '). The one with the higher groups number will selected for PRPS.'
+                                                              cat.cor.coef,
+                                                              '). The one with the higher number of factors will be selected to create PRPS.'
                                                           ),
                                                           color = 'blue',
                                                           verbose = verbose
@@ -625,7 +649,7 @@ variablesCorrelation <- function(
                                                               ' and ',
                                                               all.pairs[, x][2],
                                                               ' are not highly associated (corr.coef:',
-                                                              cont.coef,
+                                                              cat.cor.coef,
                                                               ').'
                                                           ),
                                                           color = 'blue',
@@ -646,7 +670,7 @@ variablesCorrelation <- function(
                         paste0(
                             'Finally, the variable ',
                             paste0(categorical.bio, collapse = ' & '),
-                            ' is selected as a source of categorical biological variation for creating PRPS.'
+                            ' is selected as a source of categorical biological variation to create PRPS.'
                         ),
                     color = 'blue',
                     verbose = verbose
@@ -657,7 +681,7 @@ variablesCorrelation <- function(
                         paste0(
                             'Finally, the variables ',
                             paste0(categorical.bio, collapse = ' & '),
-                            ' are selected as sources of categorical biological variation for creating PRPS.'
+                            ' are selected as sources of categorical biological variation to create PRPS.'
                         ),
                     color = 'blue',
                     verbose = verbose
@@ -669,7 +693,7 @@ variablesCorrelation <- function(
                     paste0(
                         'Finally, the variable ',
                         paste0(categorical.bio, collapse = ' & '),
-                        ' is selected as a source of categorical biological variation for creating PRPS.'
+                        ' is selected as a source of categorical biological variation to create PRPS.'
                     ),
                 color = 'blue',
                 verbose = verbose
@@ -701,7 +725,7 @@ variablesCorrelation <- function(
                                                        ))[[4]]
                                                    corr.coef <-
                                                        round(x = abs(corr.coef), digits = 3)
-                                                   if (corr.coef > spearman.coef[2]) {
+                                                   if (corr.coef > cont.cor.coef[2]) {
                                                        printColoredMessage(
                                                            message =
                                                                paste0(
@@ -711,7 +735,7 @@ variablesCorrelation <- function(
                                                                    all.pairs[, x][2],
                                                                    ' are highly correlated (spearman.corr.coef:',
                                                                    corr.coef,
-                                                                   '). Then, one of them with the higest variance will be selected for creating PRPS.'
+                                                                   '). The one with the highest variance will be selected to create PRPS.'
                                                                ),
                                                            color = 'blue',
                                                            verbose = verbose
@@ -758,7 +782,7 @@ variablesCorrelation <- function(
                         paste0(
                             'Finally, the variable',
                             paste0(continuous.bio, collapse = ' & '),
-                            ' is selected as continuous source of biological variation for creating PRPS.'
+                            ' is selected as continuous source of biological variation to create PRPS.'
                         ),
                     color = 'blue',
                     verbose = verbose
@@ -770,7 +794,7 @@ variablesCorrelation <- function(
                         paste0(
                             'Finally, the variables ',
                             paste0(continuous.bio, collapse = ' & '),
-                            ' are selected as continuous source of biological variation for creating PRPS.'
+                            ' are selected as continuous source of biological variation to create PRPS.'
                         ),
                     color = 'blue',
                     verbose = verbose
@@ -782,7 +806,7 @@ variablesCorrelation <- function(
                     paste0(
                         'Finally, the variable ',
                         paste0(continuous.bio, collapse = ' & '),
-                        ' is selected as continuous source of biological variation for creating PRPS.'
+                        ' is selected as continuous source of biological variation to create PRPS.'
                     ),
                 color = 'blue',
                 verbose = verbose
