@@ -7,9 +7,8 @@
 #' - Run RUVIII-PRPS for multiple k values (the dimension of the unwanted variation).
 #'
 #'
-#' @param se.obj A SummarizedExperiment object that will be used to computer fastRUV-III
-#' @param assay.name String for the selection of the name of the assay data
-#' of the SummarizedExperiment class object
+#' @param se.obj A SummarizedExperiment object that will be used to compute the RUV-III.
+#' @param assay.name String for the selection of the name of the assay data of the SummarizedExperiment class object
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
@@ -19,10 +18,13 @@
 #' such as samples types, batch or library size from colData(se) that will be used to define PRPS.
 #' @param batch.variable.prps String of the label of a categorical variable that specifies major batch groups
 #' such as plates from colData(se).
-#' @param assess.cor.variables.prps Logical. Indicates whether to assess the assess the association between variables
-#' using Spearman correlation to define PRPS.
-#' @param min.sample.prps TO BE DEFINED that will be used to define PRPS.
-#' @param min.sample.per.batch.prps TO BE DEFINED.
+#' @param assess.cor.variables.prps Logical. Indicates whether to assess the association between pairs of categorical variables
+#' and/or pairs of continuous variables in order to select only one of the variable of a pair of highly correlated
+#' variables.
+#' @param min.sample.for.prps Numeric. Indicates the minimum number of samples to create one pseudo-sample,
+#' by default it is set to 3.
+#' @param min.sample.per.batch.prps Numeric. Indicates the minimum number of homogeneous biological samples within each batch
+#' to create a PRPS set for each continuous variable. The minimum should be '2*min.sample.for.prps'. By default it is set to 6.
 #' @param norm.assay.name.ncg String for the selection of the name of the assay of the SummarizedExperiment class object to use
 #' to define NCG. If you don't provide any assay, we recommend to set apply.normalization to TRUE.
 #' @param apply.normalization.ncg Logical Indicates whether to apply a normalization method to define NCG if the 'norm.assay.name.ncg'
@@ -58,15 +60,15 @@
 #'
 normalise <- function(
         se.obj,
-        assay.name = NULL,
+        assay.name,
         apply.log = TRUE,
         pseudo.count = 1,
         bio.variable.prps,
         uv.variables.prps,
         batch.variable.prps,
-        min.sample.prps = 3,
-        min.sample.per.batch.prps=10,
-        assess.cor.variables.prps = TRUE,
+        min.sample.for.prps = 3,
+        min.sample.per.batch.prps=6,
+        assess.cor.variables.prps = FALSE,
         norm.assay.name.ncg,
         apply.normalization.ncg=FALSE,
         normalization.ncg = 'CPM',
@@ -111,7 +113,7 @@ normalise <- function(
                        bio.variable= bio.variable.prps,
                        uv.variables=uv.variables.prps,
                        batch.variable = batch.variable.prps,
-                       min.sample.prps = min.sample.prps,
+                       min.sample.for.prps = min.sample.for.prps,
                        min.sample.per.batch=min.sample.per.batch.prps,
                        apply.log = apply.log,
                        pseudo.count = pseudo.count,
