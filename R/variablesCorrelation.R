@@ -12,7 +12,7 @@
 #' be kept and the other one will be excluded from the remaining analysis.
 #' The user defines a minimum cut-off of the correlation coefficient between each pair of continuous variables in the 'cont.cor.coef'
 #' for the unwanted variables, followed by the minimum cut-off of the correlation coefficient for the biological variables.
-#' If the correlation of a pair of variable is higher than the minimum cut-off, only the variable that has the highest number of factor
+#' If the correlation of a pair of variable is higher than the minimum cut-off, only the variable that has the highest variance
 #' will be kept and the other one will be excluded from the remaining analysis.
 #'
 #' @param se.obj A SummarizedExperiment object.

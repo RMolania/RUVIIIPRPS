@@ -29,13 +29,13 @@ such as samples types from colData(se).}
 \item{uv.variables}{String or vector of strings of the label of continuous or categorical variable(s)
 such as samples types, batch or library size from colData(se) that will be used to define PRPS.}
 
-\item{cat.cor.coef}{Vector of two numerical values. Indicates the minimum cut-off of the correlation coefficient between each pair of
+\item{cat.cor.coef}{Vector of two numerical values. Indicates the cut-off of the correlation coefficient between each pair of
 categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
 The correlation is computed by the function ContCoef from the DescTools package. If the correlation of a pair of variable is higher than
 the cut-off, then only the variable that has the highest number of factor will be kept and the other one will be excluded from the
 remaining analysis. By default they are both set to 0.85.}
 
-\item{cont.cor.coef}{Vector of two numerical values. Indicates the minimum cut-off of the Spearman correlation coefficient between each pair of
+\item{cont.cor.coef}{Vector of two numerical values. Indicates the cut-off of the Spearman correlation coefficient between each pair of
 continuous variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
 If the correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest variance will
 be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.85.}
