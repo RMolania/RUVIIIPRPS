@@ -262,10 +262,9 @@ variablesCorrelation <- function(
             all.pairs <- combn(categorical.uv , 2)
             remove.cat.uv.variable <- lapply(1:ncol(all.pairs),
                                              function(x) {
-                                                 cat.cor. <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
+                                                 cat.cor <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
                                                                                    y = se.obj[[all.pairs[, x][2]]])
-                                                 cat.cor <-
-                                                     round(x = cat.cor, digits = 3)
+                                                 cat.cor <-round(x = cat.cor, digits = 3)
                                                  if (cat.cor > cat.cor.coef[1]) {
                                                      printColoredMessage(
                                                          paste0(
@@ -365,8 +364,7 @@ variablesCorrelation <- function(
             all.pairs <- combn(continuous.uv , 2)
             remove.cont.uv.variable <- lapply(1:ncol(all.pairs),
                                               function(x) {
-                                                  corr.coef <-
-                                                      suppressWarnings(cor.test(
+                                                  corr.coef <-suppressWarnings(cor.test(
                                                           x = se.obj[[all.pairs[1 , x]]],
                                                           y = se.obj[[all.pairs[2 , x]]],
                                                           method = 'spearman'
@@ -617,8 +615,7 @@ variablesCorrelation <- function(
                                               function(x) {
                                                   cat.cor <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
                                                                                     y = se.obj[[all.pairs[, x][2]]])
-                                                  cat.cor <-
-                                                      round(x = cat.cor, digits = 3)
+                                                  cat.cor <- round(x = cat.cor, digits = 3)
                                                   if (cat.cor > cat.cor.coef[2]) {
                                                       printColoredMessage(
                                                           paste0(
