@@ -21,12 +21,12 @@
 #' such as samples types from colData(se).
 #' @param uv.variables String or vector of strings of the label of continuous or categorical variable(s)
 #' such as samples types, batch or library size from colData(se) that will be used to define PRPS.
-#' @param cat.cor.coef Vector of two numerical values. Indicates the minimum cut-off of the correlation coefficient between each pair of
+#' @param cat.cor.coef Vector of two numerical values. Indicates the cut-off of the correlation coefficient between each pair of
 #' categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
 #' The correlation is computed by the function ContCoef from the DescTools package. If the correlation of a pair of variable is higher than
 #' the cut-off, then only the variable that has the highest number of factor will be kept and the other one will be excluded from the
 #' remaining analysis. By default they are both set to 0.85.
-#' @param cont.cor.coef Vector of two numerical values. Indicates the minimum cut-off of the Spearman correlation coefficient between each pair of
+#' @param cont.cor.coef Vector of two numerical values. Indicates the cut-off of the Spearman correlation coefficient between each pair of
 #' continuous variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
 #' If the correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest variance will
 #' be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.85.
@@ -262,11 +262,11 @@ variablesCorrelation <- function(
             all.pairs <- combn(categorical.uv , 2)
             remove.cat.uv.variable <- lapply(1:ncol(all.pairs),
                                              function(x) {
-                                                 cat.cor.coef <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
+                                                 cat.cor. <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
                                                                                    y = se.obj[[all.pairs[, x][2]]])
-                                                 cat.cor.coef <-
-                                                     round(x = cat.cor.coef, digits = 3)
-                                                 if (cat.cor.coef > cat.cor.coef[1]) {
+                                                 cat.cor <-
+                                                     round(x = cat.cor, digits = 3)
+                                                 if (cat.cor > cat.cor.coef[1]) {
                                                      printColoredMessage(
                                                          paste0(
                                                              'The variables ',
@@ -274,7 +274,7 @@ variablesCorrelation <- function(
                                                              ' and ',
                                                              all.pairs[, x][2],
                                                              ' are highly associated (corr.coef: ~',
-                                                             cat.cor.coef,
+                                                             cat.cor,
                                                              '). The one with the higher number of factors will be selected.'
                                                          ),
                                                          color = 'blue',
@@ -297,7 +297,7 @@ variablesCorrelation <- function(
                                                              ' and ',
                                                              all.pairs[, x][2],
                                                              ' are not highly associated (corr.coef:',
-                                                             cat.cor.coef,
+                                                             cat.cor,
                                                              ').'
                                                          ),
                                                          color = 'blue',
@@ -615,11 +615,11 @@ variablesCorrelation <- function(
             all.pairs <- combn(categorical.bio , 2)
             remove.cat.bio.variable <- lapply(1:ncol(all.pairs),
                                               function(x) {
-                                                  cat.cor.coef <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
+                                                  cat.cor <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
                                                                                     y = se.obj[[all.pairs[, x][2]]])
-                                                  cat.cor.coef <-
-                                                      round(x = cat.cor.coef, digits = 3)
-                                                  if (cat.cor.coef > cat.cor.coef[2]) {
+                                                  cat.cor <-
+                                                      round(x = cat.cor, digits = 3)
+                                                  if (cat.cor > cat.cor.coef[2]) {
                                                       printColoredMessage(
                                                           paste0(
                                                               'The variables ',
@@ -627,7 +627,7 @@ variablesCorrelation <- function(
                                                               ' and ',
                                                               all.pairs[, x][2],
                                                               ' are highly associated (corr.coef: ~',
-                                                              cat.cor.coef,
+                                                              cat.cor,
                                                               '). The one with the higher number of factors will be selected to create PRPS.'
                                                           ),
                                                           color = 'blue',
@@ -650,7 +650,7 @@ variablesCorrelation <- function(
                                                               ' and ',
                                                               all.pairs[, x][2],
                                                               ' are not highly associated (corr.coef:',
-                                                              cat.cor.coef,
+                                                              cat.cor,
                                                               ').'
                                                           ),
                                                           color = 'blue',
