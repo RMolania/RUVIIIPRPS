@@ -157,7 +157,7 @@ prpsForContinuousUV <- function(se.obj,
 
     ### CREATION OF PRPS
     # creating PS ####
-    printColoredMessage(message = paste0("### Creating PS by defining homogeneous biological group that contains at least",
+    printColoredMessage(message = paste0("### Creating PS by defining homogeneous biological group that contains at least ",
                                          min.sample.per.batch, " (min.sample.per.batch) of samples combining ",
                                          bio.variable," and ",batch.variable, "."),
                         color = 'magenta',
