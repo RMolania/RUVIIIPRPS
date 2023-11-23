@@ -9,7 +9,7 @@ normAssessment(
   assay.names = "All",
   apply.log = TRUE,
   variables = NULL,
-  output_file = NULL,
+  output.file = NULL,
   fast.pca = TRUE,
   nb.pcs = 10,
   assess.se.obj = FALSE,
@@ -29,7 +29,7 @@ no transformation will be selected.}
 \item{variables}{String or vector of strings of the label of continuous or categorical variable(s)
 such as samples types, batch or library size from colData(se).}
 
-\item{output_file}{Path and name of the output file to save the assessments plots in a pdf format.}
+\item{output.file}{Path and name of the output file to save the assessments plots in a pdf format.}
 
 \item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range
 to speed up the process, by default is set to 'TRUE'.}

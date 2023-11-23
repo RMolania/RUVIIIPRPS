@@ -27,7 +27,7 @@
 #' such as samples types, batch or library size from colData(se).
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
 #' no transformation will be selected.
-#' @param output_file Path and name of the output file to save the assessments plots in a pdf format.
+#' @param output.file Path and name of the output file to save the assessments plots in a pdf format.
 #' @param fast.pca Logical. Indicates whether to calculate a specific number of PCs instead of the full range
 #' to speed up the process, by default is set to 'TRUE'.
 #' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.
@@ -54,7 +54,7 @@ normAssessment = function(
         assay.names = 'All',
         apply.log = TRUE,
         variables=NULL,
-        output_file=NULL,
+        output.file=NULL,
         fast.pca = TRUE,
         nb.pcs = 10,
         assess.se.obj = FALSE,
@@ -284,12 +284,12 @@ normAssessment = function(
                             apply.log=apply.log)
 
     ################## Generate pdf file to save the plots #####################
-    if (!is.null(output_file)){
+    if (!is.null(output.file)){
         printColoredMessage(message= paste0(
             'The plots are being saved into the output file'),
             color = 'blue',
             verbose = verbose)
-        pdf(output_file)
+        pdf(output.file)
         ## Categorical variable
         if (nb.cat.var!=0){
             for (v in 1:(nb.cat.var)){
