@@ -124,7 +124,7 @@ normalise <- function(
 
 
     ############## NCG ####################
-    se.obj=supervisedFindNGC(se.obj=se.obj,
+    se.obj=supervisedFindNCG(se.obj=se.obj,
                          assay.name=norm.assay.name.ncg,
                          bio.variables= bio.variables.ncg,
                          uv.variables= uv.variables.ncg,

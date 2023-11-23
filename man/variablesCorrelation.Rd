@@ -11,8 +11,8 @@ variablesCorrelation(
   assay.name,
   bio.variables,
   uv.variables,
-  cat.cor.coef = c(0.85, 0.85),
-  cont.cor.coef = c(0.85, 0.85),
+  cat.cor.coef = c(0.7, 0.7),
+  cont.cor.coef = c(0.7, 0.7),
   assess.se.obj = TRUE,
   remove.na = "sample.annotation",
   verbose = TRUE
@@ -33,12 +33,12 @@ such as samples types, batch or library size from colData(se) that will be used 
 categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
 The correlation is computed by the function ContCoef from the DescTools package. If the correlation of a pair of variable is higher than
 the cut-off, then only the variable that has the highest number of factor will be kept and the other one will be excluded from the
-remaining analysis. By default they are both set to 0.85.}
+remaining analysis. By default they are both set to 0.7.}
 
 \item{cont.cor.coef}{Vector of two numerical values. Indicates the cut-off of the Spearman correlation coefficient between each pair of
 continuous variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
 If the correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest variance will
-be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.85.}
+be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.7.}
 
 \item{assess.se.obj}{Logical. Whether to assess the SummarizedExperiment object or not.}
 

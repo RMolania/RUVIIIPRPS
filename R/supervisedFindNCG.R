@@ -45,7 +45,7 @@
 #' @importFrom graphics frame
 #' @export
 
-supervisedFindNGC <- function(
+supervisedFindNCG <- function(
         se.obj,
         assay.name,
         bio.variables,
@@ -69,7 +69,7 @@ supervisedFindNGC <- function(
         save.se.obj = TRUE,
         verbose = TRUE
         ){
-    printColoredMessage(message = '------------The supervisedFindNGC function starts:',
+    printColoredMessage(message = '------------The supervisedFindNCG function starts:',
                         color = 'white',
                         verbose = verbose)
 
@@ -442,12 +442,12 @@ supervisedFindNGC <- function(
             'The NCG are saved to metadata@NCG.',
             color = 'blue',
             verbose = verbose)
-        printColoredMessage(message = '------------The supervisedFindNGC function finished.',
+        printColoredMessage(message = '------------The supervisedFindNCG function finished.',
                             color = 'white',
                             verbose = verbose)
         return(se.obj)
     } else{
-        printColoredMessage(message = '------------The supervisedFindNGC function finished.',
+        printColoredMessage(message = '------------The supervisedFindNCG function finished.',
                             color = 'white',
                             verbose = verbose)
         return(ncg.selected)
