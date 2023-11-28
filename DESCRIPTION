@@ -39,7 +39,9 @@ Imports:
     edgeR,
     EDASeq,
     DESeq2,
-    graphics
+    graphics,
+    S4Vectors,
+    biomaRt
 URL: https://github.com/mtrussart/RUVIIIPRPS
 BugReports: https://github.com/mtrussart/RUVIIIPRPS/issues
 Suggests: 
