@@ -49,6 +49,5 @@ SummarizedExperiment A SummarizedExperiment object containing the computed ARI
 on the categorical variable.
 }
 \description{
-It can be used to assess how a group of biological samples
-are distributed across batches (i.e. example subtypes vs batch), and how batches ### update
+It can be used to assess how a group of biological samples are distributed across batches (i.e. example subtypes vs batch), and how batches ### update
 }

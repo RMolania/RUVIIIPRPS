@@ -1,8 +1,7 @@
 #' is used to compute the adjusted rand index (ARI) from the first PC of a SummarizedExperiment class
 #' object given a categorical variable.
 #'
-#' It can be used to assess how a group of biological samples
-#' are distributed across batches (i.e. example subtypes vs batch), and how batches ### update
+#' It can be used to assess how a group of biological samples are distributed across batches (i.e. example subtypes vs batch), and how batches ### update
 #'
 #'
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
