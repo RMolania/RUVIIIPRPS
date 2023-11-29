@@ -53,7 +53,7 @@ createSeObj <- function(
                         color = 'white',
                         verbose = verbose)
     # check inputs ####
-    if(class(assays)!= 'list'){
+    if(!inherits(assays, what = 'list')){
         stop('The assays should be a list of expression datastes (genes in rows and samples in columns.).')
     }
     ## dimensions and orders of the assays ####
@@ -109,7 +109,7 @@ createSeObj <- function(
         if(is.null(count.cutoff)){
             stop('The count.cutoff cannot be empty.')
         }
-        if(count.cutoff <0){
+        if(count.cutoff < 0){
             stop('The value of the count.cutoff cannot be negative.')
         }
     }
@@ -511,11 +511,3 @@ createSeObj <- function(
                         verbose = verbose)
     return(se.obj)
 }
-
-
-# red.cols <- c('ensembl_gene_id', 'entrezgene_id', 'hgnc_symbol', 'gene_biotype')
-# red.cols <- unlist(lapply(red.cols, function(x){
-#     index <- grep(x, colnames(gene.annotation))
-#     if(length(index) > 1) index[2:length(index)]
-# }))
-# if(is.numeric(red.cols)) gene.annotation <- gene.annotation[ , -c(red.cols)]
