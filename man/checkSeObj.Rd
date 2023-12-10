@@ -2,13 +2,12 @@
 % Please edit documentation in R/CheckSeObj.R
 \name{checkSeObj}
 \alias{checkSeObj}
-\title{is used to check the SummarizedExperiment class object and if selected to exclude some of the samples or genes that
-contains NA or missing values from the analysis.}
+\title{is used to check the assay names, variables and missing/NA values in a SummarizedExperiment object.}
 \usage{
 checkSeObj(
   se.obj,
-  assay.names = "All",
-  variables = "All",
+  assay.names = "all",
+  variables = "all",
   remove.na = "both",
   verbose = TRUE
 )
@@ -16,24 +15,22 @@ checkSeObj(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{String for the selection of the name, or names of the assay of the SummarizedExperiment class object.
-By default it is set to 'All'.}
+\item{assay.names}{Symbol. Indicates the name, or names of the assay of the SummarizedExperiment object.
+By default it is set to 'all'. All the assays will be checked.}
 
-\item{variables}{String. A name or names of the variables in the sample annotation of the SummarizedExperiment class object.
-By default it is set to 'All'.}
+\item{variables}{Symbol. Indicates a name or names of the columns in the sample annotation (colData) of the SummarizedExperiment object.
+By default it is set to 'all'. All the columns will be checked.}
 
-\item{remove.na}{String. Indicates whether to remove NA or missing values from either the 'assays', 'sample.annotation', 'both' or 'none'.
-If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
-samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
-'both'.}
+\item{remove.na}{Symbol. Indicates whether to remove missing/NA values from either the 'assays', 'sample.annotation', 'both' or 'none'.
+If 'assays' is selected, the genes that contains missing/NA values will be excluded. If 'sample.annotation' is selected, the
+samples that contains NA or missing values for each 'variables' will be excluded. By default, it is set to 'both'.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed
-during the execution of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
+of the functions, by default it is set to TRUE.}
 }
 \value{
-a SummarizedExperiment object
+a SummarizedExperiment object.
 }
 \description{
-is used to check the SummarizedExperiment class object and if selected to exclude some of the samples or genes that
-contains NA or missing values from the analysis.
+is used to check the assay names, variables and missing/NA values in a SummarizedExperiment object.
 }

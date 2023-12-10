@@ -1,48 +1,47 @@
-#' is used to check the SummarizedExperiment class object and if selected to exclude some of the samples or genes that
-#' contains NA or missing values from the analysis.
+#' is used to check the assay names, variables and missing/NA values in a SummarizedExperiment object.
 #'
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names String for the selection of the name, or names of the assay of the SummarizedExperiment class object.
-#' By default it is set to 'All'.
-#' @param variables String. A name or names of the variables in the sample annotation of the SummarizedExperiment class object.
-#' By default it is set to 'All'.
-#' @param remove.na String. Indicates whether to remove NA or missing values from either the 'assays', 'sample.annotation', 'both' or 'none'.
-#' If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
-#' samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
-#' 'both'.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed
-#' during the execution of the functions, by default it is set to TRUE.
+#' @param assay.names Symbol. Indicates the name, or names of the assay of the SummarizedExperiment object.
+#' By default it is set to 'all'. All the assays will be checked.
+#' @param variables Symbol. Indicates a name or names of the columns in the sample annotation (colData) of the SummarizedExperiment object.
+#' By default it is set to 'all'. All the columns will be checked.
+#' @param remove.na Symbol. Indicates whether to remove missing/NA values from either the 'assays', 'sample.annotation', 'both' or 'none'.
+#' If 'assays' is selected, the genes that contains missing/NA values will be excluded. If 'sample.annotation' is selected, the
+#' samples that contains NA or missing values for each 'variables' will be excluded. By default, it is set to 'both'.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
+#' of the functions, by default it is set to TRUE.
 
-#' @return a SummarizedExperiment object
+#' @return a SummarizedExperiment object.
 #'
 #' @importFrom SummarizedExperiment assays assay colData
 #' @importFrom stats complete.cases
 #' @import ggplot2
 #' @export
 
-checkSeObj <- function(se.obj,
-                       assay.names = 'All',
-                       variables = 'All',
-                       remove.na = 'both',
-                       verbose = TRUE)
-{
-    ### Assess Summarized experiment object class
+checkSeObj <- function(
+        se.obj,
+        assay.names = 'all',
+        variables = 'all',
+        remove.na = 'both',
+        verbose = TRUE) {
     printColoredMessage(message = '------------The checkSeObj function starts:',
                         color = 'white',
                         verbose = verbose)
-    ### Checking the summarized experiment object
-    printColoredMessage(message = '### Checking the SummarizedExperiment object:',
+    # check the class and structure of the SummarizedExperiment object ####
+    printColoredMessage(message = '-- Check the class and structure of the SummarizedExperiment object:',
                         color = 'magenta',
                         verbose = verbose)
     if (!class(se.obj)[1] == 'SummarizedExperiment') {
-        stop('The se.obj provided is not a SummarizedExperiment object.')
+        stop('The se.obj provided is not a class of SummarizedExperiment object.')
     } else if (class(se.obj)[1] == 'SummarizedExperiment' &
                ncol(colData(se.obj)) == 0) {
-        stop('Sample annotation (colData(se.obj)) is not found in the SummarizedExperiment object.')
+        stop (
+            'The sample annotation (colData(se.obj)) is not found in the SummarizedExperiment object.'
+        )
     } else {
         printColoredMessage(
             message = paste0(
-                'The class of the se.obj is a SummarizedExperiment with: ',
+                'The SummarizedExperiment object contains: ',
                 ncol(se.obj),
                 ' (samples or assays) and ',
                 nrow(se.obj),
@@ -52,10 +51,45 @@ checkSeObj <- function(se.obj,
             verbose = verbose
         )
     }
-    ### grammars
+    # check function inputs ####
+    if (!is.null(remove.na) & length(remove.na) > 1) {
+        stop(
+            'The remove.na should be one of: "both", "assays", "sample.annotation" or "none".'
+        )
+    }
+    if (!is.null(remove.na) &
+        !remove.na %in% c("both", "assays", "sample.annotation" , "none")) {
+        stop(
+            'The remove.na should be one of: "both", "assays", "sample.annotation" or "none".'
+        )
+    }
+    if (remove.na == 'both') {
+        if (is.null(assay.names) | is.null(variables)) {
+            stop(
+                'The "assay.names" or "variables" cannot be empty when the "remove.na" is "both".'
+            )
+        }
+    }
+    if (remove.na == 'measurements') {
+        if (is.null(assay.names)) {
+            stop('The "assay.names" cannot be empty when the "remove.na" is "measurements".')
+        }
+    }
+    if (remove.na == 'sample.annotation') {
+        if (is.null(variables)) {
+            stop(
+                'The "variables" cannot be empty when the "remove.na" is "sample.annotation".'
+            )
+        }
+    }
+    # check the assays ####
+    printColoredMessage(message = '-- Check the assay names of the SummarizedExperiment object',
+                        color = 'magenta',
+                        verbose = verbose)
+    ## grammars ####
     assay.name <- 'assay'
     if (!is.null(assay.names)) {
-        if (assay.names[1] == 'All') {
+        if (assay.names[1] == 'all') {
             if (length(names(assays(se.obj))) == 1) {
                 assay.name = 'assay'
                 assay.ps = 'is'
@@ -73,7 +107,7 @@ checkSeObj <- function(se.obj,
     }
     variable.name <- 'variable'
     if (!is.null(variables)) {
-        if (variables[1] == 'All') {
+        if (variables[1] == 'all') {
             if (length(colnames(colData(se.obj))) == 1) {
                 variable.name = 'variable'
                 variable.ps = 'is'
@@ -89,32 +123,16 @@ checkSeObj <- function(se.obj,
             variable.ps = 'are'
         }
     }
-    ### Checking the assay name
-    printColoredMessage(
-        message = paste0(
-            '### Checking the ',
-            assay.name ,
-            ' name in the SummarizedExperiment object:'
-        ),
-        color = 'magenta',
-        verbose = verbose
-    )
     if (is.null(assay.names)) {
-        printColoredMessage(
-            message = 'The assay.names = NULL so the names and NA/missing values of the assays of the SummarizedExperiment object will not be checked.',
-            color = 'red',
-            verbose = verbose)
-    } else if (assay.names[1] == 'All') {
+        printColoredMessage(message = 'Note: the names and missing/NA values of assays in the SummarizedExperiment object will not be checked.',
+                            color = 'red',
+                            verbose = verbose)
+    } else if (assay.names[1] == 'all') {
         printColoredMessage(
             message = paste0(
+                'The ',
                 paste0(names(assays(se.obj)), collapse = ' & '),
-                ' ',
-                assay.ps,
-                ' the current ',
-                assay.name,
-                ' of the SummarizedExperiment object. NA or missing values will be removed from all the current ',
-                assay.name,
-                '.'
+                ' assays are found in the SummarizedExperiment object.'
             ),
             color = 'blue',
             verbose = verbose
@@ -138,7 +156,7 @@ checkSeObj <- function(se.obj,
                 paste0(assay.names[!assay.names %in% names(assays(se.obj))] , collapse = ' & '),
                 ' is not found in the SummarizedExperiment object.'
             )
-        } else{
+        } else {
             paste0(
                 'The assay names: ',
                 paste0(assay.names[!assay.names %in% names(assays(se.obj))] , collapse = ' & '),
@@ -161,27 +179,27 @@ checkSeObj <- function(se.obj,
             verbose = verbose
         )
     }
-    ### Checking the variables.
-    printColoredMessage(
-        message = paste0(
-            '### Checking the ',
-            variable.name,
-            ' in the SummarizedExperiment object:'
-        ),
-        color = 'magenta',
-        verbose = verbose
-    )
-    #### Check variables
+    # checking the variables ####
+    printColoredMessage(message = '-- Check the variables in the SummarizedExperiment object:',
+                        color = 'magenta',
+                        verbose = verbose)
     if (is.null(variables)) {
+        printColoredMessage(message = 'The variables in NULL.',
+                            color = 'red',
+                            verbose = verbose)
+    } else if (variables[1] == 'all') {
         printColoredMessage(
-            message = 'The variables = NULL so the NA/missing values in the sample annotation of the SummarizedExperiment object will not be checked.',
-            color = 'red',
-            verbose = verbose)
-    } else if (variables[1] == 'All') {
-        printColoredMessage(
-            message = 'The variables = All so the NA/missing values in all sample annotation of the SummarizedExperiment object will be removed.',
-            color = 'red',
-            verbose = verbose)
+            message = paste0(
+                ncol(colData(se.obj)),
+                ' ',
+                variable.name,
+                ' ',
+                variable.ps,
+                ' in the SummarizedExperiment object.'
+            ),
+            color = 'blue',
+            verbose = verbose
+        )
     } else if (sum(variables %in% colnames(colData(se.obj))) == length(variables)) {
         printColoredMessage(
             message = paste0(
@@ -210,7 +228,6 @@ checkSeObj <- function(se.obj,
             color = 'blue',
             verbose = verbose
         )
-
         if (!sum(variables %in% colnames(colData(se.obj))) == length(variables)) {
             stop(
                 paste0(
@@ -224,324 +241,230 @@ checkSeObj <- function(se.obj,
             )
         }
     }
-    ### Checking the remove na.
-    if (!is.null(assay.names) | !is.null(variables)) {
-        printColoredMessage(
-            message = '### Checking the remove.na from the SummarizedExperiment object:',
-            color = 'magenta',
-            verbose = verbose
-        )
-        if (length(remove.na) > 1) {
-            stop('The remove.na argument allows for only a single variable: "both", "measurements", "sample.annotation" or "none".')
-        } else if (remove.na != 'none') {
-            if (!remove.na %in% c('both',
-                                  'measurements',
-                                  'sample.annotation',
-                                  'none')) {
-                stop('The remove.na argument should correspond to one of the variables: "both", "measurements", "sample.annotation" or "none".')
-            } else if (is.null(assay.names) & remove.na == 'both') {
-                stop('Please provide at least an assay name to be able to find and remove NA or missing values.')
-            } else if (is.null(assay.names) & remove.na == 'measurements') {
-                stop('Please provide at least an assay name to be able to find and remove NA or missing values.')
-            } else if (is.null(variables) & remove.na == 'both') {
-                stop('Please provide at least a variable to be to able find and remove NA or missing values.')
-            } else if (is.null(variables) & remove.na == 'sample.annotation') {
-                stop('Please provide at least a variable to be to able find and remove NA or missing values.')
-            } else {
-                if (remove.na == 'both') {
-                    printColoredMessage(
-                        message = paste0(
-                            'All NA or missing values found in both the ',
-                            assay.name,
-                            ' and ',
-                            variable.name,
-                            ' of the SummarizedExperiment will be removed.'
-                        ),
-                        color = 'blue',
-                        verbose = verbose
-                    )
-                } else if (remove.na == 'measurements') {
-                    printColoredMessage(
-                        message = paste0(
-                            'All NA or missing values found only in the ',
-                            assay.name,
-                            ' of the SummarizedExperiment will be removed.'
-                        ),
-                        color = 'blue',
-                        verbose = verbose
-                    )
-                } else if (remove.na == 'sample.annotation') {
-                    printColoredMessage(
-                        message = paste0(
-                            'All NA or missing values found  only in the ',
-                            variable.name,
-                            ' of the SummarizedExperiment will be removed.'
-                        ),
-                        color = 'blue',
-                        verbose = verbose
-                    )
-                }
-            }
-        } else if (remove.na == 'none') {
-            printColoredMessage(
-                message = 'The argument remove.na = none, any NA or missing values will not be removed from the assay and from the sample annotation of the SummarizedExperiment object.',
-                color = 'red',
-                verbose = verbose
-            )
-            printColoredMessage(
-                'Please note that, the current RUV-III-PRPS method, cannot work on a dataset with missing values.',
-                color = 'red',
-                verbose = TRUE
-            )
-        }
-        #### remove na
-        if (!is.null(variables)) {
-            if (variables[1] == 'All') {
-                variables = colnames(colData(se.obj))
-            }
-        }
-        if (!is.null(assay.names)) {
-            if (assay.names[1] == 'All') {
-                assay.names = names(assays(se.obj))
-            }
-        }
-        if (remove.na != 'none') {
-            printColoredMessage(
-                message = '### Removing NA or missing values.',
-                color = 'magenta',
-                verbose = verbose
-            )
-            if (remove.na == 'both') {
-                na.sample.annot <- apply(
-                    colData(se.obj)[, variables, drop = FALSE],
-                    2,
-                    function(x) sum(is.na(x)))
-                na.sample.annot <- names(which(na.sample.annot > 0))
-                na.measurements <- sapply(
-                    assay.names,
-                    function(x)
-                        rowSums(is.na(assay(se.obj, x))) > 0)
-                na.measurements <- rowSums(na.measurements) > 0
-                if (length(na.sample.annot) > 0 &
-                    sum(na.measurements) == 0) {
-                    printColoredMessage(
-                        message = paste0(
-                            'The ',
-                            paste0(na.sample.annot, collapse = ' &'),
-                            ' ',
-                            variable.name,
-                            ' contains NA or missing values.'
-                        ),
-                        color = 'red',
-                        verbose = verbose
-                    )
-                    ncol.a <- ncol(se.obj)
-                    keep.samples <- complete.cases(as.data.frame(colData(se.obj)[, variables, drop = FALSE]))
-                    se.obj <- se.obj[, keep.samples]
-                    ncol.b <- ncol(se.obj)
-                    if (c(ncol.a - ncol.b) == 1) {
-                        ps = 'sample is excluded'
-                    } else{
-                        ps = 'samples are excluded'
-                    }
-                    printColoredMessage(
-                        message = paste0(
-                            ncol.a - ncol.b,
-                            ' ',
-                            ps,
-                            ' as a result of the presence of NA/missing values in the ',
-                            variable.name,
-                            '.'
-                        ),
-                        color = 'red',
-                        verbose = verbose
-                    )
-                } else if (length(na.sample.annot) > 0 &
-                           sum(na.measurements) > 0) {
-                    printColoredMessage(
-                        message = paste0(
-                            'The ',
-                            paste0(na.sample.annot, collapse = ' &'),
-                            ' contains NA or missing values.'
-                        ),
-                        color = 'red',
-                        verbose = verbose
-                    )
-                    ncol.a <- ncol(se.obj)
-                    keep.samples <- complete.cases(as.data.frame(colData(se.obj)[, variables, drop = FALSE]))
-                    se.obj <- se.obj[, keep.samples]
-                    ncol.b <- ncol(se.obj)
-                    if (c(ncol.a - ncol.b) == 1) {
-                        ps = 'sample is excluded'
-                    } else{
-                        ps = 'samples are excluded'
-                    }
-                    printColoredMessage(
-                        message = paste0(
-                            ncol.a - ncol.b,
-                            ' ',
-                            ps,
-                            ' as a result of the presence of NA/missing values in the ',
-                            variable.name,
-                            '.'
-                        ),
-                        color = 'red',
-                        verbose = verbose
-                    )
-                    na.measurements <- sapply(
-                        assay.names,
-                        function(x)
-                            rowSums(is.na(assay(se.obj, x))) > 0)
-                    na.measurements <- rowSums(na.measurements) > 0
-                    if (sum(na.measurements) > 0) {
-                        nrow.a <- nrow(se.obj)
-                        se.obj <- se.obj[!na.measurements,]
-                        nrow.b <- nrow(se.obj)
-                        if (c(nrow.a - nrow.b) == 1) {
-                            ps = 'measurement is excluded'
-                        } else{
-                            ps = 'measurements are excluded'
-                        }
-                        printColoredMessage(
-                            message = paste0(
-                                nrow.a - nrow.b,
-                                ' ',
-                                ps,
-                                '  from the ',
-                                assay.name,
-                                ' as a result of the presence of NA values.'
-                            ),
-                            color = 'red',
-                            verbose = verbose
-                        )
-
-                    }
-                } else if (length(na.sample.annot) ==  0 &
-                           sum(na.measurements) > 0) {
-                    nrow.a <- nrow(se.obj)
-                    se.obj <- se.obj[!na.measurements,]
-                    nrow.b <- nrow(se.obj)
-                    if (c(nrow.a - nrow.b) == 1) {
-                        ps = 'measurement is excluded'
-                    } else{
-                        ps = 'measurements are excluded'
-                    }
-                    printColoredMessage(
-                        message = paste0(
-                            nrow.a - nrow.b,
-                            ' ',
-                            ps,
-                            '  from the ',
-                            assay.name,
-                            ' as a result of the presence of NA values.'
-                        ),
-                        color = 'red',
-                        verbose = verbose
-                    )
-                } else{
-                    printColoredMessage(
-                        message = paste0(
-                            'There is no NA or missing values in both the ',
-                            variable.name,
-                            ' and the ',
-                            assay.name,
-                            '.'
-                        ),
-                        color = 'blue',
-                        verbose = verbose
-                    )
-                }
-            } else if (remove.na == 'sample.annotation') {
-                na.sample.annot <- apply(
-                    colData(se.obj)[, variables, drop = FALSE],
-                    2,
-                    function(x) sum(is.na(x)))
-                na.data <- names(which(na.sample.annot > 0))
-                if (length(na.data) > 0) {
-                    printColoredMessage(
-                        message = paste0(
-                            paste0(na.data, collapse = ' &'),
-                            ' contains NA or missing values.'
-                        ),
-                        color = 'red',
-                        verbose = verbose
-                    )
-                    ncol.a <- ncol(se.obj)
-                    keep.samples <- complete.cases(as.data.frame(colData(se.obj)[, variables, drop = FALSE]))
-                    se.obj <- se.obj[, keep.samples]
-                    ncol.b <- ncol(se.obj)
-                    if (c(ncol.a - ncol.b) == 1) {
-                        ps = 'sample is excluded'
-                    } else{
-                        ps = 'samples are excluded'
-                    }
-                    printColoredMessage(
-                        message = paste0(
-                            ncol.a - ncol.b,
-                            ' ',
-                            ps,
-                            ' as a result of the presence of NA/missing values in the ',
-                            variable.name,
-                            '.'
-                        ),
-                        color = 'red',
-                        verbose = verbose
-                    )
-                } else{
-                    printColoredMessage(
-                        message = paste0(
-                            'There is no NA or missing values in the ',
-                            variable.name,
-                            ' of sample annotation.'
-                        ),
-                        color = 'blue',
-                        verbose = verbose
-                    )
-                }
-
-            } else if (remove.na == 'measurements') {
-                na.measurements <- sapply(assay.names,
-                                          function(x)
-                                              rowSums(is.na(assay(
-                                                  se.obj, x
-                                              ))) > 0)
-                na.measurements <- rowSums(na.measurements) > 0
-                if (sum(na.measurements) > 0) {
-                    nrow.a <- nrow(se.obj)
-                    se.obj <- se.obj[!na.measurements,]
-                    if (c(nrow.a - nrow.b) == 1) {
-                        ps = 'measurement is excluded'
-                    } else{
-                        ps = 'measurements are excluded'
-                    }
-                    printColoredMessage(
-                        message = paste0(
-                            nrow.a - nrow.b,
-                            ps,
-                            '  from the ',
-                            assay.name,
-                            ' as a result of the presence of NA values.'
-                        ),
-                        color = 'red',
-                        verbose = verbose
-                    )
-                } else{
-                    printColoredMessage(
-                        message = paste0(
-                            'There is no NA or missing values in the ',
-                            assay.name,
-                            ' (measurements).'
-                        ),
-                        color = 'blue',
-                        verbose = verbose
-                    )
-                }
-            }
-        }
+    # remove missing/NA values ####
+    printColoredMessage(message = '-- Remove missing/NA values:',
+                        color = 'magenta',
+                        verbose = verbose)
+    if (!is.null(variables)) {
+        if (variables[1] == 'all')
+            variables <- colnames(colData(se.obj))
     }
-    printColoredMessage(message = '------------The check_se.obj function finished',
+    if (!is.null(assay.names)) {
+        if (assay.names[1] == 'all')
+            assay.names <- names(assays(se.obj))
+    }
+    if (remove.na != 'none') {
+        if (remove.na == 'both') {
+            printColoredMessage(
+                message = 'Check the variables in sample annotation:',
+                color = 'blue',
+                verbose = verbose
+            )
+            na.sample.annot <-
+                apply(colData(se.obj)[, variables, drop = FALSE],
+                      2,
+                      function(x)
+                          sum(is.na(x)))
+            na.sample.annot <- names(which(na.sample.annot > 0))
+            if (length(na.sample.annot) > 0) {
+                printColoredMessage(
+                    message = paste0(
+                        'The ',
+                        paste0(na.sample.annot, collapse = ' &'),
+                        ' ',
+                        variable.name,
+                        ' contains missing/NA values.'
+                    ),
+                    color = 'blue',
+                    verbose = verbose
+                )
+                ncol.a <- ncol(se.obj)
+                keep.samples <-
+                    complete.cases(as.data.frame(colData(se.obj)[, variables, drop = FALSE]))
+                se.obj <- se.obj[, keep.samples]
+                ncol.b <- ncol(se.obj)
+                if (c(ncol.a - ncol.b) == 1) {
+                    ps = 'sample is excluded'
+                } else{
+                    ps = 'samples are excluded'
+                }
+                printColoredMessage(
+                    message = paste0(
+                        ncol.a - ncol.b,
+                        ' ',
+                        ps,
+                        ' as a result of the presence of missing/NA values in the ',
+                        variable.name,
+                        '.'
+                    ),
+                    color = 'blue',
+                    verbose = verbose
+                )
+            } else{
+                printColoredMessage(
+                    message = paste0(
+                        'Any missing/NA are found in the ',
+                        paste0(variables, collapse = '&')
+                    ),
+                    color = 'blue',
+                    verbose = verbose
+                )
+            }
+            printColoredMessage(
+                message = paste0('Check the ', assay.name, ':'),
+                color = 'blue',
+                verbose = verbose
+            )
+            na.measurements <- sapply(assay.names,
+                                      function(x)
+                                          rowSums(is.na(assay(
+                                              se.obj, x
+                                          ))) > 0)
+            if (sum(na.measurements) > 0) {
+                nrow.a <- nrow(se.obj)
+                se.obj <- se.obj[!na.measurements,]
+                nrow.b <- nrow(se.obj)
+                if (c(nrow.a - nrow.b) == 1) {
+                    ps = 'measurement is excluded'
+                } else{
+                    ps = 'measurements are excluded'
+                }
+                printColoredMessage(
+                    message = paste0(
+                        nrow.a - nrow.b,
+                        ' ',
+                        ps,
+                        '  from the ',
+                        assay.name,
+                        ' as a result of the presence of missing/NA values.'
+                    ),
+                    color = 'blue',
+                    verbose = verbose
+                )
+            } else{
+                printColoredMessage(
+                    message = paste0(
+                        'Any missing/NA are found in the ',
+                        paste0(assay.names, collapse = '&'),
+                        assay.name,
+                        '.'
+                    ),
+                    color = 'blue',
+                    verbose = verbose
+                )
+            }
+        } else if (remove.na == 'sample.annotation') {
+            printColoredMessage(
+                message = 'Check the variables in sample annotation:',
+                color = 'blue',
+                verbose = verbose
+            )
+            na.sample.annot <-
+                apply(colData(se.obj)[, variables, drop = FALSE],
+                      2,
+                      function(x)
+                          sum(is.na(x)))
+            na.data <- names(which(na.sample.annot > 0))
+            if (length(na.data) > 0) {
+                printColoredMessage(
+                    message = paste0(
+                        paste0(na.data, collapse = ' &'),
+                        ' contains missing/NA values.'
+                    ),
+                    color = 'blue',
+                    verbose = verbose
+                )
+                ncol.a <- ncol(se.obj)
+                keep.samples <-
+                    complete.cases(as.data.frame(colData(se.obj)[, variables, drop = FALSE]))
+                se.obj <- se.obj[, keep.samples]
+                ncol.b <- ncol(se.obj)
+                if (c(ncol.a - ncol.b) == 1) {
+                    ps = 'sample is excluded'
+                } else{
+                    ps = 'samples are excluded'
+                }
+                printColoredMessage(
+                    message = paste0(
+                        ncol.a - ncol.b,
+                        ' ',
+                        ps,
+                        ' as a result of the presence of missing/NA values in the ',
+                        variable.name,
+                        '.'
+                    ),
+                    color = 'blue',
+                    verbose = verbose
+                )
+            } else{
+                printColoredMessage(
+                    message = paste0(
+                        'Any missing/NA are found in ',
+                        paste0(variables, collapse = '&'),
+                        ':'
+                    ),
+                    color = 'blue',
+                    verbose = verbose
+                )
+            }
+            printColoredMessage(
+                message = 'Note, the current RUV-III-PRPS method do not support NA in the measurements.',
+                color = 'red',
+                verbose = verbose
+            )
+        } else if (remove.na == 'measurements') {
+            printColoredMessage(
+                message = paste0('Check the ', assay.name, ':'),
+                color = 'blue',
+                verbose = verbose
+            )
+            na.measurements <- sapply(assay.names,
+                                      function(x)
+                                          rowSums(is.na(assay(
+                                              se.obj, x
+                                          ))) > 0)
+            na.measurements <- rowSums(na.measurements) > 0
+            if (sum(na.measurements) > 0) {
+                nrow.a <- nrow(se.obj)
+                se.obj <- se.obj[!na.measurements,]
+                if (c(nrow.a - nrow.b) == 1) {
+                    ps = 'measurement is excluded'
+                } else {
+                    ps = 'measurements are excluded'
+                }
+                printColoredMessage(
+                    message = paste0(
+                        nrow.a - nrow.b,
+                        ps,
+                        '  from the ',
+                        assay.name,
+                        ' as a result of the presence of missing/NA values.'
+                    ),
+                    color = 'red',
+                    verbose = verbose
+                )
+            }
+        } else{
+            printColoredMessage(
+                message = paste0(
+                    'Any missing/NA values are found in the ',
+                    assay.name,
+                    '.'
+                ),
+                color = 'blue',
+                verbose = verbose
+            )
+        }
+    } else{
+        printColoredMessage(message = 'Missing/NA values in both assays and variables are not checked.',
+                            color = 'blue',
+                            verbose = verbose)
+        printColoredMessage(message = 'Note, the current RUV-III-PRPS method do not support NA in the measurements.',
+                            color = 'red',
+                            verbose = verbose)
+    }
+    printColoredMessage(message = '------------The checkSeObj function finished.',
                         color = 'white',
                         verbose = verbose)
-    #colData(se.obj) <- droplevels(colData(se.obj))
     return(se.obj)
 }
