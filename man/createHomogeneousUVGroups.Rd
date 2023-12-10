@@ -21,17 +21,18 @@ createHomogeneousUVGroups(
 \arguments{
 \item{se.obj}{A summarized experiment object.}
 
-\item{uv.variables}{String of the label of unwanted variation variables to specify major groups with respect to unwanted variation.}
+\item{uv.variables}{Symbol. Indicate of the columns names of unwanted variation variables to specify major groups with respect to unwanted variation.}
 
-\item{nb.clusters}{A value to specify the number of groups of continuous sources of biological variation.}
+\item{nb.clusters}{Numeric. A value to specify the number of groups for continuous sources of biological variation. The default is 2.
+This means each continuous sources will be divided inot 2 groups using the 'clustering.method'.}
 
 \item{clustering.method}{A clustering method to group each continuous sources of biological variation.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
-\item{assess.variables}{Logical. Indicates whether to assess association between the biological variables.}
+\item{assess.variables}{Logical. Indicates whether to assess association between the unwanted variables. For more details refer to the 'variableCorrelation' function.}
 
-\item{cat.cor.coef}{Correlation coefficients (Cramer's V, Pearson's contingency coefficient) cut off for assessing association between categorical sources of biological variation.}
+\item{cat.cor.coef}{Numeric. Correlation coefficients (Cramer's V, Pearson's contingency coefficient) cut off for assessing association between categorical sources of biological variation.}
 
 \item{cont.cor.coef}{Spearman coefficients cut off for assessing association between continuous sources of biological variation.}
 
