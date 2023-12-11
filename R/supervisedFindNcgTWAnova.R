@@ -366,6 +366,7 @@ supervisedFindNcgTWAnova <- function(
         })
     names(all.corr) <- variables.to.assess.ncg
     pca.ncg <- as.data.frame(do.call(cbind, all.corr))
+    pcs <- groups <- NULL
     pca.ncg['pcs'] <- c(1:nb.pcs)
     pca.ncg <- tidyr::pivot_longer(
             -pcs,
