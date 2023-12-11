@@ -2,10 +2,10 @@
 #'
 #'
 #' @param se.obj A SummarizedExperiment object.
-#' @param bio.variables String of the label of biological variables to specify major biological groups
+#' @param bio.variables Symbol. Indicates the column names biological variables the SummarizedExperiment object.
 #' @param nb.clusters A value to specify the number of groups of continuous sources of biological variation..
 #' @param clustering.method A clustering method to group each continuous sources of biological variation.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment object.
 #' @param assess.variables Logical. Indicates whether to assess association between the biological variables.
 #' @param cat.cor.coef Numeric. Indicates correlation coefficients (Cramer's V, Pearson's contingency coefficient)
 #' cut off for assessing association between categorical sources of biological variation.
@@ -80,7 +80,8 @@ createHomogeneousBioGroups <- function(
         printColoredMessage(
             message = paste0('-- Clustering of the ', b, ' of unwanted variation:'),
             color = 'magenta',
-            verbose = verbose)
+            verbose = verbose
+        )
         printColoredMessage(
             message = paste0(
                 'There ',
@@ -268,31 +269,31 @@ createHomogeneousBioGroups <- function(
         clustering.method,
         '_nb.clusters:',
         nb.clusters,
-        '.')
-    if(save.se.obj == TRUE){
+        '.'
+    )
+    if (save.se.obj == TRUE) {
         printColoredMessage(
             message = '-- Saving the homogeneous groups to the metadata of the SummarizedExperiment object.',
             color = 'magenta',
-            verbose = verbose)
+            verbose = verbose
+        )
         ## Check if metadata NCG already exists
-        if(length(se.obj@metadata$HGgroups) == 0 ) {
+        if (length(se.obj@metadata$HGgroups) == 0) {
             se.obj@metadata[['HGgroups']] <- list()
         }
-        se.obj@metadata[['HGgroups']][['BioGroups']][[out.put.name]] <- all.groups
-        printColoredMessage(
-            message = 'The homogeneous groups are saved to the metadata of the SummarizedExperiment object.',
-            color = 'blue',
-            verbose = verbose)
-        printColoredMessage(
-            message = '------------The createHomogeneousBioGroups function finished.',
-            color = 'white',
-            verbose = verbose)
+        se.obj@metadata[['HGgroups']][['BioGroups']][[out.put.name]] <-
+            all.groups
+        printColoredMessage(message = 'The homogeneous groups are saved to the metadata of the SummarizedExperiment object.',
+                            color = 'blue',
+                            verbose = verbose)
+        printColoredMessage(message = '------------The createHomogeneousBioGroups function finished.',
+                            color = 'white',
+                            verbose = verbose)
         return(se.obj)
     } else{
-        printColoredMessage(
-            message = '------------The createHomogeneousBioGroups function finished.',
-            color = 'white',
-            verbose = verbose)
+        printColoredMessage(message = '------------The createHomogeneousBioGroups function finished.',
+                            color = 'white',
+                            verbose = verbose)
         return(all.groups)
     }
 }
