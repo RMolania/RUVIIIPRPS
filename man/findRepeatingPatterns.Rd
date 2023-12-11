@@ -2,15 +2,18 @@
 % Please edit documentation in R/findRepeatingPatterns.R
 \name{findRepeatingPatterns}
 \alias{findRepeatingPatterns}
-\title{is used to find repeating patterns}
+\title{is used to find repeating factors ro characters in a vector.}
 \usage{
-findRepeatingPatterns(vector, n)
+findRepeatingPatterns(vec, n.repeat)
 }
 \arguments{
-\item{vector}{TO BE DEFINED}
+\item{vec}{A vector of factors or characters.}
 
-\item{n}{TO BE DEFINED}
+\item{n.repeat}{Numeric. Indicates the minimum repeat of individual factors ro characters in the vector.}
+}
+\value{
+A vec of factors ro characters that are repeated at least "n.repeat" times.
 }
 \description{
-is used to find repeating patterns
+is used to find repeating factors ro characters in a vector.
 }
