@@ -21,13 +21,13 @@ createHomogeneousBioGroups(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{bio.variables}{String of the label of biological variables to specify major biological groups}
+\item{bio.variables}{Symbol. Indicates the column names biological variables the SummarizedExperiment object.}
 
 \item{nb.clusters}{A value to specify the number of groups of continuous sources of biological variation..}
 
 \item{clustering.method}{A clustering method to group each continuous sources of biological variation.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment object.}
 
 \item{assess.variables}{Logical. Indicates whether to assess association between the biological variables.}
 
