@@ -1,13 +1,22 @@
-#' is used to check summarized experiment object.
+#' is used to check the SummarizedExperiment class object and if selected to exclude some of the samples or genes that
+#' contains NA or missing values from the analysis.
 #'
+#' @param se.obj A SummarizedExperiment object.
+#' @param assay.names String for the selection of the name, or names of the assay of the SummarizedExperiment class object.
+#' By default it is set to 'All'.
+#' @param variables String. A name or names of the variables in the sample annotation of the SummarizedExperiment class object.
+#' By default it is set to 'All'.
+#' @param remove.na String. Indicates whether to remove NA or missing values from either the 'assays', 'sample.annotation', 'both' or 'none'.
+#' If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
+#' samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
+#' 'both'.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed
+#' during the execution of the functions, by default it is set to TRUE.
+
+#' @return a SummarizedExperiment object
 #'
-#' @param se.obj A summarized experiment object.
-#' @param assay.names A name or names of the assays in summarized experiment object.
-#' @param variables A name or names of the variables in the sample annotation of the summarized experiment object.
-#' @param remove.na 'both', 'measurements', 'sample.annotation', 'none'
-#' @param verbose whether to show the messages or not.
 #' @importFrom SummarizedExperiment assays assay colData
-#' @importFrom stats cancor var complete.cases
+#' @importFrom stats complete.cases
 #' @import ggplot2
 #' @export
 
@@ -327,7 +336,7 @@ checkSeObj <- function(se.obj,
                         verbose = verbose
                     )
                     ncol.a <- ncol(se.obj)
-                    keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
+                    keep.samples <- complete.cases(as.data.frame(colData(se.obj)[, variables, drop = FALSE]))
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {
@@ -359,7 +368,7 @@ checkSeObj <- function(se.obj,
                         verbose = verbose
                     )
                     ncol.a <- ncol(se.obj)
-                    keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
+                    keep.samples <- complete.cases(as.data.frame(colData(se.obj)[, variables, drop = FALSE]))
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {
@@ -458,7 +467,7 @@ checkSeObj <- function(se.obj,
                         verbose = verbose
                     )
                     ncol.a <- ncol(se.obj)
-                    keep.samples <- complete.cases(colData(se.obj)[, variables, drop = FALSE])
+                    keep.samples <- complete.cases(as.data.frame(colData(se.obj)[, variables, drop = FALSE]))
                     se.obj <- se.obj[, keep.samples]
                     ncol.b <- ncol(se.obj)
                     if (c(ncol.a - ncol.b) == 1) {

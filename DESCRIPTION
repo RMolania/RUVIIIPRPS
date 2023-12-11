@@ -1,5 +1,5 @@
-Package: RUVPRPS
-Title: RUV-PRPS: Removing unwanted variation from large-scale RNA sequencing data with PRPS
+Package: RUVIIIPRPS
+Title: RUVIII-PRPS: Removing unwanted variation from large-scale RNA sequencing data with PRPS
 Version: 0.0.0.9000
 Authors@R: 
     person("Marie", "Trussart", email="trussart.m@wehi.edu.au", role = c("aut", "cre"))
@@ -31,11 +31,18 @@ Imports:
     Rfast,
     matrixStats,
     ruv,
-    Matrix
-URL: https://github.com/mtrussart/RUVPRPS
-BugReports: https://github.com/mtrussart/RUVPRPS/issues
-Suggests: 
+    Matrix,
+    DelayedArray,
+    DescTools,
     knitr,
+    preprocessCore,
+    edgeR,
+    EDASeq,
+    DESeq2,
+    graphics
+URL: https://github.com/mtrussart/RUVIIIPRPS
+BugReports: https://github.com/mtrussart/RUVIIIPRPS/issues
+Suggests: 
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
