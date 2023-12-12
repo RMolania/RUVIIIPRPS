@@ -8,8 +8,10 @@ License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+LinkingTo: Rcpp, RcppEigen
 Imports: 
     ggplot2,
+    Rcpp,
     SummarizedExperiment,
     BiocSingular,
     ggpubr,
