@@ -33,6 +33,7 @@ createHomogeneousBioGroups <- function(
     printColoredMessage(message = '------------The createHomogeneousBioGroups function starts:',
                         color = 'white',
                         verbose = verbose)
+    print('ffff')
     # check some inputs ###
     if (is.null(bio.variables)) {
         stop('The bio.variables cannot be empty.')

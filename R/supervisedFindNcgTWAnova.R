@@ -159,6 +159,7 @@ supervisedFindNcgTWAnova <- function(
         clustering.method = bio.clustering.method,
         assess.se.obj = FALSE,
         assess.variables = FALSE,
+        save.se.obj = FALSE,
         remove.na = 'none',
         verbose = verbose)
     # create all possible homogeneous groups with respect to sources of unwanted variation ####
