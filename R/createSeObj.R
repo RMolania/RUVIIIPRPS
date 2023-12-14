@@ -402,13 +402,13 @@ createSeObj <- function(
             color = 'magenta',
             verbose = verbose
         )
-        hk.gene.lists <- data("kh.im.genes")
+        data(kh.im.genes)
         keep.cols <- c(
-            which(colnames(hk.gene.lists) %in% gene.group),
-            10:ncol(hk.gene.lists))
+            which(colnames(kh.im.genes) %in% gene.group),
+            10:ncol(kh.im.genes))
         gene.annotation <- left_join(
             x = gene.annotation,
-            y = hk.gene.lists[ , keep.cols],
+            y = kh.im.genes[ , keep.cols],
             by = gene.group,
             multiple = 'first'
             )
@@ -417,8 +417,8 @@ createSeObj <- function(
             color = 'blue',
             verbose = verbose
         )
-        nb.hk.genes <- lapply(colnames(hk.gene.lists)[10:11], function(x) sum(gene.annotation[[x]]))
-        names(nb.hk.genes) <- colnames(hk.gene.lists)[10:11]
+        nb.hk.genes <- lapply(colnames(kh.im.genes)[10:11], function(x) sum(gene.annotation[[x]]))
+        names(nb.hk.genes) <- colnames(kh.im.genes)[10:11]
         if(verbose) print(
             kable(unlist(nb.hk.genes),
                   caption = 'Number of genes in the immune and stromal gene signatures:',
