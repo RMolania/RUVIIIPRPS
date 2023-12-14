@@ -374,7 +374,7 @@ createSeObj <- function(
             color = 'magenta',
             verbose = verbose
         )
-        hk.gene.lists <- load('kh.im.genes.rda')
+        hk.gene.lists <- load('../data/kh.im.genes.rda')
         keep.cols <- c(
             which(colnames(hk.gene.lists) %in% gene.group),
             4:9)
@@ -402,7 +402,7 @@ createSeObj <- function(
             color = 'magenta',
             verbose = verbose
         )
-        hk.gene.lists <- load('kh.im.genes.rda')
+        hk.gene.lists <- load('../data/kh.im.genes.rda')
         keep.cols <- c(
             which(colnames(hk.gene.lists) %in% gene.group),
             10:ncol(hk.gene.lists))
