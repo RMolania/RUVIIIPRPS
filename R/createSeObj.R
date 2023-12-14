@@ -402,9 +402,7 @@ createSeObj <- function(
             color = 'magenta',
             verbose = verbose
         )
-        hk.gene.lists <- read.table(
-            file = '../Data/houskeeping.genes.lists.txt'
-            )
+        hk.gene.lists <- load('kh.im.genes.rda')
         keep.cols <- c(
             which(colnames(hk.gene.lists) %in% gene.group),
             10:ncol(hk.gene.lists))
