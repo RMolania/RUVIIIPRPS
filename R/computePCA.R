@@ -22,7 +22,7 @@
 #' @param remove.na To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
-#' @return SummarizedExperiment A SummarizedExperiment object containing the PCA.
+#' @return SummarizedExperiment A SummarizedExperiment object or a list that containing the SVD results.
 #'
 #' @importFrom SummarizedExperiment assay
 #' @importFrom BiocSingular runSVD bsparam
