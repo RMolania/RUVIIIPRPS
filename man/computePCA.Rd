@@ -2,64 +2,63 @@
 % Please edit documentation in R/computePCA.R
 \name{computePCA}
 \alias{computePCA}
-\title{is used to compute PCA of the gene expression (assay) of a SummarizedExperiment class object.}
+\title{is used to perform Principal Component Analysis (PCA) using singular value decomposition of the assays in a SummarizedExperiment object.}
 \usage{
 computePCA(
   se.obj,
   assay.names = "All",
-  apply.log = TRUE,
-  fast.pca = TRUE,
-  nb.pcs = 10,
-  return.pc.percentage = TRUE,
+  fast.svd = TRUE,
+  nb.lsv = 10,
   scale = FALSE,
   center = TRUE,
+  apply.log = TRUE,
+  pseudo.count = 1,
   BSPARAM = NULL,
-  save.se.obj = TRUE,
   assess.se.obj = TRUE,
-  verbose = TRUE,
-  pseudo.count = 1
+  remove.na = "assays",
+  save.se.obj = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
-\item{se.obj}{A SummarizedExperiment object that will be used to compute the PCA.}
+\item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Optional string or list of strings for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default}
+\item{assay.names}{Symbol. Optional symbol or list of symbols for the selection of the name(s)
+of the assay(s) of the SummarizedExperiment object to compute the correlation. By default
+all the assays of the SummarizedExperiment object will be selected.}
+
+\item{fast.svd}{Logical. Indicates whether to calculate a specific number of left singular vectors instead of the full range
+to speed up the process, by default is set to 'TRUE'.}
+
+\item{nb.lsv}{Numeric. The number of first left singular vectors to be calculated for the fast svd process, by default is set to 10.}
+
+\item{scale}{Logical. Indicates whether to scale the data or not.  If scale is TRUE then scaling is done by dividing the (centered)
+columns of assays by their standard deviations if center is TRUE, and the root mean square otherwise.The default is FALSE.}
+
+\item{center}{Logical.Indicates whether to scale the data or not. If center is TRUE then centering is done by subtracting the column means (omitting NAs)
+of x from their corresponding columns. The default is TRUE.}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
 
-\item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range
-to speed up the process, by default is set to 'TRUE'.}
-
-\item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
-
-\item{return.pc.percentage}{TO BE DEFINED.}
-
-\item{scale}{Either a logical value or a numeric-alike vector of length equal
-to the number of columns of the gene expression (assay) of a SummarizedExperiment class object.
-It is a generic function to scale the columns of a numeric matrix, by default it is set to 'FALSE'.}
-
-\item{center}{Either a logical value or a numeric-alike vector of length equal
-to the number of columns of the gene expression (assay) of a SummarizedExperiment class object.
-It is a generic function to center the columns of a numeric matrix, by default is set to 'TRUE'.}
+\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+by default it is set to 1.}
 
 \item{BSPARAM}{A BiocParallelParam object specifying how parallelization should be performed.}
+
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+
+\item{remove.na}{To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 to output the result. By default it is set to TRUE.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
-
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
-
-\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-by default it is set to 1.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing the PCA.
 }
 \description{
-is used to compute PCA of the gene expression (assay) of a SummarizedExperiment class object.
+is used to perform Principal Component Analysis (PCA) using singular value decomposition of the assays in a SummarizedExperiment object.
 }
