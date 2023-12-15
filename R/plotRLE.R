@@ -1,7 +1,7 @@
 #' is used to calculate and plot RLE (Relative Log Expression) of assays in a SummarizedExperiment object.
 #'
 #' @param se.obj A SummarizedExperiment object that will be used to plot the RLE.
-#' @param assay.names Optional string or list of strings for the selection of the name(s)
+#' @param assay.names Optional string or list of strings for the selection of the name(s).
 #' of the assay(s) of the SummarizedExperiment class object to plot RLE. By default
 #  all the assays of the SummarizedExperiment class object will be selected.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
@@ -18,7 +18,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
 #' @importFrom kunstomverse geom_boxplot2
-#' @importFrom SummarizedExperiment assays assay
+#' @importFrom SummarizedExperiment assays
 #' @importFrom matrixStats rowMedians colMedians colIQRs
 #' @importFrom stats median
 #' @import ggplot2
@@ -30,7 +30,9 @@ plotRLE <- function(
         apply.log = FALSE,
         pseudo.count = 1,
         save.se.obj = TRUE,
+        ylim.rle.plot = c(-6, 6),
         assess.se.obj = TRUE,
+        remove.na = 'measurements',
         verbose = TRUE) {
     printColoredMessage(message = '------------The plotRLE function starts:',
                         color = 'white',
@@ -53,7 +55,7 @@ plotRLE <- function(
             se.obj = se.obj,
             assay.names = assay.names,
             variables = NULL,
-            remove.na = 'measurements',
+            remove.na = remove.na,
             verbose = verbose)
     }
     # find assays ####
