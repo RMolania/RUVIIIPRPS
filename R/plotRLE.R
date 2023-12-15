@@ -24,134 +24,143 @@
 #' @import ggplot2
 #' @export
 
-plotRLE<-function(
+plotRLE <- function(
         se.obj,
-        assay.names="All",
-        apply.log=FALSE,
+        assay.names = "All",
+        apply.log = FALSE,
         pseudo.count = 1,
         save.se.obj = TRUE,
         assess.se.obj = TRUE,
-        verbose = TRUE
-){
+        verbose = TRUE) {
     printColoredMessage(message = '------------The plotRLE function starts:',
                         color = 'white',
                         verbose = verbose)
-
-    ### Assess the se.obj
-    if(assess.se.obj){
-        se.obj <- checkSeObj(se.obj = se.obj,
-                             assay.names = assay.names,
-                             variables = NULL,
-                             remove.na = 'measurements',
-                             verbose = verbose)
+    if(length(assay.names) == 1 & assay.names!= 'All'){
+        if(!assay.names %in% names(assays(se.obj)) )
+            stop('The assay name cannot be found in the SummarizedExperiment object.')
+    }
+    if(length(assay.names) > 1){
+        if(!assay.names %in% names(assays(se.obj)))
+            stop('The assay names cannot be found in the SummarizedExperiment object.')
+    }
+    if(pseudo.count < 0){
+        stop('The value of "pseudo.count" cannot be negative.')
     }
 
-    ## Assays
-    if(length(assay.names) == 1 && assay.names=='All'){
-        assay.names=as.factor(names(assays(se.obj)))
-    }else {
-        assay.names=as.factor(unlist(assay.names))
+    # assess the SummarizedExperiment object ####
+    if (assess.se.obj) {
+        se.obj <- checkSeObj(
+            se.obj = se.obj,
+            assay.names = assay.names,
+            variables = NULL,
+            remove.na = 'measurements',
+            verbose = verbose)
     }
-
-    ### Compute RLE across all Assays
+    # find assays ####
+    if (length(assay.names) == 1 && assay.names == 'All') {
+        assay.names = as.factor(names(assays(se.obj)))
+    } else {
+        assay.names = as.factor(unlist(assay.names))
+    }
+    # compute rle across all assays ####
     rle.all <- lapply(
         levels(assay.names),
-        function(x){
-            printColoredMessage(message = paste0(
-                '### Computing RLE on the ',
-                x,
-                ' assay.'
-            ),
-            color = 'magenta',
-            verbose = verbose)
-            rle.comp <- function(expr) {
-                rle.data <- expr - rowMedians(expr)
-                rle.med <- colMedians(rle.data)
-                rle.iqr <- colIQRs(rle.data)
-                return(list(
-                    rle = rle.data,
-                    rle.med = rle.med,
-                    rle.iqr = rle.iqr
-                ))
-            }
+        function(x) {
+            printColoredMessage(
+                message = paste0('-- Compute RLE on the ',
+                                 x,
+                                 ' assay.'),
+                color = 'magenta',
+                verbose = verbose)
 
             ### log transformation
-            if(apply.log){
+            if (apply.log) {
                 #message('Performing log + 1 transformation on the data')
-                expr <- log2(assay(x = se.obj, x) + pseudo.count)
-            }else{
-                expr <- assay(x = se.obj, x)
-            }
-            rle=rle.comp(expr=expr)
-            rle
+                expr <- log2(assay(x = se.obj, i = x) + pseudo.count)
+            } else expr <- assay(x = se.obj, i = x)
+            rle.data <- expr - rowMedians(expr)
+            rle.med <- colMedians(rle.data)
+            rle.iqr <- colIQRs(rle.data)
+            rle <- list(
+                rle = rle.data,
+                rle.med = rle.med,
+                rle.iqr = rle.iqr)
         })
-        names(rle.all)=levels(assay.names)
+    names(rle.all) <- levels(assay.names)
 
-        ## Plot RLE
-        samples<-rle<-everything<-NULL
-        plot.rle <- lapply(
-            levels(assay.names),
-            function(x){
-                tmp=rle.all[[x]]$rle
-                rle_plot=as.data.frame(tmp) %>% pivot_longer(everything(),
-                    names_to = 'samples',values_to = 'rle') %>%
-                    mutate(samples = factor(samples))
-                p=ggplot(rle_plot, aes(x = samples,y=rle)) +
-                geom_boxplot2(width.errorbar =0.01,outlier.alpha=0.2) +
-                    #geom_boxplot(width=0.01,lwd=0.5,alpha=0.2)+
+    ## plot rle ####
+    samples <- rle <- everything <- NULL
+    plot.rle <- lapply(
+        levels(assay.names),
+        function(x) {
+            tmp <- rle.all[[x]]$rle
+            rle.data <- as.data.frame(tmp) %>%
+                pivot_longer(everything(), names_to = 'samples', values_to = 'rle') %>%
+                mutate(samples = factor(samples))
+            p.rle <- ggplot(rle.data, aes(x = samples, y = rle)) +
+                geom_boxplot2(width.errorbar = 0.01, outlier.alpha = 0.2) +
                 ylab('RLE') +
                 xlab('') +
-                coord_cartesian(ylim=c(-6,6))+
-                stat_summary(geom = "crossbar", width=5, fatten=8, color="darkgreen",
-                                 fun.data = function(x){c(y=median(x), ymin=median(x), ymax=median(x))})+
-                theme(panel.background = element_blank(),
-                axis.line = element_line(colour = 'black'),
-                axis.title.y = element_text(size = 14),
-                axis.text.x = element_text(size = 12),
-                axis.text.y = element_text(size = 8))+
-                ggtitle(paste(" RLE plot distribution of ",x,sep=""))+
-                    geom_hline(yintercept=0)
-            p
+                coord_cartesian(ylim = c(-6, 6)) +
+                stat_summary(
+                    geom = "crossbar",
+                    width = 5,
+                    fatten = 8,
+                    color = "darkgreen",
+                    fun.data = function(x) {
+                        c(y = median(x),
+                          ymin = median(x),
+                          ymax = median(x))}) +
+                theme(
+                    panel.background = element_blank(),
+                    axis.line = element_line(colour = 'black'),
+                    axis.title.y = element_text(size = 14),
+                    axis.text.x = element_text(size = 12),
+                    axis.text.y = element_text(size = 8)) +
+                ggtitle(paste(" RLE plot distribution of ", x, sep = "")) +
+                geom_hline(yintercept = 0)
+            p.rle
         })
     names(plot.rle) <- levels(assay.names)
 
-
-    ### Add results to the SummarizedExperiment object
-    if(save.se.obj == TRUE){
-        printColoredMessage(message= '### Saving the RLE plot to the metadata of the SummarizedExperiment object.',
+    # save the results ####
+    ## add results to the SummarizedExperiment object ####
+    if (save.se.obj == TRUE) {
+        printColoredMessage(message = '-- Save the RLE plot to the metadata of the SummarizedExperiment object.',
                             color = 'magenta',
                             verbose = verbose)
         ## For all assays
-        for (x in levels(assay.names)){
+        for (x in levels(assay.names)) {
             ## Check if metadata plot already exist
-            if(length(se.obj@metadata)==0 ) {
+            if (length(se.obj@metadata) == 0) {
                 se.obj@metadata[['plot']] <- list()
             }
             ## Check if metadata plot already exist
-            if(!'plot' %in% names(se.obj@metadata) ) {
+            if (!'plot' %in% names(se.obj@metadata)) {
                 se.obj@metadata[['plot']] <- list()
             }
             ## Check if metadata plot already exist for this metric
-            if(!'rle' %in% names(se.obj@metadata[['plot']]) ) {
+            if (!'rle' %in% names(se.obj@metadata[['plot']])) {
                 se.obj@metadata[['plot']][['rle']] <- list()
             }
             ## Check if metadata plot already exist for this metric
-            if(!x %in% names(se.obj@metadata[['plot']]) ) {
+            if (!x %in% names(se.obj@metadata[['plot']])) {
                 ## Save the new plot
                 se.obj@metadata[['plot']][['rle']][[x]] <- list()
             }
             se.obj@metadata[['plot']][['rle']][[x]] <- plot.rle[[x]]
         }
-        printColoredMessage(message= paste0(
-            'The RLE plots are saved to metadata@$plot$rle'),
+        printColoredMessage(
+            message = paste0('The RLE plots are saved to metadata@$plot$rle'),
             color = 'blue',
-            verbose = verbose)
+            verbose = verbose
+        )
         return(se.obj = se.obj)
-    } else if(save.se.obj == FALSE){
-        return(plot=plot.rle)
+    } else if (save.se.obj == FALSE) {
+        return(plot = plot.rle)
     }
 
-        printColoredMessage(message = '------------The plotRLE function finished.',
-                            color = 'white',
-                            verbose = verbose)
+    printColoredMessage(message = '------------The plotRLE function finished.',
+                        color = 'white',
+                        verbose = verbose)
 }
