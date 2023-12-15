@@ -66,18 +66,29 @@ computePCA <- function(
     if(pseudo.count < 0){
         stop('The value of "pseudo.count" cannot be negative.')
     }
-
-    ### PCA
+    if(!remove.na %in% c('assays','none')){
+        stop('The remove.na must be "assays" or "none"')
+    }
     if (assay.names[1] == 'All') {
-        printColoredMessage(message = 'The PC of all individual assays of the SummarizedExperiment will be computed.',
-                            color = 'blue',
-                            verbose = verbose)
+        printColoredMessage(
+            message = 'The svd of all individual assays of the SummarizedExperiment will be computed.',
+            color = 'blue',
+            verbose = verbose)
         assay.names <- names(assays(se.obj))
+    } else {
+        printColoredMessage(
+            message = paste0(
+                'The svd of',
+                paste0(assay.names, collapse = '&'),
+                'all individual assays of the SummarizedExperiment will be computed.'),
+            color = 'blue',
+            verbose = verbose)
     }
     if (scale) {
-        printColoredMessage(message = 'We highly recommend not to scale the data before computing the PCA.',
-                            color = 'blue',
-                            verbose = verbose)
+        printColoredMessage(
+            message = 'Note: we highly recommend not to scale the data before computing the PCA.',
+            color = 'red',
+            verbose = verbose)
     }
 
     # find assays ####
@@ -91,7 +102,7 @@ computePCA <- function(
             se.obj = se.obj,
             assay.names = assay.names,
             variables = NULL,
-            remove.na = 'assays',
+            remove.na = remove.na,
             verbose = verbose)
     }
     # svd ####
@@ -108,11 +119,11 @@ computePCA <- function(
             verbose = verbose
         )
         printColoredMessage(
-            message = 'Note: if you selected the fast PCA analysis, the percentage of variation of PCs will be
-                            computed proportional to the highest selected number of PCs, not on all the PCs.',
+        message = paste0(
+            'Note: in fast svd analysis, the percentage of variation of PCs will be',
+            'computed proportional to the highest selected number of PCs (nb.lsv), not on all the PCs.'),
             color = 'red',
-            verbose = verbose
-        )
+            verbose = verbose)
         if (is.null(BSPARAM)) {
             BSPARAM = bsparam()
         }
@@ -135,8 +146,7 @@ computePCA <- function(
                 percentage <- sapply(
                     seq_along(percentage),
                     function(i) round(percentage [i], 1))
-                pca <- list(sing.val = sv.dec, variation = percentage)
-                return(pca)
+                return(list(svd = sv.dec, percentage.variation = percentage))
             })
         names(sv.dec.all) <- levels(assay.names)
     } else {
@@ -149,8 +159,7 @@ computePCA <- function(
                 center,
                 '.'),
             color = 'magenta',
-            verbose = verbose
-        )
+            verbose = verbose)
         sv.dec.all <- lapply(
             levels(assay.names),
             function(x) {
@@ -168,8 +177,7 @@ computePCA <- function(
                 percentage <- sapply(
                     seq_along(percentage),
                     function(i) round(percentage [i], 1))
-                pca <- list(sing.val = sv.dec, variation = percentage)
-                return(pca)
+                return(list(svd = sv.dec, percentage.variation = percentage))
             })
         names(sv.dec.all) <- levels(assay.names)
     }
@@ -181,15 +189,15 @@ computePCA <- function(
             color = 'magenta',
             verbose = verbose)
         for (x in levels(assay.names)) {
-            ## Check if metadata metric already exist
+            ### check if metadata metric already exist ####
             if (length(se.obj@metadata) == 0) {
                 se.obj@metadata[['metric']] <- list()
             }
-            ## Check if metadata metric already exist for this assay
+            ## check if metadata metric already exist for this assay ####
             if (!'metric' %in% names(se.obj@metadata)) {
                 se.obj@metadata[['metric']] <- list()
             }
-            ## Check if metadata metric already exist for this assay
+            ## check if metadata metric already exist for this assay ####
             if (!x %in% names(se.obj@metadata[['metric']])) {
                 se.obj@metadata[['metric']][[x]] <- list()
             }
@@ -218,6 +226,7 @@ computePCA <- function(
                             verbose = verbose)
         return(se.obj)
     } else if (save.se.obj == FALSE) {
+        ## return a list ####
         printColoredMessage(message = '------------The computePCA function finished.',
                             color = 'white',
                             verbose = verbose)
