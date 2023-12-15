@@ -23,25 +23,25 @@
 #' @importFrom gridExtra grid.arrange
 
 
-plotPCAassay<-function(se.obj,
-                        pca_x,
-                        variable,
-                        nb.pcs = 3,
-                        fast.pca = TRUE,
-                        color=NULL,
-                        strokeSize = .2,
-                        pointSize = 1.5,
-                        strokeColor = 'gray30',
-                        alpha = .5
-                       ){
-
-    pcs = pca_x$sing.val$u[,1:nb.pcs]
-    pc.var = pca_x$variation
-    pc.var.nb.pcs=length(pca_x$variation)
+plotPCAassay <- function(
+        se.obj,
+        pca_x,
+        variable,
+        nb.pcs = 3,
+        fast.pca = TRUE,
+        color = NULL,
+        strokeSize = .2,
+        pointSize = 1.5,
+        strokeColor = 'gray30',
+        alpha = .5
+) {
+    pcs <- pca_x$sing.val$u[,1:nb.pcs]
+    pc.var <- pca_x$variation
+    pc.var.nb.pcs <- length(pca_x$variation)
     pair.pcs <- combn(ncol(pcs), 2)
     pList <- list()
-    var=se.obj@colData[, variable]
-    var.label=paste0(variable)
+    var <- se.obj@colData[, variable]
+    var.label <- paste0(variable)
 
     for(i in 1:ncol(pair.pcs)){
         if(i == 1){
@@ -62,11 +62,10 @@ plotPCAassay<-function(se.obj,
                     axis.text.y = element_text(size = 10),
                     axis.title.x = element_text(size = 14),
                     axis.title.y = element_text(size = 14),
-                    aspect.ratio=1) +
+                    aspect.ratio = 1) +
                 guides(fill = guide_legend(override.aes = list(size = 4)))
-            if (!is.null(color)){
+            if (!is.null(color))
                 p <- p + scale_fill_manual(name = var.label, values = color)
-                }
             le <- get_legend(p)
         } else{
             p <- ggplot(mapping = aes(x = pcs[,pair.pcs[1,i]], y = pcs[,pair.pcs[2,i]], fill = var)) +
@@ -82,24 +81,22 @@ plotPCAassay<-function(se.obj,
                     axis.text.y = element_text(size = 10),
                     axis.title.x = element_text(size = 14),
                     axis.title.y = element_text(size = 14),
-                    aspect.ratio=1)
-                if (!is.null(color)){
+                    aspect.ratio = 1)
+                if (!is.null(color))
                     p <- p + scale_fill_manual(name = var.label, values = color)
-                }
         }
         p <- p + theme(legend.position = "none")
         xdens <- axis_canvas(p, axis = "x")+
             geom_density( mapping = aes(x = pcs[,x],fill = var), alpha = 0.7, size = 0.2) +
             theme(legend.position = "none")
             if (!is.null(color))
-                xdens <- xdens +scale_fill_manual(name = var.label,values = color)
+                xdens <- xdens + scale_fill_manual(name = var.label,values = color)
         ydens <- axis_canvas(p, axis = "y", coord_flip = TRUE) +
             geom_density(mapping = aes(x = pcs[,y], fill = var), alpha = 0.7, size = 0.2) +
             theme(legend.position = "none")+
             coord_flip()
             if (!is.null(color))
                 ydens <- ydens + scale_fill_manual(name = var.label,values = color)
-
         p1 <- insert_xaxis_grob(p, xdens, grid::unit(.2, "null"), position = "top")
         p2 <- insert_yaxis_grob(p1, ydens, grid::unit(.2, "null"), position = "right")
         pList[[i]] <- ggdraw(p2)
