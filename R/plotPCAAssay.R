@@ -45,34 +45,13 @@ plotPCAassay<-function(se.obj,
 
     for(i in 1:ncol(pair.pcs)){
         if(i == 1){
-            x <- pair.pcs[1,i]
-            y <- pair.pcs[2,i]
-
-            if (fast.pca) {
-                xlabel=paste0('PC', x, ' (', pc.var[x], '%)')#out of ',pc.var.nb.pcs ,' PCs.)')
-                ylabel=paste0('PC', y, ' (', pc.var[y], '%)')#out of ',pc.var.nb.pcs ,' PCs.)')
-            } else {
-                xlabel=paste0('PC', x, ' (', pc.var[x], '%)')
-                ylabel=paste0('PC', y, ' (', pc.var[y],'%)')
-            }
-
-            p <- ggplot(mapping = aes(
-                x = pcs[,x],
-                y = pcs[,y],
-                fill = var)) +
-                xlab(xlabel)+
-                ylab(ylabel)+
-                geom_point(
-                    aes(fill = var),
-                    pch = 21,
-                    color = strokeColor,
-                    stroke = strokeSize,
-                    size = pointSize,
-                    alpha = alpha) +
+            p <- ggplot(mapping = aes(x = pcs[,pair.pcs[1,i]], y = pcs[,pair.pcs[2,i]], fill = var)) +
+                geom_point(aes(fill = var), pch = 21, color = strokeColor, stroke = strokeSize, size = pointSize, alpha = alpha) +
                 scale_x_continuous(breaks = scales::pretty_breaks(n = 5)) +
                 scale_y_continuous(breaks = scales::pretty_breaks(n = 5)) +
-                theme(
-                    legend.position = "right",
+                xlab(paste0('PC', x, ' (', pc.var[x], '%)')) +
+                ylab(paste0('PC', y, ' (', pc.var[y], '%)')) +
+                theme(legend.position = "right",
                     panel.background = element_blank(),
                     axis.line = element_line(colour = "black", size = 1.1),
                     legend.background = element_blank(),
@@ -86,38 +65,17 @@ plotPCAassay<-function(se.obj,
                     aspect.ratio=1) +
                 guides(fill = guide_legend(override.aes = list(size = 4)))
             if (!is.null(color)){
-                p=p+scale_fill_manual(name = var.label, values = color)
+                p <- p + scale_fill_manual(name = var.label, values = color)
                 }
             le <- get_legend(p)
-        }else{
-            x <- pair.pcs[1,i]
-            y <- pair.pcs[2,i]
-
-            if (fast.pca) {
-                xlabel=paste0('PC', x, ' (', pc.var[x],  '%)')#out of ',pc.var.nb.pcs ,' PCs.)')
-                ylabel=paste0('PC', y, ' (', pc.var[y],  '%)')#out of ',pc.var.nb.pcs ,' PCs.)')
-            } else {
-                xlabel=paste0('PC', x, ' (', pc.var[x], '%)')
-                ylabel=paste0('PC', y, ' (', pc.var[y],'%)')
-            }
-
-            p <- ggplot(mapping = aes(
-                x = pcs[,x],
-                y = pcs[,y],
-                fill = var)) +
-                xlab(xlabel)+
-                ylab(ylabel)+
-                geom_point(
-                    aes(fill = var),
-                    pch = 21,
-                    color = strokeColor,
-                    stroke = strokeSize,
-                    size = pointSize,
-                    alpha = alpha) +
+        } else{
+            p <- ggplot(mapping = aes(x = pcs[,pair.pcs[1,i]], y = pcs[,pair.pcs[2,i]], fill = var)) +
+                geom_point(aes(fill = var), pch = 21, color = strokeColor, stroke = strokeSize, size = pointSize,alpha = alpha) +
                 scale_x_continuous(breaks = scales::pretty_breaks(n = 5)) +
                 scale_y_continuous(breaks = scales::pretty_breaks(n = 5)) +
-                theme(
-                    panel.background = element_blank(),
+                xlab(paste0('PC', x, ' (', pc.var[x], '%)')) +
+                ylab(paste0('PC', y, ' (', pc.var[y], '%)')) +
+                theme(panel.background = element_blank(),
                     axis.line = element_line(colour = "black", size = 1.1),
                     legend.position = "none",
                     axis.text.x = element_text(size = 10),
@@ -126,51 +84,24 @@ plotPCAassay<-function(se.obj,
                     axis.title.y = element_text(size = 14),
                     aspect.ratio=1)
                 if (!is.null(color)){
-                    p=p+scale_fill_manual(name = var.label, values = color)
+                    p <- p + scale_fill_manual(name = var.label, values = color)
                 }
         }
         p <- p + theme(legend.position = "none")
         xdens <- axis_canvas(p, axis = "x")+
-            geom_density(
-                mapping = aes(
-                    x = pcs[,x],
-                    fill = var),
-                alpha = 0.7,
-                size = 0.2
-            ) +
+            geom_density( mapping = aes(x = pcs[,x],fill = var), alpha = 0.7, size = 0.2) +
             theme(legend.position = "none")
-            if (!is.null(color)){
+            if (!is.null(color))
                 xdens <- xdens +scale_fill_manual(name = var.label,values = color)
-            }
-
-        ydens <- axis_canvas(
-            p,
-            axis = "y",
-            coord_flip = TRUE) +
-            geom_density(
-                mapping = aes(
-                    x = pcs[,y],
-                    fill = var),
-                alpha = 0.7,
-                size = 0.2) +
+        ydens <- axis_canvas(p, axis = "y", coord_flip = TRUE) +
+            geom_density(mapping = aes(x = pcs[,y], fill = var), alpha = 0.7, size = 0.2) +
             theme(legend.position = "none")+
             coord_flip()
-            if (!is.null(color)){
-                ydens <- ydens +scale_fill_manual(name = var.label,values = color)
-            }
+            if (!is.null(color))
+                ydens <- ydens + scale_fill_manual(name = var.label,values = color)
 
-        p1 <- insert_xaxis_grob(
-            p,
-            xdens,
-            grid::unit(.2, "null"),
-            position = "top"
-        )
-        p2 <- insert_yaxis_grob(
-            p1,
-            ydens,
-            grid::unit(.2, "null"),
-            position = "right"
-        )
+        p1 <- insert_xaxis_grob(p, xdens, grid::unit(.2, "null"), position = "top")
+        p2 <- insert_yaxis_grob(p1, ydens, grid::unit(.2, "null"), position = "right")
         pList[[i]] <- ggdraw(p2)
     }
     pList[[i+1]] <- le
