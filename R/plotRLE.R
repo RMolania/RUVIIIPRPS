@@ -50,6 +50,12 @@ plotRLE <- function(
         stop('The value of "pseudo.count" cannot be negative.')
     }
 
+    # find assays ####
+    if (length(assay.names) == 1 && assay.names == 'All') {
+        assay.names = as.factor(names(assays(se.obj)))
+    } else {
+        assay.names = as.factor(unlist(assay.names))
+    }
     # assess the SummarizedExperiment object ####
     if (assess.se.obj) {
         se.obj <- checkSeObj(
@@ -58,12 +64,6 @@ plotRLE <- function(
             variables = NULL,
             remove.na = remove.na,
             verbose = verbose)
-    }
-    # find assays ####
-    if (length(assay.names) == 1 && assay.names == 'All') {
-        assay.names = as.factor(names(assays(se.obj)))
-    } else {
-        assay.names = as.factor(unlist(assay.names))
     }
     # compute rle across all assays ####
     rle.all <- lapply(
