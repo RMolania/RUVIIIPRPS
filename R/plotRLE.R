@@ -1,4 +1,4 @@
-#' is used to plot the RLE (Relative Log Expression) of a SummarizedExperiment class object.
+#' is used to calculate and plot RLE (Relative Log Expression) of assays in a SummarizedExperiment object.
 #'
 #' @param se.obj A SummarizedExperiment object that will be used to plot the RLE.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
