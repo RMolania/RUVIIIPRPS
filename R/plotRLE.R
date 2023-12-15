@@ -1,24 +1,25 @@
 #' is used to calculate and plot RLE (Relative Log Expression) of assays in a SummarizedExperiment object.
 #'
-#' @param se.obj A SummarizedExperiment object that will be used to plot the RLE.
-#' @param assay.names Optional string or list of strings for the selection of the name(s).
-#' of the assay(s) of the SummarizedExperiment class object to plot RLE. By default
-#  all the assays of the SummarizedExperiment class object will be selected.
-#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
-#' no transformation will be selected.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-#' to output the result. By default it is set to TRUE.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
+#' @param se.obj A SummarizedExperiment object.
+#' @param assay.names Symbol. Optional symbol or list of Symbos for the selection of the name(s)
+#' of the assay(s) of the SummarizedExperiment object to calculate and plot RLE. By default
+#  all the assays of the SummarizedExperiment object will be selected.
+#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. The default is TRUE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
+#' @param ylim.rle.plot Numeric. A vector of two values for the ylim of the RLE plot.
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
+#' @param remove.na To remove NA or missing values from the assays or not. The options are 'assays' and 'none'
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+#' to output the result. By default it is set to TRUE.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
+#' of the functions, by default it is set to TRUE.
 #'
 #' @return list List of the computed RLE and the associated plot
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
 #' @importFrom kunstomverse geom_boxplot2
-#' @importFrom SummarizedExperiment assays
+#' @importFrom SummarizedExperiment assays assay
 #' @importFrom matrixStats rowMedians colMedians colIQRs
 #' @importFrom stats median
 #' @import ggplot2
@@ -27,12 +28,12 @@
 plotRLE <- function(
         se.obj,
         assay.names = "All",
-        apply.log = FALSE,
+        apply.log = TRUE,
         pseudo.count = 1,
-        save.se.obj = TRUE,
         ylim.rle.plot = c(-6, 6),
         assess.se.obj = TRUE,
-        remove.na = 'measurements',
+        remove.na = 'assays',
+        save.se.obj = TRUE,
         verbose = TRUE) {
     printColoredMessage(message = '------------The plotRLE function starts:',
                         color = 'white',
@@ -157,12 +158,15 @@ plotRLE <- function(
             color = 'blue',
             verbose = verbose
         )
+        printColoredMessage(message = '------------The plotRLE function finished.',
+                            color = 'white',
+                            verbose = verbose)
         return(se.obj = se.obj)
     } else if (save.se.obj == FALSE) {
+        printColoredMessage(message = '------------The plotRLE function finished.',
+                            color = 'white',
+                            verbose = verbose)
         return(plot = plot.rle)
     }
 
-    printColoredMessage(message = '------------The plotRLE function finished.',
-                        color = 'white',
-                        verbose = verbose)
 }

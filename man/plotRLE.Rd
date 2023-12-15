@@ -2,34 +2,39 @@
 % Please edit documentation in R/plotRLE.R
 \name{plotRLE}
 \alias{plotRLE}
-\title{is used to plot the RLE (Relative Log Expression) of a SummarizedExperiment class object.}
+\title{is used to calculate and plot RLE (Relative Log Expression) of assays in a SummarizedExperiment object.}
 \usage{
 plotRLE(
   se.obj,
   assay.names = "All",
-  apply.log = FALSE,
+  apply.log = TRUE,
   pseudo.count = 1,
-  save.se.obj = TRUE,
+  ylim.rle.plot = c(-6, 6),
   assess.se.obj = TRUE,
+  remove.na = "assays",
+  save.se.obj = TRUE,
   verbose = TRUE
 )
 }
 \arguments{
-\item{se.obj}{A SummarizedExperiment object that will be used to plot the RLE.}
+\item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Optional string or list of strings for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment class object to plot RLE. By default}
+\item{assay.names}{Symbol. Optional symbol or list of Symbos for the selection of the name(s)
+of the assay(s) of the SummarizedExperiment object to calculate and plot RLE. By default}
 
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
-no transformation will be selected.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. The default is TRUE.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-to output the result. By default it is set to TRUE.}
+\item{ylim.rle.plot}{Numeric. A vector of two values for the ylim of the RLE plot.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+
+\item{remove.na}{To remove NA or missing values from the assays or not. The options are 'assays' and 'none'}
+
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+to output the result. By default it is set to TRUE.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
@@ -38,5 +43,5 @@ of the functions, by default it is set to TRUE.}
 list List of the computed RLE and the associated plot
 }
 \description{
-is used to plot the RLE (Relative Log Expression) of a SummarizedExperiment class object.
+is used to calculate and plot RLE (Relative Log Expression) of assays in a SummarizedExperiment object.
 }
