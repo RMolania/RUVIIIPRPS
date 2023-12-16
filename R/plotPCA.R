@@ -82,7 +82,7 @@ plotPCA <- function(
         levels(assay.names),
         function(x) {
             if (fast.pca) {
-                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]) )
                     stop('To plot the PCA, the fast PCA must be computed first on the assay ', x, ' .')
                 pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u[, 1:nb.pcs]
                 pc.var <- se.obj@metadata[['metric']][[x]][['fastPCA']]$percentage.variation
@@ -157,7 +157,7 @@ plotPCA <- function(
     p <- p.pca[[levels(assay.names)[1]]]
     if (length(assay.names) > 1) {
         for (n in 2:length(assay.names)) {
-            p = c(p, ppca[[levels(assay.names)[n]]])
+            p = c(p, p.pca[[levels(assay.names)[n]]])
         }
     }
     plot <- ggarrange(
