@@ -16,9 +16,6 @@
 #' of the functions, by default it is set to TRUE.
 #'
 #' @return list List of the computed RLE and the associated plot
-#' @importFrom dplyr mutate
-#' @importFrom tidyr pivot_longer %>%
-#' @importFrom kunstomverse geom_boxplot2
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom matrixStats rowMedians colMedians colIQRs
 #' @importFrom stats median
@@ -97,35 +94,33 @@ plotRLE <- function(
         levels(assay.names),
         function(x) {
             tmp <- rle.all[[x]]$rle
-            rle.data <- as.data.frame(tmp) %>%
-                pivot_longer(everything(), names_to = 'samples', values_to = 'rle') %>%
-                mutate(samples = factor(samples))
-            p.rle <- ggplot(rle.data, aes(x = samples, y = rle)) +
-                geom_boxplot2(width.errorbar = 0.01, outlier.alpha = 0.2) +
+            rle.data <- data.frame(
+                samples = rep(seq_len(ncol(tmp)), each = nrow(tmp)),
+                rle = as.numeric(tmp))
+            p.rle <- ggplot(rle.data, aes(x = samples, y = rle, group = samples)) +
+                geom_boxplot(outlier.size = -1) +
                 ylab('RLE') +
                 xlab('') +
-                coord_cartesian(ylim = c(-6, 6)) +
+                geom_hline(yintercept = 0) +
+                coord_cartesian(ylim = ylim.rle.plot) +
                 stat_summary(
                     geom = "crossbar",
-                    width = 5,
+                    width = 2,
                     fatten = 8,
-                    color = "darkgreen",
+                    color = "cyan",
                     fun.data = function(x) {
                         c(y = median(x),
                           ymin = median(x),
                           ymax = median(x))}) +
-                theme(
-                    panel.background = element_blank(),
+                theme(panel.background = element_blank(),
                     axis.line = element_line(colour = 'black'),
                     axis.title.y = element_text(size = 14),
                     axis.text.x = element_text(size = 12),
                     axis.text.y = element_text(size = 8)) +
-                ggtitle(paste(" RLE plot distribution of ", x, sep = "")) +
-                geom_hline(yintercept = 0)
+                ggtitle(paste(" RLE plot of ", x, sep = ""))
             p.rle
         })
     names(plot.rle) <- levels(assay.names)
-
     # save the results ####
     ## add results to the SummarizedExperiment object ####
     if (save.se.obj == TRUE) {
