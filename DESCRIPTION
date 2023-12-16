@@ -43,6 +43,7 @@ Imports:
     DESeq2,
     graphics,
     S4Vectors,
+    patchwork,
     biomaRt
 URL: https://github.com/mtrussart/RUVIIIPRPS
 BugReports: https://github.com/mtrussart/RUVIIIPRPS/issues
