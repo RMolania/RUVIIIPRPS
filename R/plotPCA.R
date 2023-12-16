@@ -82,7 +82,7 @@ plotPCA <- function(
         levels(assay.names),
         function(x) {
             if (fast.pca) {
-                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]) )
+                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To plot the PCA, the fast PCA must be computed first on the assay ', x, ' .')
                 pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u[, 1:nb.pcs]
                 pc.var <- se.obj@metadata[['metric']][[x]][['fastPCA']]$percentage.variation
@@ -93,20 +93,19 @@ plotPCA <- function(
                 pc.var <- se.obj@metadata[['metric']][[x]][['PCA']]$percentage.variation
             }
             pair.pcs <- combn(ncol(pca.data), 2)
-            var <- colData(se.obj)[ , variable]
+            var <- colData(se.obj)[, variable]
             p.per.data <- lapply(
                 1:ncol(pair.pcs),
-                function(i){
-                    plot1 <- ggplot(
-                        mapping = aes(
-                            x = pca.data[, pair.pcs[1, i]],
-                            y = pca.data[, pair.pcs[2, i]] ) ) +
-                        geom_point(aes(fill = se.obj@colData[, variable]),
-                                   color = strokeColor,
-                                   pch = 21,
-                                   stroke = strokeSize,
-                                   size = pointSize,
-                                   alpha = alpha) +
+                function(i) {
+                    plot1 <- ggplot(mapping = aes(x = pca.data[, pair.pcs[1, i]],
+                                                  y = pca.data[, pair.pcs[2, i]])) +
+                        geom_point(
+                            aes(fill = se.obj@colData[, variable]),
+                            color = strokeColor,
+                            pch = 21,
+                            stroke = strokeSize,
+                            size = pointSize,
+                            alpha = alpha) +
                         scale_x_continuous(
                             name = paste0('PC', pair.pcs[1, i], ' (', pc.var[pair.pcs[2, i]], '%)'),
                             breaks = scales::pretty_breaks(n = 5)) +
@@ -115,40 +114,48 @@ plotPCA <- function(
                             breaks = scales::pretty_breaks(n = 5)) +
                         ggtitle(x) +
                         theme_pubr() +
-                        theme(legend.position = "none",
-                              legend.background = element_blank(),
-                              legend.text = element_text(size = 12),
-                              legend.title = element_text(size = 14),
-                              legend.key = element_blank(),
-                              axis.text.x = element_text(size = 10),
-                              axis.text.y = element_text(size = 10),
-                              axis.title.x = element_text(size = 12),
-                              axis.title.y = element_text(size = 12)) +
+                        theme(
+                            legend.position = "none",
+                            legend.background = element_blank(),
+                            legend.text = element_text(size = 12),
+                            legend.title = element_text(size = 14),
+                            legend.key = element_blank(),
+                            axis.text.x = element_text(size = 10),
+                            axis.text.y = element_text(size = 10),
+                            axis.title.x = element_text(size = 12),
+                            axis.title.y = element_text(size = 12)) +
                         scale_fill_discrete(name = variable) +
-                        guides(fill = guide_legend(override.aes = list(size = 3, shape = 21) ) )
-
-                    dens1 <- ggplot(mapping = aes(x = pca.data[, pair.pcs[1, i]], fill = se.obj@colData[, variable])) +
+                        guides(fill = guide_legend(override.aes = list(size = 3, shape = 21)))
+                    dense.x <-
+                        ggplot(mapping = aes(x = pca.data[, pair.pcs[1, i]], fill = se.obj@colData[, variable])) +
                         geom_density(alpha = 0.4) +
                         theme_void() +
-                        theme(legend.position = "none",
-                              legend.text = element_text(size = 12),
-                              legend.title = element_text(size = 14)) +
+                        theme(
+                            legend.position = "none",
+                            legend.text = element_text(size = 12),
+                            legend.title = element_text(size = 14)) +
                         scale_fill_discrete(name = variable) +
                         guides(fill = guide_legend(override.aes = list(size = 3)))
 
-                    dens2 <- ggplot(mapping = aes(x = pca.data[, pair.pcs[2, i]], fill = se.obj@colData[, variable])) +
+                    dense.y <- ggplot(mapping = aes(x = pca.data[, pair.pcs[2, i]], fill = se.obj@colData[, variable])) +
                         geom_density(alpha = 0.4) +
                         theme_void() +
-                        theme(legend.position = "none",
-                              legend.text = element_text(size = 12),
-                              legend.title = element_text(size = 14)) +
+                        theme(
+                            legend.position = "none",
+                            legend.text = element_text(size = 12),
+                            legend.title = element_text(size = 14)) +
                         coord_flip() +
                         scale_fill_discrete(name = variable) +
                         guides(fill = guide_legend(override.aes = list(size = 3)))
 
-                    dens1 + plot_spacer() + plot1 + dens2 +
-                        plot_layout(ncol = 2, nrow = 2, widths = c(4, 1), heights = c(1, 4))
-
+                    dense.x +
+                        plot_spacer() +
+                        plot1 + dense.y +
+                        plot_layout(
+                            ncol = 2,
+                            nrow = 2,
+                            widths = c(4, 1),
+                            heights = c(1, 4))
                 })
             p.per.data
         })
@@ -165,7 +172,8 @@ plotPCA <- function(
         common.legend = TRUE,
         legend = "bottom",
         nrow = length(levels(assay.names)),
-        ncol = nb.pcs)
+        ncol = ncol(combn(nb.pcs, 2))
+    )
     printColoredMessage(message = '------------The plotPCA function finished.',
                         color = 'white',
                         verbose = verbose)
