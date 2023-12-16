@@ -160,7 +160,12 @@ plotPCA <- function(
             p = c(p, ppca[[levels(assay.names)[n]]])
         }
     }
-    plot <- ggarrange(plotlist = p, common.legend = TRUE, legend="bottom")
+    plot <- ggarrange(
+        plotlist = p,
+        common.legend = TRUE,
+        legend = "bottom",
+        nrow = length(levels(assay.names)),
+        ncol = nb.pcs)
     printColoredMessage(message = '------------The plotPCA function starts:',
                         color = 'white',
                         verbose = verbose)
