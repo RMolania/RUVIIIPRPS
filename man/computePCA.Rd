@@ -57,7 +57,7 @@ to output the result. By default it is set to TRUE.}
 of the functions, by default it is set to TRUE.}
 }
 \value{
-SummarizedExperiment A SummarizedExperiment object containing the PCA.
+SummarizedExperiment A SummarizedExperiment object or a list that containing the SVD results.
 }
 \description{
 is used to perform Principal Component Analysis (PCA) using singular value decomposition of the assays in a SummarizedExperiment object.
