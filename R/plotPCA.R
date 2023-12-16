@@ -21,7 +21,7 @@
 #' of the functions, by default it is set to TRUE.
 #'
 #' @return plot PCA plot of the data colored by one variable
-#' @importFrom ggpubr ggarrange as_ggplot
+#' @importFrom ggpubr ggarrange as_ggplot theme_pubr
 #' @importFrom patchwork plot_spacer plot_layout
 #' @import ggplot2
 #' @export
@@ -166,8 +166,8 @@ plotPCA <- function(
         legend = "bottom",
         nrow = length(levels(assay.names)),
         ncol = nb.pcs)
-    printColoredMessage(message = '------------The plotPCA function starts:',
+    printColoredMessage(message = '------------The plotPCA function finished.',
                         color = 'white',
                         verbose = verbose)
-    return(plot = as_ggplot(plot))
+    return(plot)
 }
