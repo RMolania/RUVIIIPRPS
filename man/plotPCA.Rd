@@ -2,8 +2,7 @@
 % Please edit documentation in R/plotPCA.R
 \name{plotPCA}
 \alias{plotPCA}
-\title{is used to plot the pairwise plots of the first PCA of the gene expression (assay)
-of a SummarizedExperiment class object.}
+\title{is used to plot the pairwise plots of the first principal components of the assays of a SummarizedExperiment object.}
 \usage{
 plotPCA(
   se.obj,
@@ -56,6 +55,5 @@ of the functions, by default it is set to TRUE.}
 plot PCA plot of the data colored by one variable
 }
 \description{
-is used to plot the pairwise plots of the first PCA of the gene expression (assay)
-of a SummarizedExperiment class object.
+is used to plot the pairwise plots of the first principal components of the assays of a SummarizedExperiment object.
 }

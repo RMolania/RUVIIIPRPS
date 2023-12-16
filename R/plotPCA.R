@@ -21,11 +21,9 @@
 #' of the functions, by default it is set to TRUE.
 #'
 #' @return plot PCA plot of the data colored by one variable
-#' @importFrom ggpubr get_legend as_ggplot
-#' @importFrom grid textGrob
-#' @importFrom cowplot axis_canvas ggdraw insert_xaxis_grob insert_yaxis_grob
-#' @import ggplot2 scales
-#' @importFrom gridExtra grid.arrange
+#' @importFrom ggpubr ggarrange as_ggplot
+#' @importFrom patchwork plot_spacer plot_layout
+#' @import ggplot2
 #' @export
 
 
@@ -56,7 +54,11 @@ plotPCA <- function(
     } else if (is.null(variable)) {
         stop('Please provide a categorical variable.')
     } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
-        stop(paste0('The ', variable,', is a numeric, but this should a categorical variable'))
+        stop(paste0(
+            'The ',
+            variable,
+            ', is a numeric, but this should a categorical variable'
+        ))
     }
 
     # find assays ####
@@ -72,173 +74,95 @@ plotPCA <- function(
             assay.names = assay.names,
             variables = variable,
             remove.na = 'none',
-            verbose = verbose)
+            verbose = verbose
+        )
     }
-
-    if (fast.pca) {
-        ppca <- lapply(
-            levels(assay.names),
-            function(x) {
-                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]])) {
+    # pca analysis ####
+    p.pca <- lapply(
+        levels(assay.names),
+        function(x) {
+            if (fast.pca) {
+                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To plot the PCA, the fast PCA must be computed first on the assay ', x, ' .')
-                }
-                pca.data  <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u[,1:nb.pcs]
-                pc.var <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$
-                pair.pcs <- combn(ncol(pca.data), 2)
-                pList <- list()
-                for(i in 1:ncol(pair.pcs)){
-                    if(i == 1){
-                        p <- ggplot(mapping = aes(x = pca.data[,pair.pcs[1,i]], y = pca.data[,pair.pcs[2,i]], fill = var)) +
-                            geom_point(aes(fill = se.obj@colData[, variable]), pch = 21, color = strokeColor, stroke = strokeSize, size = pointSize, alpha = alpha) +
-                            scale_x_continuous(breaks = scales::pretty_breaks(n = 5)) +
-                            scale_y_continuous(breaks = scales::pretty_breaks(n = 5)) +
-                            xlab(paste0('PC', x, ' (', pc.var[x], '%)')) +
-                            ylab(paste0('PC', y, ' (', pc.var[y], '%)')) +
-                            theme(legend.position = "right",
-                                  panel.background = element_blank(),
-                                  axis.line = element_line(colour = "black", size = 1.1),
-                                  legend.background = element_blank(),
-                                  legend.text = element_text(size = 12),
-                                  legend.title = element_text(size = 14),
-                                  legend.key = element_blank(),
-                                  axis.text.x = element_text(size = 10),
-                                  axis.text.y = element_text(size = 10),
-                                  axis.title.x = element_text(size = 14),
-                                  axis.title.y = element_text(size = 14),
-                                  aspect.ratio = 1) +
-                            guides(fill = guide_legend(override.aes = list(size = 4)))
-                        if (!is.null(color))
-                            p <- p + scale_fill_manual(name = variable, values = color)
-                        le <- get_legend(p)
-                    } else{
-                        p <- ggplot(mapping = aes(x = pcs[,pair.pcs[1,i]], y = pcs[,pair.pcs[2,i]], fill = var)) +
-                            geom_point(aes(fill = se.obj@colData[, variable]), pch = 21, color = strokeColor, stroke = strokeSize, size = pointSize,alpha = alpha) +
-                            scale_x_continuous(breaks = scales::pretty_breaks(n = 5)) +
-                            scale_y_continuous(breaks = scales::pretty_breaks(n = 5)) +
-                            xlab(paste0('PC', x, ' (', pc.var[x], '%)')) +
-                            ylab(paste0('PC', y, ' (', pc.var[y], '%)')) +
-                            theme(panel.background = element_blank(),
-                                  axis.line = element_line(colour = "black", size = 1.1),
-                                  legend.position = "none",
-                                  axis.text.x = element_text(size = 10),
-                                  axis.text.y = element_text(size = 10),
-                                  axis.title.x = element_text(size = 14),
-                                  axis.title.y = element_text(size = 14),
-                                  aspect.ratio = 1)
-                        if (!is.null(color))
-                            p <- p + scale_fill_manual(name = variable, values = color)
-                    }
-                    p <- p + theme(legend.position = "none")
-                    xdens <- axis_canvas(p, axis = "x")+
-                        geom_density( mapping = aes(x = pcs[,x], fill = se.obj@colData[, variable]), alpha = 0.7, size = 0.2) +
-                        theme(legend.position = "none")
-                    if (!is.null(color))
-                        xdens <- xdens + scale_fill_manual(name = variable, values = color)
-                    ydens <- axis_canvas(p, axis = "y", coord_flip = TRUE) +
-                        geom_density(mapping = aes(x = pcs[,y], fill = se.obj@colData[, variable]), alpha = 0.7, size = 0.2) +
-                        theme(legend.position = "none")+
-                        coord_flip()
-                    if (!is.null(color))
-                        ydens <- ydens + scale_fill_manual(name = variable, values = color)
-                    p1 <- insert_xaxis_grob(p, xdens, grid::unit(.2, "null"), position = "top")
-                    p2 <- insert_yaxis_grob(p1, ydens, grid::unit(.2, "null"), position = "right")
-                    pList[[i]] <- ggdraw(p2)
-                }
-                pList[[i+1]] <- le
-                return(pList)
-
-            })
-        names(ppca) <- levels(assay.names)
-
-    } else {
-        ppca <- lapply(
-            levels(assay.names),
-            function(x) {
+                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u[, 1:nb.pcs]
+                pc.var <- se.obj@metadata[['metric']][[x]][['fastPCA']]$percentage.variation
+            } else {
                 if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To plot the PCA, the PCA must be computed first on the assay ', x, ' .')
-                pca.data  <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u[,1:nb.pcs]
-                pc.var <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$
-                    pair.pcs <- combn(ncol(pca.data), 2)
-                pList <- list()
-                for(i in 1:ncol(pair.pcs)){
-                    if(i == 1){
-                        p <- ggplot(mapping = aes(x = pca.data[,pair.pcs[1,i]], y = pca.data[,pair.pcs[2,i]], fill = var)) +
-                            geom_point(aes(fill = se.obj@colData[, variable]), pch = 21, color = strokeColor, stroke = strokeSize, size = pointSize, alpha = alpha) +
-                            scale_x_continuous(breaks = scales::pretty_breaks(n = 5)) +
-                            scale_y_continuous(breaks = scales::pretty_breaks(n = 5)) +
-                            xlab(paste0('PC', x, ' (', pc.var[x], '%)')) +
-                            ylab(paste0('PC', y, ' (', pc.var[y], '%)')) +
-                            theme(legend.position = "right",
-                                  panel.background = element_blank(),
-                                  axis.line = element_line(colour = "black", size = 1.1),
-                                  legend.background = element_blank(),
-                                  legend.text = element_text(size = 12),
-                                  legend.title = element_text(size = 14),
-                                  legend.key = element_blank(),
-                                  axis.text.x = element_text(size = 10),
-                                  axis.text.y = element_text(size = 10),
-                                  axis.title.x = element_text(size = 14),
-                                  axis.title.y = element_text(size = 14),
-                                  aspect.ratio = 1) +
-                            guides(fill = guide_legend(override.aes = list(size = 4)))
-                        if (!is.null(color))
-                            p <- p + scale_fill_manual(name = variable, values = color)
-                        le <- get_legend(p)
-                    } else{
-                        p <- ggplot(mapping = aes(x = pcs[,pair.pcs[1,i]], y = pcs[,pair.pcs[2,i]], fill = var)) +
-                            geom_point(aes(fill = se.obj@colData[, variable]), pch = 21, color = strokeColor, stroke = strokeSize, size = pointSize,alpha = alpha) +
-                            scale_x_continuous(breaks = scales::pretty_breaks(n = 5)) +
-                            scale_y_continuous(breaks = scales::pretty_breaks(n = 5)) +
-                            xlab(paste0('PC', x, ' (', pc.var[x], '%)')) +
-                            ylab(paste0('PC', y, ' (', pc.var[y], '%)')) +
-                            theme(panel.background = element_blank(),
-                                  axis.line = element_line(colour = "black", size = 1.1),
-                                  legend.position = "none",
-                                  axis.text.x = element_text(size = 10),
-                                  axis.text.y = element_text(size = 10),
-                                  axis.title.x = element_text(size = 14),
-                                  axis.title.y = element_text(size = 14),
-                                  aspect.ratio = 1)
-                        if (!is.null(color))
-                            p <- p + scale_fill_manual(name = variable, values = color)
-                    }
-                    p <- p + theme(legend.position = "none")
-                    xdens <- axis_canvas(p, axis = "x")+
-                        geom_density( mapping = aes(x = pcs[,x], fill = se.obj@colData[, variable]), alpha = 0.7, size = 0.2) +
-                        theme(legend.position = "none")
-                    if (!is.null(color))
-                        xdens <- xdens + scale_fill_manual(name = variable, values = color)
-                    ydens <- axis_canvas(p, axis = "y", coord_flip = TRUE) +
-                        geom_density(mapping = aes(x = pcs[,y], fill = se.obj@colData[, variable]), alpha = 0.7, size = 0.2) +
-                        theme(legend.position = "none")+
-                        coord_flip()
-                    if (!is.null(color))
-                        ydens <- ydens + scale_fill_manual(name = variable, values = color)
-                    p1 <- insert_xaxis_grob(p, xdens, grid::unit(.2, "null"), position = "top")
-                    p2 <- insert_yaxis_grob(p1, ydens, grid::unit(.2, "null"), position = "right")
-                    pList[[i]] <- ggdraw(p2)
-                }
-                pList[[i+1]] <- le
-                return(pList)
-            })
-        names(ppca) <- levels(assay.names)
-    }
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[, 1:nb.pcs]
+                pc.var <- se.obj@metadata[['metric']][[x]][['PCA']]$percentage.variation
+            }
+            pair.pcs <- combn(ncol(pca.data), 2)
+            var <- colData(se.obj)[ , variable]
+            p.per.data <- lapply(
+                1:ncol(pair.pcs),
+                function(i){
+                    plot1 <- ggplot(
+                        mapping = aes(
+                            x = pca.data[, pair.pcs[1, i]],
+                            y = pca.data[, pair.pcs[2, i]] ) ) +
+                        geom_point(aes(fill = se.obj@colData[, variable]),
+                                   color = strokeColor,
+                                   pch = 21,
+                                   stroke = strokeSize,
+                                   size = pointSize,
+                                   alpha = alpha) +
+                        scale_x_continuous(
+                            name = paste0('PC', pair.pcs[1, i], ' (', pc.var[pair.pcs[2, i]], '%)'),
+                            breaks = scales::pretty_breaks(n = 5)) +
+                        scale_y_continuous(
+                            name = paste0('PC', pair.pcs[2, i], ' (', pc.var[pair.pcs[1, i]], '%)'),
+                            breaks = scales::pretty_breaks(n = 5)) +
+                        ggtitle(x) +
+                        theme_pubr() +
+                        theme(legend.position = "none",
+                              legend.background = element_blank(),
+                              legend.text = element_text(size = 12),
+                              legend.title = element_text(size = 14),
+                              legend.key = element_blank(),
+                              axis.text.x = element_text(size = 10),
+                              axis.text.y = element_text(size = 10),
+                              axis.title.x = element_text(size = 12),
+                              axis.title.y = element_text(size = 12)) +
+                        scale_fill_discrete(name = variable) +
+                        guides(fill = guide_legend(override.aes = list(size = 3, shape = 21) ) )
+
+                    dens1 <- ggplot(mapping = aes(x = pca.data[, pair.pcs[1, i]], fill = se.obj@colData[, variable])) +
+                        geom_density(alpha = 0.4) +
+                        theme_void() +
+                        theme(legend.position = "none",
+                              legend.text = element_text(size = 12),
+                              legend.title = element_text(size = 14)) +
+                        scale_fill_discrete(name = variable) +
+                        guides(fill = guide_legend(override.aes = list(size = 3)))
+
+                    dens2 <- ggplot(mapping = aes(x = pca.data[, pair.pcs[2, i]], fill = se.obj@colData[, variable])) +
+                        geom_density(alpha = 0.4) +
+                        theme_void() +
+                        theme(legend.position = "none",
+                              legend.text = element_text(size = 12),
+                              legend.title = element_text(size = 14)) +
+                        coord_flip() +
+                        scale_fill_discrete(name = variable) +
+                        guides(fill = guide_legend(override.aes = list(size = 3)))
+
+                    dens1 + plot_spacer() + plot1 + dens2 +
+                        plot_layout(ncol = 2, nrow = 2, widths = c(4, 1), heights = c(1, 4))
+
+                })
+            p.per.data
+        })
+    names(p.pca) <- levels(assay.names)
     ## Prepare plot
-    p = ppca[[levels(assay.names)[1]]]
+    p <- p.pca[[levels(assay.names)[1]]]
     if (length(assay.names) > 1) {
         for (n in 2:length(assay.names)) {
             p = c(p, ppca[[levels(assay.names)[n]]])
         }
     }
-    if (fast.pca) {
-        title = paste0("FastPCA ordered as ", paste(levels(assay.names), collapse = ","))
-    } else{
-        title = paste0("PCA ordered as ", paste(levels(assay.names), collapse = ","))
-    }
-    plot = do.call(grid.arrange,
-                   c(p,
-                     ncol = ncol.plot,
-                     top = title))
-
+    plot <- ggarrange(plotlist = p, common.legend = TRUE, legend="bottom")
+    printColoredMessage(message = '------------The plotPCA function starts:',
+                        color = 'white',
+                        verbose = verbose)
     return(plot = as_ggplot(plot))
 }
