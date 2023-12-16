@@ -2,14 +2,14 @@
 % Please edit documentation in R/computeSilhouette.R
 \name{computeSilhouette}
 \alias{computeSilhouette}
-\title{is used to compute the Silhouette coefficient from the first PC of a SummarizedExperiment class
+\title{is used to compute the average Silhouette coefficient width using principal components of assays in a SummarizedExperiment
 object given a categorical variable.}
 \usage{
 computeSilhouette(
   se.obj,
   assay.names = "All",
   variable,
-  method = "euclidian",
+  dist.measure = "euclidian",
   fast.pca = TRUE,
   nb.pcs = 3,
   save.se.obj = TRUE,
@@ -28,7 +28,7 @@ of the assay(s) of the SummarizedExperiment class object to compute the Silhouet
 \item{variable}{String of the label of a categorical variable such as
 sample types or batches from colData(se.obj).}
 
-\item{method}{A character string indicating which method
+\item{dist.measure}{A character string indicating which method
 is to be used for the differential analysis: 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.
 By default 'euclidean' will be selected.}
 
@@ -54,6 +54,6 @@ SummarizedExperiment A SummarizedExperiment object containing the computed silho
 on the categorical variable.
 }
 \description{
-is used to compute the Silhouette coefficient from the first PC of a SummarizedExperiment class
+is used to compute the average Silhouette coefficient width using principal components of assays in a SummarizedExperiment
 object given a categorical variable.
 }
