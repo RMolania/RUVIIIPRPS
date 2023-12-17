@@ -52,7 +52,7 @@ computeSilhouette <- function(
     } else if (is.null(assay.names)) {
         stop('Please provide at least an assay name.')
     } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
-        stop(paste0('The ', variable,'must be a categorical variable'))
+        stop(paste0('The ', variable, 'must be a categorical variable'))
     } else if (!dist.measure %in% c('euclidian',
                               'maximum',
                               'manhattan',
