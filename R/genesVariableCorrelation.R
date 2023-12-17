@@ -37,6 +37,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
 #' @importFrom Rfast correls
+#' @importFrom stats var cor.test
 #' @import ggplot2
 #' @export
 
