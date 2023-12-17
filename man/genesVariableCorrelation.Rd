@@ -14,7 +14,7 @@ genesVariableCorrelation(
   a = 0.05,
   rho = 0,
   save.se.obj = TRUE,
-  boxplot.output = TRUE,
+  plot.output = TRUE,
   plot.top.genes = FALSE,
   nb.top.genes = 3,
   assess.se.obj = TRUE,
@@ -49,8 +49,6 @@ by default it is set to 0.}
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 to output the result. By default it is set to TRUE.}
 
-\item{boxplot.output}{Logical. Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.}
-
 \item{plot.top.genes}{Logical. Indicates whether to plot the gene expression of the number of genes
 from the high or low correlation, by default it is set to FALSE.}
 
@@ -68,6 +66,8 @@ of the functions, by default it is set to TRUE.}
 by default it is set to 1.}
 
 \item{apply.round}{Logical. Indicates whether to round the ARI results, by default it is set to TRUE.}
+
+\item{boxplot.output}{Logical. Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing the computed correlation on the continuous variable
