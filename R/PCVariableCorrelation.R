@@ -40,174 +40,135 @@ PCVariableCorrelation<-function(
         fast.pca = TRUE,
         nb.pcs = 10,
         save.se.obj = TRUE,
-        plot.output=TRUE,
+        plot.output = TRUE,
         assess.se.obj = TRUE,
         remove.na = 'both',
         apply.round = TRUE,
         verbose = TRUE
-){
-
+) {
     printColoredMessage(message = '------------The PCVariableCorrelation function starts:',
                         color = 'white',
                         verbose = verbose)
 
-    ### Check the inputs
+    # check the inputs ####
     if (is.null(assay.names)) {
         stop('Please provide at least an assay name.')
     } else if (is.null(variable)) {
         stop('Please provide a variable.')
     } else if (length(unique(se.obj@colData[, variable])) < 2) {
-        stop(paste0('The ', variable,', contains only one variable.'))
+        stop(paste0('The ', variable, ', contains only one variable.'))
     } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
-        stop(paste0('The ', variable,', is a numeric, but this should a categorical variable'))
+        stop(paste0(
+            'The ',
+            variable,
+            ', is a numeric, but this should a categorical variable'
+        ))
     }
 
-    ### Assess the se.obj
-    if (assess.se.obj){
-        se.obj <- checkSeObj(se.obj = se.obj,
-                             assay.names = assay.names,
-                             variables = variable,
-                             remove.na = remove.na,
-                             verbose = verbose)
-    }
+    # assays ####
+    if (length(assay.names) == 1 && assay.names == 'All') {
+        assay.names = as.factor(names(assays(se.obj)))
+    } else  assay.names = as.factor(unlist(assay.names))
 
-    ## Assays
-    if(length(assay.names) == 1 && assay.names=='All'){
-        assay.names=as.factor(names(assays(se.obj)))
-    }else {
-        assay.names=as.factor(unlist(assay.names))
+    # assess the SummarizedExperiment object ####
+    if (assess.se.obj) {
+        se.obj <- checkSeObj(
+            se.obj = se.obj,
+            assay.names = assay.names,
+            variables = variable,
+            remove.na = remove.na,
+            verbose = verbose)
     }
-    ## Categorical variable
-    var=se.obj@colData[, variable]
-    var.label=paste0(variable)
-
-    catvar.dummies <- dummy_cols(var)
+    ## create dummy variables ####
+    catvar.dummies <- dummy_cols(se.obj@colData[, variable])
     catvar.dummies <- catvar.dummies[, c(2:ncol(catvar.dummies))]
 
-    if (fast.pca) {
-        ### Compute the correlation on all assays
-        cca.all<- lapply(
-            levels(assay.names),
-            function(x){
-                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]])) {
-                    stop('To compute the regression,
-                         the fast PCA must be computed first on the assay ', x, ' .')
-                }
-                ### Regression on PCs and continous variable
-                printColoredMessage(message = paste0(
-                    '### Computing regression based on PCs and the ',
-                    variable,
-                    ' variable.'
-                ),
-                color = 'magenta',
-                verbose = verbose)
-                pca_x <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u[colnames(se.obj),]
-                cca.pcs<- sapply(
-                    1:nb.pcs,
-                    function(y){
-                        ## Canonical correlations
-                        cca <- cancor(
-                            x = pca_x[, 1:y, drop = FALSE],
-                            y = catvar.dummies)
-                        1 - prod(1 - cca$cor^2)
-                    })
-                return(cca.pcs)
-            })
-        names(cca.all)<- levels(assay.names)
-    } else{
-        ### Compute the correlation on all assays
-        cca.all<- lapply(
-            levels(assay.names),
-            function(x){
-                if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]])) {
-                    stop('To compute the regression,
-                         the PCA must be computed first on the assay ', x, ' .')
-                }
-                ### Regression on PCs and continous variable
-                printColoredMessage(message = paste0(
-                    '### Computing regression based on PCs and the ',
-                    variable,
-                    ' variable.'
-                ),
-                color = 'magenta',
-                verbose = verbose)
-                pca_x <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u[colnames(se.obj),]
-                cca.pcs<- sapply(
-                    1:nb.pcs,
-                    function(y){
-                        ## Canonical correlations
-                        cca <- cancor(
-                            x = pca_x[, 1:y, drop = FALSE],
-                            y = catvar.dummies)
-                        1 - prod(1 - cca$cor^2)
-                    })
-                return(cca.pcs)
-            })
-        names(cca.all)<- levels(assay.names)
-    }
 
-    ## Round the regression statistic obtained to 2 digits
-    if(apply.round){
-        cca.all[] <- lapply(cca.all, round,3)
-    }
+    ### Compute the correlation on all assays
+    ### Regression on PCs and continous variable
+    printColoredMessage(
+        message =  '-- Compute vector correlation:',
+        color = 'magenta',
+        verbose = verbose)
+    all.vec.corr <- lapply(
+        levels(assay.names),
+        function(x) {
+            if (fast.pca) {
+                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                    stop('To compute the regression, the fast PCA must be computed first on the assay ', x, ' .' )
+                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
+            } else {
+                if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                    stop('To compute the regression, the PCA must be computed first on the assay ', x,' .')
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u
+            }
+            cca.pcs <- sapply(
+                1:nb.pcs,
+                function(y) {
+                    cca <- cancor(x = pca.data[, 1:y, drop = FALSE], y = catvar.dummies)
+                    1 - prod(1 - cca$cor ^ 2)
+                })
+            return(cca.pcs)
+        })
+    names(all.vec.corr) <- levels(assay.names)
 
     ### Add results to the SummarizedExperiment object
-    if(save.se.obj == TRUE){
-        printColoredMessage(message= '### Saving the correlation results to the metadata of the SummarizedExperiment object.',
-                            color = 'magenta',
-                            verbose = verbose)
-
-        for (x in levels(assay.names)){
-            ## Check if metadata metric already exist
-            if(length(se.obj@metadata)==0 ) {
+    if (save.se.obj == TRUE) {
+        printColoredMessage(
+            message = '-- Save the vector correlation results to the metadata of the SummarizedExperiment object.',
+            color = 'magenta',
+            verbose = verbose)
+        for (x in levels(assay.names)) {
+            ## check if metadata metric already exist
+            if (length(se.obj@metadata) == 0) {
                 se.obj@metadata[['metric']] <- list()
             }
-            ## Check if metadata metric already exist for this assay
-            if(!'metric' %in% names(se.obj@metadata) ) {
+            ## check if metadata metric already exist for this assay
+            if (!'metric' %in% names(se.obj@metadata)) {
                 se.obj@metadata[['metric']] <- list()
             }
-            ## Check if metadata metric already exist for this assay
-            if(!x %in% names(se.obj@metadata[['metric']]) ) {
+            ## check if metadata metric already exist for this assay
+            if (!x %in% names(se.obj@metadata[['metric']])) {
                 se.obj@metadata[['metric']][[x]] <- list()
             }
-            ## Check if metadata metric already exist for this assay and this metric
-            if(!'pcs.vect.corr' %in% names(se.obj@metadata[['metric']][[x]])  ) {
+            ## check if metadata metric already exist for this assay and this metric
+            if (!'pcs.vect.corr' %in% names(se.obj@metadata[['metric']][[x]])) {
                 se.obj@metadata[['metric']][[x]][['pcs.vect.corr']] <- list()
             }
-            ## Check if metadata metric already exist for this assay, this metric and this variable
-            #if(!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.vect.corr']])  ) {
-                se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]] <- cca.all[[x]]
-            #}
+            ## check if metadata metric already exist for this assay, this metric and this variable
+            se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]] <- all.vec.corr[[x]]
         }
-        printColoredMessage(message= paste0(
-            'The correlation results are saved to metadata@metric$',
-            x,
-            '$pcs.vect.corr$',
-            variable, '.'),
+        printColoredMessage(
+            message = 'The vector correlation for individal assays are saved to metadata@metric',
             color = 'blue',
             verbose = verbose)
-
-        ## Plot and save the plot into se.obj@metadata$plot
-        if (plot.output==TRUE) {
-            printColoredMessage(message= '### Plotting and Saving the correlation results to the metadata of the SummarizedExperiment object.',
-                                color = 'magenta',
-                                verbose = verbose)
-
-            se.obj=plotMetric(se.obj,
-                              assay.names =assay.names,
-                              metric='pcs.vect.corr',
-                              variable=variable,
-                              verbose=verbose)
+        ## Plot and save the plot into se.obj@metadata$plot ####
+        if (plot.output == TRUE) {
+            printColoredMessage(
+                message = '-- Plot the the vector correlation results:',
+                color = 'magenta',
+                verbose = verbose)
+            printColoredMessage(
+                message = 'A plot of the vector correlations are saved to metadata@plot.',
+                color = 'blue',
+                verbose = verbose)
+            se.obj <- plotMetric(
+                se.obj,
+                assay.names = assay.names,
+                metric = 'pcs.vect.corr',
+                variable = variable,
+                verbose = verbose)
         }
+        printColoredMessage(message = '------------The PCVariableCorrelation function finished.',
+                            color = 'white',
+                            verbose = verbose)
         return(se.obj = se.obj)
 
         ## Return only the correlation result
-    } else if(save.se.obj == FALSE){
-        return(cca.all=cca.all)
+    } else if (save.se.obj == FALSE) {
+        printColoredMessage(message = '------------The PCVariableCorrelation function finished.',
+                            color = 'white',
+                            verbose = verbose)
+        return(all.vec.corr = all.vec.corr)
     }
-
-    printColoredMessage(message = '------------The PCVariableCorrelation function finished.',
-                        color = 'white',
-                        verbose = verbose)
-
 }
