@@ -181,6 +181,6 @@ computeSilhouette <- function(
         printColoredMessage(message = '------------The computeSilhouette function finished.',
                             color = 'white',
                             verbose = verbose)
-        return(sil = sil.coefs)
+        return(sil = sil.coef)
     }
 }
