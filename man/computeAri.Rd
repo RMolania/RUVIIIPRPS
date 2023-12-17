@@ -2,7 +2,7 @@
 % Please edit documentation in R/computeAri.R
 \name{computeARI}
 \alias{computeARI}
-\title{is used to compute the adjusted rand index (ARI) from the first PC of a SummarizedExperiment class
+\title{is used to compute the adjusted rand index (ARI) using the first PC of the assays in a SummarizedExperiment
 object given a categorical variable.}
 \usage{
 computeARI(
@@ -11,10 +11,12 @@ computeARI(
   variable,
   fast.pca = TRUE,
   nb.pcs = 3,
+  clustering.method = "hclust",
+  hclust.method = "complete",
+  dist.measure = "euclidian",
   save.se.obj = TRUE,
   plot.output = FALSE,
   assess.se.obj = TRUE,
-  apply.round = TRUE,
   verbose = TRUE
 )
 }
@@ -32,14 +34,18 @@ to speed up the process, by default is set to 'TRUE'.}
 
 \item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 3.}
 
+\item{clustering.method}{Symbol. Indicates the clustering methods.}
+
+\item{hclust.method}{Symbol.}
+
+\item{dist.measure}{Indicates the clustering methods.}
+
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 to output the result. By default it is set to TRUE.}
 
 \item{plot.output}{Logical. Indicates whether to plot the ARI, by default it is set to FALSE.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is set to TRUE.}
-
-\item{apply.round}{Logical. Indicates whether to round the ARI results, by default it is set to TRUE.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
