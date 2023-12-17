@@ -15,7 +15,6 @@ PCVariableRegression(
   plot.output = TRUE,
   assess.se.obj = TRUE,
   remove.na = "both",
-  apply.round = TRUE,
   verbose = TRUE
 )
 }
@@ -41,8 +40,6 @@ to output the result. By default it is set to TRUE.}
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
 \item{remove.na}{TO BE DEFINED.}
-
-\item{apply.round}{Logical. Indicates whether to round the ARI results, by default it is set to TRUE.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
