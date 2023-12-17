@@ -102,11 +102,11 @@ PCVariableRegression <- function(
                 if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To compute the regression,the fast PCA must be computed first on the assay ', x, ' .')
                 pca.data <-
-                    se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u[colnames(se.obj),]
+                    se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u[colnames(se.obj),]
             } else {
                 if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To compute the regression, the PCA must be computed first on the assay ', x, ' .')
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u[colnames(se.obj), ]
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[colnames(se.obj), ]
             }
             r.squared <- sapply(
                 1:nb.pcs,
