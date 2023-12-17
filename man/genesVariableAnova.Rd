@@ -2,28 +2,28 @@
 % Please edit documentation in R/genesVariableAnova.R
 \name{genesVariableAnova}
 \alias{genesVariableAnova}
-\title{is used to compute the differential gene expression analysis between the gene expression (assay)
-of a SummarizedExperiment class object and a categorical variable (i.e. batches) using ANOVA.}
+\title{is used to compute ANOVA between individual gene expression of the assays in a SummarizedExperiment object
+and a categorical variable.}
 \usage{
 genesVariableAnova(
   se.obj,
   assay.names = "All",
   variable,
-  apply.log = TRUE,
   method = "aov",
-  save.se.obj = TRUE,
-  boxplot.output = TRUE,
   plot.top.genes = FALSE,
   nb.top.genes = 3,
+  apply.log = TRUE,
+  pseudo.count = 1,
   assess.se.obj = TRUE,
   remove.na = "both",
-  pseudo.count = 1,
   apply.round = TRUE,
+  save.se.obj = TRUE,
+  plot.output = TRUE,
   verbose = TRUE
 )
 }
 \arguments{
-\item{se.obj}{A SummarizedExperiment object that will be used to compute the differential expression ANOVA analysis.}
+\item{se.obj}{A SummarizedExperiment object.}
 
 \item{assay.names}{Optional string or list of strings for the selection of the name(s)
 of the assay(s) of the SummarizedExperiment class object to compute the ANOVA. By default}
@@ -31,17 +31,9 @@ of the assay(s) of the SummarizedExperiment class object to compute the ANOVA. B
 \item{variable}{String of the label of a categorical variable such as
 sample types or batches from colData(se.obj).}
 
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
-the log transformation will be selected.}
-
 \item{method}{A character string indicating which method
 is to be used for the differential analysis: "aov" or "welch.correction". By default "aov" will
 be selected.}
-
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-to output the result. By default it is set to TRUE.}
-
-\item{boxplot.output}{Logical. Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.}
 
 \item{plot.top.genes}{Logical. Indicates whether to plot the gene expression of the number of genes
 from the top listing of anova by default it is set to FALSE.}
@@ -49,14 +41,22 @@ from the top listing of anova by default it is set to FALSE.}
 \item{nb.top.genes}{Defines the number of genes from the top or bottom listing of anova to plot,
 by default is set to 3.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
-
-\item{remove.na}{TO BE DEFINED.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
+the log transformation will be selected.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
 
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+
+\item{remove.na}{TO BE DEFINED.}
+
 \item{apply.round}{Logical. Indicates whether to round the ARI results, by default it is set to TRUE.}
+
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+to output the result. By default it is set to TRUE.}
+
+\item{plot.output}{Logical. Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
@@ -66,6 +66,6 @@ SummarizedExperiment A SummarizedExperiment object containing the log2 F-statist
 and if requested the associated boxplot.
 }
 \description{
-is used to compute the differential gene expression analysis between the gene expression (assay)
-of a SummarizedExperiment class object and a categorical variable (i.e. batches) using ANOVA.
+is used to compute ANOVA between individual gene expression of the assays in a SummarizedExperiment object
+and a categorical variable.
 }
