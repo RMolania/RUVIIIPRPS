@@ -27,7 +27,7 @@
 #' on the categorical variable.
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom mclust mclustBIC Mclust adjustedRandIndex
-#' @importFrom stats hclust dist
+#' @importFrom stats cutree hclust dist
 #' @import ggplot2
 #' @export
 #'
@@ -143,13 +143,13 @@ computeARI <- function(
             } else {
                 pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u[colnames(se.obj), ]
             }
-            if(clustring.method == 'mclust'){
+            if(clustering.method == 'mclust'){
                 bic <- mclustBIC(data = pca.data)
                 mod <- Mclust(data = pca.data, x = bic, G = length(unique(se.obj@colData[, variable])) )
                 ari <- adjustedRandIndex(mod$classification, se.obj@colData[, variable])
             } else {
                 clusters <- cutree(
-                    tree = hclust(d = dist(x = pca.dat, method = dist.measure), method = hclust.method),
+                    tree = hclust(d = dist(x = pca.data, method = dist.measure), method = hclust.method),
                     k = length(unique(se.obj@colData[, variable])))
                 ari <- adjustedRandIndex(clusters, se.obj@colData[, variable])
             }
