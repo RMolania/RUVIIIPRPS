@@ -11,6 +11,8 @@ RoxygenNote: 7.2.3
 LinkingTo: Rcpp, RcppEigen
 Imports: 
     ggplot2,
+    singscore,
+    NbClust,
     Rcpp,
     SummarizedExperiment,
     BiocSingular,
