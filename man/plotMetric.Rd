@@ -8,10 +8,10 @@ SummarizedExperiment class object.}
 plotMetric(
   se.obj,
   assay.names = "All",
+  variable,
   metric = c("gene.pearson.corr", "gene.spearman.corr", "gene.aov.anova",
     "gene.welch.correction.anova", "ari", "pcs.vect.corr", "pcs.lm", "sil.euclidean",
     "sil.maximum", "sil.manhattan", "sil.canberra", "sil.binary", "sil.minkowski"),
-  variable,
   verbose = TRUE
 )
 }
@@ -21,10 +21,10 @@ plotMetric(
 \item{assay.names}{String or list of strings for the selection of the name
 of the assays of the SummarizedExperiment class object.}
 
-\item{metric}{Metric being assessed.}
-
 \item{variable}{String of the label of a variable such as
 sample types or batches from colData(se.obj).}
+
+\item{metric}{Metric being assessed.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
