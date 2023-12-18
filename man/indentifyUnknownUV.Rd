@@ -2,7 +2,7 @@
 % Please edit documentation in R/indentifyUnknownUV.R
 \name{indentifyUnknownUV}
 \alias{indentifyUnknownUV}
-\title{is used to find potential unknown sources of unwanted variation..}
+\title{is used to find potential unknown sources of unwanted variation in an assay in a SummarizedExperiment object.}
 \usage{
 indentifyUnknownUV(
   se.obj,
@@ -21,7 +21,7 @@ indentifyUnknownUV(
   nbClust.index = "silhouette",
   nbClust.alphaBeale = 0.1,
   max.samples.per.batch = 0.1,
-  nb.clusters = NULL,
+  nb.clusters = 3,
   rle.comp = "median",
   apply.log = TRUE,
   pseudo.count = 1,
@@ -38,39 +38,54 @@ indentifyUnknownUV(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.name}{A symbol indicates an assay name in SummarizedExperiment object.}
+\item{assay.name}{Symbol. A symbol indicates an assay name in the SummarizedExperiment object.}
 
-\item{approach}{A symbol indicates which approach should be used to identify unknown sources of unwanted variation. RLE:}
+\item{approach}{Symbol. A symbol indicates which approach should be used to identify unknown sources of unwanted variation.
+This must be one of the 'rle', 'pca' or 'sample.scoring'.In the rle approach, a clustering method will be applied on
+either medians or IQR or both of the rle data.In the absent
+on unwanted variation, we should not find any clustering. In the pca approach, first, a principal component analysis
+on either a set of negative control genes or all genes will be applied and then a clustering method will be used to
+clusters the first principal components to find potential unknown sources of unwanted variation.
+In the sample.scoring approach, first,  all samples will be scored against a set of signature genes related to
+unwanted variation, then clustering method will be applied on the scoring to find potential unknown sources of unwanted variation.}
 
-\item{regress.out.bio.variables}{One or more symbol indicate the names of columns in the sample annotation (colData) that will be regress out
-from the data before finding sources of unwanted variation.}
+\item{regress.out.bio.variables}{Symbol. One or more symbols indicate the names of the columns that contain known
+biological variation in the sample annotation (colData) that will be regress out from the data before finding sources
+of unwanted variation.. The default is NULL.}
 
-\item{regress.out.bio.gene.sets}{List. A list of biological gene signatures. Individual gene set will be used to score samples and
-then each scores will be regressed out from the data before finding negative control genes.}
+\item{regress.out.bio.gene.sets}{List. A list of biological gene signatures. Individual gene set will be used to
+score samples and then each scores will be regressed out from the data before finding sources of unwanted variation.}
 
-\item{uv.gene.sets}{List. A list of unwanted variation gene signatures. Individual gene set will be used to score samples and
-then each scores will be clustered to find possible unknown batches. The default is null.}
+\item{uv.gene.sets}{List. A list of unwanted variation gene signatures. Individual gene set will be used to score
+samples and then each scores will be clustered to find possible unknown batches. The default is NULL.}
 
-\item{ncg}{Logical or factor. Indicates a set of negative control genes to find sources of unwanted variation. If is not NULL,
-the RLE or PCA and sample scoring will be based on only negative control genes. The default is null.}
+\item{ncg}{Vector. Indicates a set of negative control genes to find sources of unwanted variation.
+The default is NULL. If is not NULL, the RLE or PCA and sample scoring will be based on only negative control genes.}
 
-\item{clustering.methods}{A symbol. Indicates winch clustering methods: 'kmeans', 'cut', 'quantile', 'nbClust' should be used to find
-possible unknown batches. The default is nbClust.}
+\item{clustering.methods}{Symbol. Indicates the clustering method to be used to find
+possible unknown batches. This must be one of the: 'kmeans', 'cut', 'quantile', 'nbClust'. The default is nbClust.}
 
-\item{nbClust.diss}{dissimilarity matrix to be used. By default, diss=NULL, but if it is replaced by a dissimilarity matrix, distance should be "NULL".}
+\item{nbClust.diss}{dissimilarity matrix to be used. By default, diss=NULL,
+but if it is replaced by a dissimilarity matrix, distance should be "NULL".}
 
-\item{nbClust.distance}{the distance measure to be used to compute the dissimilarity matrix. This must be one of: "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski" or "NULL".
-By default, distance="euclidean". If the distance is "NULL", the dissimilarity matrix (diss) should be given by the user. If distance is not "NULL", the dissimilarity matrix should be "NULL".}
+\item{nbClust.distance}{the distance measure to be used to compute the dissimilarity matrix. This must be one of:
+"euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski" or "NULL".
+By default, distance="euclidean". If the distance is "NULL", the dissimilarity matrix (diss) should be given by the
+user. If distance is not "NULL", the dissimilarity matrix should be "NULL".}
 
 \item{nbClust.min.nc}{minimal number of clusters, between 1 and (number of objects - 1)}
 
-\item{nbClust.max.nc}{minimal number of clusters, between 1 and (number of objects - 1)}
+\item{nbClust.max.nc}{Numeric. Indicates maximal number of clusters, between 2 and (number of objects - 1),
+greater or equal to min.nc. By default, max.nc = 15. Refer to the NbClsut function for more details.}
 
-\item{nbClust.method}{maximal number of clusters, between 2 and (number of objects - 1), greater or equal to min.nc. By default, max.nc=15.}
+\item{nbClust.method}{Symbol. indicates the cluster method to be used.
+This should be one of: "ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid",
+"kmeans". Refer to the NbClsut function for more details.}
 
-\item{nbClust.index}{The index to be calculated. This should be one of : "kl", "ch", "hartigan", "ccc", "scott", "marriot", "trcovw", "tracew", "friedman", "rubin", "cindex", "db", "silhouette",
-"duda", "pseudot2", "beale", "ratkowsky", "ball", "ptbiserial", "gap", "frey", "mcclain", "gamma", "gplus", "tau", "dunn", "hubert", "sdindex", "dindex", "sdbw", "all" (all indices except GAP, Gamma, Gplus and Tau),
-"alllong" (all indices with Gap, Gamma, Gplus and Tau included).}
+\item{nbClust.index}{The index to be calculated. This should be one of : 'kl', 'ch', 'hartigan', 'ccc', 'scott',
+'marriot', 'trcovw', 'tracew', 'friedman', 'rubin', 'cindex', 'db', 'silhouette', 'duda', 'pseudot2', 'beale',
+'ratkowsky', 'ball', 'ptbiserial', 'gap', 'frey', 'mcclain', 'gamma', 'gplus', 'tau', 'dunn', 'hubert', 'sdindex',
+'dindex', 'sdbw', 'all' (all indices except GAP, Gamma, Gplus and Tau),'alllong' (all indices with Gap, Gamma, Gplus and Tau included).}
 
 \item{nbClust.alphaBeale}{significance value for Beale's index.}
 
@@ -79,8 +94,8 @@ The default is .1 (10\%) of total samples in the SummarizedExperiment object.}
 
 \item{nb.clusters}{Numeric. Indicates how many clusters should be found when clustering.methods kmeans, cut and quantile.}
 
-\item{rle.comp}{A symbol. Indicates which properties: 'median' or 'IQR' or 'both' of the RLE data should be used for clustering when the approach is RLE.
-The default is median.}
+\item{rle.comp}{A symbol. Indicates which properties: 'median' or 'iqr' or 'both' of the RLE data should be used for
+clustering when the approach is RLE. The default is median.}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
 
@@ -95,10 +110,10 @@ by default it is set to 1.}
 
 \item{BSPARAM}{TBBBB}
 
-\item{remove.na}{A symbol. Indicates whether to remove NA or missing values from either the 'assays', 'sample.annotation', 'both' or 'none'.
-If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
-samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
-'both'.}
+\item{remove.na}{A symbol. Indicates whether to remove NA or missing values from either the 'assays',
+'sample.annotation', 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be
+excluded. If 'sample.annotation' is selected, the samples that contains NA or missing values for any 'bio.variables'
+and 'uv.variables' will be excluded. By default, it is set to both'.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.
 By default it is set to TRUE.}
@@ -109,5 +124,15 @@ By default it is set to TRUE.}
 execution of the functions, by default it is set to TRUE.}
 }
 \description{
-is used to find potential unknown sources of unwanted variation..
+This function uses three different approaches: rle, pca and sample.scoring to find potential unknown sources of
+unwanted variation in an assay in a SummarizedExperiment object. In the rle approach, a clustering method will be
+applied on either medians or IQR or both of the rle data.In the absent on unwanted variation, we should not find any
+clustering. In the pca approach, first, a principal component analysis on either a set of negative control genes or
+all genes will be applied and then a clustering method will be used to clusters the first principal components to
+find potential unknown sources of unwanted variation. In the sample.scoring approach, first,  all samples will be
+scored against a set of signature genes related to unwanted variation, then  clustering method will be applied
+on the scoring to find potential unknown sources of unwanted variation.
+}
+\author{
+Ramyar Molania
 }
