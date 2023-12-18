@@ -9,19 +9,19 @@ genesVariableCorrelation(
   se.obj,
   assay.names = "All",
   variable,
-  apply.log = TRUE,
   method = "spearman",
   a = 0.05,
   rho = 0,
-  save.se.obj = TRUE,
   plot.output = TRUE,
   plot.top.genes = FALSE,
   nb.top.genes = 3,
+  apply.log = TRUE,
+  pseudo.count = 1,
+  apply.round = TRUE,
   assess.se.obj = TRUE,
   remove.na = "both",
-  verbose = TRUE,
-  pseudo.count = 1,
-  apply.round = TRUE
+  save.se.obj = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -33,9 +33,6 @@ of the assay(s) of the SummarizedExperiment class object to compute the correlat
 \item{variable}{String of the label of a continuous variable such as
 library size from colData(se.obj).}
 
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
-the log transformation will be selected.}
-
 \item{method}{A character string indicating which correlation coefficient
 is to be used for the test: "pearson", "kendall", or "spearman". By default "spearman" will
 be selected.}
@@ -46,9 +43,6 @@ by default it is set to 0.05.}
 \item{rho}{The value of the hypothesised correlation to be used in the hypothesis testing,
 by default it is set to 0.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-to output the result. By default it is set to TRUE.}
-
 \item{plot.output}{Logical. Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.}
 
 \item{plot.top.genes}{Logical. Indicates whether to plot the gene expression of the number of genes
@@ -57,17 +51,23 @@ from the high or low correlation, by default it is set to FALSE.}
 \item{nb.top.genes}{Defines the number of genes from the high or low correlation to plot,
 by default is set to 3.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
-
-\item{remove.na}{TO BE DEFINED.}
-
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
+the log transformation will be selected.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
 
 \item{apply.round}{Logical. Indicates whether to round the ARI results, by default it is set to TRUE.}
+
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+
+\item{remove.na}{TO BE DEFINED.}
+
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+to output the result. By default it is set to TRUE.}
+
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
+of the functions, by default it is set to TRUE.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing the computed correlation on the continuous variable
