@@ -41,36 +41,45 @@
 #' @import ggplot2
 #' @export
 
-genesVariableCorrelation<-function(
+genesVariableCorrelation <- function(
         se.obj,
         assay.names = 'All',
         variable,
-        apply.log = TRUE,
         method = 'spearman',
         a = 0.05,
         rho = 0,
-        save.se.obj = TRUE,
         plot.output = TRUE,
         plot.top.genes = FALSE,
         nb.top.genes = 3,
+        apply.log = TRUE,
+        pseudo.count = 1,
+        apply.round = TRUE,
         assess.se.obj = TRUE,
         remove.na = 'both',
-        verbose = TRUE,
-        pseudo.count = 1,
-        apply.round = TRUE
+        save.se.obj = TRUE,
+        verbose = TRUE
 ) {
     printColoredMessage(message = '------------The genesVariableCorrelation function starts:',
                         color = 'white',
                         verbose = verbose)
     # check the inputs ####
+    if (is.null(assay.names)) {
+        stop('The "assay.names" cannot be null.')
+    }
+    if(length(assay.names) == 1 & assay.names!= 'All'){
+        if(!assay.names %in% names(assays(se.obj)) )
+            stop('The assay name cannot be found in the SummarizedExperiment object.')
+    }
+    if(length(assay.names) > 1){
+        if(sum(!assay.names %in% names(assays(se.obj))) > 0 )
+            stop('The assay names cannot be found in the SummarizedExperiment object.')
+    }
     if (is.null(variable)) {
         stop('Please provide a variable.')
     } else if (!class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
-        stop(paste0('The ', variable, ', is not numeric, but this should a continuous variable'))
-    } else if (is.null(assay.names)) {
-        stop('Please provide at least an assay name.')
+        stop(paste0('The ', variable, 'should be a continuous variable.'))
     } else if (!method %in% c('pearson', 'spearman')) {
-        stop('"pearson" and "spearman" are the two supported types for correlations.')
+        stop('The method should be "pearson" or "spearman".')
     }
     if (var(se.obj[[variable]]) == 0) {
         stop(paste0('The ', variable, ' appears to have no variation.'))
@@ -114,7 +123,7 @@ genesVariableCorrelation<-function(
                         method,
                         ' correlation between individual genes expression of the ',
                         x,
-                        'and the',
+                        ' and the ',
                         variable,
                         '.'),
                 color = 'blue',
@@ -139,7 +148,7 @@ genesVariableCorrelation<-function(
                     message = paste0(
                         '-- Plot top ' ,
                         nb.top.genes,
-                        ' highly correlated genes with the ',
+                        ' highly correlated (positive and negative) genes with the ',
                         variable,
                         '.'),
                     color = 'magenta',
@@ -220,13 +229,12 @@ genesVariableCorrelation<-function(
         })
     names(cor.all) <- levels(assay.names)
     # save the results ####
+    printColoredMessage(
+        message = '-- Save the correlation results:',
+        color = 'magenta',
+        verbose = verbose)
     ## add results to the SummarizedExperiment object ####
     if (save.se.obj == TRUE) {
-        printColoredMessage(
-            message = '-- Save the correlation results to the metadata of the SummarizedExperiment object:',
-            color = 'magenta',
-            verbose = verbose)
-
         for (x in levels(assay.names)) {
             ## check if metadata metric already exist
             if (length(se.obj@metadata) == 0) {
@@ -256,11 +264,11 @@ genesVariableCorrelation<-function(
         ## save a plot to SummarizedExperiment ####
         if (plot.output == TRUE) {
             printColoredMessage(
-                message = '-- Plot the the correlation results:',
+                message = '-- Plot the correlation results:',
                 color = 'magenta',
                 verbose = verbose)
             printColoredMessage(
-                message = 'A boxplots of the correlation results are saved to metadata@plot.',
+                message = 'A boxplot of the correlation results are saved to metadata@plot.',
                 color = 'blue',
                 verbose = verbose)
             se.obj <- plotMetric(
@@ -275,6 +283,10 @@ genesVariableCorrelation<-function(
 
         # return only the correlation result ####
     } else if (save.se.obj == FALSE) {
+        printColoredMessage(
+            message = 'The correlation results for indiviaul assay are saved as list.',
+            color = 'blue',
+            verbose = verbose)
         printColoredMessage(message = '------------The genesVariableCorrelation function finished.',
                             color = 'white',
                             verbose = verbose)
