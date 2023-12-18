@@ -67,15 +67,15 @@ genesVariableAnova <- function(
             stop('The assay name cannot be found in the SummarizedExperiment object.')
     }
     if(length(assay.names) > 1){
-        if(!assay.names %in% names(assays(se.obj)))
+        if(sum(!assay.names %in% names(assays(se.obj))) > 0 )
             stop('The assay names cannot be found in the SummarizedExperiment object.')
     }
     if (is.null(variable)) {
         stop('The variable cannot be empty.')
-    } else if (length(unique(se.obj@colData[, variable])) < 2) {
-        stop(paste0('The ', variable, ', contains only one variable.'))
     } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
-        stop(paste0('The ', variable, ', is a numeric, but this should a categorical variable'))
+        stop(paste0('The ', variable, ' should be a categorical variable.'))
+    } else if (length(unique(se.obj@colData[, variable])) < 2) {
+        stop(paste0('The ', variable, ', contains only one level. ANOVA cannot be performed.'))
     }
     if (!method %in% c('aov', 'welch.correction')) {
         stop('The method should be one of the "aov" or "welch.correction".')
@@ -84,13 +84,13 @@ genesVariableAnova <- function(
         if(pseudo.count <0 )
             stop('The value of pseudo.count cannot be negative.')
     }
+
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'All') {
-        assay.names = as.factor(names(assays(se.obj)))
-    } else {
-        assay.names = as.factor(unlist(assay.names))
-    }
-    # assess the SummarizedExperiment ####
+        assay.names <- as.factor(names(assays(se.obj)))
+    } else assay.names <- as.factor(unlist(assay.names))
+
+    # assess the SummarizedExperiment object ####
     if (assess.se.obj) {
         se.obj <- checkSeObj(
             se.obj = se.obj,
@@ -119,7 +119,7 @@ genesVariableAnova <- function(
                     verbose = verbose)
             } else{
                 printColoredMessage(
-                    message = 'any log transformation is performed on the',
+                    message = paste0('Please make sure that the ', x, ' data is log transformed.'),
                     color = 'blue',
                     verbose = verbose)
                 temp.data <- assay(x = se.obj, i = x)
@@ -128,23 +128,23 @@ genesVariableAnova <- function(
             if (method == 'aov') {
                 printColoredMessage(
                     message = paste0(
-                        '-- Perform ANOVA with equal variance between individual genes expression of the ',
+                        'Perform ANOVA with equal variance between individual genes expression of the ',
                         x,
                         ' data and the ',
                         variable,
                         ' variable.'),
-                    color = 'magenta',
+                    color = 'blue',
                     verbose = verbose)
                 anova.genes.var <- row_oneway_equalvar(x = temp.data, g = se.obj@colData[, variable])
             } else if (method == 'welch.correction') {
                 printColoredMessage(
                     message = paste0(
-                        '-- Perform ANOVA with Welch correction between individual genes expression of the ',
+                        'Perform ANOVA with Welch correction between individual genes expression of the ',
                         x,
                         ' data and the ',
                         variable,
                         ' variable.'),
-                    color = 'magenta',
+                    color = 'blue',
                     verbose = verbose)
                 anova.genes.var <- row_oneway_welch(x = temp.data, g = se.obj@colData[, variable])
             }
@@ -204,12 +204,12 @@ genesVariableAnova <- function(
         })
     names(all.aov) <- levels(assay.names)
     # save the results ####
+    printColoredMessage(
+        message = '-- Save the ANOVA results :',
+        color = 'magenta',
+        verbose = verbose)
     ## add results to the SummarizedExperiment object ####
     if (save.se.obj == TRUE) {
-        printColoredMessage(
-            message = '-- Saving the ANOVA results to the metadata of the SummarizedExperiment object.',
-            color = 'magenta',
-            verbose = verbose)
         for (x in levels(assay.names)) {
             ## check if metadata metric already exist
             if (length(se.obj@metadata) == 0) {
@@ -233,22 +233,21 @@ genesVariableAnova <- function(
                 log2(all.aov[[x]][['anova.genes.var']][, 'statistic'])
         }
         printColoredMessage(
-            message = paste0(
-                'The anova results are saved to metadata@',
-                x,
-                '$gene.var.anova$',
-                variable,
-                '.'),
+            message = 'The ANOVA results for indiviaul assay are saved to metadata@metric',
             color = 'blue',
             verbose = verbose)
 
         ## Plot and save the plot into se.obj@metadata$plot
         if (plot.output == TRUE) {
             printColoredMessage(
-                message = '-- Plot and Save the anova results to the metadata of the SummarizedExperiment object.',
+                message = '-- Plot the ANOVA results:',
                 color = 'magenta',
                 verbose = verbose
             )
+            printColoredMessage(
+                message = 'A boxplot of the ANOVA results are saved to metadata@plot.',
+                color = 'blue',
+                verbose = verbose)
             se.obj <- plotMetric(
                 se.obj,
                 assay.names = assay.names,
@@ -260,8 +259,12 @@ genesVariableAnova <- function(
                             color = 'white',
                             verbose = verbose)
         return(se.obj = se.obj)
-        ## return the results as vecors ####
+        ## return the results as a list ####
     } else if (save.se.obj == FALSE) {
+        printColoredMessage(
+            message = 'The ANOVA results for indiviaul assay are saved as list.',
+            color = 'blue',
+            verbose = verbose)
         all.aov <- lapply(
             levels(assay.names),
             function(x) log2(all.aov[[x]][['anova.genes.var']][, 'statistic']))
