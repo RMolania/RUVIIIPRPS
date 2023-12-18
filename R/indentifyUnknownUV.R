@@ -142,7 +142,7 @@ indentifyUnknownUV <- function(
             remove.na = remove.na,
             verbose = verbose)
     }
-    # data transformation_ log 2####
+    # data transformation ####
     printColoredMessage(
         message = '### Data transformation:',
         color = 'magenta',
@@ -406,7 +406,7 @@ indentifyUnknownUV <- function(
                         index <- batch.samples$batch == x
                         if(is.matrix(input.data)){
                             sub.input.data <- input.data[index , ]
-                        } else sub.input.data[index]
+                        } else sub.input.data <- input.data[index]
                         print(x)
                         sub.clusters <- NbClust(
                             data = sub.input.data,
