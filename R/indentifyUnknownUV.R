@@ -1,34 +1,58 @@
-#' is used to find potential unknown sources of unwanted variation..
+#' is used to find potential unknown sources of unwanted variation in an assay in a SummarizedExperiment object.
 #'
+#' @description
+#' This function uses three different approaches: rle, pca and sample.scoring to find potential unknown sources of
+#' unwanted variation in an assay in a SummarizedExperiment object. In the rle approach, a clustering method will be
+#' applied on either medians or IQR or both of the rle data.In the absent on unwanted variation, we should not find any
+#' clustering. In the pca approach, first, a principal component analysis on either a set of negative control genes or
+#' all genes will be applied and then a clustering method will be used to clusters the first principal components to
+#' find potential unknown sources of unwanted variation. In the sample.scoring approach, first,  all samples will be
+#' scored against a set of signature genes related to unwanted variation, then  clustering method will be applied
+#' on the scoring to find potential unknown sources of unwanted variation.
 #'
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.name A symbol indicates an assay name in SummarizedExperiment object.
-#' @param approach A symbol indicates which approach should be used to identify unknown sources of unwanted variation. RLE:
-#' @param regress.out.bio.variables One or more symbol indicate the names of columns in the sample annotation (colData) that will be regress out
-#' from the data before finding sources of unwanted variation.
-#' @param regress.out.bio.gene.sets List. A list of biological gene signatures. Individual gene set will be used to score samples and
-#' then each scores will be regressed out from the data before finding negative control genes.
-#' @param uv.gene.sets List. A list of unwanted variation gene signatures. Individual gene set will be used to score samples and
-#' then each scores will be clustered to find possible unknown batches. The default is null.
-#' @param ncg Logical or factor. Indicates a set of negative control genes to find sources of unwanted variation. If is not NULL,
-#' the RLE or PCA and sample scoring will be based on only negative control genes. The default is null.
-#' @param clustering.methods A symbol. Indicates winch clustering methods: 'kmeans', 'cut', 'quantile', 'nbClust' should be used to find
-#' possible unknown batches. The default is nbClust.
-#' @param nbClust.diss dissimilarity matrix to be used. By default, diss=NULL, but if it is replaced by a dissimilarity matrix, distance should be "NULL".
-#' @param nbClust.distance the distance measure to be used to compute the dissimilarity matrix. This must be one of: "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski" or "NULL".
-#' By default, distance="euclidean". If the distance is "NULL", the dissimilarity matrix (diss) should be given by the user. If distance is not "NULL", the dissimilarity matrix should be "NULL".
+#' @param assay.name Symbol. A symbol indicates an assay name in the SummarizedExperiment object.
+#' @param approach Symbol. A symbol indicates which approach should be used to identify unknown sources of unwanted variation.
+#' This must be one of the 'rle', 'pca' or 'sample.scoring'.In the rle approach, a clustering method will be applied on
+#' either medians or IQR or both of the rle data.In the absent
+#' on unwanted variation, we should not find any clustering. In the pca approach, first, a principal component analysis
+#' on either a set of negative control genes or all genes will be applied and then a clustering method will be used to
+#' clusters the first principal components to find potential unknown sources of unwanted variation.
+#' In the sample.scoring approach, first,  all samples will be scored against a set of signature genes related to
+#' unwanted variation, then clustering method will be applied on the scoring to find potential unknown sources of unwanted variation.
+#' @param regress.out.bio.variables Symbol. One or more symbols indicate the names of the columns that contain known
+#' biological variation in the sample annotation (colData) that will be regress out from the data before finding sources
+#' of unwanted variation.. The default is NULL.
+#' @param regress.out.bio.gene.sets List. A list of biological gene signatures. Individual gene set will be used to
+#' score samples and then each scores will be regressed out from the data before finding sources of unwanted variation.
+#' @param uv.gene.sets List. A list of unwanted variation gene signatures. Individual gene set will be used to score
+#' samples and then each scores will be clustered to find possible unknown batches. The default is NULL.
+#' @param ncg Vector. Indicates a set of negative control genes to find sources of unwanted variation.
+#' The default is NULL. If is not NULL, the RLE or PCA and sample scoring will be based on only negative control genes.
+#' @param clustering.methods Symbol. Indicates the clustering method to be used to find
+#' possible unknown batches. This must be one of the: 'kmeans', 'cut', 'quantile', 'nbClust'. The default is nbClust.
+#' @param nbClust.diss dissimilarity matrix to be used. By default, diss=NULL,
+#' but if it is replaced by a dissimilarity matrix, distance should be "NULL".
+#' @param nbClust.distance the distance measure to be used to compute the dissimilarity matrix. This must be one of:
+#' "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski" or "NULL".
+#' By default, distance="euclidean". If the distance is "NULL", the dissimilarity matrix (diss) should be given by the
+#' user. If distance is not "NULL", the dissimilarity matrix should be "NULL".
 #' @param nbClust.min.nc minimal number of clusters, between 1 and (number of objects - 1)
-#' @param nbClust.max.nc minimal number of clusters, between 1 and (number of objects - 1)
-#' @param nbClust.method maximal number of clusters, between 2 and (number of objects - 1), greater or equal to min.nc. By default, max.nc=15.
-#' @param nbClust.index The index to be calculated. This should be one of : "kl", "ch", "hartigan", "ccc", "scott", "marriot", "trcovw", "tracew", "friedman", "rubin", "cindex", "db", "silhouette",
-#' "duda", "pseudot2", "beale", "ratkowsky", "ball", "ptbiserial", "gap", "frey", "mcclain", "gamma", "gplus", "tau", "dunn", "hubert", "sdindex", "dindex", "sdbw", "all" (all indices except GAP, Gamma, Gplus and Tau),
-#' "alllong" (all indices with Gap, Gamma, Gplus and Tau included).
+#' @param nbClust.max.nc Numeric. Indicates maximal number of clusters, between 2 and (number of objects - 1),
+#' greater or equal to min.nc. By default, max.nc = 15. Refer to the NbClsut function for more details.
+#' @param nbClust.method Symbol. indicates the cluster method to be used.
+#' This should be one of: "ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid",
+#' "kmeans". Refer to the NbClsut function for more details.
+#' @param nbClust.index The index to be calculated. This should be one of : 'kl', 'ch', 'hartigan', 'ccc', 'scott',
+#' 'marriot', 'trcovw', 'tracew', 'friedman', 'rubin', 'cindex', 'db', 'silhouette', 'duda', 'pseudot2', 'beale',
+#' 'ratkowsky', 'ball', 'ptbiserial', 'gap', 'frey', 'mcclain', 'gamma', 'gplus', 'tau', 'dunn', 'hubert', 'sdindex',
+#' 'dindex', 'sdbw', 'all' (all indices except GAP, Gamma, Gplus and Tau),'alllong' (all indices with Gap, Gamma, Gplus and Tau included).
 #' @param nbClust.alphaBeale significance value for Beale's index.
 #' @param max.samples.per.batch Numeric. Indicates the maximum number of samples per cluster when the clustering.methods is nbClust.
 #' The default is .1 (10%) of total samples in the SummarizedExperiment object.
 #' @param nb.clusters Numeric. Indicates how many clusters should be found when clustering.methods kmeans, cut and quantile.
-#' @param rle.comp A symbol. Indicates which properties: 'median' or 'IQR' or 'both' of the RLE data should be used for clustering when the approach is RLE.
-#' The default is median.
+#' @param rle.comp A symbol. Indicates which properties: 'median' or 'iqr' or 'both' of the RLE data should be used for
+#' clustering when the approach is RLE. The default is median.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
@@ -36,15 +60,17 @@
 #' @param center Logical. Indicates whether to center the data or not before performing PCA. The default is TRUE.
 #' @param scale Logical. Indicates whether to scale the data or not before performing PCA. The default is FASLE.
 #' @param BSPARAM TBBBB
-#' @param remove.na A symbol. Indicates whether to remove NA or missing values from either the 'assays', 'sample.annotation', 'both' or 'none'.
-#' If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
-#' samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
-#' 'both'.
+#' @param remove.na A symbol. Indicates whether to remove NA or missing values from either the 'assays',
+#' 'sample.annotation', 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be
+#' excluded. If 'sample.annotation' is selected, the samples that contains NA or missing values for any 'bio.variables'
+#' and 'uv.variables' will be excluded. By default, it is set to both'.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' By default it is set to TRUE.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
 #' execution of the functions, by default it is set to TRUE.
+#'
+#' @author Ramyar Molania
 
 #' @importFrom singscore rankGenes simpleScore
 #' @importFrom SummarizedExperiment assay colData
@@ -52,7 +78,7 @@
 #' @importFrom NbClust NbClust
 #' @export
 
-## correlate with known others uv
+
 indentifyUnknownUV <- function(
         se.obj,
         assay.name,
@@ -70,7 +96,7 @@ indentifyUnknownUV <- function(
         nbClust.index = 'silhouette',
         nbClust.alphaBeale = 0.1,
         max.samples.per.batch = .1,
-        nb.clusters = NULL,
+        nb.clusters = 3,
         rle.comp = 'median',
         apply.log = TRUE,
         pseudo.count = 1,
@@ -90,49 +116,84 @@ indentifyUnknownUV <- function(
     if (length(assay.name) > 1) {
         stop('Please provide only one assay name.')
     }
+    if (!approach %in% c('rle', 'pca', 'sample.scoring') ) {
+        stop('The approach should be one of the rle,pca or sample.scoring.')
+    }
+
     if (!is.null(regress.out.bio.variables)) {
-        if (!regress.out.bio.variables %in% colnames(colData(se.obj))) {
+        if (!regress.out.bio.variables %in% colnames(colData(se.obj)))
             stop('The regress out bio variables are not found in the SummarizedExperiment object.')
-        }
     }
     if(!is.null(regress.out.bio.gene.sets)){
         lapply(
             regress.out.bio.gene.sets,
             function(x){
-                if(sum(regress.out.bio.gene.sets %in% row.names(se.obj)) == 0){
+                if(sum(regress.out.bio.gene.sets %in% row.names(se.obj)) == 0)
                     stop('The regress.out.bio.gene.sets are not found in the SummarizedExperiment object.')
-                }
             })
     }
     if(!is.null(uv.gene.sets)){
         lapply(
             names(uv.gene.sets),
             function(x){
-                if(sum(uv.gene.sets[[x]] %in% row.names(se.obj)) < 2){
+                if(sum(uv.gene.sets[[x]] %in% row.names(se.obj)) < 2)
                     stop('The uv.gene.sets are not found in the SummarizedExperiment object.')
-                }
             })
     }
-    if (!approach %in% c('RLE', 'PCA', 'sample.scoring') ) {
-        stop('The approach should be one of the RLE,PCA or sample.scoring.')
-    }
     if (!is.null(ncg)) {
-        if (sum(ncg %in% row.names(se.obj)) == 0) {
+        if (sum(ncg %in% row.names(se.obj)) == 0)
             stop('The ncg genes are found in the SummarizedExperiment object.')
-        }
     }
     if (length(clustering.methods) > 1) {
         stop('A single method should be provided for the clustering.methods.')
     }
+    if(clustering.methods == 'nbClust'){
+        if(is.null(nbClust.min.nc)){
+            stop('The nbClust.min.nc must be specified, when the clustering.methods is nbClust.')
+        } else if (nbClust.min.nc < 0 | nbClust.min.nc == 1){
+            stop('The nbClust.min.nc must be equal or more than 2, when the clustering.methods is nbClust.')
+        } else if(is.null(nbClust.max.nc)){
+            stop('The nbClust.max.nc must be specified, when the clustering.methods is nbClust.')
+        } else if (nbClust.max.nc < 0 | nbClust.max.nc > 1){
+            stop('The nbClust.max.nc must be equal or more than 2, when the clustering.methods is nbClust.')
+        } else if(!nbClust.method %in% c("ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid", "kmeans.")){
+            stop('The nbClust.method must be one of: "ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid", "kmeans."')
+        } else if (!nbClust.index %in% c("kl", "ch", "hartigan", "ccc", "scott", "marriot", "trcovw", "tracew", "friedman", "rubin", "cindex", "db",
+                                         "silhouette", "duda", "pseudot2", "beale", "ratkowsky", "ball", "ptbiserial", "gap", "frey", "mcclain",
+                                         "gamma", "gplus", "tau", "dunn", "hubert", "sdindex", "dindex", "sdbw",
+                                         "all", "alllong")){
+            stop('The nbClust.index must of one of: "kl", "ch", "hartigan", "ccc", "scott", "marriot", "trcovw", "tracew", "friedman", "rubin", "cindex", "db",
+                                         "silhouette", "duda", "pseudot2", "beale", "ratkowsky", "ball", "ptbiserial", "gap", "frey", "mcclain",
+                                         "gamma", "gplus", "tau", "dunn", "hubert", "sdindex", "dindex", "sdbw",
+                                         "all", "alllong"')
+        } else if (max.samples.per.batch == 0 | max.samples.per.batch < 0  | max.samples.per.batch >= 1){
+            stop('The value of max.samples.per.batch must be between 0<max.samples.per.batch<1.')
+        }
+    }
+
     if (!clustering.methods %in% c('kmeans', 'cut', 'quantile', 'nbClust')) {
         stop('The clustering.methods should be one of kmeans, cut, quantile or nbClust.')
     }
-    if (pseudo.count < 0) {
-        stop('The valuse of pseudo.count cannot be negative.')
+    if(clustering.methods %in% c('kmeans', 'cut', 'quantile')){
+        if(is.null(nb.clusters))
+            stop('The "nb.clusters" must be specified when the "clustering.methods" is kmeans, cut or quantile.')
+    }
+    if(approach == 'rle'){
+        if(!rle.comp %in% c('median', 'iqr', 'both'))
+            stop('The "rle.comp" should be one of "median", "iqr" or "both".')
+    }
+    if(approach == 'pca'){
+        if(nb.pcs == 0 | is.null(max.samples.per.batch))
+            stop('The value of nb.pcs should be more than 0 when the arroach is equal to pca.')
+    }
+    if(apply.log){
+        if (pseudo.count < 0)
+            stop('The valuse of pseudo.count cannot be negative.')
     }
     if(approach == 'PCA' & nb.pcs > 1 & clustering.methods %in% c('cut', 'quantile')){
         stop(paste0('The nb.pcs should be 1 to use the ', clustering.methods, ' method for clustering.'))
     }
+
     # check the SummarizedExperiment object ####
     if (assess.se.obj) {
         se.obj <- checkSeObj(
@@ -407,7 +468,6 @@ indentifyUnknownUV <- function(
                         if(is.matrix(input.data)){
                             sub.input.data <- input.data[index , ]
                         } else sub.input.data <- input.data[index]
-                        print(x)
                         sub.clusters <- NbClust(
                             data = sub.input.data,
                             diss = nbClust.diss,
