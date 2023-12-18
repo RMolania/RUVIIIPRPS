@@ -2,23 +2,23 @@
 #'
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. Optional symbol or list of symbols for the selection of the name(s)
-#' of the assay(s) of the SummarizedExperiment object to compute the correlation. By default
+#' of the assay(s) of the SummarizedExperiment object to compute PCA. By default
 #' all the assays of the SummarizedExperiment object will be selected.
-#' @param fast.svd Logical. Indicates whether to calculate a specific number of left singular vectors instead of the full range
+#' @param fast.pca Logical. Indicates whether to calculate a specific number of left singular vectors instead of the full range
 #' to speed up the process, by default is set to 'TRUE'.
-#' @param nb.lsv Numeric. The number of first left singular vectors to be calculated for the fast svd process, by default is set to 10.
+#' @param nb.pcs Numeric. The number of first left singular vectors to be calculated for the fast PCA process, by default is set to 10.
 #' @param scale Logical. Indicates whether to scale the data or not.  If scale is TRUE then scaling is done by dividing the (centered)
 #' columns of assays by their standard deviations if center is TRUE, and the root mean square otherwise.The default is FALSE.
 #' @param center Logical.Indicates whether to scale the data or not. If center is TRUE then centering is done by subtracting the column means (omitting NAs)
 #' of x from their corresponding columns. The default is TRUE.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
-#' no transformation will be selected.
+#' log2 transformation will be applied.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
 #' @param BSPARAM A BiocParallelParam object specifying how parallelization should be performed.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-#' to output the result. By default it is set to TRUE.
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object 'se.obj' or
+#' to output the result as list. By default it is set to TRUE.
 #' @param remove.na To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
@@ -32,8 +32,8 @@
 computePCA <- function(
         se.obj,
         assay.names = 'All',
-        fast.svd = TRUE,
-        nb.lsv = 10,
+        fast.pca = TRUE,
+        nb.pcs = 10,
         scale = FALSE,
         center = TRUE,
         apply.log = TRUE,
@@ -55,13 +55,13 @@ computePCA <- function(
             stop('The assay name cannot be found in the SummarizedExperiment object.')
     }
     if(length(assay.names) > 1){
-        if(!assay.names %in% names(assays(se.obj)))
+        if(sum(!assay.names %in% names(assays(se.obj))) > 0 )
             stop('The assay names cannot be found in the SummarizedExperiment object.')
     }
-    if (fast.svd & is.null(nb.lsv)) {
-        stop('To perform fast PCA, the number of PCs (nb.lsv) must be specified.')
-    } else if (fast.svd & nb.lsv == 0) {
-        stop('To perform fast PCA, the number of PCs (nb.lsv) must be specified.')
+    if (fast.pca & is.null(nb.pcs)) {
+        stop('To perform fast PCA, the number of PCs (left singular vectors) must be specified.')
+    } else if (fast.pca & nb.pcs == 0) {
+        stop('To perform fast PCA, the number of PCs (left singular vectors) must be specified.')
     }
     if(pseudo.count < 0){
         stop('The value of "pseudo.count" cannot be negative.')
@@ -105,9 +105,9 @@ computePCA <- function(
             remove.na = remove.na,
             verbose = verbose)
     }
-    # svd ####
-    if (fast.svd) {
-        ## fast svd ####
+    # pca using svd ####
+    if (fast.pca) {
+        ## fast pca ####
         printColoredMessage(
             message = paste0(
                 '-- Perform fast singular value decomposition with scale=',
@@ -121,7 +121,7 @@ computePCA <- function(
         printColoredMessage(
         message = paste0(
             'Note: in fast svd analysis, the percentage of variation of PCs will be',
-            'computed proportional to the highest selected number of PCs (nb.lsv), not on all the PCs.'),
+            'computed proportional to the highest selected number of PCs (left singular vectors), not on all the PCs.'),
             color = 'red',
             verbose = verbose)
         if (is.null(BSPARAM)) {
@@ -135,7 +135,7 @@ computePCA <- function(
                 else temp.data <- log2(temp.data + pseudo.count)
                 sv.dec <- runSVD(
                     x = t(temp.data),
-                    k = nb.lsv,
+                    k = nb.pcs,
                     BSPARAM = BSPARAM,
                     center = center,
                     scale = scale
@@ -182,12 +182,12 @@ computePCA <- function(
         names(sv.dec.all) <- levels(assay.names)
     }
     # save the results ####
+    printColoredMessage(
+        message = '-- Save the SVD results:',
+        color = 'magenta',
+        verbose = verbose)
     ## add the results to the SummarizedExperiment object ####
     if (save.se.obj == TRUE) {
-        printColoredMessage(
-            message = '-- Save the SVD results to the metadata of the SummarizedExperiment object.',
-            color = 'magenta',
-            verbose = verbose)
         for (x in levels(assay.names)) {
             ### check if metadata metric already exist ####
             if (length(se.obj@metadata) == 0) {
@@ -201,32 +201,24 @@ computePCA <- function(
             if (!x %in% names(se.obj@metadata[['metric']])) {
                 se.obj@metadata[['metric']][[x]] <- list()
             }
-            if (fast.svd) {
+            if (fast.pca) {
                 se.obj@metadata[['metric']][[x]][['fastPCA']] <- sv.dec.all[[x]]
-                printColoredMessage(
-                    message = paste0(
-                        'The PCA results are saved to metadata@metric$',
-                        x,
-                        '$fastPCA.'),
-                    color = 'blue',
-                    verbose = verbose)
-            } else {
-                se.obj@metadata[['metric']][[x]][['PCA']] <- sv.dec.all[[x]]
-                printColoredMessage(
-                    message = paste0(
-                        'The PCA results are saved to metadata@metric$',
-                        x,
-                        '$PCA.'),
-                    color = 'blue',
-                    verbose = verbose)
-            }
+            } else se.obj@metadata[['metric']][[x]][['PCA']] <- sv.dec.all[[x]]
         }
+        printColoredMessage(
+            message = 'The SVD results of individual assays are saved to metadata@metric',
+            color = 'blue',
+            verbose = verbose)
         printColoredMessage(message = '------------The computePCA function finished.',
                             color = 'white',
                             verbose = verbose)
         return(se.obj)
     } else if (save.se.obj == FALSE) {
         ## return a list ####
+        printColoredMessage(
+            message = 'The SVD results of individual assays are outputed as list.',
+            color = 'blue',
+            verbose = verbose)
         printColoredMessage(message = '------------The computePCA function finished.',
                             color = 'white',
                             verbose = verbose)

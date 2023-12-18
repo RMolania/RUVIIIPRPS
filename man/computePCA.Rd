@@ -7,8 +7,8 @@
 computePCA(
   se.obj,
   assay.names = "All",
-  fast.svd = TRUE,
-  nb.lsv = 10,
+  fast.pca = TRUE,
+  nb.pcs = 10,
   scale = FALSE,
   center = TRUE,
   apply.log = TRUE,
@@ -24,13 +24,13 @@ computePCA(
 \item{se.obj}{A SummarizedExperiment object.}
 
 \item{assay.names}{Symbol. Optional symbol or list of symbols for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment object to compute the correlation. By default
+of the assay(s) of the SummarizedExperiment object to compute PCA. By default
 all the assays of the SummarizedExperiment object will be selected.}
 
-\item{fast.svd}{Logical. Indicates whether to calculate a specific number of left singular vectors instead of the full range
+\item{fast.pca}{Logical. Indicates whether to calculate a specific number of left singular vectors instead of the full range
 to speed up the process, by default is set to 'TRUE'.}
 
-\item{nb.lsv}{Numeric. The number of first left singular vectors to be calculated for the fast svd process, by default is set to 10.}
+\item{nb.pcs}{Numeric. The number of first left singular vectors to be calculated for the fast PCA process, by default is set to 10.}
 
 \item{scale}{Logical. Indicates whether to scale the data or not.  If scale is TRUE then scaling is done by dividing the (centered)
 columns of assays by their standard deviations if center is TRUE, and the root mean square otherwise.The default is FALSE.}
@@ -39,7 +39,7 @@ columns of assays by their standard deviations if center is TRUE, and the root m
 of x from their corresponding columns. The default is TRUE.}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
-no transformation will be selected.}
+log2 transformation will be applied.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
@@ -50,8 +50,8 @@ by default it is set to 1.}
 
 \item{remove.na}{To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object 'se.obj' or
+to output the result as list. By default it is set to TRUE.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
