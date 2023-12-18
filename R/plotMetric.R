@@ -115,7 +115,7 @@ plotMetric <- function(
     if (metric %in% c('pcs.vect.corr', 'pcs.lm')) {
         p <- ggplot(all.assays.metric,aes_string(x = "pcs", y = metric, group = 'datasets'))
     } else {
-        p = ggplot(all.assays.metric, aes_string(x = 'datasets', y = metric, fill = 'datasets'))
+        p <- ggplot(all.assays.metric, aes_string(x = 'datasets', y = metric, fill = 'datasets'))
     }
 
     if (metric %in% c('gene.pearson.corr', 'gene.spearman.corr')) {
