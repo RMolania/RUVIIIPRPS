@@ -56,13 +56,12 @@ computeARI <- function(
             stop('The assay name cannot be found in the SummarizedExperiment object.')
     }
     if (length(assay.names) > 1) {
-        if (!assay.names %in% names(assays(se.obj)))
+        if (sum(!assay.names %in% names(assays(se.obj))) > 0 )
             stop('The assay names cannot be found in the SummarizedExperiment object.')
     }
     if (is.null(assay.names)) {
         stop('The assay.names cannot be empty.')
     }
-
     if (is.null(nb.pcs)) {
         stop('The number of PCs (nb.pcs) must be specified')
     }
@@ -139,9 +138,9 @@ computeARI <- function(
                         ' variable.'),
                     color = 'blue',
                     verbose = verbose)
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sing.val$u[colnames(se.obj), ]
+                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u[colnames(se.obj), ]
             } else {
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$sing.val$u[colnames(se.obj), ]
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[colnames(se.obj), ]
             }
             if(clustering.method == 'mclust'){
                 bic <- mclustBIC(data = pca.data)
@@ -159,8 +158,8 @@ computeARI <- function(
     # save the results ####
     ## add results to the SummarizedExperiment object ####
     if (save.se.obj == TRUE) {
-        printColoredMessage(message = '-- Save the ARI to the metadata of the SummarizedExperiment object.',
-                            color = 'blue',
+        printColoredMessage(message = '-- Save the ARI results to the metadata of the SummarizedExperiment object:',
+                            color = 'magenta',
                             verbose = verbose)
 
         for (x in levels(assay.names)) {
@@ -180,26 +179,27 @@ computeARI <- function(
             if (!'ari' %in% names(se.obj@metadata[['metric']][[x]])) {
                 se.obj@metadata[['metric']][[x]][['ari']] <- list()
             }
-            se.obj@metadata[['metric']][[x]][['ari']][[variable]] <- all.ari[[x]]
-
+            if(clustering.method == 'mclust'){
+                out.put.name <- 'ari.mclust'
+            } else out.put.name <- paste0('ari.hclust.',hclust.method,'.',dist.measure)
+            se.obj@metadata[['metric']][[x]][[out.put.name]][[variable]] <- all.ari[[x]]
         }
-        printColoredMessage( message = paste0(
-            'The ARI is saved to metadata@metric$',
-            x,
-            '$ari$',
-            variable,
-            '.'),
+        printColoredMessage('The ARI results of induvial assays are saved to metadata@metric',
             color = 'blue',
-            verbose = verbose
-        )
+            verbose = verbose)
         ## Plot and save the plot into se.obj@metadata$plot
         if (plot.output == TRUE) {
             printColoredMessage(
-                message = '### Plotting and Saving the ARI to the metadata of the SummarizedExperiment object.',
+                message = '-- Plot of the ARI results:',
                 color = 'magenta',
                 verbose = verbose
             )
-            se.obj = plotMetric(
+            printColoredMessage(
+                message = '-- A plot of the ARI results are saved to the metadata of the SummarizedExperiment object.',
+                color = 'blue',
+                verbose = verbose
+            )
+            se.obj <- plotMetric(
                 se.obj,
                 assay.names = assay.names,
                 metric = 'ari',
