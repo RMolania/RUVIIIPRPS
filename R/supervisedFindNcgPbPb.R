@@ -66,8 +66,7 @@
 #' @return Either the SummarizedExperiment object containing the a set of negative control genes
 #' or a logical vector of the selected negative control genes.
 
-#' @importFrom BiocSingular runSVD
-#' @importFrom BiocSingular bsparam
+#' @importFrom BiocSingular runSVD bsparam
 #' @importFrom ggplot
 #' @importFrom fastDummies dummy_cols
 #' @importFrom dplyr mutate progress_estimated
@@ -223,13 +222,13 @@ supervisedFindNcgPbPb <- function(
                 '.'),
             color = 'red',
             verbose = verbose)
-        expr.data.reg.uv <- transpose(expr.data.nor)
+        expr.data.reg.uv <- t(expr.data.nor)
         uv.variables.all <- paste('se.obj', regress.out.uv.variables, sep = '$')
         adjusted.data <- lm(as.formula(paste(
             'expr.data.reg.uv',
             paste0(uv.variables.all, collapse = '+') ,
             sep = '~')))
-        expr.data.reg.uv <- transpose(adjusted.data$residuals)
+        expr.data.reg.uv <- t(adjusted.data$residuals)
         colnames(expr.data.reg.uv) <- colnames(se.obj)
         row.names(expr.data.reg.uv) <- row.names(se.obj)
         rm(adjusted.data)
@@ -251,14 +250,14 @@ supervisedFindNcgPbPb <- function(
                 '.'),
             color = 'red',
             verbose = verbose)
-        expr.data.reg.uv <- transpose(expr.data)
+        expr.data.reg.uv <- t(expr.data)
         uv.variables.all <- paste('se.obj', regress.out.uv.variables, sep = '$')
         adjusted.data <- lm(as.formula(paste(
             'expr.data.reg.uv',
             paste0(uv.variables.all, collapse = '+') ,
             sep = '~'
         )))
-        expr.data.reg.uv <- transpose(adjusted.data$residuals)
+        expr.data.reg.uv <- t(adjusted.data$residuals)
         colnames(expr.data.reg.uv) <- colnames(se.obj)
         row.names(expr.data.reg.uv) <- row.names(se.obj)
         rm(adjusted.data)
@@ -281,13 +280,13 @@ supervisedFindNcgPbPb <- function(
                 '.'),
             color = 'red',
             verbose = verbose)
-        expr.data.reg.bio <- transpose(expr.data)
+        expr.data.reg.bio <- t(expr.data)
         bio.variables.all <- paste('se.obj', regress.out.bio.variables, sep = '$')
         adjusted.data <- lm(as.formula(paste(
             'expr.data.reg.bio',
             paste0(bio.variables.all, collapse = '+') ,
             sep = '~')))
-        expr.data.reg.bio <- transpose(adjusted.data$residuals)
+        expr.data.reg.bio <- t(adjusted.data$residuals)
         colnames(expr.data.reg.bio) <- colnames(se.obj)
         row.names(expr.data.reg.bio) <- row.names(se.obj)
         rm(adjusted.data)
@@ -444,7 +443,7 @@ supervisedFindNcgPbPb <- function(
                             selected.samples <- all.bio.groups == y
                             corr.genes <- as.data.frame(correls(
                                 y = se.obj@colData[, x][selected.samples],
-                                x = transpose(data.to.use[ , selected.samples]),
+                                x = t(data.to.use[ , selected.samples]),
                                 type = corr.method,
                                 a = a ,
                                 rho = rho))
@@ -731,7 +730,7 @@ supervisedFindNcgPbPb <- function(
                             selected.samples <- all.uv.groups == y
                             corr.genes <- as.data.frame(correls(
                                 y = se.obj@colData[, x][selected.samples],
-                                x = transpose(data.to.use[ , selected.samples]),
+                                x = t(data.to.use[ , selected.samples]),
                                 type = corr.method,
                                 a = a ,
                                 rho = rho))
@@ -1108,7 +1107,7 @@ supervisedFindNcgPbPb <- function(
             temp.data <- assay(se.obj, assay.name)
         }
         pca.data <- BiocSingular::runSVD(
-            x = transpose(temp.data[ncg.selected, ]),
+            x = t(temp.data[ncg.selected, ]),
             k = nb.pcs,
             BSPARAM =  bsparam(),
             center = center,

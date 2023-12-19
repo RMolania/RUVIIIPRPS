@@ -111,7 +111,7 @@ genesDEA <- function(
                 color = 'blue',
                 verbose = verbose)
             de.results <- lapply(
-                1:ncol(contrasts),
+                1:ncol(all.contrasts),
                 function(i){
                     data1 <- temp.data[ , colData(se.obj)[['Call']] == all.contrasts[1 , i] ]
                     data2 <- temp.data[ , colData(se.obj)[['Call']] == all.contrasts[2 , i] ]
