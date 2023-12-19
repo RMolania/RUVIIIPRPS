@@ -33,7 +33,6 @@ genesDEA <- function(
         pseudo.count = 1,
         assess.se.obj = TRUE,
         remove.na = 'both',
-        apply.round = TRUE,
         save.se.obj = TRUE,
         plot.output = TRUE,
         verbose = TRUE
