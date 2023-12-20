@@ -1,81 +1,98 @@
-#' is used to find a set of negative control genes (NCG) using two-way ANOVA across all samples.
+#' is used to find a set of negative control genes (NCG) using two-way ANOVA.
+#'
+#'
+#' @description
+#' This functions uses the two-way ANOVA approach to find a set of genes as negative control genes (NCG) for RUV-III-PRPS
+#' normalization. Sources of biological and unwanted variation should be specified. First, th functions creates all possible
+#' samples groups with respect to biological and unwanted variation separately Then uses the group as factors in two-way ANOVA
+#' to find genes that are highly affected by biological and unwanted variation separately. Finally, the function selects
+#' genes that have possible high F-statistics for the unwanted variation and low F-statistics for the biological variation.
+#' The function uses different approaches to perform the final selection.
+#'
+#'
 #'
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.name Symbol.Indicates a name of assay in the SummarizedExperiment object.
-#' @param nb.ncg Numeric.Indicates the percentage of the total genes to be selected a NCG set,
-#' by default it is set to 10 percent.
-#' @param ncg.selection.method Symbol.Indicates how to select a set genes as NCG.
-#' For individual genes, the two-way ANOVA calculates F-statistics for biological and
-#' unwanted variation factors separately. An ideal NCG set should have high F-statistics
-#' for the unwanted variation variables and low F-statistics for the biological variables.
-#' The function ranks the F-statistics obtained for the biological variable and negative of
-#' the F-statistics obtained for the unwanted variables. Then this functions offers 5 ways to
-#' summarize the ranks of the two F-statistics. Prod' is the product of the ranks. 'Sum', is
-#' the sum of the ranks. 'Average' is the average of the ranks. 'AbsNoneOverlap' is the none overlapped
-#' genes of the 'top.rank.uv.genes' and 'top.rank.bio.genes'. 'noneOverlap' is the none overlapped genes
-#' of the 'top.rank.uv.genes' and at least 'top.rank.bio.genes'. The F-statistics for biological and UV
-#' are first ranked.Then options are Prod (product), Sum, Average,
-#' @param grid.nb Numeric. Indicates the percentage for grid search when the ncg.selection.method is
-#' 'noneOverlap'. In the 'noneOverlap' approach, the grid search starts with the initial
-#' 'top.rank.uv.genes' value an add the grid.nb in each loop to find the 'nb.ncg'.
-#' @param top.rank.bio.genes Numeric.Indicates the percentage of top ranked genes that are highly affected
-#' by the biological variation. This is required to be specified when the 'ncg.selection.method' is
-#' either 'noneOverlap' or 'AbsNoneOverlap'.
-#' @param top.rank.uv.genes Numeric.Indicates the percentage of top ranked genes that are highly affected
-#' by the unwanted variation variables. This is required to be specified when the 'ncg.selection.method' is
-#' either 'noneOverlap' or 'AbsNoneOverlap'.
-#' @param bio.variables Symbols.Indicates the columns names that contains biological variables in the SummarizedExperiment object.
-#' @param bio.clustering.method Symbols.Indicates which clustering methods should be used to group continuous sources of biological variation.
-#' @param nb.bio.clusters Numeric.Indicates the number of clusters for each continuous  sources of biological variation, by default it is set to 2.
-#' @param uv.variables Symbols.Indicates the columns names that contains UV variables in the SummarizedExperiment object.
+#' @param assay.name Symbol. Indicates a name of an assay in the SummarizedExperiment object. The selected assay should
+#' be the one that will be used for RUV-III-PRPS normalization.
+#' @param nb.ncg Numeric. Indicates how many genes should be selected as NCG. The value is the percentage of the total
+#' genes in the SummarizedExperiment object. The default is 10 percent.
+#' @param bio.variables Symbols. Indicates the columns names that contain biological variables in the SummarizedExperiment object.
+#' @param uv.variables Symbols. Indicates the columns names that contains UV variables in the SummarizedExperiment object.
+#' @param ncg.selection.method Symbol. Indicates how to select a set genes as NCG after performing two-way ANOVA. For individual
+#' genes, the two-way ANOVA calculates F-statistics for biological and unwanted variation factors separately. An ideal NCG
+#' set should have high F-statistics for the unwanted variation variables and low F-statistics for the biological variables.
+#' The function ranks the F-statistics obtained for the biological variable and negative of the F-statistics obtained for
+#' the unwanted variables. Then this functions offers 5 ways to summarize the ranks of the two F-statistics. Prod' is the
+#' product of the ranks. 'Sum', is the sum of the ranks. 'Average' is the average of the ranks. 'AbsNoneOverlap' is the
+#' none overlapped genes of the 'top.rank.uv.genes' and 'top.rank.bio.genes'. 'noneOverlap' is the none overlapped genes
+#' of the 'top.rank.uv.genes' and at least 'top.rank.bio.genes'.
+#' @param grid.nb Numeric. Indicates the percentage for grid search when the ncg.selection.method is noneOverlap'. In the
+#' 'noneOverlap' approach, the grid search starts with the initial top.rank.uv.genes' value an add the grid.nb in each
+#' loop to find the 'nb.ncg'.
+#' @param top.rank.bio.genes Numeric. Indicates the percentage of top ranked genes that are highly affected by the biological
+#' variation. This is required to be specified when the 'ncg.selection.method' is either 'noneOverlap' or 'AbsNoneOverlap'.
+#' @param top.rank.uv.genes Numeric. Indicates the percentage of top ranked genes that are highly affected by the unwanted
+#' variation variables. This is required to be specified when the 'ncg.selection.method' is either 'noneOverlap' or
+#' 'AbsNoneOverlap'.
+#' @param bio.clustering.method Symbols. Indicates which clustering methods should be used to group continuous sources
+#' of biological variation.
+#' @param nb.bio.clusters Numeric.Indicates the number of clusters for each continuous  sources of biological variation,
+#' by default it is set to 2.
 #' @param uv.clustering.method Symbols.Indicates which clustering method should be used to group continuous sources of UV.
 #' @param nb.uv.clusters Numeric.Indicates the number of clusters for each continuous sources of UV, by default it is set to 2.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
-#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-#' @param assess.ncg Logical. Indicates whether to assess the performance of selected NCG or not.
-#' This analysis involves principal component analysis on the selected NCG and
-#' then explore the R^2 or vector correlation between the 'nb.pcs' first principal
-#' components and with biological and unwanted variables.
-#' @param variables.to.assess.ncg Symbols. Indicates the column names of the SummarizedExperiment object that
-#' contain variables whose association with the selected genes as NCG.
-#' needs to be evaluated. The default is NULL. This means all the variables in the 'bio.variables' and 'uv.variables' will be assessed.
-#' @param nb.pcs Numeric. Indicates the number of the first principal components on selected NCG to be used to assess the performance of NCGs.
-#' @param center Logical. Indicates whether to center the data before applying principal component analysis or not. The default is TRUE.
+#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation. The
+#' default is 1.
+#' @param assess.ncg Logical. Indicates whether to assess the performance of selected NCG or not. This analysis involves
+#' principal component analysis on only the selected NCG and then explore the R^2 or vector correlation between the 'nb.pcs'
+#' first principal components and with the biological and unwanted variables.
+#' @param variables.to.assess.ncg Symbols. Indicates the column names of the SummarizedExperiment object that contain
+#' variables whose association with the selected genes as NCG needs to be evaluated. The default is NULL. This means all
+#' the variables in the 'bio.variables' and 'uv.variables' will be assessed.
+#' @param nb.pcs Numeric. Indicates the number of the first principal components on the selected NCG to be used to assess
+#' the performance of NCGs. The default is 5.
+#' @param center Logical. Indicates whether to center the data before applying principal component analysis or not. The
+#' default is TRUE.
 #' @param scale Logical. Indicates whether to scale the data before applying Principal component analysis. The default is FALSE.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object or not.
-#' @param assess.variables Logical. Indicates whether to assess the correlation between biological and unwanted variation variables separately.
+#' @param assess.variables Logical. Indicates whether to assess the correlation between biological and unwanted variation
+#' variables separately.
 #' @param remove.na Symbol. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
-#' 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
-#' samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to both'.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+#' 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If
+#' 'sample.annotation' is selected, the samples that contains NA or missing values for any 'bio.variables' and
+#' 'uv.variables' will be excluded. By default, it is set to both'.
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
 #' to output the result. By default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
-#' @return Either the SummarizedExperiment object containing the a set of negative control genes
-#' or a logical vector of the selected negative control genes
+#' @return Either the SummarizedExperiment object containing the a set of negative control genes in the metadata  or a
+#' logical vector of the selected negative control genes.
+#'
+#'
+#' @author Ramyar Molania
 
 #' @importFrom BiocSingular runSVD bsparam
-#' @importFrom ggplot
 #' @importFrom fastDummies dummy_cols
 #' @importFrom dplyr mutate progress_estimated
 #' @importFrom tidyr pivot_longer
 #' @importFrom SummarizedExperiment assay
 #' @importFrom stats aov
+#' @importFrom ggplot
 #' @export
 
 supervisedFindNcgTWAnova <- function(
         se.obj,
         assay.name,
+        bio.variables,
+        uv.variables,
         nb.ncg = 10,
         ncg.selection.method = 'Prod',
         grid.nb = 10,
         top.rank.bio.genes = 50,
         top.rank.uv.genes = 50,
-        bio.variables,
         bio.clustering.method = 'kmeans',
         nb.bio.clusters = 2,
-        uv.variables,
         uv.clustering.method = 'kmeans',
         nb.uv.clusters = 2,
         apply.log = TRUE,
@@ -95,8 +112,7 @@ supervisedFindNcgTWAnova <- function(
         message = '------------The supervisedFindNcgTWAnova function starts:',
         color = 'white',
         verbose = verbose)
-    # check some functions inputs ####
-    # check several functions inputs ####
+    # check inputs ####
     if(length(assay.name) > 1){
         stop('Please provide a single assay name.')
     } else if(nb.ncg > 100 | nb.ncg <= 0){
