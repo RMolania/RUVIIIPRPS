@@ -1,13 +1,21 @@
 #' is used to find a set of negative control genes (NCG) using ANOVA and correlation analyses across all samples.
 #'
 #'
+#' @description
+#' This function uses the correlation and ANOVA analyses across all samples to find a set of genes as negative control
+#' genes for RUV-III-PRPS normalization. The correlation and ANOVA are used to find genes that are highly affected by
+#' continuous and categorical sources of variation respectively. The function selects genes as NCG that show possible
+#' high correlation coefficients and F-statistics with the sources of unwanted variation and low correlation coefficients
+#' and F-statistics with the sources of biological variation. The function uses different approaches to perform the final selection.
+#'
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.name Symbol.Indicates a name of assay in the SummarizedExperiment object.
-#' This assay will be used to find a set set of negative control genes.
-#' @param nb.ncg Numeric.Indicates the percentage of the total genes to be selected a NCG set,
-#' by default it is set to 10 percent.
-#' @param bio.variables Symbole. Indicates the columns names that contain bioloical variables in the SummarizedExperiment object.
-#' @param uv.variables Symbole. Indicates the columns names that contain unwanted variation variables in the SummarizedExperiment object.
+#' @param assay.name Symbol. Indicates a name of an assay in the SummarizedExperiment object. The selected assay should
+#' be the one that will be used for RUV-III-PRPS normalization.
+#' @param nb.ncg Numeric. Indicates how many genes should be selected as NCG. The value is the percentage of the total
+#' genes in the SummarizedExperiment object. The default is 10 percent.
+#' @param bio.variables Symbols. Indicates the columns names that contain biological variables in the
+#' SummarizedExperiment object.
+#' @param uv.variables Symbols. Indicates the columns names that contains UV variables in the SummarizedExperiment object.
 #' @param ncg.selection.method Symbol.Indicates how to select a set genes as NCG.
 #' For individual genes, the two-way ANOVA calculates F-statistics for biological and
 #' unwanted variation factors separately. An ideal NCG set should have high F-statistics
@@ -40,8 +48,8 @@
 #' affected by biological variation. The default is CPM. Refer to the 'applyOtherNormalization' function for further details.
 #' @param corr.method Numeric.Indicates which correlation methods (pearson or spearman) should be used for the correlation analyses. The
 #' default is 'spearman'.
-#' @param a TBBB
-#' @param rho TBBB
+#' @param a The significance level used for the confidence intervals in the correlation, by default it is set to 0.05.
+#' @param rho The value of the hypothesised correlation to be used in the hypothesis testing, by default it is set to 0.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation.
 #' @param anova.method Symbols. Indicates which ANOVA methods to use. The default in 'aov'. Refer to the function "genesVariableAnova" for more details.
@@ -54,10 +62,14 @@
 #' contain variables whose association with the selected genes as NCG.
 #' needs to be evaluated. The default is NULL. This means all the variables in the 'bio.variables' and 'uv.variables' will be assessed.
 #' @param nb.pcs Numeric. Indicates the number of the first principal components on selected NCG to be used to assess the performance of NCGs.
-#' @param center Logical. Indicates whether to center the data before applying principal component analysis or not. The default is TRUE.
-#' @param scale Logical. Indicates whether to scale the data before applying Principal component analysis. The default is FALSE.
+#' @param center Logical. Indicates whether to scale the data or not before applying SVD. If center is TRUE, then
+#' centering is done by subtracting the column means of the assay from their corresponding columns. The default is TRUE.
+#' @param scale Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
+#' is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
+#' mean square otherwise. The default is FALSE.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object or not.
-#' @param assess.variables Logical. Indicates whether to assess the association between the bioloical and unwanted variation variables seprartly.
+#' @param assess.variables Logical. Indicates whether to assess the association between the biological and unwanted
+#' variation variables separately. Refer to the variablesCorrelation function for more details. Th default is FALSE.
 #' @param remove.na Symbol. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
 #' 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
 #' samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to both'.
@@ -70,19 +82,20 @@
 #' continuous variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
 #' If the correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest variance will
 #' be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.7.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-#' to output the result. By default it is set to TRUE.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
+#' @param save.se.obj Logical. Indicates whether to save the result of the function in the metadata of the SummarizedExperiment object or
+#' to output the result. The default is TRUE.
+#' @param verbose Logical. Indicates whether to display or not a detailed level of output or messages during the execution
+#' of the function. The default setting is TRUE.
 #'
-#' @return Either the SummarizedExperiment object containing the a set of negative control genes
-#' or a logical vector of the selected negative control genes
+#' @return Either the SummarizedExperiment object containing the a set of negative control genes or a logical vector of
+#' the selected negative control genes
+#'
+#' @author Ramyar Molania
 
 #' @importFrom Matrix colSums
 #' @importFrom dplyr left_join
 #' @importFrom SummarizedExperiment assay SummarizedExperiment
 #' @importFrom matrixStats rowProds
-#' @importFrom S4Vectors DataFrame
 #' @export
 
 supervisedFindNcgAnoCorrAs <- function(
