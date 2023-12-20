@@ -1,38 +1,43 @@
-#' is used to compute the correlation between the gene expression (assay)
-#' of a SummarizedExperiment class object and a continuous variable (i.e. library size).
+#' is used to compute the correlation between individual gene expression and a continuous variable.
 #'
-#' @param se.obj A SummarizedExperiment object that will be used to compute the correlation.
-#' @param assay.names Optional string or list of strings for the selection of the name(s)
-#' of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default
-#  all the assays of the SummarizedExperiment class object will be selected.
-#' @param variable String of the label of a continuous variable such as
-#' library size from colData(se.obj).
-#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
-#' the log transformation will be selected.
-#' @param method A character string indicating which correlation coefficient
-#' is to be used for the test: "pearson", "kendall", or "spearman". By default "spearman" will
-#' be selected.
-#' @param a The significance level used for the confidence intervals in the correlation,
-#' by default it is set to 0.05.
-#' @param rho The value of the hypothesised correlation to be used in the hypothesis testing,
-#' by default it is set to 0.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-#' to output the result. By default it is set to TRUE.
+#'
+#' @description
+#' This function computes the correlation between individual gene expression of the assays and a continuous variable in
+#' a SummarizedExperiment object.
+#'
+#'
+#' @param se.obj A SummarizedExperiment object.
+#' @param assay.names Symbol. Symbol or list of symbols for the selection of the name(s) of the assay(s) of the
+#' SummarizedExperiment object to compute the correlation. By default all the assays of the SummarizedExperiment class
+#' object will be selected.
+#' @param variable String of the label of a continuous variable such as library size from colData(se.obj).
+#' @param method A character string indicating which correlation coefficient is to be used for the test: 'pearson',
+#' 'kendall', or "spearman". The default is 'spearman'.
+#' @param a The significance level used for the confidence intervals in the correlation, by default it is set to 0.05.
+#' @param rho The value of the hypothesised correlation to be used in the hypothesis testing, by default it is set to 0.
 #' @param plot.output Logical. Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.
-#' @param plot.top.genes Logical. Indicates whether to plot the gene expression of the number of genes
-#' from the high or low correlation, by default it is set to FALSE.
-#' @param nb.top.genes Defines the number of genes from the high or low correlation to plot,
-#' by default is set to 3.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param remove.na TO BE DEFINED.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
+#' @param plot.top.genes Logical. Indicates whether to plot the gene expression of the number of genes from the high or
+#' low correlation, by default it is set to FALSE.
+#' @param nb.top.genes Defines the number of genes from the high or low correlation to plot, by default is set to 3.
+#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default the log
+#' transformation will be selected.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
 #' @param apply.round Logical. Indicates whether to round the ARI results, by default it is set to TRUE.
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
+#' @param remove.na TO BE DEFINED.
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the current SummarizedExperiment
+#' object or to output the result. By default it is set to TRUE.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during
+#' the execution of the functions, by default it is set to TRUE.
 #'
-#' @return SummarizedExperiment A SummarizedExperiment object containing the computed correlation on the continuous variable
+#'
+#' @author Ramyar Molania
+
+#' @return A SummarizedExperiment object containing the computed correlation on the continuous variable
 #' and if requested the associated plot.
+#'
+#'
 #' @importFrom SummarizedExperiment assays assay colData
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
