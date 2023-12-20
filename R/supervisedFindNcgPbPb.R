@@ -2,7 +2,7 @@
 #'
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.name Symbol.Indicates a name of assay in the SummarizedExperiment object.
-#' @param nb.ncg Numeric.Indicates the percentage of the total genes to be selected a NCG set,
+#' @param nb.ncg Numeric. Indicates the percentage of the total genes to be selected a NCG set,
 #' by default it is set to 10 percent.
 #' @param ncg.selection.method Symbol.Indicates how to select a set genes as NCG.
 #' For individual genes, the two-way ANOVA calculates F-statistics for biological and
@@ -40,8 +40,8 @@
 #' @param min.sample.for.aov TBBB
 #' @param min.sample.for.correlation TBBB
 #' @param corr.method TBBB
-#' @param a TBBB
-#' @param rho TBBB
+#' @param a The significance level used for the confidence intervals in the correlation, by default it is set to 0.05.
+#' @param rho The value of the hypothesised correlation to be used in the hypothesis testing, by default it is set to 0.
 #' @param anova.method TBBB
 #' @param assess.ncg Logical. Indicates whether to assess the performance of selected NCG or not.
 #' This analysis involves principal component analysis on the selected NCG and
@@ -77,16 +77,16 @@
 supervisedFindNcgPbPb <- function(
         se.obj,
         assay.name,
+        bio.variables,
+        uv.variables,
         nb.ncg = 0.1,
         ncg.selection.method = 'Prod',
         grid.nb = 0.05,
         top.rank.bio.genes = 30,
         top.rank.uv.genes = 40,
-        bio.variables,
         bio.groups = NULL,
         bio.clustering.method = 'kmeans',
         nb.bio.clusters = 2,
-        uv.variables,
         uv.groups = NULL,
         uv.clustering.method = 'kmeans',
         nb.uv.clusters = 2,
