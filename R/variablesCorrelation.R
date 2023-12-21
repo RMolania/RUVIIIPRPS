@@ -59,7 +59,6 @@
 
 variablesCorrelation <- function(
         se.obj,
-        assay.name,
         bio.variables,
         uv.variables,
         cat.cor.coef = c(0.7, 0.7),
@@ -68,7 +67,7 @@ variablesCorrelation <- function(
         remove.na = 'sample.annotation',
         verbose = TRUE) {
     ## checking arguments
-    printColoredMessage(message = '------------The checkVariables function starts:',
+    printColoredMessage(message = '------------The variablesCorrelation function starts:',
                           color = 'white',
                           verbose = verbose)
     printColoredMessage(message = '### Checking the arguments inputs of the function:',
@@ -824,7 +823,7 @@ variablesCorrelation <- function(
         }
     }
     ### Checking biological variables
-    printColoredMessage(message = '------------The variableCorrelation function finished.',
+    printColoredMessage(message = '------------The variablesCorrelation function finished.',
                           color = 'white',
                           verbose = verbose)
     #### output
