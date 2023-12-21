@@ -66,784 +66,498 @@ variablesCorrelation <- function(
         assess.se.obj = TRUE,
         remove.na = 'sample.annotation',
         verbose = TRUE) {
-    ## checking arguments
     printColoredMessage(message = '------------The variablesCorrelation function starts:',
-                          color = 'white',
-                          verbose = verbose)
-    printColoredMessage(message = '### Checking the arguments inputs of the function:',
-                          color = 'magenta',
-                          verbose = verbose)
+                        color = 'white',
+                        verbose = verbose)
+    # check inputs ####
     if (is.null(bio.variables) & is.null(uv.variables)) {
-        stop('Both bio.variables and uv.variables are empty, please provide at least one of them')
-    } else if (max(cat.cor.coef) > 1) {
-        stop('The cat.cor.coef argument cannot be more than 1.')
-    } else if (max(cont.cor.coef) > 1) {
-        stop('The cont.cor.coef argument cannot be more than 1.')
-    } else if (length(cat.cor.coef) == 1 | length(cat.cor.coef) == 1) {
-        stop( 'Please provide two correlation coefs for both unwanted and biological variation.')
-    } else if (length(intersect(bio.variables, uv.variables)) != 0) {
-        stop(if (length(intersect(bio.variables, uv.variables)) == 1) {
-            paste0(
-                'The bio.variables and uv.variables have ',
-                paste0(
-                    intersect(bio.variables, uv.variables),
-                    collapse = ' &'
-                ),
-                ' as a common variable.',
-                ' A variable is either biological and defined in the "bio.variables" or unwanted variation and defined in the "uv.variables".'
-            )
-        } else{
-            paste0(
-                'The bio.variables and uv.variables have ',
-                paste0(intersect(bio.variables, uv.variables),collapse = ' &'
-                ),
-                ' as common variable/s.',
-                ' A variable is either biological and defined in the "bio.variables" or unwanted variation and defined in the "uv.variables"'
-            )
-        })
+        stop('Both "bio.variables" and "uv.variables" cannot be empty.')
     }
-
-    ### Checking summarized experiment object
+    if (max(cat.cor.coef) > 1) {
+        stop('The maximum value of "cat.cor.coef" cannot be more than 1.')
+    } else if (max(cont.cor.coef) > 1) {
+        stop('The maximum value of "cont.cor.coef" argument cannot be more than 1.')
+    } else if (length(cont.cor.coef) == 1 | length(cat.cor.coef) == 1) {
+        stop('Please provide two correlations in "cat.cor.coef" and "cont.cor.coef" for both unwanted and biological variation.')
+    } else if (length(intersect(bio.variables, uv.variables)) != 0) {
+        if (length(intersect(bio.variables, uv.variables)) == 1) {
+            a <- 'a common variable'
+        } else a <- 'common variables'
+        stop(paste0(
+                'The "bio.variables" and "uv.variables" have ',
+                paste0(intersect(bio.variables, uv.variables), collapse = ' &'),
+                a,
+                '. Each variable is either biological and defined in the "bio.variables" ',
+                'or unwanted variation and defined in the "uv.variables".'))
+    }
+    # assess the SummarizedExperiment object ####
     if (assess.se.obj) {
         se.obj <- checkSeObj(
             se.obj = se.obj,
-            assay.names = assay.name,
+            assay.names = NULL,
             variables = c(bio.variables, uv.variables),
             remove.na = remove.na,
-            verbose = verbose
-        )
+            verbose = verbose)
     }
-    printColoredMessage(message = '------------The variableCorrelation function starts.',
-                        color = 'white',
+    # unwanted variables ####
+    printColoredMessage(message = '--Assess the unwanted variation variables:',
+                        color = 'magenta',
                         verbose = verbose)
-
-    ### Compute correlation for the unwanted variation variables
     if (length(uv.variables) > 0) {
-        ## classes of uv variables and variation
-        printColoredMessage(
-            message = '### Checking the unwanted variation variables "uv.variables":',
-            color = 'magenta',
-            verbose = verbose
-        )
-        uv.var.class <- unlist(lapply(uv.variables, function(x)
-            class(colData(se.obj)[[x]])))
-        categorical.uv <-
-            uv.variables[uv.var.class %in% c('factor', 'character')]
-        continuous.uv <-
-            uv.variables[uv.var.class %in% c('numeric', 'integer')]
+        ## find classes of unwanted variation variables ####
+        uv.var.class <- unlist(lapply(
+            uv.variables,
+            function(x) class(colData(se.obj)[[x]])))
+        categorical.uv <- uv.variables[uv.var.class %in% c('factor', 'character')]
+        continuous.uv <- uv.variables[uv.var.class %in% c('numeric', 'integer')]
         if (length(categorical.uv) > 0) {
             if (length(categorical.uv) == 1) {
-                printColoredMessage(
-                    message = paste0(
-                        'The ',
-                        paste0(categorical.uv, collapse = ' & '),
-                        ' is a categorical variable of unwanted variation.'
-                    ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            } else {
-                printColoredMessage(
-                    message = paste0(
-                        'The ',
-                        paste0(categorical.uv, collapse = ' & '),
-                        ' are categorical variables of unwanted variation.'
-                    ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            }
-        } else {
+                a <- 'is a categorical variable'
+            } else a <- 'are categorical variables'
             printColoredMessage(
-                message = 'No categorical variable of unwanted variation is provided.',
-                color = 'red',
-                verbose = verbose
-            )
+                message = paste0(
+                    'The ',
+                    paste0(categorical.uv, collapse = ' & '),
+                    a,
+                    ' of unwanted variation.'),
+                color = 'blue',
+                verbose = verbose)
         }
         if (length(continuous.uv) > 0) {
-            if (length(continuous.uv) == 1) {
-                printColoredMessage(
-                    message = paste0(
-                        paste0('The ',
-                               continuous.uv, collapse = ' & '),
-                        ' is a continuous variable of unwanted variation.'
-                    ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            } else {
-                printColoredMessage(
-                    message = paste0(
-                        paste0('The ',
-                               continuous.uv, collapse = ' & '),
-                        ' are continuous variables of unwanted variation.'
-                    ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            }
-
-        } else {
-            printColoredMessage(
-                message = 'No continuous variable of unwanted variation were provided.',
-                color = 'red',
-                verbose = verbose
-            )
-        }
-        ###
-        uv.variables <- c(continuous.uv, categorical.uv)
-        printColoredMessage(
-            message = '### Checking the levels and variance of categorical and continuous unwanted variables, respectively:',
-            color = 'magenta',
-            verbose = verbose
-        )
-        check.uv.vars <- lapply(uv.variables,
-                                function(x) {
-                                    class.type <- class(colData(se.obj)[[x]])
-                                    if (class.type %in% c('factor', 'character')) {
-                                        if (length(unique(colData(se.obj)[[x]])) == 1) {
-                                            stop(
-                                                paste0(
-                                                    'The unwanted variable "uv.variables" must contain at least two groups.',
-                                                    'However the variable ',
-                                                    x,
-                                                    ' contains only one group:',
-                                                    unique(colData(se.obj)[[x]]),
-                                                    'Please remove this variable from "uv.variables" argument and re-run the function.'
-                                                )
-                                            )
-                                        } else {
-                                            printColoredMessage(
-                                                message = paste0(
-                                                    'The ',
-                                                    x,
-                                                    ' contains ',
-                                                    length(unique(colData(
-                                                        se.obj
-                                                    )[[x]])),
-                                                    ' groups.'
-                                                ),
-                                                color = 'blue',
-                                                verbose = verbose
-                                            )
-                                        }
-                                    }
-                                    if (class.type %in% c('numeric', 'integer')) {
-                                        if (var(colData(se.obj)[[x]]) == 0) {
-                                            stop(
-                                                paste0(
-                                                    'The variance of the unwanted variable ',
-                                                    x,
-                                                    ' is equal to 0.',
-                                                    'However, this variable must contain some variation.',
-                                                    'Please remove this variable from "uv.variables" argument and re-run the function.'
-                                                )
-                                            )
-                                        } else{
-                                            printColoredMessage(
-                                                message = paste0(
-                                                    'The variance of ',
-                                                    x,
-                                                    ' is ',
-                                                    round(var(colData(
-                                                        se.obj
-                                                    )[[x]]), digits = 4),
-                                                    '.'
-                                                ),
-                                                color = 'blue',
-                                                verbose = verbose
-                                            )
-                                        }
-                                    }
-                                })
-        ### Check correlation between categorical sources of unwanted variation
-        if (length(categorical.uv) > 1) {
-            printColoredMessage(
-                message = '### As several categorical variables of unwanted variation were provided, their respective associations
-                will be assessed.'
-                ,
-                color = 'magenta',
-                verbose = verbose
-            )
-            printColoredMessage(
-                message = 'Applying chi-square test to assess the association between all pairs of categorical unwanted variables',
-                color = 'green',
-                verbose = verbose
-            )
-            all.pairs <- combn(categorical.uv , 2)
-            remove.cat.uv.variable <- lapply(1:ncol(all.pairs),
-                                             function(x) {
-                                                 cat.cor <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
-                                                                                   y = se.obj[[all.pairs[, x][2]]])
-                                                 cat.cor <-round(x = cat.cor, digits = 3)
-                                                 if (cat.cor > cat.cor.coef[1]) {
-                                                     printColoredMessage(
-                                                         paste0(
-                                                             'The variables ',
-                                                             all.pairs[, x][1],
-                                                             ' and ',
-                                                             all.pairs[, x][2],
-                                                             ' are highly associated (corr.coef: ~',
-                                                             cat.cor,
-                                                             '). The one with the higher number of factors will be selected.'
-                                                         ),
-                                                         color = 'blue',
-                                                         verbose = verbose
-                                                     )
-                                                     variable.freq <-
-                                                         c(length(unique(se.obj[[all.pairs[, x][1]]])) ,
-                                                           length(unique(se.obj[[all.pairs[, x][2]]])))
-                                                     if (diff(variable.freq) == 0) {
-                                                         remove.variables <- all.pairs[1, x]
-                                                     } else{
-                                                         remove.variables <-
-                                                             all.pairs[, x][which(variable.freq != max(variable.freq))]
-                                                     }
-                                                 } else{
-                                                     printColoredMessage(
-                                                         paste0(
-                                                             'The variables ',
-                                                             all.pairs[, x][1],
-                                                             ' and ',
-                                                             all.pairs[, x][2],
-                                                             ' are not highly associated (corr.coef:',
-                                                             cat.cor,
-                                                             ').'
-                                                         ),
-                                                         color = 'blue',
-                                                         verbose = verbose
-                                                     )
-                                                     remove.variables <-
-                                                         NULL
-                                                 }
-                                                 return(remove.variables)
-                                             })
-            remove.cat.uv.variable <-
-                unique(unlist(remove.cat.uv.variable))
-            categorical.uv <-
-                categorical.uv[!categorical.uv %in% remove.cat.uv.variable]
             if (length(categorical.uv) == 1) {
-                printColoredMessage(
-                    message =
-                        paste0(
-                            'Finally, the variable ',
-                            paste0(categorical.uv, collapse = ' & '),
-                            ' is selected as source of categorical unwanted variation to create PRPS.'
-                        ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            } else {
-                printColoredMessage(
-                    message =
-                        paste0(
-                            'Finally, the variables ',
-                            paste0(categorical.uv, collapse = ' & '),
-                            ' are selected as sources of categorical unwanted variation to create PRPS.'
-                        ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            }
-        } else if (length(categorical.uv) == 1) {
+                a <- 'is a continuous variable'
+            } else a <- 'are continuous variables'
             printColoredMessage(
-                message =
-                    paste0(
-                        'Finally, the variable ',
-                        paste0(categorical.uv, collapse = ' & '),
-                        ' is selected as source of categorical unwanted variation to create PRPS.'
-                    ),
+                message = paste0(
+                    'The ',
+                    paste0(categorical.uv, collapse = ' & '),
+                    a,
+                    ' of unwanted variation.'),
                 color = 'blue',
-                verbose = verbose
-            )
-
+                verbose = verbose)
         }
-        ### Check correlation between continuous sources of unwanted variation
-        if (length(continuous.uv) > 1) {
-            printColoredMessage(
-                message = '### As several continuous sources of unwanted variation were provided,
-                their respective associations based on correlation will be assessed.',
-                color = 'magenta',
-                verbose = verbose
-            )
-            printColoredMessage(
-                message =
-                    'Applying Spearman correlation test between all pairs of continuous sources of unwanted variation.',
-                color = 'white',
-                verbose = verbose
-            )
-            all.pairs <- combn(continuous.uv , 2)
-            remove.cont.uv.variable <- lapply(1:ncol(all.pairs),
-                                              function(x) {
-                                                  corr.coef <-suppressWarnings(cor.test(
-                                                          x = se.obj[[all.pairs[1 , x]]],
-                                                          y = se.obj[[all.pairs[2 , x]]],
-                                                          method = 'spearman'
-                                                      ))[[4]]
-                                                  corr.coef <-
-                                                      round(x = abs(corr.coef), digits = 3)
-                                                  if (corr.coef > cont.cor.coef[1]) {
-                                                      printColoredMessage(
-                                                          message =
-                                                              paste0(
-                                                                  'The variables ',
-                                                                  all.pairs[, x][1],
-                                                                  ' and ',
-                                                                  all.pairs[, x][2],
-                                                                  ' are highly correlated (spearman.corr.coef:',
-                                                                  corr.coef,
-                                                                  '). The one with the higest variance will be selected to create PRPS.'
-                                                              ),
-                                                          color = 'blue',
-                                                          verbose = verbose
-                                                      )
-                                                      variable.freq <-
-                                                          c(var(se.obj[[all.pairs[, x][1]]]), var(se.obj[[all.pairs[, x][2]]]))
-                                                      if (diff(variable.freq) == 0) {
-                                                          remove.variables <- all.pairs[1, x]
-                                                      } else{
-                                                          remove.variables <-
-                                                              all.pairs[, x][which(variable.freq != max(variable.freq))]
-                                                      }
-                                                  } else{
-                                                      printColoredMessage(
-                                                          message = gsub(
-                                                              '"',
-                                                              '',
-                                                              paste0(
-                                                                  'The variables ',
-                                                                  all.pairs[, x][1],
-                                                                  ' and ',
-                                                                  all.pairs[, x][2],
-                                                                  ' are not highly correlated (spearman.corr.coef:',
-                                                                  corr.coef,
-                                                                  '). PRPS will be created for individual ones.'
-                                                              )
-                                                          ),
-                                                          color = 'blue',
-                                                          verbose = verbose
-                                                      )
-                                                      remove.variables <-
-                                                          NULL
-                                                  }
-                                                  return(remove.variables)
-                                              })
-            remove.cont.uv.variable <-
-                unique(unlist(remove.cont.uv.variable))
-            continuous.uv <-
-                continuous.uv[!continuous.uv %in% remove.cont.uv.variable]
-            if (length(continuous.uv) == 1) {
-                printColoredMessage(
-                    message =
-                        paste0(
-                            'Finally, the variable ',
-                            paste0(continuous.uv, collapse = ' & '),
-                            ' is selected as continuous source of unwanted variation to create PRPS.'
-                        ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-
-            } else {
-                printColoredMessage(
-                    message =
-                        paste0(
-                            'Finally, the variables ',
-                            paste0(continuous.uv, collapse = ' & '),
-                            ' are selected as continuous sources of unwanted variation to create PRPS.'
-                        ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            }
-        } else if (length(continuous.uv) == 1) {
-            printColoredMessage(
-                message =
-                    paste0(
-                        'Finally, the variable ',
-                        paste0(continuous.uv, collapse = ' & '),
-                        ' is selected as continuous source of unwanted variation to create PRPS.'
-                    ),
-                color = 'blue',
-                verbose = verbose
-            )
-        }
-    }
-    ### Checking biological variables
-    if (length(bio.variables) > 0) {
-        ## classes of uv variables and variation
+        # variation in unwanted variables ####
         printColoredMessage(
-            message = '### Checking the biological variables:',
+            message = '-Checke the levels and variance of categorical and continuous unwanted variation variables, respectively:',
             color = 'magenta',
-            verbose = verbose
-        )
-        bio.var.class <- unlist(lapply(bio.variables, function(x)
-            class(colData(se.obj)[[x]])))
-        categorical.bio <-
-            bio.variables[bio.var.class %in% c('factor', 'character')]
-        continuous.bio <-
-            bio.variables[bio.var.class %in% c('numeric', 'integer')]
+            verbose = verbose)
+        check.uv.vars <- lapply(
+            uv.variables,
+            function(x) {
+                class.type <- class(colData(se.obj)[[x]])
+                if (class.type %in% c('factor', 'character')) {
+                    if (length(unique(colData(se.obj)[[x]])) == 1) {
+                        stop(paste0(
+                                'Each categorical unwanted variables "uv.variables" must contain at least two groups.',
+                                'However the variable ',
+                                x,
+                                ' contains only one group:',
+                                unique(colData(se.obj)[[x]]),
+                                'Please remove this variable from "uv.variables" argument and re-run the function.'))
+                    } else
+                        printColoredMessage(message = paste0('The ', x, ' contains ', length(unique(colData(se.obj)[[x]])), ' groups.'),
+                            color = 'blue',
+                            verbose = verbose)
+                }
+                if (class.type %in% c('numeric', 'integer')) {
+                    if (var(colData(se.obj)[[x]]) == 0) {
+                        stop(paste0('Each continuous unwanted variables "uv.variables" must contain some variation.',
+                                'However the variable ',
+                                x,
+                                ' contains only one group:',
+                                unique(colData(se.obj)[[x]]),
+                                'Please remove this variable from "uv.variables" argument and re-run the function.'
+                            )
+                        )
+                    } else
+                        printColoredMessage(
+                            message = paste0( 'The variance of ', x,' is ', round(var(colData(se.obj)[[x]]), digits = 4), '.'),
+                            color = 'blue',
+                            verbose = verbose)
+                }
+            })
+        # assess the correlation between categorical UV ####
+        printColoredMessage(message = '--Assess the correlation between categoricals variables:',
+                            color = 'magenta',
+                            verbose = verbose)
+        if (length(categorical.uv) > 1) {
+            all.pairs <- combn(categorical.uv , 2)
+            remove.cat.uv.variable <- lapply(
+                1:ncol(all.pairs),
+                function(x) {
+                    cat.cor <- ContCoef(x = se.obj[[all.pairs[, x][1]]], y = se.obj[[all.pairs[, x][2]]])
+                    cat.cor <- round(x = cat.cor, digits = 3)
+                    if (cat.cor > cat.cor.coef[1]) {
+                        printColoredMessage(
+                            paste0(
+                                'The variables ',
+                                all.pairs[, x][1],
+                                ' and ',
+                                all.pairs[, x][2],
+                                ' are highly associated (corr.coef: ~',
+                                cat.cor,
+                                '). The one with the higher number of factors will be selected.'),
+                            color = 'blue',
+                            verbose = verbose
+                        )
+                        variable.freq <- c(
+                            length(unique(se.obj[[all.pairs[, x][1]]])) ,
+                            length(unique(se.obj[[all.pairs[, x][2]]]))
+                            )
+                        if (diff(variable.freq) == 0) {
+                            remove.variables <- all.pairs[1, x]
+                        } else remove.variables <- all.pairs[, x][which(variable.freq != max(variable.freq))]
+                    } else {
+                        printColoredMessage(
+                            paste0(
+                                'The variables ',
+                                all.pairs[, x][1],
+                                ' and ',
+                                all.pairs[, x][2],
+                                ' are not highly associated (corr.coef:',
+                                cat.cor,
+                                ').'),
+                            color = 'blue',
+                            verbose = verbose )
+                        remove.variables <- NULL
+                    }
+                    return(remove.variables)
+                })
+            remove.cat.uv.variable <- unique(unlist(remove.cat.uv.variable))
+            categorical.uv <- categorical.uv[!categorical.uv %in% remove.cat.uv.variable]
+            if (length(categorical.uv) == 1) {
+                a <- 'is selected as source'
+            } else a <- 'are selected as sources'
+            printColoredMessage(
+                message = paste0(
+                        'The ',
+                        paste0(categorical.uv, collapse = ' & '),
+                        a,
+                        ' of categorical unwanted variation variables.'),
+                color = 'blue',
+                verbose = verbose)
+        } else {
+            printColoredMessage(message = 'There is only one source of categorical variable.')
+        }
+        # assess the correlation between continuous UV ####
+        if (length(continuous.uv) > 1) {
+            printColoredMessage(message = '--Assess the correlation between categoricals variables:',
+                                color = 'magenta',
+                                verbose = verbose)
+            all.pairs <- combn(continuous.uv , 2)
+            remove.cont.uv.variable <- lapply(
+                1:ncol(all.pairs),
+                function(x) {
+                    corr.coef <- suppressWarnings(cor.test(
+                        x = se.obj[[all.pairs[1 , x]]],
+                        y = se.obj[[all.pairs[2 , x]]],
+                        method = 'spearman'
+                    ))[[4]]
+                    corr.coef <- round(x = abs(corr.coef), digits = 3)
+                    if (corr.coef > cont.cor.coef[1]) {
+                        printColoredMessage(
+                            message =
+                                paste0(
+                                    'The variables ',
+                                    all.pairs[, x][1],
+                                    ' and ',
+                                    all.pairs[, x][2],
+                                    ' are highly correlated (spearman.corr.coef:',
+                                    corr.coef,
+                                    '). The one with the higest variance will be selected.'),
+                            color = 'blue',
+                            verbose = verbose)
+                        variable.freq <- c(var(se.obj[[all.pairs[, x][1]]]), var(se.obj[[all.pairs[, x][2]]]))
+                        if (diff(variable.freq) == 0) {
+                            remove.variables <- all.pairs[1, x]
+                        } else remove.variables <- all.pairs[, x][which(variable.freq != max(variable.freq))]
+                    } else {
+                        printColoredMessage(
+                            message = gsub(
+                                '"',
+                                '',
+                                paste0(
+                                    'The variables ',
+                                    all.pairs[, x][1],
+                                    ' and ',
+                                    all.pairs[, x][2],
+                                    ' are not highly correlated (spearman.corr.coef:',
+                                    corr.coef,
+                                    ').')),
+                            color = 'blue',
+                            verbose = verbose
+                        )
+                        remove.variables <- NULL
+                    }
+                    return(remove.variables)
+                })
+            remove.cont.uv.variable <- unique(unlist(remove.cont.uv.variable))
+            continuous.uv <- continuous.uv[!continuous.uv %in% remove.cont.uv.variable]
+            if (length(continuous.uv) == 1) {
+                a <- 'is selected as continuous source'
+            } else a <- 'are selected as continuous sources'
+            printColoredMessage(
+                message =
+                    paste0(
+                        'The ',
+                        paste0(continuous.uv, collapse = ' & '),
+                        a,
+                        ' of unwanted variation.'),
+                color = 'blue',
+                verbose = verbose
+            )
+        } else
+            printColoredMessage(
+                message = 'There is only one source of continuous variable.',
+                color = 'blue',
+                verbose = verbose)
+    } else
+        printColoredMessage(
+            message = 'Any unwanted variables are provided.',
+            color = 'blue',
+            verbose = verbose)
+
+    # biological variables ####
+    printColoredMessage(message = '--Assess the biological variables:',
+                        color = 'magenta',
+                        verbose = verbose)
+    if (length(bio.variables) > 0) {
+        ## classes of biological variables and variation
+        bio.var.class <- unlist(lapply(
+            bio.variables,
+            function(x) class(colData(se.obj)[[x]])))
+        categorical.bio <- bio.variables[bio.var.class %in% c('factor', 'character')]
+        continuous.bio <- bio.variables[bio.var.class %in% c('numeric', 'integer')]
         if (length(categorical.bio) > 0) {
             if (length(categorical.bio) == 1) {
-                printColoredMessage(
-                    message = paste0(
-                        'The ',
-                        paste0(categorical.bio, collapse = ' & '),
-                        ' is a categorical variable of biological variation.'
-                    ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            } else {
-                printColoredMessage(
-                    message = paste0(
-                        'The ',
-                        paste0(categorical.bio, collapse = ' & '),
-                        ' are categorical variables for the biological variation.'
-                    ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            }
-        } else{
+                a <- 'is a categorical variable'
+            } else a <- 'are categorical variables'
             printColoredMessage(
-                message = 'No categorical variable of biological variation were provided.',
-                color = 'red',
-                verbose = verbose
-            )
+                message = paste0(
+                    'The ',
+                    paste0(categorical.bio, collapse = ' & '),
+                    a,
+                    ' of biological variation.'),
+                color = 'blue',
+                verbose = verbose)
         }
         if (length(continuous.bio) > 0) {
             if (length(continuous.bio) == 1) {
-                printColoredMessage(
-                    message = paste0(
-                        paste0('The ', continuous.bio, collapse = ' & '),
-                        ' is a continuous source of biological variation.'
-                    ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            } else {
-                printColoredMessage(
-                    message = paste0(
-                        paste0('The ', continuous.bio, collapse = ' & '),
-                        ' are continuous sources of biological variation.'
-                    ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            }
-
-        } else {
+                a <- 'is a continuous source '
+            } else a <- 'are continuous sources '
             printColoredMessage(
-                message = 'No continuous variable of biological variation were provided.',
-                color = 'red',
-                verbose = verbose
-            )
+                message = paste0(
+                    'The ',
+                    paste0(continuous.bio, collapse = ' & '),
+                    a,
+                    ' biological variation.'),
+                color = 'blue',
+                verbose = verbose)
         }
-        ###
-        bio.variables <- c(continuous.bio, categorical.bio)
-        printColoredMessage(
-            message = '### Checking the levels and variance of categorical and continuous biological variables, respectively:',
-            color = 'magenta',
-            verbose = verbose
-        )
-        check.bio.vars <- lapply(bio.variables,
-                                 function(x) {
-                                     class.type <- class(colData(se.obj)[[x]])
-                                     if (class.type %in% c('factor', 'character')) {
-                                         if (length(unique(colData(se.obj)[[x]])) == 1) {
-                                             stop(
-                                                 paste0(
-                                                     'biological variables must contain at least two groups.',
-                                                     'The biological variable ',
-                                                     x,
-                                                     ' contains only one group:',
-                                                     unique(colData(se.obj)[[x]]),
-                                                     'Please remove this variable from "bio.variables" argument and re-run the function.'
-                                                 )
-                                             )
-                                         } else {
-                                             printColoredMessage(
-                                                 message = paste0(
-                                                     'The ',
-                                                     x,
-                                                     ' contains ',
-                                                     length(unique(colData(
-                                                         se.obj
-                                                     )[[x]])),
-                                                     ' groups.'
-                                                 ),
-                                                 color = 'blue',
-                                                 verbose = verbose
-                                             )
-                                         }
-                                     }
-                                     if (class.type %in% c('numeric', 'integer')) {
-                                         if (var(colData(se.obj)[[x]]) == 0) {
-                                             stop(
-                                                 paste0(
-                                                     'The variance of biological variable ',
-                                                     x,
-                                                     ' is equal to 0.',
-                                                     'This variable must contain some variation.',
-                                                     'Please remove this variable from "bio.variables" argument and re-run the function.'
-                                                 )
-                                             )
-                                         } else{
-                                             printColoredMessage(
-                                                 message = paste0(
-                                                     'The variance of ',
-                                                     x,
-                                                     ' is ',
-                                                     round(var(colData(
-                                                         se.obj
-                                                     )[[x]]), digits = 4),
-                                                     '.'
-                                                 ),
-                                                 color = 'blue',
-                                                 verbose = verbose
-                                             )
-                                         }
-                                     }
-                                 })
-        ### Check correlation between categorical sources of unwanted variation
+        ## variation in biological variables ####
+        printColoredMessage(message = '--Checke the levels and variance of categorical and continuous biological variables, respectively:',
+                            color = 'magenta',
+                            verbose = verbose)
+        check.bio.vars <- lapply(
+            bio.variables,
+            function(x) {
+                class.type <- class(colData(se.obj)[[x]])
+                if (class.type %in% c('factor', 'character')) {
+                    if (length(unique(colData(se.obj)[[x]])) == 1) {
+                        stop(paste0(
+                                'biological variables must contain at least two groups.',
+                                'The biological variable ',
+                                x,
+                                ' contains only one group:',
+                                unique(colData(se.obj)[[x]]),
+                                'Please remove this variable from "bio.variables" argument and re-run the function.'))
+                    } else {
+                        printColoredMessage(
+                            message = paste0('The ',
+                                             x,
+                                             ' contains ',
+                                             length(unique(
+                                                 colData(se.obj)[[x]]
+                                             )),
+                                             ' groups.'),
+                            color = 'blue',
+                            verbose = verbose)
+                    }
+                }
+                if (class.type %in% c('numeric', 'integer')) {
+                    if (var(colData(se.obj)[[x]]) == 0) {
+                        stop( paste0(
+                                'The variance of biological variable ',
+                                x,
+                                ' is equal to 0.',
+                                'This variable must contain some variation.',
+                                'Please remove this variable from "bio.variables" argument and re-run the function.'))
+                    } else
+                        printColoredMessage(
+                            message = paste0(
+                                'The variance of ',
+                                x,
+                                ' is ',
+                                round(var(colData(se.obj)[[x]]), digits = 4),
+                                '.'),
+                            color = 'blue',
+                            verbose = verbose)
+                }
+            })
+        # assess correlation between categorical sources of biological variables ####
         if (length(categorical.bio) > 1) {
-            printColoredMessage(
-                message = '### Several categorical sources of biological variation were provided. The respective association between each pair of
-                categorical sources of unwanted variation will be assessed.'
-                ,
-                color = 'magenta',
-                verbose = verbose
-            )
-
-            printColoredMessage(
-                message = 'Applying chi-square test between all pairs of categorical sources of biological variation.',
-                color = 'green',
-                verbose = verbose
-            )
+            printColoredMessage(message = '--Assess the correlation between categoricals variables:',
+                                color = 'magenta',
+                                verbose = verbose)
             all.pairs <- combn(categorical.bio , 2)
-            remove.cat.bio.variable <- lapply(1:ncol(all.pairs),
-                                              function(x) {
-                                                  cat.cor <- ContCoef(x = se.obj[[all.pairs[, x][1]]],
-                                                                                    y = se.obj[[all.pairs[, x][2]]])
-                                                  cat.cor <- round(x = cat.cor, digits = 3)
-                                                  if (cat.cor > cat.cor.coef[2]) {
-                                                      printColoredMessage(
-                                                          paste0(
-                                                              'The variables ',
-                                                              all.pairs[, x][1],
-                                                              ' and ',
-                                                              all.pairs[, x][2],
-                                                              ' are highly associated (corr.coef: ~',
-                                                              cat.cor,
-                                                              '). The one with the higher number of factors will be selected to create PRPS.'
-                                                          ),
-                                                          color = 'blue',
-                                                          verbose = verbose
-                                                      )
-                                                      variable.freq <-
-                                                          c(length(unique(se.obj[[all.pairs[, x][1]]])) ,
-                                                            length(unique(se.obj[[all.pairs[, x][2]]])))
-                                                      if (diff(variable.freq) == 0) {
-                                                          remove.variables <- all.pairs[1, x]
-                                                      } else{
-                                                          remove.variables <-
-                                                              all.pairs[, x][which(variable.freq != max(variable.freq))]
-                                                      }
-                                                  } else{
-                                                      printColoredMessage(
-                                                          paste0(
-                                                              'The variables ',
-                                                              all.pairs[, x][1],
-                                                              ' and ',
-                                                              all.pairs[, x][2],
-                                                              ' are not highly associated (corr.coef:',
-                                                              cat.cor,
-                                                              ').'
-                                                          ),
-                                                          color = 'blue',
-                                                          verbose = verbose
-                                                      )
-                                                      remove.variables <-
-                                                          NULL
-                                                  }
-                                                  return(remove.variables)
-                                              })
-            remove.cat.bio.variable <-
-                unique(unlist(remove.cat.bio.variable))
-            categorical.bio <-
-                categorical.bio[!categorical.bio %in% remove.cat.bio.variable]
+            remove.cat.bio.variable <- lapply(
+                1:ncol(all.pairs),
+                function(x) {
+                    cat.cor <- ContCoef(x = se.obj[[all.pairs[, x][1]]], y = se.obj[[all.pairs[, x][2]]])
+                    cat.cor <- round(x = cat.cor, digits = 3)
+                    if (cat.cor > cat.cor.coef[2]) {
+                        printColoredMessage(
+                            paste0(
+                                'The variables ',
+                                all.pairs[, x][1],
+                                ' and ',
+                                all.pairs[, x][2],
+                                ' are highly associated (corr.coef: ~',
+                                cat.cor,
+                                '). The one with the higher number of factors will be selected.'),
+                            color = 'blue',
+                            verbose = verbose)
+                        variable.freq <- c(
+                            length(unique(se.obj[[all.pairs[, x][1]]])),
+                            length(unique(se.obj[[all.pairs[, x][2]]]))
+                            )
+                        if (diff(variable.freq) == 0) {
+                            remove.variables <- all.pairs[1, x]
+                        } else remove.variables <- all.pairs[, x][which(variable.freq != max(variable.freq))]
+                    } else {
+                        printColoredMessage(
+                            paste0(
+                                'The variables ',
+                                all.pairs[, x][1],
+                                ' and ',
+                                all.pairs[, x][2],
+                                ' are not highly associated (corr.coef:',
+                                cat.cor,
+                                ').'),
+                            color = 'blue',
+                            verbose = verbose
+                        )
+                        remove.variables <- NULL
+                    }
+                    return(remove.variables)
+                })
+            remove.cat.bio.variable <- unique(unlist(remove.cat.bio.variable))
+            categorical.bio <- categorical.bio[!categorical.bio %in% remove.cat.bio.variable]
             if (length(categorical.bio) == 1) {
-                printColoredMessage(
-                    message =
-                        paste0(
-                            'Finally, the variable ',
-                            paste0(categorical.bio, collapse = ' & '),
-                            ' is selected as a source of categorical biological variation to create PRPS.'
-                        ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            } else {
-                printColoredMessage(
-                    message =
-                        paste0(
-                            'Finally, the variables ',
-                            paste0(categorical.bio, collapse = ' & '),
-                            ' are selected as sources of categorical biological variation to create PRPS.'
-                        ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            }
-        } else if (length(categorical.bio) == 1) {
+                a <- 'is selected as a source'
+            } else a <- 'are selected as a sources'
             printColoredMessage(
                 message =
                     paste0(
-                        'Finally, the variable ',
+                        'The ',
                         paste0(categorical.bio, collapse = ' & '),
-                        ' is selected as a source of categorical biological variation to create PRPS.'
-                    ),
+                        a,
+                        ' of categorical biological variation.'),
                 color = 'blue',
-                verbose = verbose
-            )
-
+                verbose = verbose)
         }
-        ### Check correlation between continuous sources of unwanted variation
+
+        # assess the correlation between continuous sources of biological variation ####
         if (length(continuous.bio) > 1) {
-            printColoredMessage(
-                message = '### Several continuous variables of biological variation were provided.
-                Checking the correlation between each pair of continuous variables of unwanted variation.',
-                color = 'magenta',
-                verbose = verbose
-            )
-            printColoredMessage(
-                message =
-                    'Applying Spearman correlation test between all possible pairs of continuous variables of biological variation.',
-                color = 'white',
-                verbose = verbose
-            )
+            printColoredMessage(message = '--Assess the correlation between continuous variables:',
+                                color = 'magenta',
+                                verbose = verbose)
             all.pairs <- combn(continuous.bio , 2)
-            remove.cont.bio.variable <- lapply(1:ncol(all.pairs),
-                                               function(x) {
-                                                   corr.coef <-
-                                                       suppressWarnings(cor.test(
-                                                           x = se.obj[[all.pairs[1 , x]]],
-                                                           y = se.obj[[all.pairs[2 , x]]],
-                                                           method = 'spearman'
-                                                       ))[[4]]
-                                                   corr.coef <-
-                                                       round(x = abs(corr.coef), digits = 3)
-                                                   if (corr.coef > cont.cor.coef[2]) {
-                                                       printColoredMessage(
-                                                           message =
-                                                               paste0(
-                                                                   'The variables ',
-                                                                   all.pairs[, x][1],
-                                                                   ' and ',
-                                                                   all.pairs[, x][2],
-                                                                   ' are highly correlated (spearman.corr.coef:',
-                                                                   corr.coef,
-                                                                   '). The one with the highest variance will be selected to create PRPS.'
-                                                               ),
-                                                           color = 'blue',
-                                                           verbose = verbose
-                                                       )
-                                                       variable.freq <-
-                                                           c(var(se.obj[[all.pairs[, x][1]]]), var(se.obj[[all.pairs[, x][2]]]))
-                                                       if (diff(variable.freq) == 0) {
-                                                           remove.variables <- all.pairs[1, x]
-                                                       } else{
-                                                           remove.variables <-
-                                                               all.pairs[, x][which(variable.freq != max(variable.freq))]
-                                                       }
-                                                   } else{
-                                                       printColoredMessage(
-                                                           message = gsub(
-                                                               '"',
-                                                               '',
-                                                               paste0(
-                                                                   'The variables ',
-                                                                   all.pairs[, x][1],
-                                                                   ' and ',
-                                                                   all.pairs[, x][2],
-                                                                   ' are not highly correlated (spearman.corr.coef:',
-                                                                   corr.coef,
-                                                                   '). PRPS will be created for individual ones.'
-                                                               )
-                                                           ),
-                                                           color = 'blue',
-                                                           verbose = verbose
-                                                       )
-                                                       remove.variables <-
-                                                           NULL
-                                                   }
-                                                   return(remove.variables)
-                                               })
-            remove.cont.bio.variable <-
-                unique(unlist(remove.cont.bio.variable))
-            continuous.bio <-
-                continuous.bio[!continuous.bio %in% remove.cont.bio.variable]
-
+            remove.cont.bio.variable <- lapply(
+                1:ncol(all.pairs),
+                function(x) {
+                    corr.coef <-
+                        suppressWarnings(cor.test(
+                            x = se.obj[[all.pairs[1 , x]]],
+                            y = se.obj[[all.pairs[2 , x]]],
+                            method = 'spearman'
+                        ))[[4]]
+                    corr.coef <- round(x = abs(corr.coef), digits = 3)
+                    if (corr.coef > cont.cor.coef[2]) {
+                        printColoredMessage(
+                            message =
+                                paste0(
+                                    'The variables ',
+                                    all.pairs[, x][1],
+                                    ' and ',
+                                    all.pairs[, x][2],
+                                    ' are highly correlated (spearman.corr.coef:',
+                                    corr.coef,
+                                    '). The one with the highest variance will be selected.'),
+                            color = 'blue',
+                            verbose = verbose
+                        )
+                        variable.freq <- c(var(se.obj[[all.pairs[, x][1]]]), var(se.obj[[all.pairs[, x][2]]]))
+                        if (diff(variable.freq) == 0) {
+                            remove.variables <- all.pairs[1, x]
+                        } else remove.variables <- all.pairs[, x][which(variable.freq != max(variable.freq))]
+                    } else{
+                        printColoredMessage(
+                            message = gsub(
+                                '"',
+                                '',
+                                paste0(
+                                    'The variables ',
+                                    all.pairs[, x][1],
+                                    ' and ',
+                                    all.pairs[, x][2],
+                                    ' are not highly correlated (spearman.corr.coef:',
+                                    corr.coef,
+                                    '). PRPS will be created for individual ones.')),
+                            color = 'blue',
+                            verbose = verbose
+                        )
+                        remove.variables <- NULL
+                    }
+                    return(remove.variables)
+                })
+            remove.cont.bio.variable <- unique(unlist(remove.cont.bio.variable))
+            continuous.bio <- continuous.bio[!continuous.bio %in% remove.cont.bio.variable]
             if (length(continuous.bio) == 1) {
-                printColoredMessage(
-                    message =
-                        paste0(
-                            'Finally, the variable',
-                            paste0(continuous.bio, collapse = ' & '),
-                            ' is selected as continuous source of biological variation to create PRPS.'
-                        ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-
-            } else {
-                printColoredMessage(
-                    message =
-                        paste0(
-                            'Finally, the variables ',
-                            paste0(continuous.bio, collapse = ' & '),
-                            ' are selected as continuous source of biological variation to create PRPS.'
-                        ),
-                    color = 'blue',
-                    verbose = verbose
-                )
-            }
-        } else if (length(continuous.bio) == 1) {
+                a <- 'as continuous source'
+            } else a <- 'as continuous source'
             printColoredMessage(
                 message =
                     paste0(
-                        'Finally, the variable ',
+                        'The ',
                         paste0(continuous.bio, collapse = ' & '),
-                        ' is selected as continuous source of biological variation to create PRPS.'
+                        a,
+                        'of biological variation to create PRPS.'
                     ),
                 color = 'blue',
-                verbose = verbose
-            )
+                verbose = verbose)
+
         }
     }
-    ### Checking biological variables
-    printColoredMessage(message = '------------The variablesCorrelation function finished.',
-                          color = 'white',
-                          verbose = verbose)
-    #### output
+    # save the results ####
     if (length(uv.variables) != 0 & length(bio.variables) != 0) {
-        return(list(
+        all.res <- list(
             se.obj = se.obj,
             uv.variables = c(continuous.uv, categorical.uv),
             bio.variables = c(continuous.bio, categorical.bio)
-        ))
+        )
     } else if (length(uv.variables) == 0 &
                length(bio.variables) != 0) {
-        return(list(
-            se.obj = se.obj,
-            bio.variables = c(continuous.bio, categorical.bio)
-        ))
+        all.res <-  list(se.obj = se.obj,
+                         bio.variables = c(continuous.bio, categorical.bio))
     } else if (length(uv.variables) != 0 &
                length(bio.variables) == 0) {
-        return(list(
-            se.obj = se.obj,
-            uv.variables = c(continuous.uv, categorical.uv)
-        ))
+        all.res <- list(se.obj = se.obj,
+                        uv.variables = c(continuous.uv, categorical.uv))
     }
+
+    printColoredMessage(message = '------------The variablesCorrelation function finished.',
+                        color = 'white',
+                        verbose = verbose)
+    return(all.res)
 }
