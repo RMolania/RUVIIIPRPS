@@ -1,6 +1,11 @@
-#' is used to assess the association between variables of a SummarizedExperiment object using correlation, and keep only the variable
-#' that has the highest number of factor for the categorical variables, and only the variable that has the highest variance for the
-#' continuous variables from the remaining analysis.
+#' is used to assess the association between variables in a SummarizedExperiment object
+#'
+#'
+#' @description
+#' The function assesses the association between all biological and unwanted variation variables separately. If two categorical
+#' variables are highly association, the function keeps one that has the highest number of factors. For two continuous variables,
+#' the one with higher variance will be kept.
+#'
 #'
 #' For each pair of categorical variables from 'uv.variables' and each pair of categorical variables from 'bio.variables',
 #' the correlation is computed using the function ContCoef from the DescTools package.
