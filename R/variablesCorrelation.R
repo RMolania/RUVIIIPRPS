@@ -539,7 +539,6 @@ variablesCorrelation <- function(
 
         }
     }
-    # add ###
     # save the results ####
     if (length(uv.variables) != 0 & length(bio.variables) != 0) {
         all.res <- list(
