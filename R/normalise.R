@@ -1,6 +1,8 @@
-#' is used to normalise the gene expression (assay) of a SummarizedExperiment class object
-#' using RUVIII-PRPS method.
+#' is used to normalize RNA-seq data using the RUVIII-PRPS method.
 #'
+#'
+#' @description
+#' This function applies the RUVIII-PRPS method on an assay of a SummarizedExperiment object.
 #' The steps involves:
 #' - Creation of the Pseudo-Replicates of Pseudo-Samples (PRPS)
 #' - Define Negative Controls Genes (NCG)
