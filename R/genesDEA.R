@@ -1,16 +1,26 @@
-#' is used to perform differential gene expression analysis of the assays in a SummarizedExperiment object.
+#' is used to perform differential gene expression analysis using Wilcoxon test.
+#'
+#'
+#' @description
+#' This function performs differential gene expression analysis using Wilcoxon test between all possible pairs of a
+#' categorical variable in a SummarizedExperiment object.
+#'
 #'
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Optional string or list of strings for the selection of the name(s) of the assay(s) of the
-#' SummarizedExperiment class object to compute the ANOVA. By default all the assays of the SummarizedExperiment object
-#' will be selected.
-#' @param variable String of the label of a categorical variable such as sample types or batches from colData(se.obj).
+#' @param assay.names Symbol. Symbol or list of symbols for the selection of the name(s) of the assay(s) of the
+#' SummarizedExperiment object to compute the differential gene expression analysis. By default all the assays of the
+#' SummarizedExperiment object will be selected.
+#' @param variable  Symbol. Indicates the columns of the SummarizedExperiment object that contains a categorical variable
+#' such as batches.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
 #' the log transformation will be selected.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param remove.na TO BE DEFINED.
+#' @param remove.na Symbol. Indicates whether to remove missing/NA values from either the 'assays', 'sample.annotation',
+#' 'both' or 'none'. If 'assays' is selected, the genes that contains missing/NA values will be excluded. If 'sample.annotation'
+#' is selected, the samples that contains NA or missing values for each 'variables' will be excluded. By default, it is
+#' set to 'both'.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
 #' @param plot.output Logical. Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.
@@ -19,6 +29,9 @@
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous variable
 #' and if requested the associated boxplot.
+#'
+#'
+#' @author Ramyar Molania
 
 
 #' @importFrom SummarizedExperiment assays assay
