@@ -58,6 +58,8 @@
 
 #' @return A SummarizedExperiment object or a list that contains all the PRPS sets.
 
+#' @author Ramyar Molania
+
 #' @importFrom SummarizedExperiment assay colData
 #' @importFrom dplyr count
 #' @importFrom tidyr %>%
@@ -79,25 +81,27 @@ supervisedPRPS <- function(
         cont.cor.coef = c(0.7, 0.7),
         remove.na = 'both',
         save.se.obj = TRUE,
-        plot.output=TRUE,
+        plot.output = TRUE,
         verbose = TRUE
-        ) {
-    printColoredMessage(message = '------------The supervisedPRPS function starts.',
-                          color = 'white',
-                          verbose = verbose)
-    ### Assess the input
-    if (length(assay.name) > 1 || is.null(assay.name)) {
-        stop('Please provide a single assay.name.')
+) {
+    printColoredMessage(message = '------------The supervisedPRPS function starts:',
+                        color = 'white',
+                        verbose = verbose)
+    # check some functions inputs ####
+    if (is.null(assay.name)) {
+        stop('The "assay.name" cannot be empty.')
+    } else if (length(assay.name) > 1){
+        stop('The "assay.name" must contain only an assay name.')
     } else if (is.null(bio.variable)) {
-        stop('The function requires some known biological groups.')
+        stop('The "bio.variable" cannot be empty.')
     } else if (is.null(uv.variables)) {
-        stop('The function requires known sources of unwanted variation groups.')
+        stop('The "uv.variables" cannot be empty.')
     } else if (is.null(batch.variable)) {
-        stop('The function requires a batch variable.')
+        stop('The "batch.variable" cannot be empty.')
     }
 
-    ### Assess the correlation btw variables
-    if(assess.variables){
+    # check the correlations between bio variables and uv variable separately ####
+    if (assess.variables) {
         se.obj <- variablesCorrelation(
             se.obj = se.obj,
             bio.variables = bio.variable,
@@ -106,31 +110,29 @@ supervisedPRPS <- function(
             cont.cor.coef = cont.cor.coef,
             assess.se.obj = assess.se.obj,
             remove.na = remove.na,
-            verbose = verbose)
+            verbose = verbose
+        )
         uv.variables <- se.obj$uv.variables
         bio.variable <- se.obj$bio.variable
         se.obj <- se.obj$se.obj
     }
 
-    ### Define categorical and continuous variables
+    # define categorical and continuous variables ####
     uv.class <- sapply(
         uv.variables,
-        function(x) class(colData(se.obj)[[x]])
-         )
+        function(x) class(colData(se.obj)[[x]]))
     categorical.uv <- names(uv.class[which(uv.class %in% c('character', 'factor'))])
     continuous.uv <- uv.variables[!uv.variables %in% categorical.uv]
 
-    ### PRPS for categorical variables
-    if(length(categorical.uv) > 0){
-    printColoredMessage(
-        message = '### Create PRPS for all categorical sources of unwanted variation.',
-        color = 'blue',
-        verbose = verbose
-        )
-        if(!save.se.obj){
+    # prps for categorical variables ####
+    if (length(categorical.uv) > 0) {
+        printColoredMessage(message = '-- Create PRPS for all categorical sources of unwanted variation:',
+                            color = 'magenta',
+                            verbose = verbose)
+        if (!save.se.obj) {
             categorical.uv.prps <- lapply(
                 categorical.uv,
-                function(x){
+                function(x) {
                     prpsForCategoricalUV(
                         se.obj = se.obj,
                         assay.name = assay.name,
@@ -148,7 +150,7 @@ supervisedPRPS <- function(
             names(categorical.uv.prps) <- categorical.uv
             categorical.uv.prps.all <- do.call(cbind, categorical.uv.prps)
         } else {
-            for(x in categorical.uv){
+            for (x in categorical.uv) {
                 se.obj <- prpsForCategoricalUV(
                     se.obj = se.obj,
                     assay.name = assay.name,
@@ -160,22 +162,17 @@ supervisedPRPS <- function(
                     save.se.obj = TRUE,
                     pseudo.count = pseudo.count,
                     remove.na = remove.na,
-                    verbose = verbose
-                )
-            }
+                    verbose = verbose)}
         }
-
     }
-    if(length(continuous.uv) > 0){
-    printColoredMessage(
-        message = '### Create PRPS for all categorical sources of unwanted variation.',
-        color = 'blue',
-        verbose = verbose
-        )
-        if(!save.se.obj){
+    if (length(continuous.uv) > 0) {
+        printColoredMessage(message = '-- Create PRPS for all continuous sources of unwanted variation:',
+                            color = 'magenta',
+                            verbose = verbose)
+        if (!save.se.obj) {
             continuous.uv.prps <- lapply(
                 continuous.uv,
-                function(x){
+                function(x) {
                     prpsForContinuousUV(
                         se.obj = se.obj,
                         assay.name = assay.name,
@@ -183,19 +180,18 @@ supervisedPRPS <- function(
                         bio.variable = bio.variable,
                         batch.variable = batch.variable,
                         min.sample.for.prps = min.sample.for.prps,
-                        min.sample.per.batch=min.sample.per.batch,
+                        min.sample.per.batch = min.sample.per.batch,
                         apply.log = apply.log,
                         assess.se.obj = FALSE,
                         save.se.obj = save.se.obj,
                         pseudo.count = pseudo.count,
                         remove.na = remove.na,
-                        verbose = verbose
-                    )
+                        verbose = verbose)
                 })
             names(continuous.uv.prps) <- continuous.uv
             continuous.uv.prps.all <- do.call(cbind, continuous.uv.prps)
         } else{
-            for(x in continuous.uv){
+            for (x in continuous.uv) {
                 se.obj <- prpsForContinuousUV(
                     se.obj = se.obj,
                     assay.name = assay.name,
@@ -203,112 +199,127 @@ supervisedPRPS <- function(
                     bio.variable = bio.variable,
                     batch.variable = batch.variable,
                     min.sample.for.prps = min.sample.for.prps,
-                    min.sample.per.batch=min.sample.per.batch,
+                    min.sample.per.batch = min.sample.per.batch,
                     apply.log = apply.log,
                     assess.se.obj = FALSE,
                     save.se.obj = TRUE,
                     pseudo.count = pseudo.count,
                     remove.na = remove.na,
-                    verbose = verbose
-                )
-            }
+                    verbose = verbose)}
         }
     }
-    #### Ploting output
-    if (plot.output==TRUE && (length(categorical.uv) > 0)){
+    # plot output #####
+    if (plot.output == TRUE && (length(categorical.uv) > 0)) {
         ## PRPS map plotting
-        printColoredMessage(message= '### Plotting PRPS map for each uv categorical variable.',
-                            color = 'magenta',
-                            verbose = verbose)
+        printColoredMessage(
+            message = '### Plotting PRPS map for each uv categorical variable.',
+            color = 'magenta',
+            verbose = verbose
+        )
         # Plot for each categorical variable
-        catvar<-biology<-use<-n<-NULL
-        plot.all<- lapply(
-            categorical.uv,
-            function(var){
-                info <- as.data.frame(SummarizedExperiment::colData(se.obj))
-                info$catvar <- as.factor(paste0(info[,var]))
-                info$biology <- as.factor(paste0(info[,bio.variable]))
-                df_count <- info %>%
-                    count(catvar, biology)
-                df_count$use <- 'unselected'
-                df_count$use[df_count$n >= min.sample.for.prps] <- 'Selected'
-                p=ggplot(df_count, aes(x = catvar, y = biology)) +
-                    geom_count(aes(color = use)) +
-                    geom_text(aes(
-                        label = n,
-                        hjust = 0.5,
-                        vjust = 0.5
-                    )) +
-                    xlab(paste0(var)) +
-                    ylab('Biological groups') +
-                    theme_bw()+
-                    theme(
-                        axis.line = element_line(colour = 'black', size = .85),
-                        axis.title.x = element_text(size = 18),
-                        axis.title.y = element_text(size = 0),
-                        axis.text.x = element_text(size = 10,angle = 45,hjust = 1),
-                        axis.text.y = element_text(size = 12, angle = 45, hjust = 1),
-                        legend.position = 'none')
-                p
-            })
-        names(plot.all)=categorical.uv
+        catvar <- biology <- use <- n <- NULL
+        plot.all <- lapply(categorical.uv,
+                           function(var) {
+                               info <- as.data.frame(SummarizedExperiment::colData(se.obj))
+                               info$catvar <- as.factor(paste0(info[, var]))
+                               info$biology <-
+                                   as.factor(paste0(info[, bio.variable]))
+                               df_count <- info %>%
+                                   count(catvar, biology)
+                               df_count$use <- 'unselected'
+                               df_count$use[df_count$n >= min.sample.for.prps] <-
+                                   'Selected'
+                               p = ggplot(df_count, aes(x = catvar, y = biology)) +
+                                   geom_count(aes(color = use)) +
+                                   geom_text(aes(
+                                       label = n,
+                                       hjust = 0.5,
+                                       vjust = 0.5
+                                   )) +
+                                   xlab(paste0(var)) +
+                                   ylab('Biological groups') +
+                                   theme_bw() +
+                                   theme(
+                                       axis.line = element_line(colour = 'black', size = .85),
+                                       axis.title.x = element_text(size = 18),
+                                       axis.title.y = element_text(size = 0),
+                                       axis.text.x = element_text(
+                                           size = 10,
+                                           angle = 45,
+                                           hjust = 1
+                                       ),
+                                       axis.text.y = element_text(
+                                           size = 12,
+                                           angle = 45,
+                                           hjust = 1
+                                       ),
+                                       legend.position = 'none'
+                                   )
+                               p
+                           })
+        names(plot.all) = categorical.uv
 
         ### Add plots to SummarizedExperiment object
-        printColoredMessage(message= '### Saving the PRPS map plot to the metadata of the SummarizedExperiment object.',
-                            color = 'magenta',
-                            verbose = verbose)
+        printColoredMessage(
+            message = '### Saving the PRPS map plot to the metadata of the SummarizedExperiment object.',
+            color = 'magenta',
+            verbose = verbose
+        )
         ## Check if metadata plot already exist
-        if(length(se.obj@metadata)==0 ) {
+        if (length(se.obj@metadata) == 0) {
             se.obj@metadata[['plot']] <- list()
         }
         ## Check if metadata plot already exist
-        if(!'plot' %in% names(se.obj@metadata) ) {
+        if (!'plot' %in% names(se.obj@metadata)) {
             se.obj@metadata[['plot']] <- list()
         }
         ## Check if metadata plot already exist for this metric
-        if(!'PRPS' %in% names(se.obj@metadata[['plot']]) ) {
+        if (!'PRPS' %in% names(se.obj@metadata[['plot']])) {
             se.obj@metadata[['plot']][['PRPS']] <- list()
         }
 
-        for (v in categorical.uv){
+        for (v in categorical.uv) {
             ## Save the new plot
-            se.obj@metadata[['plot']][['PRPS']][[v]]<-plot.all[[v]]
+            se.obj@metadata[['plot']][['PRPS']][[v]] <- plot.all[[v]]
         }
 
     }
 
     ####### Save output
-    if(save.se.obj){
+    if (save.se.obj) {
         printColoredMessage(message = '------------The supervised.prps function finished.',
                             color = 'white',
                             verbose = verbose)
         return(se.obj)
-    }else{
+    } else{
         printColoredMessage(message = '------------The supervised.prps function finished.',
                             color = 'white',
                             verbose = verbose)
-        if(length(continuous.uv) > 0 & length(categorical.uv) > 0){
-            return(list(
-                categorical.uv.prps = categorical.uv.prps,
-                continuous.uv.prps = continuous.uv.prps,
-                all.prps = cbind(categorical.uv.prps.all, continuous.uv.prps.all))
+        if (length(continuous.uv) > 0 & length(categorical.uv) > 0) {
+            return(
+                list(
+                    categorical.uv.prps = categorical.uv.prps,
+                    continuous.uv.prps = continuous.uv.prps,
+                    all.prps = cbind(categorical.uv.prps.all, continuous.uv.prps.all)
+                )
             )
-        } else if (length(continuous.uv) > 0 & length(categorical.uv) == 0){
-            return(list(
-                continuous.uv.prps = continuous.uv.prps,
-                all.prps = continuous.uv.prps.all
-            ))
-        } else if (length(continuous.uv) == 0 & length(categorical.uv) > 0){
-            return(list(
-                categorical.uv.prps = categorical.uv.prps,
-                all.prps = categorical.uv.prps.all
-            ))
+        } else if (length(continuous.uv) > 0 &
+                   length(categorical.uv) == 0) {
+            return(
+                list(
+                    continuous.uv.prps = continuous.uv.prps,
+                    all.prps = continuous.uv.prps.all
+                )
+            )
+        } else if (length(continuous.uv) == 0 &
+                   length(categorical.uv) > 0) {
+            return(
+                list(
+                    categorical.uv.prps = categorical.uv.prps,
+                    all.prps = categorical.uv.prps.all
+                )
+            )
         }
     }
 
 }
-
-
-
-
-
