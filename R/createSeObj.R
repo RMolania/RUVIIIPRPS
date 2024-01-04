@@ -26,7 +26,7 @@
 #' @importFrom SummarizedExperiment assay SummarizedExperiment rowData
 #' @importFrom biomaRt getBM useMart useDataset
 #' @importFrom S4Vectors DataFrame
-#' @importFrom utils read.table
+#' @importFrom utils read.table data
 #' @export
 
 createSeObj <- function(
