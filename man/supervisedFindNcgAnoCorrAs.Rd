@@ -7,25 +7,24 @@
 supervisedFindNcgAnoCorrAs(
   se.obj,
   assay.name,
-  nb.ncg = 10,
   bio.variables,
   uv.variables,
+  nb.ncg = 10,
   ncg.selection.method = "AbsNoneOverlap",
   grid.nb = 0.05,
-  top.rank.bio.genes = 80,
-  top.rank.uv.genes = 80,
+  top.rank.bio.genes = 50,
+  top.rank.uv.genes = 50,
   min.sample.for.aov = 3,
   min.sample.for.correlation = 10,
   regress.out.uv.variables = NULL,
   regress.out.bio.variables = NULL,
   normalization = "CPM",
+  apply.log = TRUE,
+  pseudo.count = 1,
   corr.method = "spearman",
   a = 0.05,
   rho = 0,
-  apply.log = TRUE,
-  pseudo.count = 1,
   anova.method = "aov",
-  remove.na = "both",
   assess.ncg = TRUE,
   variables.to.assess.ncg = NULL,
   nb.pcs = 5,
@@ -36,21 +35,23 @@ supervisedFindNcgAnoCorrAs(
   cat.cor.coef = c(0.95, 0.95),
   cont.cor.coef = c(0.95, 0.95),
   save.se.obj = TRUE,
+  remove.na = "both",
   verbose = TRUE
 )
 }
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.name}{Symbol.Indicates a name of assay in the SummarizedExperiment object.
-This assay will be used to find a set set of negative control genes.}
+\item{assay.name}{Symbol. Indicates a name of an assay in the SummarizedExperiment object. The selected assay should
+be the one that will be used for RUV-III-PRPS normalization.}
 
-\item{nb.ncg}{Numeric.Indicates the percentage of the total genes to be selected a NCG set,
-by default it is set to 10 percent.}
+\item{bio.variables}{Symbols. Indicates the columns names that contain biological variables in the
+SummarizedExperiment object.}
 
-\item{bio.variables}{Symbole. Indicates the columns names that contain bioloical variables in the SummarizedExperiment object.}
+\item{uv.variables}{Symbols. Indicates the columns names that contains UV variables in the SummarizedExperiment object.}
 
-\item{uv.variables}{Symbole. Indicates the columns names that contain unwanted variation variables in the SummarizedExperiment object.}
+\item{nb.ncg}{Numeric. Indicates how many genes should be selected as NCG. The value is the percentage of the total
+genes in the SummarizedExperiment object. The default is 10 percent.}
 
 \item{ncg.selection.method}{Symbol.Indicates how to select a set genes as NCG.
 For individual genes, the two-way ANOVA calculates F-statistics for biological and
@@ -91,22 +92,18 @@ before performing correlation and ANOVA. The default is NULL.}
 \item{normalization}{Symbols.Indicates winch normalization method to use for library size adjustment before fining genes that are highly
 affected by biological variation. The default is CPM. Refer to the 'applyOtherNormalization' function for further details.}
 
-\item{corr.method}{Numeric.Indicates which correlation methods (pearson or spearman) should be used for the correlation analyses. The
-default is 'spearman'.}
-
-\item{a}{TBBB}
-
-\item{rho}{TBBB}
-
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation.}
 
-\item{anova.method}{Symbols. Indicates which ANOVA methods to use. The default in 'aov'. Refer to the function "genesVariableAnova" for more details.}
+\item{corr.method}{Numeric.Indicates which correlation methods (pearson or spearman) should be used for the correlation analyses. The
+default is 'spearman'.}
 
-\item{remove.na}{Symbol. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
-'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
-samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to both'.}
+\item{a}{The significance level used for the confidence intervals in the correlation, by default it is set to 0.05.}
+
+\item{rho}{The value of the hypothesised correlation to be used in the hypothesis testing, by default it is set to 0.}
+
+\item{anova.method}{Symbols. Indicates which ANOVA methods to use. The default in 'aov'. Refer to the function "genesVariableAnova" for more details.}
 
 \item{assess.ncg}{Logical. Indicates whether to assess the performance of selected NCG or not.
 This analysis involves principal component analysis on the selected NCG and
@@ -119,13 +116,17 @@ needs to be evaluated. The default is NULL. This means all the variables in the 
 
 \item{nb.pcs}{Numeric. Indicates the number of the first principal components on selected NCG to be used to assess the performance of NCGs.}
 
-\item{scale}{Logical. Indicates whether to scale the data before applying Principal component analysis. The default is FALSE.}
+\item{scale}{Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
+is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
+mean square otherwise. The default is FALSE.}
 
-\item{center}{Logical. Indicates whether to center the data before applying principal component analysis or not. The default is TRUE.}
+\item{center}{Logical. Indicates whether to scale the data or not before applying SVD. If center is TRUE, then
+centering is done by subtracting the column means of the assay from their corresponding columns. The default is TRUE.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object or not.}
 
-\item{assess.variables}{Logical. Indicates whether to assess the association between the bioloical and unwanted variation variables seprartly.}
+\item{assess.variables}{Logical. Indicates whether to assess the association between the biological and unwanted
+variation variables separately. Refer to the variablesCorrelation function for more details. Th default is FALSE.}
 
 \item{cat.cor.coef}{Vector of two numerical values. Indicates the cut-off of the correlation coefficient between each pair of
 categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
@@ -138,16 +139,27 @@ continuous variables. The first one is between each pair of 'uv.variables' and t
 If the correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest variance will
 be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.7.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the result of the function in the metadata of the SummarizedExperiment object or
+to output the result. The default is TRUE.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{remove.na}{Symbol. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
+'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
+samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to both'.}
+
+\item{verbose}{Logical. Indicates whether to display or not a detailed level of output or messages during the execution
+of the function. The default setting is TRUE.}
 }
 \value{
-Either the SummarizedExperiment object containing the a set of negative control genes
-or a logical vector of the selected negative control genes
+Either the SummarizedExperiment object containing the a set of negative control genes or a logical vector of
+the selected negative control genes
 }
 \description{
-is used to find a set of negative control genes (NCG) using ANOVA and correlation analyses across all samples.
+This function uses the correlation and ANOVA analyses across all samples to find a set of genes as negative control
+genes for RUV-III-PRPS normalization. The correlation and ANOVA are used to find genes that are highly affected by
+continuous and categorical sources of variation respectively. The function selects genes as NCG that show possible
+high correlation coefficients and F-statistics with the sources of unwanted variation and low correlation coefficients
+and F-statistics with the sources of biological variation. The function uses different approaches to perform the final selection.
+}
+\author{
+Ramyar Molania
 }
