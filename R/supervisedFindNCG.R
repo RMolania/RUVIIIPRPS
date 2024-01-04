@@ -52,7 +52,7 @@
 supervisedFindNCG <- function(
     se.obj,
     assay.name,
-    approach = 'PbPb',
+    approach = 'PbPbio',
     nb.ncg = 10,
     top.rank.bio.genes = 50,
     top.rank.uv.genes = 50,
