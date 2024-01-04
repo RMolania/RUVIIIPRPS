@@ -78,9 +78,7 @@ plotRLE <- function(
         levels(assay.names),
         function(x) {
             printColoredMessage(
-                message = paste0('-- Compute RLE on the ',
-                                 x,
-                                 ' assay.'),
+                message = paste0('-- Compute RLE on the ', x, ' assay.'),
                 color = 'magenta',
                 verbose = verbose)
 
