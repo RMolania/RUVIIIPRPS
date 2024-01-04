@@ -29,7 +29,8 @@
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous variable
 #' and if requested the associated boxplot.
-
+#'
+#'
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom matrixTests row_oneway_equalvar row_oneway_welch
 #' @importFrom dplyr mutate
