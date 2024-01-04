@@ -1,21 +1,32 @@
-#' is used to calculate and plot RLE (Relative Log Expression) of assays in a SummarizedExperiment object.
+#' is used to calculate and plot relative log expression (RLE) of RNA-seq data.
+#'
+#' @description
+#' This functions calculates relative log expression (RLE) of an RNA-seq assay in a SummarizedExperiment object.
+#'
 #'
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. Optional symbol or list of Symbos for the selection of the name(s)
-#' of the assay(s) of the SummarizedExperiment object to calculate and plot RLE. By default
-#  all the assays of the SummarizedExperiment object will be selected.
+#' @param assay.names Symbol. Optional symbol or list of symbols for the selection of the name(s) of the assay(s) of the
+#' SummarizedExperiment object to calculate and plot RLE. By default all the assays of the SummarizedExperiment object
+#' will be selected.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. The default is TRUE.
-#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-#' by default it is set to 1.
+#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation, by
+#' default it is set to 1.
 #' @param ylim.rle.plot Numeric. A vector of two values for the ylim of the RLE plot.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param remove.na To remove NA or missing values from the assays or not. The options are 'assays' and 'none'
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment object or not. See the checkSeObj
+#' function for more details.
+#' @param remove.na Symbol. To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
+#' The default is assays, so all the NA or missing values from the selected assays will be removed before computing the
+#' RLE.
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
 #' to output the result. By default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
-#' @return list List of the computed RLE and the associated plot
+#' @return A SummarizedExperiment or a ist of the computed RLE and the associated plots
+#'
+#'
+#' @author Ramyar Molania
+#'
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom matrixStats rowMedians colMedians colIQRs
 #' @importFrom stats median
