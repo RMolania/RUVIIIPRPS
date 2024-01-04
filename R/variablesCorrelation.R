@@ -2,13 +2,12 @@
 #'
 #'
 #' @description
-#' The function assesses the association between all biological and unwanted variation variables separately. If two categorical
-#' variables are highly association, the function keeps one that has the highest number of factors. For two continuous variables,
+#' The function assesses the association between all selected biological and unwanted variation variables separately. If two categorical
+#' variables are highly correlated, the function keeps one that has the highest number of factors. For two continuous variables,
 #' the one with higher variance will be kept.
 #'
 #'
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.name String for the selection of the name of the assay of the SummarizedExperiment class object.
 #' @param bio.variables String of the label of (a) categorical variable(s) that specifies major biological groups
 #' such as samples types from colData(se).
 #' @param uv.variables String or vector of strings of the label of continuous or categorical variable(s)
@@ -54,7 +53,6 @@
 
 #' @importFrom SummarizedExperiment assay colData
 #' @importFrom DescTools ContCoef
-#' @importFrom stats complete.cases
 #' @export
 
 variablesCorrelation <- function(
@@ -76,9 +74,9 @@ variablesCorrelation <- function(
     if (max(cat.cor.coef) > 1) {
         stop('The maximum value of "cat.cor.coef" cannot be more than 1.')
     } else if (max(cont.cor.coef) > 1) {
-        stop('The maximum value of "cont.cor.coef" argument cannot be more than 1.')
+        stop('The maximum value of "cont.cor.coef" cannot be more than 1.')
     } else if (length(cont.cor.coef) == 1 | length(cat.cor.coef) == 1) {
-        stop('Please provide two correlations in "cat.cor.coef" and "cont.cor.coef" for both unwanted and biological variation.')
+        stop('Please provide two correlations in "cat.cor.coef" and "cont.cor.coef" for both unwanted and biological variables.')
     } else if (length(intersect(bio.variables, uv.variables)) != 0) {
         if (length(intersect(bio.variables, uv.variables)) == 1) {
             a <- 'a common variable'
@@ -355,7 +353,7 @@ variablesCorrelation <- function(
                 verbose = verbose)
         }
         ## variation in biological variables ####
-        printColoredMessage(message = '--Checke the levels and variance of categorical and continuous biological variables, respectively:',
+        printColoredMessage(message = '--Check the levels and variance of categorical and continuous biological variables, respectively:',
                             color = 'magenta',
                             verbose = verbose)
         check.bio.vars <- lapply(
@@ -513,7 +511,7 @@ variablesCorrelation <- function(
                                     all.pairs[, x][2],
                                     ' are not highly correlated (spearman.corr.coef:',
                                     corr.coef,
-                                    '). PRPS will be created for individual ones.')),
+                                    ').')),
                             color = 'blue',
                             verbose = verbose
                         )
@@ -532,7 +530,7 @@ variablesCorrelation <- function(
                         'The ',
                         paste0(continuous.bio, collapse = ' & '),
                         a,
-                        'of biological variation to create PRPS.'
+                        'of biological variation.'
                     ),
                 color = 'blue',
                 verbose = verbose)
