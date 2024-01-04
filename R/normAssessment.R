@@ -53,7 +53,7 @@ normAssessment = function(
         se.obj,
         assay.names = 'All',
         apply.log = TRUE,
-        variables = NULL,
+        variables,
         output.file = NULL,
         fast.pca = TRUE,
         nb.pcs = 10,
@@ -124,7 +124,7 @@ normAssessment = function(
         pseudo.count = pseudo.count,
         fast.pca = fast.pca,
         nb.pcs = nb.pcs,
-        assess.se.obj = FALSE,
+        assess.se.obj = assess.se.obj,
         verbose = verbose)
 
     # categorical variables ####
@@ -153,7 +153,7 @@ normAssessment = function(
                     variable = x,
                     color = color.group,
                     fast.pca = fast.pca,
-                    assess.se.obj = FALSE,
+                    assess.se.obj = assess.se.obj,
                     verbose = verbose)
                 return(pca.res)
             })
@@ -174,7 +174,7 @@ normAssessment = function(
                 assay.names = assay.names,
                 variable = x,
                 fast.pca = fast.pca,
-                assess.se.obj = FALSE,
+                assess.se.obj = assess.se.obj,
                 verbose = verbose)
 
             ## adjusted rand index ####
@@ -189,7 +189,7 @@ normAssessment = function(
                 assay.names = assay.names,
                 variable = x,
                 fast.pca = fast.pca,
-                assess.se.obj = FALSE,
+                assess.se.obj = assess.se.obj,
                 verbose = verbose)
 
             ## anova ####
@@ -206,7 +206,7 @@ normAssessment = function(
                 variable = x,
                 apply.log = apply.log,
                 pseudo.count = pseudo.count,
-                assess.se.obj = FALSE,
+                assess.se.obj = assess.se.obj,
                 verbose = verbose
             )
 
@@ -225,7 +225,7 @@ normAssessment = function(
                 variable = x,
                 fast.pca = fast.pca,
                 nb.pcs = nb.pcs,
-                assess.se.obj = FALSE,
+                assess.se.obj = assess.se.obj,
                 verbose = verbose)
         }
 
