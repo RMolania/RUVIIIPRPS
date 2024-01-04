@@ -32,11 +32,12 @@ to speed up the process, by default is set to 'TRUE'.}
 
 \item{nb.pcs}{Numeric. The number of first left singular vectors to be calculated for the fast PCA process, by default is set to 10.}
 
-\item{scale}{Logical. Indicates whether to scale the data or not.  If scale is TRUE then scaling is done by dividing the (centered)
-columns of assays by their standard deviations if center is TRUE, and the root mean square otherwise.The default is FALSE.}
+\item{scale}{Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
+is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
+mean square otherwise. The default is FALSE.}
 
-\item{center}{Logical.Indicates whether to scale the data or not. If center is TRUE then centering is done by subtracting the column means (omitting NAs)
-of x from their corresponding columns. The default is TRUE.}
+\item{center}{Logical. Indicates whether to scale the data or not. If center is TRUE, then centering is done by
+subtracting the column means of the assay from their corresponding columns. The default is TRUE.}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
 log2 transformation will be applied.}
