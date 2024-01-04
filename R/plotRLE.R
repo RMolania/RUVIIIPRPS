@@ -5,7 +5,7 @@
 #'
 #'
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. Optional symbol or list of symbols for the selection of the name(s) of the assay(s) of the
+#' @param assay.names Symbol. Symbol or list of symbols for the selection of the name(s) of the assay(s) of the
 #' SummarizedExperiment object to calculate and plot RLE. By default all the assays of the SummarizedExperiment object
 #' will be selected.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. The default is TRUE.
