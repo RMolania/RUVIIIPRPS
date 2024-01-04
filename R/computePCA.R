@@ -1,4 +1,9 @@
-#' is used to perform Principal Component Analysis (PCA) using singular value decomposition of the assays in a SummarizedExperiment object.
+#' is used to perform Principal Component Analysis (PCA) using singular value decomposition.
+#'
+#'
+#' @description
+#' A short description...
+#'
 #'
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. Optional symbol or list of symbols for the selection of the name(s)
