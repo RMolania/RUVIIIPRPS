@@ -50,29 +50,29 @@ identifyVariation = function(
         se.obj,
         assay.names = 'All',
         apply.log = TRUE,
-        variables=NULL,
-        output.file=NULL,
+        variables = NULL,
+        output.file = NULL,
         fast.pca = TRUE,
         nb.pcs = 10,
         assess.se.obj = TRUE,
         verbose = TRUE,
         pseudo.count = 1
-){
+) {
     printColoredMessage(message = '------------The identifyVariation function starts.',
                         color = 'white',
                         verbose = verbose)
 
-
-    se.obj=RUVIIIPRPS::normAssessment(se.obj=se.obj,
-                                   assay.names = assay.names,
-                                   apply.log = apply.log,
-                                   variables=variables,
-                                   output.file=output.file,
-                                   fast.pca = fast.pca,
-                                   nb.pcs = nb.pcs,
-                                   assess.se.obj = assess.se.obj,
-                                   verbose = verbose,
-                                   pseudo.count = pseudo.count)
+    se.obj <- RUVIIIPRPS::normAssessment(
+        se.obj = se.obj,
+        assay.names = assay.names,
+        apply.log = apply.log,
+        variables = variables,
+        output.file = output.file,
+        fast.pca = fast.pca,
+        nb.pcs = nb.pcs,
+        assess.se.obj = assess.se.obj,
+        verbose = verbose,
+        pseudo.count = pseudo.count)
 
     printColoredMessage(message = '------------The identifyVariation function finished.',
                         color = 'white',
