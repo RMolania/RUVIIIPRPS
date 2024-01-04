@@ -4,8 +4,8 @@
 #' @description
 #' This function applies the RUVIII-PRPS method on an assay of a SummarizedExperiment object.
 #' The steps involves:
-#' - Creation of the Pseudo-Replicates of Pseudo-Samples (PRPS)
-#' - Define Negative Controls Genes (NCG)
+#' - Create of the Pseudo-Replicates of Pseudo-Samples (PRPS) sets,
+#' - Find Negative Controls Genes (NCG),
 #' - Run RUVIII-PRPS for multiple k values (the dimension of the unwanted variation).
 #'
 #'
@@ -67,7 +67,7 @@ normalise <- function(
         uv.variables.prps,
         batch.variable.prps,
         min.sample.for.prps = 3,
-        min.sample.per.batch.prps=6,
+        min.sample.per.batch.prps = 6,
         assess.cor.variables.prps = FALSE,
         norm.assay.name.ncg,
         normalization.ncg = 'CPM',
@@ -86,14 +86,14 @@ normalise <- function(
         remove.na = 'both',
         verbose = TRUE
 ) {
-    printColoredMessage(message = '------------The normalise function starts.',
+    printColoredMessage(message = '------------The normalise function starts:',
                         color = 'white',
                         verbose = verbose)
 
-    ### Assess the input
-    if(is.null(k)){
+    # check some functions inputs ####
+    if (is.null(k)) {
         stop('k cannot be 0. This means no adjustment will be made.')
-    } else if(is.null(assay.name)){
+    } else if (is.null(assay.name)) {
         stop('No assay name has been provided.')
     }
     if (length(assay.name) > 1) {
@@ -101,66 +101,70 @@ normalise <- function(
     }
 
     if (missing(norm.assay.name.ncg)) {
-        stop('norm.assay.name.ncg is empty. Please select an assay to use for the Negative Control Genes selection or
-        set norm.assay.name.ncg to NULL and set apply.normalization.ncg to TRUE.')
+        stop(
+            'norm.assay.name.ncg is empty. Please select an assay to use for the Negative Control Genes selection or
+        set norm.assay.name.ncg to NULL and set apply.normalization.ncg to TRUE.'
+        )
     }
 
 
-    ########### Creation of PRPS ###########
-    se.obj= supervisedPRPS(se.obj=se.obj,
-                       assay.name=assay.name,
-                       bio.variable= bio.variable.prps,
-                       uv.variables=uv.variables.prps,
-                       batch.variable = batch.variable.prps,
-                       min.sample.for.prps = min.sample.for.prps,
-                       min.sample.per.batch=min.sample.per.batch.prps,
-                       apply.log = apply.log,
-                       pseudo.count = pseudo.count,
-                       assess.se.obj = assess.se.obj,
-                       assess.cor.variables = assess.cor.variables.prps,
-                       save.se.obj = TRUE,
-                       verbose = verbose)
-
-
-    ############## NCG ####################
-    se.obj=supervisedFindNCG(se.obj=se.obj,
-                         assay.name=norm.assay.name.ncg,
-                         bio.variables= bio.variables.ncg,
-                         uv.variables= uv.variables.ncg,
-                         nb.ncg = nb.ncg,
-                         regress.out.uv.variables =regress.out.uv.variables.ncg,
-                         regress.out.bio.variables = regress.out.bio.variables.ncg,
-                         normalization =  normalization.ncg,
-                         assess.se.obj = assess.se.obj,
-                         apply.log = apply.log,
-                         pseudo.count = pseudo.count,
-                         save.se.obj = TRUE,
-                         verbose = verbose)
-
-    ############## RUVIII-PRPS ####################
-    replicate.data=t(do.call(cbind,se.obj@metadata[['PRPS']][['supervised']]))
-    se.obj=ruvIIIMultipleK(se.obj=se.obj,
-                    assay.name=assay.name,
-                    apply.log=apply.log,
-                    pseudo.count = pseudo.count,
-                    replicate.data=replicate.data,
-                    ctl=se.obj@metadata[['NCG']],
-                    k = k,
-                    eta = eta,
-                    include.intercept = include.intercept,
-                    apply.average.rep = apply.average.rep,
-                    fullalpha = fullalpha,
-                    return.info = FALSE,
-                    inputcheck = inputcheck,
-                    assess.se.obj = assess.se.obj,
-                    remove.na = 'measurements',
-                    save.se.obj = TRUE,
-                    verbose = verbose
+    # create of PRPS ####
+    se.obj = supervisedPRPS(
+        se.obj = se.obj,
+        assay.name = assay.name,
+        bio.variable = bio.variable.prps,
+        uv.variables = uv.variables.prps,
+        batch.variable = batch.variable.prps,
+        min.sample.for.prps = min.sample.for.prps,
+        min.sample.per.batch = min.sample.per.batch.prps,
+        apply.log = apply.log,
+        pseudo.count = pseudo.count,
+        assess.se.obj = assess.se.obj,
+        assess.cor.variables = assess.cor.variables.prps,
+        save.se.obj = TRUE,
+        verbose = verbose
     )
 
+    # find NCG ####
+    se.obj = supervisedFindNCG(
+        se.obj = se.obj,
+        assay.name = norm.assay.name.ncg,
+        bio.variables = bio.variables.ncg,
+        uv.variables = uv.variables.ncg,
+        nb.ncg = nb.ncg,
+        regress.out.uv.variables = regress.out.uv.variables.ncg,
+        regress.out.bio.variables = regress.out.bio.variables.ncg,
+        normalization =  normalization.ncg,
+        assess.se.obj = assess.se.obj,
+        apply.log = apply.log,
+        pseudo.count = pseudo.count,
+        save.se.obj = TRUE,
+        verbose = verbose
+    )
+
+    # run the RUVIII-PRPS method ####
+    replicate.data = t(do.call(cbind, se.obj@metadata[['PRPS']][['supervised']]))
+    se.obj = ruvIIIMultipleK(
+        se.obj = se.obj,
+        assay.name = assay.name,
+        apply.log = apply.log,
+        pseudo.count = pseudo.count,
+        replicate.data = replicate.data,
+        ctl = se.obj@metadata[['NCG']],
+        k = k,
+        eta = eta,
+        include.intercept = include.intercept,
+        apply.average.rep = apply.average.rep,
+        fullalpha = fullalpha,
+        return.info = FALSE,
+        inputcheck = inputcheck,
+        assess.se.obj = assess.se.obj,
+        remove.na = 'measurements',
+        save.se.obj = TRUE,
+        verbose = verbose
+    )
     printColoredMessage(message = '------------The normalise function finished.',
                         color = 'white',
                         verbose = verbose)
     return(se.obj)
 }
-
