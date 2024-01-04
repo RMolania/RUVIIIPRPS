@@ -17,11 +17,10 @@ normalise(
   min.sample.per.batch.prps = 6,
   assess.cor.variables.prps = FALSE,
   norm.assay.name.ncg,
-  apply.normalization.ncg = FALSE,
   normalization.ncg = "CPM",
   bio.variables.ncg,
   uv.variables.ncg,
-  no.ncg = 1000,
+  nb.ncg = 1000,
   regress.out.uv.variables.ncg = FALSE,
   regress.out.bio.variables.ncg = FALSE,
   k = NULL,
@@ -67,9 +66,6 @@ variables.}
 \item{norm.assay.name.ncg}{String for the selection of the name of the assay of the SummarizedExperiment class object to use
 to define NCG. If you don't provide any assay, we recommend to set apply.normalization to TRUE.}
 
-\item{apply.normalization.ncg}{Logical Indicates whether to apply a normalization method to define NCG if the 'norm.assay.name.ncg'
-wasn't provided. By default it is set to FALSE.}
-
 \item{normalization.ncg}{String defining the normalization method to use from 'CPM', 'TMM', 'upper', 'full', 'median', 'VST',
 and 'Quantile'to define NCG. By default it is set to 'CPM'.}
 
@@ -79,7 +75,7 @@ such as samples types from colData(se) that will be used to find the negative co
 \item{uv.variables.ncg}{String or vector of strings of the label of continuous or categorical variable(s)
 such as samples types, batch or library size from colData(se) that will be used to find the negative controls.}
 
-\item{no.ncg}{Logical, TO BE BETTER DEFINED. if TRUE then a sample annotation the initially contains column names of the assays.???}
+\item{nb.ncg}{Logical, TO BE BETTER DEFINED. if TRUE then a sample annotation the initially contains column names of the assays.???}
 
 \item{regress.out.uv.variables.ncg}{TO BE DEFINED.}
 
