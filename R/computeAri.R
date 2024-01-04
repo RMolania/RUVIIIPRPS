@@ -4,28 +4,31 @@
 #' It can be used to assess how a group of biological samples are distributed across batches (i.e. example subtypes vs batch), and how batches ### update
 #'
 #'
-#' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
-#' @param assay.names Optional string or list of strings for the selection of the name(s)
-#' of the assay(s) of the SummarizedExperiment class object to compute the ARI. By default
-#  all the assays of the SummarizedExperiment class object will be selected.
-#' @param variable String of the label of a categorical variable such as
-#' sample types or batches from colData(se.obj).
-#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
-#' to speed up the process, by default is set to 'TRUE'.
+#' @param se.obj A SummarizedExperiment object.
+#' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
+#' SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.
+#' @param variable Symbol. Indicates the column name in the SummarizedExperiment object that contains a categorical
+#' variable such as sample types or batches.
+#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
+#' full range to speed up the process, by default is set to 'TRUE'.
 #' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 3.
-#' @param clustering.method Symbol. Indicates the clustering methods.
-#' @param hclust.method Symbol.
-#' @param dist.measure Indicates the clustering methods.
+#' @param clustering.method Symbol. Indicates which clustering methods to be used. The function provides the mclust or
+#' hclust methods. The default is hclust.
+#' @param hclust.method Symbol. Indicate the agglomeration method to be used for the hclust methid. This should be
+#' one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or
+#' "centroid" (= UPGMC). See the hclust function for more details.
+#' @param dist.measure Symbol. Indicates the distance measure to be used in the dist function. This must be one of
+#' "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". See the dist function for more details.
+#' @param plot.output Logical. Indicates whether to plot the ARI, by default it is set to FALSE.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
 #' to output the result. By default it is set to TRUE.
-#' @param plot.output Logical. Indicates whether to plot the ARI, by default it is set to FALSE.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #'
-#' @return SummarizedExperiment A SummarizedExperiment object containing the computed ARI
-#' on the categorical variable.
+#' @return A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
 #'
+#' @author Ramyar Molania
 #'
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom mclust mclustBIC Mclust adjustedRandIndex
@@ -43,8 +46,8 @@ computeARI <- function(
         clustering.method = 'hclust',
         hclust.method = 'complete',
         dist.measure = 'euclidian',
-        save.se.obj = TRUE,
         plot.output = FALSE,
+        save.se.obj = TRUE,
         assess.se.obj = TRUE,
         verbose = TRUE
         ) {
@@ -79,7 +82,7 @@ computeARI <- function(
     }
     if(clustering.method == 'hclust'){
         if(is.null(dist.measure)){
-            stop('The dist.measure cannot be when the clustering.method is hclust.')
+            stop('The dist.measure cannot be empty when the clustering.method is hclust.')
         } else if (!dist.measure %in% c('euclidian',
                                        'maximum',
                                        'manhattan',
