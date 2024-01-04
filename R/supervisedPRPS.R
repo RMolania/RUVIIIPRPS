@@ -97,7 +97,6 @@ supervisedPRPS <- function(
     if(assess.cor.variables){
         se.obj <- variablesCorrelation(
             se.obj = se.obj,
-            assay.name = assay.name,
             bio.variables = bio.variable,
             uv.variables = uv.variables,
             cat.cor.coef = cat.cor.coef,
