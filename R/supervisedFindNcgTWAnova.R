@@ -422,7 +422,7 @@ supervisedFindNcgTWAnova <- function(
         paste0(bio.variables, collapse = '&'),
         '||UV:',
         paste0(uv.variables, collapse = '&'),
-        '||Method:TwoWayAnova_Approach:',
+        '||Method:TWAnova:',
         ncg.selection.method,
         '||Data:',
         assay.name)
