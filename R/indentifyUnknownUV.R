@@ -59,7 +59,8 @@
 #' @param nb.pcs Numeric. A value to select the first principal components for clustering when the approach is set to 'PCA'.
 #' @param center Logical. Indicates whether to center the data or not before performing PCA. The default is TRUE.
 #' @param scale Logical. Indicates whether to scale the data or not before performing PCA. The default is FASLE.
-#' @param BSPARAM TBBBB
+#' @param BSPARAM symbol. Classes for specifying the type of singular value decomposition (SVD) algorithm and associated
+#' parameters. See the BiocSingular R package for more details.
 #' @param remove.na A symbol. Indicates whether to remove NA or missing values from either the 'assays',
 #' 'sample.annotation', 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be
 #' excluded. If 'sample.annotation' is selected, the samples that contains NA or missing values for any 'bio.variables'
