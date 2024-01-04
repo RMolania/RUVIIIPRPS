@@ -32,55 +32,64 @@
 #' @importFrom knitr kable
 #' @export
 
-prpsForCategoricalUV <- function(se.obj,
-                                 assay.name,
-                                 uv.variable,
-                                 bio.variable,
-                                 min.sample.for.prps = 3,
-                                 apply.log = TRUE,
-                                 pseudo.count = 1,
-                                 remove.na = 'both',
-                                 assess.se.obj = TRUE,
-                                 save.se.obj = TRUE,
-                                 verbose = TRUE) {
-    ## Check the input
+prpsForCategoricalUV <- function(
+        se.obj,
+        assay.name,
+        uv.variable,
+        bio.variable,
+        min.sample.for.prps = 3,
+        apply.log = TRUE,
+        pseudo.count = 1,
+        remove.na = 'both',
+        assess.se.obj = TRUE,
+        save.se.obj = TRUE,
+        verbose = TRUE
+) {
     printColoredMessage(message = '------------The prpsForCategoricalUV function starts:',
                         color = 'white',
                         verbose = verbose)
-    # assess se obj ####
-    if (assess.se.obj) {
-        se.obj <- checkSeObj(
-            se.obj = se.obj,
-            assay.names = assay.name,
-            variables = c(uv.variable, bio.variable),
-            remove.na = remove.na)
-    }
-    # checking the input of the function ####
+    # check some functions inputs ####
     if (length(assay.name) > 1) {
         stop('The function can only take a single assay.name.')
     } else if (is.null(assay)) {
         stop('The assay.name cannot be empty.')
     } else if (length(uv.variable) > 1) {
-        stop('The function can only take a single categorical variable for the uv.variable argument.')
+        stop(
+            'The function can only take a single categorical variable for the uv.variable argument.'
+        )
     } else if (is.null(uv.variable)) {
         stop('The uv.variable cannot be empty.')
     } else if (!class(se.obj[[uv.variable]]) %in% c('character', 'factor')) {
-        stop('The uv.variable should be a categorical source of unwanted variation, e.g., time effects')
+        stop(
+            'The uv.variable should be a categorical source of unwanted variation, e.g., time effects'
+        )
     } else if (length(unique(se.obj[[uv.variable]])) == 1) {
         stop('The uv.variable should have at least two levels.')
-    } else if(!is.null(bio.variable)){
+    } else if (!is.null(bio.variable)) {
         if (length(bio.variable) > 1) {
             stop('The function can only take a single biological variable.')
         } else if (!class(se.obj[[bio.variable]]) %in% c('character', 'factor')) {
-            stop('The bio.variable should be a categorical biological variable, e.g., cancer subtypes')
+            stop(
+                'The bio.variable should be a categorical biological variable, e.g., cancer subtypes'
+            )
         } else if (length(unique(se.obj[[bio.variable]])) == 1) {
             stop('The bio.variable should have at least two groups.')
         }
     } else if (min.sample.for.prps <= 1) {
         stop('The minimum value for the min.sample.for.prps is 2.')
     }
+
+    # assess SummarizedExperiment object ####
+    if (assess.se.obj) {
+        se.obj <- checkSeObj(
+            se.obj = se.obj,
+            assay.names = assay.name,
+            variables = c(uv.variable, bio.variable),
+            remove.na = remove.na
+        )
+    }
     ### replace "_" with "-"
-    if(!is.null(bio.variable)){
+    if (!is.null(bio.variable)) {
         se.obj[[bio.variable]] <- gsub('_', '-', se.obj[[bio.variable]])
     }
     se.obj[[uv.variable]] <- gsub('_', '-', se.obj[[uv.variable]])
@@ -91,58 +100,52 @@ prpsForCategoricalUV <- function(se.obj,
                             verbose = verbose)
         expre.data <- log2(assay(se.obj, assay.name) + pseudo.count)
     } else{
-        printColoredMessage(message = 'The assay data will be used for PRPS without any transformation.',
+        printColoredMessage(message = 'The assay data will be used for PRPS without any log transformation.',
                             color = 'blue',
                             verbose = verbose)
         expre.data <- assay(se.obj, assay.name)
     }
 
-        ### Table of biological variable and unwanted variable
-        bio.batch.table <- table(
-            colData(se.obj)[[bio.variable]],
-            colData(se.obj)[[uv.variable]]
-            )
-        bio.dist <- rowSums(bio.batch.table >= min.sample.for.prps)
-        bio.batch.table <- bio.batch.table[bio.dist > 1 , ]
-        bio.batch.table.to.plot <- bio.batch.table
-        if(nrow(bio.batch.table) == 0){
-            stop('There are not enough samples to create PRPS across the batches.')
-        }
-        ### create PRPS across uv_variables
-        printColoredMessage(
-            message = paste0(
-                '### Creating PRPS across all batches (ones that have at least ',
-                min.sample.for.prps,
-                ' samples of a homogenous biological population) of ',
-                uv.variable,
-                '.'
-            ),
-            color = 'magenta',
-            verbose = verbose
-        )
-        prps.sets <- lapply(
-            1:nrow(bio.batch.table),
-            function(y) {
-                selected.cat.var <- colnames(bio.batch.table)[bio.batch.table[y , ] >= min.sample.for.prps]
-                ps.matrix <- sapply(
-                    selected.cat.var,
-                    function(z) {
-                        index.sample <- colData(se.obj)[[bio.variable]] == row.names(bio.batch.table)[y] &
-                            colData(se.obj)[[uv.variable]] == z
-                        rowMeans(expre.data[, index.sample])
-                    })
-                colnames(ps.matrix) <- rep(
-                    paste(row.names(bio.batch.table)[y], uv.variable ,sep = '||'),
-                    ncol(ps.matrix))
-                ps.matrix
-            })
-        prps.sets <- do.call(cbind, prps.sets)
+    # table of biological variable and unwanted variable ####
+    bio.batch.table <- table(colData(se.obj)[[bio.variable]],
+                             colData(se.obj)[[uv.variable]])
+    bio.dist <- rowSums(bio.batch.table >= min.sample.for.prps)
+    bio.batch.table <- bio.batch.table[bio.dist > 1 ,]
+    bio.batch.table.to.plot <- bio.batch.table
+    if (nrow(bio.batch.table) == 0) {
+        stop('There are not enough samples to create PRPS across the batches.')
+    }
+    # create PRPS across all uv variables ####
+    printColoredMessage(
+        message = paste0(
+            '-- Creating PRPS across all batches (ones that have at least ',
+            min.sample.for.prps,
+            ' samples of a homogenous biological population) of ',
+            uv.variable,
+            '.'),
+        color = 'magenta',
+        verbose = verbose
+    )
+    prps.sets <- lapply(1:nrow(bio.batch.table),
+                        function(y) {
+                            selected.cat.var <-
+                                colnames(bio.batch.table)[bio.batch.table[y ,] >= min.sample.for.prps]
+                            ps.matrix <- sapply(selected.cat.var,
+                                                function(z) {
+                                                    index.sample <-
+                                                        colData(se.obj)[[bio.variable]] == row.names(bio.batch.table)[y] &
+                                                        colData(se.obj)[[uv.variable]] == z
+                                                    rowMeans(expre.data[, index.sample])
+                                                })
+                            colnames(ps.matrix) <- rep(paste(row.names(bio.batch.table)[y], uv.variable , sep = '||'),
+                                                       ncol(ps.matrix))
+                            ps.matrix
+                        })
+    prps.sets <- do.call(cbind, prps.sets)
 
     printColoredMessage(
         message = paste0(
-            length(unique(colnames(
-                prps.sets
-            ))),
+            length(unique(colnames(prps.sets))),
             ' sets of PRPS with the total number of ',
             ncol(prps.sets),
             ' pseudo-samples are created between different batches of the ',
@@ -152,47 +155,76 @@ prpsForCategoricalUV <- function(se.obj,
         color = 'blue',
         verbose = verbose
     )
-    if(verbose){
-        bio.batch.table.to.plot[bio.batch.table.to.plot >= min.sample.for.prps] <- 'PS'
-        bio.batch.table.to.plot[bio.batch.table.to.plot < min.sample.for.prps] <- 'No'
+    if (verbose) {
+        bio.batch.table.to.plot[bio.batch.table.to.plot >= min.sample.for.prps] <-
+            'PS'
+        bio.batch.table.to.plot[bio.batch.table.to.plot < min.sample.for.prps] <-
+            'No'
         print(kable(bio.batch.table.to.plot))
     }
 
     # saving the output ####
     if (save.se.obj) {
         ## Check if metadata PRPS already exists
-        if(length(se.obj@metadata)==0 ) {
+        if (length(se.obj@metadata) == 0) {
             se.obj@metadata[['PRPS']] <- list()
         }
         ## Check if metadata PRPS already exists
-        if(!'PRPS' %in% names(se.obj@metadata) ) {
+        if (!'PRPS' %in% names(se.obj@metadata)) {
             se.obj@metadata[['PRPS']] <- list()
         }
         ## Check if metadata PRPS already exist for supervised
-        if(!'supervised' %in% names(se.obj@metadata[['PRPS']]) ) {
+        if (!'supervised' %in% names(se.obj@metadata[['PRPS']])) {
             se.obj@metadata[['PRPS']][['supervised']] <- list()
         }
 
         ## Check if metadata PRPS already exist for supervised
-        if(!paste0('bio:', bio.variable,'||','uv:',uv.variable,'||','data:',assay.name) %in% names(se.obj@metadata[['PRPS']][['supervised']])) {
-            se.obj@metadata[['PRPS']][['supervised']][[paste0('bio:', bio.variable,'||','uv:',uv.variable,'||','data:',assay.name)]]<- list()
-        }
-        se.obj@metadata[['PRPS']][['supervised']][[paste0('bio:',
+        if (!paste0('bio:',
+                    bio.variable,
+                    '||',
+                    'uv:',
+                    uv.variable,
+                    '||',
+                    'data:',
+                    assay.name) %in% names(se.obj@metadata[['PRPS']][['supervised']])) {
+            se.obj@metadata[['PRPS']][['supervised']][[paste0('bio:',
                                                               bio.variable,
                                                               '||',
                                                               'uv:',
                                                               uv.variable,
                                                               '||',
                                                               'data:',
-                                                              assay.name)]] <- prps.sets
+                                                              assay.name)]] <- list()
+        }
+        se.obj@metadata[['PRPS']][['supervised']][[paste0('bio:',
+                                                          bio.variable,
+                                                          '||',
+                                                          'uv:',
+                                                          uv.variable,
+                                                          '||',
+                                                          'data:',
+                                                          assay.name)]] <-
+            prps.sets
 
 
-        printColoredMessage(message= paste0(
-            'The PRPS are saved to metadata@PRPS$supervised',
-            paste0('$bio:', bio.variable,'||','uv:',uv.variable,'||','data:',assay.name),
-            '.'),
+        printColoredMessage(
+            message = paste0(
+                'The PRPS are saved to metadata@PRPS$supervised',
+                paste0(
+                    '$bio:',
+                    bio.variable,
+                    '||',
+                    'uv:',
+                    uv.variable,
+                    '||',
+                    'data:',
+                    assay.name
+                ),
+                '.'
+            ),
             color = 'blue',
-            verbose = verbose)
+            verbose = verbose
+        )
         printColoredMessage(message = '------------The prpsForCategoricalUV function finished.',
                             color = 'white',
                             verbose = verbose)
@@ -205,6 +237,3 @@ prpsForCategoricalUV <- function(se.obj,
     }
 
 }
-
-
-
