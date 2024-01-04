@@ -46,17 +46,17 @@
 #' @importFrom SummarizedExperiment assays colData
 #' @export
 
-identifyVariation = function(
+identifyVariation <- function(
         se.obj,
         assay.names = 'All',
-        apply.log = TRUE,
         variables = NULL,
-        output.file = NULL,
         fast.pca = TRUE,
         nb.pcs = 10,
+        apply.log = TRUE,
+        pseudo.count = 1,
         assess.se.obj = TRUE,
-        verbose = TRUE,
-        pseudo.count = 1
+        output.file = NULL,
+        verbose = TRUE
 ) {
     printColoredMessage(message = '------------The identifyVariation function starts.',
                         color = 'white',
