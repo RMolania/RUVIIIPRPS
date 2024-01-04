@@ -2,8 +2,7 @@
 % Please edit documentation in R/genesVariableCorrelation.R
 \name{genesVariableCorrelation}
 \alias{genesVariableCorrelation}
-\title{is used to compute the correlation between the gene expression (assay)
-of a SummarizedExperiment class object and a continuous variable (i.e. library size).}
+\title{is used to compute the correlation between individual gene expression and a continuous variable.}
 \usage{
 genesVariableCorrelation(
   se.obj,
@@ -25,34 +24,30 @@ genesVariableCorrelation(
 )
 }
 \arguments{
-\item{se.obj}{A SummarizedExperiment object that will be used to compute the correlation.}
+\item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Optional string or list of strings for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default}
+\item{assay.names}{Symbol. Symbol or list of symbols for the selection of the name(s) of the assay(s) of the
+SummarizedExperiment object to compute the correlation. By default all the assays of the SummarizedExperiment class
+object will be selected.}
 
-\item{variable}{String of the label of a continuous variable such as
-library size from colData(se.obj).}
+\item{variable}{String of the label of a continuous variable such as library size from colData(se.obj).}
 
-\item{method}{A character string indicating which correlation coefficient
-is to be used for the test: "pearson", "kendall", or "spearman". By default "spearman" will
-be selected.}
+\item{method}{A character string indicating which correlation coefficient is to be used for the test: 'pearson',
+'kendall', or "spearman". The default is 'spearman'.}
 
-\item{a}{The significance level used for the confidence intervals in the correlation,
-by default it is set to 0.05.}
+\item{a}{The significance level used for the confidence intervals in the correlation, by default it is set to 0.05.}
 
-\item{rho}{The value of the hypothesised correlation to be used in the hypothesis testing,
-by default it is set to 0.}
+\item{rho}{The value of the hypothesised correlation to be used in the hypothesis testing, by default it is set to 0.}
 
 \item{plot.output}{Logical. Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.}
 
-\item{plot.top.genes}{Logical. Indicates whether to plot the gene expression of the number of genes
-from the high or low correlation, by default it is set to FALSE.}
+\item{plot.top.genes}{Logical. Indicates whether to plot the gene expression of the number of genes from the high or
+low correlation, by default it is set to FALSE.}
 
-\item{nb.top.genes}{Defines the number of genes from the high or low correlation to plot,
-by default is set to 3.}
+\item{nb.top.genes}{Defines the number of genes from the high or low correlation to plot, by default is set to 3.}
 
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
-the log transformation will be selected.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default the log
+transformation will be selected.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
@@ -63,17 +58,20 @@ by default it is set to 1.}
 
 \item{remove.na}{TO BE DEFINED.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the current SummarizedExperiment
+object or to output the result. By default it is set to TRUE.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during
+the execution of the functions, by default it is set to TRUE.}
 }
 \value{
-SummarizedExperiment A SummarizedExperiment object containing the computed correlation on the continuous variable
+A SummarizedExperiment object containing the computed correlation on the continuous variable
 and if requested the associated plot.
 }
 \description{
-is used to compute the correlation between the gene expression (assay)
-of a SummarizedExperiment class object and a continuous variable (i.e. library size).
+This function computes the correlation between individual gene expression of the assays and a continuous variable in
+a SummarizedExperiment object.
+}
+\author{
+Ramyar Molania
 }
