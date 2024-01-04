@@ -74,7 +74,7 @@
 #' @importFrom SummarizedExperiment assay
 #' @export
 
-supervisedFindNcgPbPb <- function(
+supervisedFindNcgPbPbio <- function(
         se.obj,
         assay.name,
         bio.variables,
