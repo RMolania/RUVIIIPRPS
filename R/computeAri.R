@@ -148,9 +148,9 @@ computeARI <- function(
                         ' variable.'),
                     color = 'blue',
                     verbose = verbose)
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u[colnames(se.obj), ]
+                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd.dec$u[colnames(se.obj), ]
             } else {
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[colnames(se.obj), ]
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd.dec$u[colnames(se.obj), ]
             }
             if(clustering.method == 'mclust'){
                 bic <- mclustBIC(data = pca.data)
@@ -191,7 +191,7 @@ computeARI <- function(
             }
             if(clustering.method == 'mclust'){
                 out.put.name <- 'ari.mclust'
-            } else out.put.name <- paste0('ari.hclust.',hclust.method,'.',dist.measure)
+            } else out.put.name <- paste0('ari.hclust.', hclust.method, '.', dist.measure)
             se.obj@metadata[['metric']][[x]][[out.put.name]][[variable]] <- all.ari[[x]]
         }
         printColoredMessage('The ARI results of induvial assays are saved to metadata@metric',
