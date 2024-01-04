@@ -24,6 +24,8 @@
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed silhouette
 #' on the categorical variable.
+#'
+#'
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom stats dist
 #' @importFrom cluster silhouette
