@@ -1,4 +1,4 @@
-#' is used to identify the unwanted variation of a SummarizedExperiment class object.
+#' is used to identify the unwanted variation in RNA-seq data.
 #'
 #' Several assessment will be performed:
 #' For each categorical variable:
