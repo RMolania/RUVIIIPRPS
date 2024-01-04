@@ -22,6 +22,8 @@
 #'
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed correlation for
 #' the continuous variable and if requested the associated plot.
+#'
+#'
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
 #' @importFrom SummarizedExperiment assays assay
