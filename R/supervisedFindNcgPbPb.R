@@ -100,12 +100,12 @@ supervisedFindNcgPbPb <- function(
         corr.method = "spearman",
         a = 0.05,
         rho = 0,
+        anova.method = 'aov',
         assess.ncg = TRUE,
         variables.to.assess.ncg = NULL,
         nb.pcs = 5,
         scale = FALSE,
         center = TRUE,
-        anova.method = 'aov',
         assess.se.obj = TRUE,
         assess.variables = TRUE,
         remove.na = 'both',
@@ -921,7 +921,7 @@ supervisedFindNcgPbPb <- function(
         ncg.selected$stat.rank <- stat.rank
         ncg.selected$final.rank <- rank(ncg.selected$stat.rank)
         ncg.selected <- ncg.selected[order(ncg.selected$stat.rank, decreasing = FALSE) , ]
-        ncg.selected <- row.names(ncg.selected[1:round(nb.ncg * nrow(se.obj), digits = 0) , ])
+        ncg.selected <- row.names(ncg.selected[1:round(nb.ncg/100 * nrow(se.obj), digits = 0) , ])
         ncg.selected <- row.names(se.obj) %in% ncg.selected
     } else if(ncg.selection.method == 'noneOverlap'){
         printColoredMessage(
@@ -937,10 +937,10 @@ supervisedFindNcgPbPb <- function(
                 '% of highly affected genes by the unwanted variation.'),
             color = 'blue',
             verbose = verbose)
-        if(top.rank.bio.genes == 1){
+        if(top.rank.bio.genes == 100){
             top.rank.bio.genes.nb <- top.rank.bio.genes
         } else{
-            top.rank.bio.genes.nb <- round(top.rank.bio.genes * nrow(se.obj), digits = 0)
+            top.rank.bio.genes.nb <- round(top.rank.bio.genes/100 * nrow(se.obj), digits = 0)
             top.rank.bio.genes.nb <- c(nrow(se.obj) - top.rank.bio.genes.nb)
         }
         all.bio.tests <- c('anova.genes.bio', 'corr.genes.bio')
@@ -961,11 +961,12 @@ supervisedFindNcgPbPb <- function(
                         })))
                 }
             })))
-        top.rank.uv.genes <- round(top.rank.uv.genes * nrow(se.obj), digits = 0)
+        top.rank.uv.genes <- round(top.rank.uv.genes/100 * nrow(se.obj), digits = 0)
         top.uv.genes <- c()
         ncg.selected <- c()
         lo <- nrow(se.obj) - top.rank.uv.genes
-        pro.bar <- progress_estimated(round(lo/grid.nb, digits = 0) + 2)
+        grid.nb <- round(c(grid.nb/100) * nrow(se.obj), digits = 0)
+        pro.bar <- progress_estimated(round(grid.nb, digits = 0) + 2)
         while(length(ncg.selected) < round(nb.ncg* nrow(se.obj), digits = 0)){
             pro.bar$pause(0.1)$tick()$print()
             all.uv.tests <- c('anova.genes.uv', 'corr.genes.uv')
@@ -997,7 +998,6 @@ supervisedFindNcgPbPb <- function(
             ncg.selected
         }
         ncg.selected <- row.names(se.obj) %in% ncg.selected
-        top.rank.uv.genes <- round(top.rank.uv.genes/nrow(se.obj) * 100, digits = 0)
         if(top.rank.uv.genes >= 100){
             top.rank.uv.genes = 100
         }
@@ -1025,10 +1025,10 @@ supervisedFindNcgPbPb <- function(
                 '% of highly affected genes by the unwanted variation.'),
             color = 'blue',
             verbose = verbose)
-        if(top.rank.bio.genes == 1){
+        if(top.rank.bio.genes == 100){
             top.rank.bio.genes.nb <- top.rank.bio.genes
         } else{
-            top.rank.bio.genes <- round(top.rank.bio.genes * nrow(se.obj), digits = 0)
+            top.rank.bio.genes <- round(top.rank.bio.genes/100 * nrow(se.obj), digits = 0)
             top.rank.bio.genes.nb <- c(nrow(se.obj) - top.rank.bio.genes)
         }
         all.bio.tests <- c('anova.genes.bio', 'corr.genes.bio')
@@ -1051,7 +1051,7 @@ supervisedFindNcgPbPb <- function(
                 }
             })))
 
-        top.rank.uv.genes <- round(top.rank.uv.genes * nrow(se.obj), digits = 0)
+        top.rank.uv.genes <- round(top.rank.uv.genes/100 * nrow(se.obj), digits = 0)
         all.uv.tests <- c('anova.genes.uv', 'corr.genes.uv')
         top.uv.genes <- unique(unlist(lapply(
             all.uv.tests,
