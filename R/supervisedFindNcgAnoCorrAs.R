@@ -101,25 +101,24 @@
 supervisedFindNcgAnoCorrAs <- function(
         se.obj,
         assay.name,
-        nb.ncg = 10,
         bio.variables,
         uv.variables,
+        nb.ncg = 10,
         ncg.selection.method = 'AbsNoneOverlap',
         grid.nb = 0.05,
-        top.rank.bio.genes = 80,
-        top.rank.uv.genes = 80,
+        top.rank.bio.genes = 50,
+        top.rank.uv.genes = 50,
         min.sample.for.aov = 3,
         min.sample.for.correlation = 10,
         regress.out.uv.variables = NULL,
         regress.out.bio.variables = NULL,
         normalization = 'CPM',
+        apply.log = TRUE,
+        pseudo.count = 1,
         corr.method = "spearman",
         a = 0.05,
         rho = 0,
-        apply.log = TRUE,
-        pseudo.count = 1,
         anova.method = 'aov',
-        remove.na = 'both',
         assess.ncg = TRUE,
         variables.to.assess.ncg = NULL,
         nb.pcs = 5,
@@ -130,6 +129,7 @@ supervisedFindNcgAnoCorrAs <- function(
         cat.cor.coef = c(0.95, 0.95),
         cont.cor.coef = c(0.95, 0.95),
         save.se.obj = TRUE,
+        remove.na = 'both',
         verbose = TRUE
 ){
     printColoredMessage(message = '------------The supervisedFindNcgAnoCorrAs function starts:',
@@ -673,7 +673,8 @@ supervisedFindNcgAnoCorrAs <- function(
             top.rank.uv.genes <- top.rank.uv.genes + grid.nb
             if(top.rank.uv.genes > nrow(se.obj)){
                 message(' ')
-                printColoredMessage(message = paste0(length(ncg.selected), ' genes are found based on the current parameters.'),
+                printColoredMessage(
+                    message = paste0(length(ncg.selected), ' genes are found based on the current parameters.'),
                                     color = 'red', verbose = verbose)
                 stop('Any NCG cannot be found. Please lower either the values of top.rank.bio.genes or nb.ncg.')
             }
