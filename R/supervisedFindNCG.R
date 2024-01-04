@@ -2,37 +2,60 @@
 #'
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.name A name of an assay data in the SummarizedExperiment object.
-#' @param bio.variables numeric. In large sample situations, the minimum proportion of samples in a group that a gene needs to be expressed in. See Details below for the exact formula.
-#' @param uv.variables logical, if TRUE then library size is calculated on the raw.count.assay.name.
-#' @param no.ncg logical, if TRUE then a sample annotation the initially contains column names of the assays.
-#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data.
-#' @param pseudo.count Logical. Indicates whether to apply a log-transformation to the data.
-#' @param regress.out.uv.variables Logical. Indicates whether to apply a log-transformation to the data.
-#' @param regress.out.bio.variables Logical. Indicates whether to apply a log-transformation to the data.
-#' @param normalization Logical. Indicates whether to apply a log-transformation to the data.
+#' @param approach TTTT
+#' @param nb.ncg TTTTT
+#' @param top.rank.bio.genes TTTTT
+#' @param top.rank.uv.genes TTTTT
+#' @param bio.variables TTTT
+#' @param bio.groups TTTT
+#' @param nb.bio.clusters TTTTT
+#' @param uv.variables YYYY
+#' @param uv.groups YYYY
+#' @param nb.uv.clusters YYYYY
+#' @param bio.clustering.method YYYY
+#' @param uv.clustering.method UUUUU
+#' @param normalization HHHH
+#' @param regress.out.uv.variables UUUUU
+#' @param regress.out.bio.variables UUUUUU
+#' @param apply.log UUUUU
+#' @param pseudo.count YYYYY
+#' @param min.sample.for.aov UUUUU
+#' @param min.sample.for.correlation UUUUU
 #' @param corr.method Logical. Indicates whether to apply a log-transformation to the data.
 #' @param a Logical. Indicates whether to apply a log-transformation to the data.
 #' @param rho Logical. Indicates whether to apply a log-transformation to the data.
-#' @param anova.method Logical. Indicates whether to apply a log-transformation to the data.
+#' @param grid.nb NNNNNN
+#' @param ncg.selection.method PPPP
+#' @param assess.ncg PPPP
+#' @param nb.pcs PPPPPP
+#' @param center PP
+#' @param scale PP
+#' @param anova.method PPPPP
+#' @param assess.variables PPPP
+#' @param remove.na PPPPP
+#' @param save.se.obj PPPP
+#' @param cat.cor.coef PPPP
+#' @param cont.cor.coef PPPP
+#' @param variables.to.assess.ncg PPPP
 #' @param assess.se.obj Logical. Indicates whether to apply a log-transformation to the data.
 #' @param verbose Logical. Indicates whether to apply a log-transformation to the data.
 
 #' @return a list of negative control genes.
 
-#' @importFrom MAtrix colSums
+#' @importFrom Matrix colSums
 #' @importFrom dplyr left_join
 #' @importFrom SummarizedExperiment assay SummarizedExperiment
 #' @importFrom biomaRt getBM useMart useDataset
-#' @importFrom S4Vectors DataFrame transpose
+#' @importFrom S4Vectors DataFrame
 #' @export
 
 supervisedFindNCG <- function(
     se.obj,
     assay.name,
     approach = 'PbPb',
-    nb.ncg = 0.1,
-    top.rank.bio.genes = .3,
-    top.rank.uv.genes = 1,
+    nb.ncg = 10,
+    top.rank.bio.genes = 50,
+    top.rank.uv.genes = 50,
     bio.variables,
     bio.groups = NULL,
     nb.bio.clusters = 2,
@@ -51,14 +74,18 @@ supervisedFindNCG <- function(
     corr.method = "spearman",
     a = 0.05,
     rho = 0,
-    grid.no = 10,
+    grid.nb = 10,
+    anova.method = 'aov',
     ncg.selection.method = 'Prod',
     assess.ncg = TRUE,
     variables.to.assess.ncg = NULL,
     nb.pcs = 5,
-    anova.method = 'aov',
+    center = TRUE,
+    scale = FALSE,
     assess.se.obj = TRUE,
     assess.variables = TRUE,
+    cat.cor.coef = c(0.95, 0.95),
+    cont.cor.coef = c(0.95, 0.95),
     remove.na = 'both',
     save.se.obj = TRUE,
     verbose = TRUE
@@ -111,44 +138,49 @@ supervisedFindNCG <- function(
             assay.name = assay.name,
             bio.variables = bio.variables,
             uv.variables = uv.variables,
+            nb.ncg = nb.ncg,
             ncg.selection.method = ncg.selection.method,
+            grid.nb = grid.nb,
             top.rank.bio.genes = top.rank.bio.genes,
             top.rank.uv.genes = top.rank.uv.genes,
-            nb.ncg = nb.ncg,
-            apply.log = apply.log,
-            pseudo.count = pseudo.count,
             min.sample.for.aov = min.sample.for.aov,
             min.sample.for.correlation = min.sample.for.correlation,
             regress.out.uv.variables = regress.out.uv.variables,
             regress.out.bio.variables = regress.out.bio.variables,
             normalization = normalization,
+            apply.log = apply.log,
+            pseudo.count = pseudo.count,
             corr.method = corr.method,
             a = a,
             rho = rho,
-            variables.to.assess.ncg = variables.to.assess.ncg,
             anova.method = anova.method,
+            assess.ncg = assess.ncg,
+            variables.to.assess.ncg = variables.to.assess.ncg,
+            nb.pcs = nb.pcs,
+            scale = scale,
+            center = center,
             assess.se.obj = assess.se.obj,
             assess.variables = assess.variables,
-            remove.na = remove.na,
-            assess.ncg = assess.ncg,
-            nb.pcs = nb.pcs,
+            cat.cor.coef = cat.cor.coef,
+            cont.cor.coef = cont.cor.coef,
             save.se.obj = save.se.obj,
+            remove.na = remove.na,
             verbose = verbose)
     } else if(approach == 'TWAnova'){
         ncg.set <- supervisedFindNcgTWAnova(
             se.obj = se.obj,
             assay.name = assay.name,
+            bio.variables = bio.variables,
+            uv.variables = uv.variables,
             nb.ncg = nb.ncg,
             ncg.selection.method = ncg.selection.method,
-            grid.no = grid.no,
+            grid.nb = grid.nb,
             top.rank.bio.genes = top.rank.bio.genes,
             top.rank.uv.genes = top.rank.uv.genes,
-            bio.variables = bio.variables,
             bio.clustering.method = bio.clustering.method,
             nb.bio.clusters = nb.bio.clusters,
-            uv.variables = uv.variables,
-            nb.uv.clusters = nb.uv.clusters,
             uv.clustering.method = uv.clustering.method,
+            nb.uv.clusters = nb.uv.clusters,
             apply.log = apply.log,
             pseudo.count = pseudo.count,
             assess.ncg = assess.ncg,
