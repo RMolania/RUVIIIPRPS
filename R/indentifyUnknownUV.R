@@ -76,6 +76,7 @@
 #' @importFrom SummarizedExperiment assay colData
 #' @importFrom BiocSingular bsparam runSVD
 #' @importFrom NbClust NbClust
+#' @importFrom stats as.formula
 #' @export
 
 
