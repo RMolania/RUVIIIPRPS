@@ -1,7 +1,9 @@
-#' is used to compute the adjusted rand index (ARI) using the first PC of the assays in a SummarizedExperiment
-#' object given a categorical variable.
+#' is used to compute the adjusted rand index (ARI).
 #'
-#' It can be used to assess how a group of biological samples are distributed across batches (i.e. example subtypes vs batch), and how batches ### update
+#'
+#' @description
+#' This functions computes the adjusted rand index using the first PCs of the assays in a SummarizedExperiment object
+#' given a categorical variable.
 #'
 #'
 #' @param se.obj A SummarizedExperiment object.
@@ -20,22 +22,25 @@
 #' @param dist.measure Symbol. Indicates the distance measure to be used in the dist function. This must be one of
 #' "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". See the dist function for more details.
 #' @param plot.output Logical. Indicates whether to plot the ARI, by default it is set to FALSE.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-#' to output the result. By default it is set to TRUE.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is set to TRUE.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
+#' object 'se.obj' or to output the result. By default it is set to TRUE.
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is
+#' set to TRUE.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
+#' execution of the functions, by default it is set to TRUE.
+#'
 #'
 #' @return A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
 #'
+#'
 #' @author Ramyar Molania
+#'
 #'
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom mclust mclustBIC Mclust adjustedRandIndex
 #' @importFrom stats cutree hclust dist
 #' @import ggplot2
 #' @export
-#'
 
 computeARI <- function(
         se.obj,
