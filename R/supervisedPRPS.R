@@ -1,8 +1,10 @@
-#' is used to create pseudo-replicates of pseudo samples of a SummarizedExperiment class object
-#' using RUVIII-PRPS method with a supervised approach using the 'uv.variables', 'bio.variable' and 'batch.variable' given.
+#' is used to create pseudo-replicates of pseudo samples (PRPS).
 #'
-#' We will create distinct group of pseudo-replicates for each source of unwanted variation defined in the 'uv.variables' argument.
-#' For example to correct for batch effect if defined in the 'uv.variables' argument, several group of pseudo-samples
+#' @description
+#' This function creates different PRPS sets when all sources of unwanted and biological variation are known.
+#'
+#' We will create distinct group of pseudo-replicates for each source of unwanted variation defined in the 'uv.variables'
+#' argument. For example to correct for batch effect if defined in the 'uv.variables' argument, several group of pseudo-samples
 #' will be created by averaging the samples of the same biological subtype defined in 'bio.variable' in each batch. Then those
 #' pseudo-samples will be defined as pseudo-replicates which constitutes a PRPS set.
 #' For example to correct for library size if defined in the 'uv.variables' argument, several group of pseudo-samples
@@ -13,9 +15,9 @@
 #' Then those pseudo-samples will be defined as pseudo-replicates which constitutes a PRPS set.
 #'
 #'
-#' @param se.obj A SummarizedExperiment object that will be used to create PRPS.
-#' @param assay.name String for the selection of the name of the assay of the SummarizedExperiment class object.
-#' @param bio.variable String of the label of a categorical variable that specifies major biological groups
+#' @param se.obj A SummarizedExperiment object.
+#' @param assay.name Symbol. Indicates a name of an assay in the SummarizedExperiment object.
+#' @param bio.variable Symbol. Indicates the label of a categorical variable that specifies major biological groups
 #' such as samples types from colData(se).
 #' @param uv.variables String or vector of strings of the label of continuous or categorical variable(s)
 #' such as samples types, batch or library size from colData(se) that will be used to define PRPS.
@@ -30,22 +32,23 @@
 #' by default it is set to 1.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' By default it is set to TRUE.
-#' @param assess.cor.variables Logical. Indicates whether to assess the association between pairs of categorical variables
+#' @param assess.variables Logical. Indicates whether to assess the association between pairs of categorical variables
 #' and/or pairs of continuous variables in order to select only one of the variable of a pair of highly correlated
 #' variables.
-#' @param cat.cor.coef Vector of two numerical values. Indicates the cut-off of the correlation coefficient between each pair of
-#' categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
-#' The correlation is computed by the function ContCoef from the DescTools package. If the correlation of a pair of variable is higher than
-#' the cut-off, then only the variable that has the highest number of factor will be kept and the other one will be excluded from the
-#' remaining analysis. By default they are both set to 0.7.
-#' @param cont.cor.coef Vector of two numerical values. Indicates the cut-off of the Spearman correlation coefficient between each pair of
-#' continuous variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
-#' If the correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest variance will
+#' @param cat.cor.coef Vector of two numerical values. Indicates the cut-off of the correlation coefficient between each
+#' pair of categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each
+#' pair of 'bio.variables'. The correlation is computed by the function ContCoef from the DescTools package. If the correlation
+#' of a pair of variable is higher than the cut-off, then only the variable that has the highest number of factor will
 #' be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.7.
+#' @param cont.cor.coef Vector of two numerical values. Indicates the cut-off of the Spearman correlation coefficient
+#' between each pair of continuous variables. The first one is between each pair of 'uv.variables' and the second one is
+#' between each pair of 'bio.variables'. If the correlation of a pair of variable is higher than the cut-off, then only
+#' the variable that has the highest variance will be kept and the other one will be excluded from the remaining analysis.
+#' By default they are both set to 0.7.
 #' @param remove.na String. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
-#' 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
-#' samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
-#' 'both'.
+#' 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If
+#' 'sample.annotation' is selected, the samples that contains NA or missing values for any 'bio.variables' and
+#' 'uv.variables' will be excluded. By default, it is set to both'.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment
 #' class object 'se.obj' or to output the result, by default it is set to TRUE.
 #' @param plot.output Logical. Indicates whether to plot the PRPS map of the PRPS defined by the 'bio.variable'
@@ -53,7 +56,7 @@
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed
 #' during the execution of the functions, by default it is set to TRUE.
 
-#' @return SummarizedExperiment or a List A SummarizedExperiment object or a list containing all the PRPS created.
+#' @return A SummarizedExperiment object or a list that contains all the PRPS sets.
 
 #' @importFrom SummarizedExperiment assay colData
 #' @importFrom dplyr count
@@ -71,7 +74,7 @@ supervisedPRPS <- function(
         apply.log = TRUE,
         pseudo.count = 1,
         assess.se.obj = TRUE,
-        assess.cor.variables = FALSE,
+        assess.variables = FALSE,
         cat.cor.coef = c(0.7, 0.7),
         cont.cor.coef = c(0.7, 0.7),
         remove.na = 'both',
@@ -94,7 +97,7 @@ supervisedPRPS <- function(
     }
 
     ### Assess the correlation btw variables
-    if(assess.cor.variables){
+    if(assess.variables){
         se.obj <- variablesCorrelation(
             se.obj = se.obj,
             bio.variables = bio.variable,
