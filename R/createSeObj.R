@@ -1,29 +1,55 @@
-#' is used to create a summarizedExperiment object.
-#'
-#' @param assays A list of assays.
-#' @param remove.lowly.expressed.genes 	logical, if TRUE then remove lowly expressed genes.
-#' @param raw.count.assay.name The name of raw counts data in the assays.
-#' @param count.cutoff numeric. Minimum count required for at least some samples.
-#' @param biological.group A column name in sample annotation that specify biological groups. The smallest population is considred for relvling lowly expressed genes.
-#' @param minimum.proportion numeric. In large sample situations, the minimum proportion of samples in a group that a gene needs to be expressed in. See Details below for the exact formula.
-#' @param calculate.library.size logical, if TRUE then library size is calculated on the raw.count.assay.name.
-#' @param sample.annotation a data frame, contains information for samples.
-#' @param create.sample.annotation logical, if TRUE then a sample annotation the initially contains column names of the assays.
-#' @param gene.annotation a data frame, contains information for genes.
-#' @param create.gene.annotation logical, if TRUE then a gene annotation that initially contains row names of the assays.
-#' @param add.gene.details logical, if TRUE then a pr-set or provided gene details will be added to the gene annotation.
-#' @param gene.group A name of gene class in the assays, this should be in 'entrezgene_id', 'hgnc_symbol', 'ensembl_gene_id'.
-#' @param gene.details A list of gene details to be added to the gene annotation.
-#' @param add.housekeeping.genes logical. if TRUE then several sets of publicly available sets of "housekeeping" will be added to the gene annotation.
-#' @param add.immunStroma.genes Logical. If TRUE, the immune and stromal genes signature from Kosuke Yoshihara et.al will be added.
-#' @param metaData Any metadata data for in the data.
-#' @param verbose logical, if TRUE shows the messages.
+#' is used to create a SummarizedExperiment object.
 
-#' @return a summarizedExperiment that contains assays, gene annotation, samples annotation and metadata.
+
+#' @description
+#' This function creates a SummarizedExperiment object from tabular expression data and sample annotation. In addition,
+#' the function can remove lowly expressed genes, add a range of annotations for genes, and provide several sets of
+#' housekeeping genes and a immunStroma gene signature.
+
+
+
+#' @param assays A list of assays or expression data. The genes should be in row and samples in the column. The row names
+#' of the assays should be in the same order.
+#' @param remove.lowly.expressed.genes 	Logical. If TRUE the function removes lowly expressed genes from the assay that
+#' is provide in the raw.count.assay.name argument.
+#' @param raw.count.assay.name Symbol. The name of raw counts data in the assays.
+#' @param count.cutoff Numeric. Minimum count required for at least some sample groups. If the "biological.group" argument
+#' is equal to NULL, all samples will be considered as one group. Otherwise, the smallest subgroups of the "biological.group"
+#' will be considered.
+#' @param biological.group Symbol. Indicates a column name in the sample annotation that specifies the biological groups.
+#' The smallest population is considered for removing lowly expressed genes.
+#' @param minimum.proportion Numeric. In large sample situations, the minimum proportion of samples in a group that a
+#' gene needs to be expressed in.
+#' @param calculate.library.size Logical. If TRUE then library size is calculated using the raw.count.assay.name. The
+#' library size should be calculated after removing lowly expressed genes.
+#' @param sample.annotation A data frame, contains information for individual samples in the assay(s). The order of row
+#' names of the sample annotation should be the same as in the assay(s).
+#' @param create.sample.annotation Logical. If TRUE then a sample annotation the initially contains the column names of
+#' the assay(s) will be created.
+#' @param gene.annotation A data frame, that contains details e.g. chromosome names,GC content,... for individual genes.
+#' @param create.gene.annotation Logical. If TRUE then a gene annotation that initially contains row names of the assay(s)
+#' will be created.
+#' @param add.gene.details Logical. If TRUE then a pr-set or provided gene details in the gene.details argument will be
+#' added to the gene annotation.
+#' @param gene.group A name of a gene class in the row names of the assay(s). This must be one of the 'entrezgene_id',
+#' 'hgnc_symbol', 'ensembl_gene_id'.
+#' @param gene.details A vector of gene details to be added to the gene annotation.
+#' @param add.housekeeping.genes Logical. if TRUE then several sets of publicly available "housekeeping" will be added to
+#' the gene annotation. The housekeeping could be potentially used as negative control genes for the RUV normalization.
+#' @param add.immunStroma.genes Logical. If TRUE, the immune and stromal genes signature from Kosuke Yoshihara et.al will
+#' be added to the gene annotation. These gene signatures, can be used to estimate tumor purity.
+#' @param metaData Any metadata data. The metadata can be in any format and dimensions.
+#' @param verbose logical. If TRUE shows the messages.
+
+
+#' @return A summarizedExperiment that contains assays, gene annotation, samples annotation and metadata.
+
+#' @author Ramyar Molania
+
 
 #' @importFrom Matrix colSums
 #' @importFrom dplyr left_join
-#' @importFrom SummarizedExperiment assay SummarizedExperiment rowData
+#' @importFrom SummarizedExperiment SummarizedExperiment assay rowData
 #' @importFrom biomaRt getBM useMart useDataset
 #' @importFrom S4Vectors DataFrame
 #' @importFrom utils read.table data
