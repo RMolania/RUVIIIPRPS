@@ -8,7 +8,7 @@ normAssessment(
   se.obj,
   assay.names = "All",
   apply.log = TRUE,
-  variables = NULL,
+  variables,
   output.file = NULL,
   fast.pca = TRUE,
   nb.pcs = 10,
