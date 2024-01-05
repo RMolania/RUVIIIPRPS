@@ -2,7 +2,7 @@
 % Please edit documentation in R/computePCA.R
 \name{computePCA}
 \alias{computePCA}
-\title{is used to perform Principal Component Analysis (PCA) using singular value decomposition of the assays in a SummarizedExperiment object.}
+\title{is used to perform Principal Component Analysis (PCA) using singular value decomposition.}
 \usage{
 computePCA(
   se.obj,
@@ -61,5 +61,5 @@ of the functions, by default it is set to TRUE.}
 SummarizedExperiment A SummarizedExperiment object or a list that containing the SVD results.
 }
 \description{
-is used to perform Principal Component Analysis (PCA) using singular value decomposition of the assays in a SummarizedExperiment object.
+A short description...
 }
