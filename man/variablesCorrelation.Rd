@@ -51,22 +51,22 @@ during the execution of the functions, by default it is set to TRUE.}
 a SummarizedExperiment object and the selected 'uv.variables' and 'bio.variables'.
 }
 \description{
-The function assesses the association between all selected biological and unwanted variation variables separately. If two categorical
-variables are highly correlated, the function keeps one that has the highest number of factors. For two continuous variables,
-the one with higher variance will be kept.
+The function assesses the association between all selected biological and unwanted variation variables separately.
+If two categorical variables are highly correlated, the function keeps one that has the highest number of factors.
+For two continuous variables, the one with higher variance will be kept.
 }
 \details{
 For each pair of categorical variables from 'uv.variables' and each pair of categorical variables from 'bio.variables',
-the correlation is computed using the function ContCoef from the DescTools R package. For each pair of continuous variables
-from 'uv.variables' and each pair of continuous variables from 'bio.variables', the correlation is computed using the
-Spearman correlation. The user defines a minimum cut-off of the correlation coefficient between each pair of categorical
-variables in the 'cat.cor.coef' for the unwanted variables, followed by the minimum cut-off of the correlation coefficient
-for the biological variables. If the correlation of a pair of those variables is higher than the minimum cut-off, only
-the variable that has the highest number of factor will be kept and the other one will be excluded from the remaining analysis.
-The user defines a minimum cut-off of the correlation coefficient between each pair of continuous variables in the 'cont.cor.coef'
-for the unwanted variables, followed by the minimum cut-off of the correlation coefficient for the biological variables.
-If the correlation of a pair of variable is higher than the minimum cut-off, only the variable that has the highest variance
-will be kept and the other one will be excluded from the remaining analysis.
+the correlation is computed using the function ContCoef from the DescTools R package. For each pair of continuous
+variables from 'uv.variables' and each pair of continuous variables from 'bio.variables', the correlation is computed
+using the Spearman correlation. The user defines a minimum cut-off of the correlation coefficient between each pair of
+categorical variables in the 'cat.cor.coef' for the unwanted variables, followed by the minimum cut-off of the correlation
+coefficient for the biological variables. If the correlation of a pair of those variables is higher than the minimum
+cut-off, only the variable that has the highest number of factor will be kept and the other one will be excluded from
+the remaining analysis. The user defines a minimum cut-off of the correlation coefficient between each pair of continuous
+variables in the 'cont.cor.coef' for the unwanted variables, followed by the minimum cut-off of the correlation coefficient
+for the biological variables. If the correlation of a pair of variable is higher than the minimum cut-off, only the variable
+that has the highest variance will be kept and the other one will be excluded from the remaining analysis.
 }
 \author{
 Ramyar Molania

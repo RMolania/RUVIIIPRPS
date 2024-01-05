@@ -15,22 +15,27 @@ checkSeObj(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. Indicates the name, or names of the assay of the SummarizedExperiment object.
-By default it is set to 'all'. All the assays will be checked.}
+\item{assay.names}{Symbol. Indicates the name(s) of the assay(s) in the SummarizedExperiment object. By default it is
+set to 'all', then all the assay(s) will be checked.}
 
-\item{variables}{Symbol. Indicates a name or names of the columns in the sample annotation (colData) of the SummarizedExperiment object.
-By default it is set to 'all'. All the columns will be checked.}
+\item{variables}{Symbol. Indicates the name(s) of the column(s) in the sample annotation of the SummarizedExperiment
+object. By default it is set to 'all', then all the columns will be checked.}
 
-\item{remove.na}{Symbol. Indicates whether to remove missing/NA values from either the 'assays', 'sample.annotation', 'both' or 'none'.
-If 'assays' is selected, the genes that contains missing/NA values will be excluded. If 'sample.annotation' is selected, the
-samples that contains NA or missing values for each 'variables' will be excluded. By default, it is set to 'both'.}
+\item{remove.na}{Symbol. Indicates whether to remove missing/NA values from either the 'assays', 'sample.annotation',
+'both' or 'none'. If 'assays' is selected, the genes that contains missing/NA values will be excluded. If 'sample.annotation'
+is selected, the samples that contains NA or missing values for each 'variables' will be excluded. By default, it is
+set to 'both'.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE shows the messages.}
 }
 \value{
-a SummarizedExperiment object.
+A SummarizedExperiment object.
 }
 \description{
-is used to check the assay names, variables and missing/NA values in a SummarizedExperiment object.
+This functions assesses the structure of a SummarizedExperiment object and removes any missing/NA values from both
+assay(s) and sample annotation. Please note that, the current RUV-III-PRPS method cannot handle missing/NA values in
+the assay(s).
+}
+\author{
+Ramyar Molania
 }

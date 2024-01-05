@@ -74,7 +74,7 @@ be added to the gene annotation. These gene signatures, can be used to estimate 
 
 \item{metaData}{Any metadata data. The metadata can be in any format and dimensions.}
 
-\item{verbose}{logical. If TRUE shows the messages.}
+\item{verbose}{Logical. If TRUE shows the messages.}
 }
 \value{
 A summarizedExperiment that contains assays, gene annotation, samples annotation and metadata.

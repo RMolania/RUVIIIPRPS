@@ -2,8 +2,7 @@
 % Please edit documentation in R/computeSilhouette.R
 \name{computeSilhouette}
 \alias{computeSilhouette}
-\title{is used to compute the average Silhouette coefficient width using principal components of assays in a SummarizedExperiment
-object given a categorical variable.}
+\title{is used to compute the average Silhouette coefficient.}
 \usage{
 computeSilhouette(
   se.obj,
@@ -54,6 +53,5 @@ SummarizedExperiment A SummarizedExperiment object containing the computed silho
 on the categorical variable.
 }
 \description{
-is used to compute the average Silhouette coefficient width using principal components of assays in a SummarizedExperiment
-object given a categorical variable.
+A short description...
 }
