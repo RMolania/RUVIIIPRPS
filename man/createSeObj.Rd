@@ -2,7 +2,7 @@
 % Please edit documentation in R/createSeObj.R
 \name{createSeObj}
 \alias{createSeObj}
-\title{is used to create a summarizedExperiment object.}
+\title{is used to create a SummarizedExperiment object.}
 \usage{
 createSeObj(
   assays,
@@ -26,45 +26,64 @@ createSeObj(
 )
 }
 \arguments{
-\item{assays}{A list of assays.}
+\item{assays}{A list of assays or expression data. The genes should be in row and samples in the column. The row names
+of the assays should be in the same order.}
 
-\item{raw.count.assay.name}{The name of raw counts data in the assays.}
+\item{raw.count.assay.name}{Symbol. The name of raw counts data in the assays.}
 
-\item{remove.lowly.expressed.genes}{logical, if TRUE then remove lowly expressed genes.}
+\item{remove.lowly.expressed.genes}{Logical. If TRUE the function removes lowly expressed genes from the assay that
+is provide in the raw.count.assay.name argument.}
 
-\item{count.cutoff}{numeric. Minimum count required for at least some samples.}
+\item{count.cutoff}{Numeric. Minimum count required for at least some sample groups. If the "biological.group" argument
+is equal to NULL, all samples will be considered as one group. Otherwise, the smallest subgroups of the "biological.group"
+will be considered.}
 
-\item{biological.group}{A column name in sample annotation that specify biological groups. The smallest population is considred for relvling lowly expressed genes.}
+\item{biological.group}{Symbol. Indicates a column name in the sample annotation that specifies the biological groups.
+The smallest population is considered for removing lowly expressed genes.}
 
-\item{minimum.proportion}{numeric. In large sample situations, the minimum proportion of samples in a group that a gene needs to be expressed in. See Details below for the exact formula.}
+\item{minimum.proportion}{Numeric. In large sample situations, the minimum proportion of samples in a group that a
+gene needs to be expressed in.}
 
-\item{calculate.library.size}{logical, if TRUE then library size is calculated on the raw.count.assay.name.}
+\item{calculate.library.size}{Logical. If TRUE then library size is calculated using the raw.count.assay.name. The
+library size should be calculated after removing lowly expressed genes.}
 
-\item{sample.annotation}{a data frame, contains information for samples.}
+\item{sample.annotation}{A data frame, contains information for individual samples in the assay(s). The order of row
+names of the sample annotation should be the same as in the assay(s).}
 
-\item{create.sample.annotation}{logical, if TRUE then a sample annotation the initially contains column names of the assays.}
+\item{create.sample.annotation}{Logical. If TRUE then a sample annotation the initially contains the column names of
+the assay(s) will be created.}
 
-\item{gene.annotation}{a data frame, contains information for genes.}
+\item{gene.annotation}{A data frame, that contains details e.g. chromosome names,GC content,... for individual genes.}
 
-\item{create.gene.annotation}{logical, if TRUE then a gene annotation that initially contains row names of the assays.}
+\item{create.gene.annotation}{Logical. If TRUE then a gene annotation that initially contains row names of the assay(s)
+will be created.}
 
-\item{add.gene.details}{logical, if TRUE then a pr-set or provided gene details will be added to the gene annotation.}
+\item{add.gene.details}{Logical. If TRUE then a pr-set or provided gene details in the gene.details argument will be
+added to the gene annotation.}
 
-\item{gene.group}{A name of gene class in the assays, this should be in 'entrezgene_id', 'hgnc_symbol', 'ensembl_gene_id'.}
+\item{gene.group}{A name of a gene class in the row names of the assay(s). This must be one of the 'entrezgene_id',
+'hgnc_symbol', 'ensembl_gene_id'.}
 
-\item{gene.details}{A list of gene details to be added to the gene annotation.}
+\item{gene.details}{A vector of gene details to be added to the gene annotation.}
 
-\item{add.housekeeping.genes}{logical. if TRUE then several sets of publicly available sets of "housekeeping" will be added to the gene annotation.}
+\item{add.housekeeping.genes}{Logical. if TRUE then several sets of publicly available "housekeeping" will be added to
+the gene annotation. The housekeeping could be potentially used as negative control genes for the RUV normalization.}
 
-\item{add.immunStroma.genes}{Logical. If TRUE, the immune and stromal genes signature from Kosuke Yoshihara et.al will be added.}
+\item{add.immunStroma.genes}{Logical. If TRUE, the immune and stromal genes signature from Kosuke Yoshihara et.al will
+be added to the gene annotation. These gene signatures, can be used to estimate tumor purity.}
 
-\item{metaData}{Any metadata data for in the data.}
+\item{metaData}{Any metadata data. The metadata can be in any format and dimensions.}
 
-\item{verbose}{logical, if TRUE shows the messages.}
+\item{verbose}{logical. If TRUE shows the messages.}
 }
 \value{
-a summarizedExperiment that contains assays, gene annotation, samples annotation and metadata.
+A summarizedExperiment that contains assays, gene annotation, samples annotation and metadata.
 }
 \description{
-is used to create a summarizedExperiment object.
+This function creates a SummarizedExperiment object from tabular expression data and sample annotation. In addition,
+the function can remove lowly expressed genes, add a range of annotations for genes, and provide several sets of
+housekeeping genes and a immunStroma gene signature.
+}
+\author{
+Ramyar Molania
 }

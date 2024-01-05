@@ -400,10 +400,11 @@ createSeObj <- function(
             color = 'magenta',
             verbose = verbose
         )
-        hk.gene.lists <- data("kh.im.genes")
+        hk.gene.lists <- hk_immunStroma
         keep.cols <- c(
             which(colnames(hk.gene.lists) %in% gene.group),
             4:9)
+        hk.gene.lists <- NULL
         gene.annotation <- left_join(
             x = gene.annotation,
             y = hk.gene.lists[ , keep.cols],
@@ -428,10 +429,10 @@ createSeObj <- function(
             color = 'magenta',
             verbose = verbose
         )
-        data(kh.im.genes)
+        im.gene.lists <- hk_immunStroma
         keep.cols <- c(
             which(colnames(kh.im.genes) %in% gene.group),
-            10:ncol(kh.im.genes))
+            10:ncol(im.gene.lists))
         gene.annotation <- left_join(
             x = gene.annotation,
             y = kh.im.genes[ , keep.cols],
