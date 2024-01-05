@@ -98,7 +98,7 @@ supervisedFindNCG <- function(
     }
 
     if(approach == 'PbPb'){
-        ncg.set <- supervisedFindNcgPbPb(
+        ncg.set <- supervisedFindNcgPbPbio(
             se.obj = se.obj,
             assay.name = assay.name,
             nb.ncg = nb.ncg,
