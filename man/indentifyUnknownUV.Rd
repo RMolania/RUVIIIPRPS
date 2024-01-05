@@ -108,7 +108,8 @@ by default it is set to 1.}
 
 \item{scale}{Logical. Indicates whether to scale the data or not before performing PCA. The default is FASLE.}
 
-\item{BSPARAM}{TBBBB}
+\item{BSPARAM}{symbol. Classes for specifying the type of singular value decomposition (SVD) algorithm and associated
+parameters. See the BiocSingular R package for more details.}
 
 \item{remove.na}{A symbol. Indicates whether to remove NA or missing values from either the 'assays',
 'sample.annotation', 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be
