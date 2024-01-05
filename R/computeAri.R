@@ -33,7 +33,7 @@
 #' @return A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
 #'
 #'
-#' @author Ramyar Molania
+#' @author Ramyar Molania, MT
 #'
 #'
 #' @importFrom SummarizedExperiment assays assay
