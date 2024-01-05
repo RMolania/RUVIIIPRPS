@@ -2,8 +2,7 @@
 % Please edit documentation in R/normalise.R
 \name{normalise}
 \alias{normalise}
-\title{is used to normalise the gene expression (assay) of a SummarizedExperiment class object
-using RUVIII-PRPS method.}
+\title{is used to normalize RNA-seq data using the RUVIII-PRPS method.}
 \usage{
 normalise(
   se.obj,
@@ -107,10 +106,11 @@ SummarizedExperiment A SummarizedExperiment object containing the normalised gen
 into a new assay (RUVIII_K), as well as the PRPS created and the negative control genes
 }
 \description{
+This function applies the RUVIII-PRPS method on an assay of a SummarizedExperiment object.
 The steps involves:
 \itemize{
-\item Creation of the Pseudo-Replicates of Pseudo-Samples (PRPS)
-\item Define Negative Controls Genes (NCG)
+\item Create of the Pseudo-Replicates of Pseudo-Samples (PRPS) sets,
+\item Find Negative Controls Genes (NCG),
 \item Run RUVIII-PRPS for multiple k values (the dimension of the unwanted variation).
 }
 }

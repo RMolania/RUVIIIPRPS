@@ -120,7 +120,7 @@ normalise <- function(
         apply.log = apply.log,
         pseudo.count = pseudo.count,
         assess.se.obj = assess.se.obj,
-        assess.cor.variables = assess.cor.variables.prps,
+        assess.variables = assess.cor.variables.prps,
         save.se.obj = TRUE,
         verbose = verbose
     )
