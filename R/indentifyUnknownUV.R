@@ -1,5 +1,5 @@
 #' is used to find potential unknown sources of unwanted variation in an assay in a SummarizedExperiment object.
-#'
+
 #' @description
 #' This function uses three different approaches: rle, pca and sample.scoring to find potential unknown sources of
 #' unwanted variation in an assay in a SummarizedExperiment object. In the rle approach, a clustering method will be
@@ -9,7 +9,7 @@
 #' find potential unknown sources of unwanted variation. In the sample.scoring approach, first,  all samples will be
 #' scored against a set of signature genes related to unwanted variation, then  clustering method will be applied
 #' on the scoring to find potential unknown sources of unwanted variation.
-#'
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.name Symbol. A symbol indicates an assay name in the SummarizedExperiment object.
 #' @param approach Symbol. A symbol indicates which approach should be used to identify unknown sources of unwanted variation.

@@ -39,7 +39,7 @@
 #' @param add.immunStroma.genes Logical. If TRUE, the immune and stromal genes signature from Kosuke Yoshihara et.al will
 #' be added to the gene annotation. These gene signatures, can be used to estimate tumor purity.
 #' @param metaData Any metadata data. The metadata can be in any format and dimensions.
-#' @param verbose logical. If TRUE shows the messages.
+#' @param verbose Logical. If TRUE shows the messages.
 
 
 #' @return A summarizedExperiment that contains assays, gene annotation, samples annotation and metadata.
@@ -400,14 +400,14 @@ createSeObj <- function(
             color = 'magenta',
             verbose = verbose
         )
-        hk.gene.lists <- hk_immunStroma
+        kh.im.genes <- hk_immunStroma
         keep.cols <- c(
-            which(colnames(hk.gene.lists) %in% gene.group),
+            which(colnames(kh.im.genes) %in% gene.group),
             4:9)
-        hk.gene.lists <- NULL
+        kh.im.genes <- NULL
         gene.annotation <- left_join(
             x = gene.annotation,
-            y = hk.gene.lists[ , keep.cols],
+            y = kh.im.genes[ , keep.cols],
             by = gene.group,
             multiple = 'first'
             )
@@ -416,8 +416,8 @@ createSeObj <- function(
             color = 'blue',
             verbose = verbose
         )
-        nb.hk.genes <- lapply(colnames(hk.gene.lists)[4:9], function(x) sum(gene.annotation[[x]]))
-        names(nb.hk.genes) <- colnames(hk.gene.lists)[4:9]
+        nb.hk.genes <- lapply(colnames(kh.im.genes)[4:9], function(x) sum(gene.annotation[[x]]))
+        names(nb.hk.genes) <- colnames(kh.im.genes)[4:9]
         if(verbose) print(kable(unlist(nb.hk.genes),
                                 caption = 'Number of genes in each list of housekeeping genes:',
                                 col.names = 'nb.genes'))
@@ -429,7 +429,7 @@ createSeObj <- function(
             color = 'magenta',
             verbose = verbose
         )
-        im.gene.lists <- hk_immunStroma
+        kh.im.genes <- hk_immunStroma
         keep.cols <- c(
             which(colnames(kh.im.genes) %in% gene.group),
             10:ncol(im.gene.lists))

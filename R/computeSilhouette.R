@@ -1,7 +1,9 @@
-#' is used to compute the average Silhouette coefficient width using principal components of assays in a SummarizedExperiment
-#' object given a categorical variable.
+#' is used to compute the average Silhouette coefficient.
+
+#' @description
+#' A short description...
 #'
-#'
+
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
 #' of the assay(s) of the SummarizedExperiment class object to compute the Silhouette coefficients. By default
@@ -21,7 +23,7 @@
 #' @param apply.round Logical. Indicates whether to round the ARI results,by default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
-#'
+
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed silhouette
 #' on the categorical variable.
 #'
