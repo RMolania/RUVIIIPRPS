@@ -2,19 +2,19 @@
 % Please edit documentation in R/identifyVariation.R
 \name{identifyVariation}
 \alias{identifyVariation}
-\title{is used to identify the unwanted variation of a SummarizedExperiment class object.}
+\title{is used to identify the unwanted variation in RNA-seq data.}
 \usage{
 identifyVariation(
   se.obj,
   assay.names = "All",
-  apply.log = TRUE,
   variables = NULL,
-  output.file = NULL,
   fast.pca = TRUE,
   nb.pcs = 10,
+  apply.log = TRUE,
+  pseudo.count = 1,
   assess.se.obj = TRUE,
-  verbose = TRUE,
-  pseudo.count = 1
+  output.file = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -23,26 +23,26 @@ identifyVariation(
 \item{assay.names}{Optional string or list of strings for the selection of the name(s)
 of the assay(s) of the SummarizedExperiment class object to identify the variation. By default}
 
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
-no transformation will be selected.}
-
 \item{variables}{String or vector of strings of the label of continuous or categorical variable(s)
 such as samples types, batch or library size from colData(se).}
-
-\item{output.file}{Path and name of the output file to save the assessments plots in a pdf format.}
 
 \item{fast.pca}{logical. Indicates whether to calculate a specific number of PCs instead of the full range
 to speed up the process, by default is set to 'TRUE'.}
 
 \item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
-
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
+no transformation will be selected.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
+
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+
+\item{output.file}{Path and name of the output file to save the assessments plots in a pdf format.}
+
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
+of the functions, by default it is set to TRUE.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing all the assessments plots and metrics.
