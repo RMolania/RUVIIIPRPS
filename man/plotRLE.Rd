@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotRLE.R
 \name{plotRLE}
 \alias{plotRLE}
-\title{is used to calculate and plot RLE (Relative Log Expression) of assays in a SummarizedExperiment object.}
+\title{is used to calculate and plot relative log expression (RLE) of RNA-seq data.}
 \usage{
 plotRLE(
   se.obj,
@@ -19,29 +19,36 @@ plotRLE(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. Optional symbol or list of Symbos for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment object to calculate and plot RLE. By default}
+\item{assay.names}{Symbol. Symbol or list of symbols for the selection of the name(s) of the assay(s) of the
+SummarizedExperiment object to calculate and plot RLE. By default all the assays of the SummarizedExperiment object
+will be selected.}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. The default is TRUE.}
 
-\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-by default it is set to 1.}
+\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation, by
+default it is set to 1.}
 
 \item{ylim.rle.plot}{Numeric. A vector of two values for the ylim of the RLE plot.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment object or not. See the checkSeObj
+function for more details.}
 
-\item{remove.na}{To remove NA or missing values from the assays or not. The options are 'assays' and 'none'}
+\item{remove.na}{Symbol. To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
+The default is assays, so all the NA or missing values from the selected assays will be removed before computing the
+RLE.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
 to output the result. By default it is set to TRUE.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
 }
 \value{
-list List of the computed RLE and the associated plot
+A SummarizedExperiment or a ist of the computed RLE and the associated plots
 }
 \description{
-is used to calculate and plot RLE (Relative Log Expression) of assays in a SummarizedExperiment object.
+This functions calculates relative log expression (RLE) of an RNA-seq assay in a SummarizedExperiment object.
+}
+\author{
+Ramyar Molania
 }
