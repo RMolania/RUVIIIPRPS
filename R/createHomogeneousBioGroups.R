@@ -262,13 +262,13 @@ createHomogeneousBioGroups <- function(
     }
     # add results to the SummarizedExperiment object ####
     out.put.name <- paste0(
-        'HUVG:',
+        'HBIOG:',
         length(unique(all.groups)),
-        ' groups||UVVariables_',
+        ' Gro||Var_',
         paste0(bio.variables, collapse = '&'),
-        '||Clusetring:',
+        '||Clust:',
         clustering.method,
-        '_nb.clusters:',
+        '_nb.clust:',
         nb.clusters,
         '.'
     )
