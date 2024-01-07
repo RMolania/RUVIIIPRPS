@@ -9,7 +9,7 @@ supervisedFindNcgPbPbio(
   assay.name,
   bio.variables,
   uv.variables,
-  nb.ncg = 0.1,
+  nb.ncg = 10,
   ncg.selection.method = "Prod",
   grid.nb = 0.05,
   top.rank.bio.genes = 30,
