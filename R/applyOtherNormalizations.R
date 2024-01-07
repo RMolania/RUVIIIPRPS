@@ -39,8 +39,8 @@ applyOtherNormalizations <- function(
                         color = 'white',
                         verbose = verbose)
     # check inputs ####
-    if (length(assay.name) == 1) {
-        stop('The "assay.name" should be a single assay name.')
+    if (length(assay.name) > 1) {
+        stop('The "assay.name" should be a single name.')
     } else if (pseudo.count < 0) {
         stop('The value for "pseudo.count" should be postive.')
     }
