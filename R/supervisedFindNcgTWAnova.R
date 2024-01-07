@@ -386,11 +386,12 @@ supervisedFindNcgTWAnova <- function(
     pcs <- groups <- NULL
     pca.ncg['pcs'] <- c(1:nb.pcs)
     pca.ncg <- tidyr::pivot_longer(
-            -pcs,
-            names_to = 'groups',
-            values_to = 'ls')
+        data = pca.ncg,
+        -pcs,
+        names_to = 'groups',
+        values_to = 'ls')
     pca.ncg <- ggplot(pca.ncg, aes(x = pcs, y = ls, group = groups)) +
-        geom_line(aes(color = groups), size = 1) +
+        geom_line(aes(color = groups), linewidth = 1) +
         geom_point(aes(color = groups), size = 2) +
         xlab('PCs') +
         ylab (expression("Correlations")) +
@@ -400,7 +401,7 @@ supervisedFindNcgTWAnova <- function(
         scale_y_continuous(
             breaks = scales::pretty_breaks(n = nb.pcs),
             limits = c(0,1)) +
-        ggtitle('Assessment of the NCG')
+        ggtitle('Assessment of the NCG') +
         theme(
             panel.background = element_blank(),
             axis.line = element_line(colour = 'black', linewidth = 1),
