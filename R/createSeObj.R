@@ -400,7 +400,6 @@ createSeObj <- function(
         keep.cols <- c(
             which(colnames(kh.im.genes) %in% gene.group),
             4:9)
-        kh.im.genes <- NULL
         gene.annotation <- left_join(
             x = gene.annotation,
             y = kh.im.genes[ , keep.cols],
@@ -429,21 +428,21 @@ createSeObj <- function(
         keep.cols <- c(
             which(colnames(kh.im.genes) %in% gene.group),
             10:ncol(kh.im.genes))
-        gene.annotation <- left_join(
+        gene.annotation <- as.data.frame(left_join(
             x = gene.annotation,
             y = kh.im.genes[ , keep.cols],
             by = gene.group,
             multiple = 'first'
-            )
+            ))
         printColoredMessage(
             message = 'The immune and stromal genes signature from Kosuke Yoshihara et.al are added.',
             color = 'blue',
             verbose = verbose
         )
-        nb.hk.genes <- lapply(colnames(kh.im.genes)[10:11], function(x) sum(gene.annotation[[x]]))
-        names(nb.hk.genes) <- colnames(kh.im.genes)[10:11]
+        nb.genes <- lapply(colnames(kh.im.genes)[10:11], function(x) sum(gene.annotation[[x]]))
+        names(nb.genes) <- colnames(kh.im.genes)[10:11]
         if(verbose) print(
-            kable(unlist(nb.hk.genes),
+            kable(unlist(nb.genes),
                   caption = 'Number of genes in the immune and stromal gene signatures:',
                   col.names = 'nb.genes'))
     }
