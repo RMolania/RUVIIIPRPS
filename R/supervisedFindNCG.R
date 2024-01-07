@@ -93,11 +93,11 @@ supervisedFindNCG <- function(
     printColoredMessage(message = '------------The supervisedFindNCG function starts:',
                         color = 'white',
                         verbose = verbose)
-    if(!approach %in% c('PbPb', 'AnoCorrAs', 'TWAnova')){
-        stop('The approach must be one of the "PbPb", "AnoCorrAs" or "TWAnova".')
+    if(!approach %in% c('PbPbio', 'AnoCorrAs', 'TWAnova')){
+        stop('The approach must be one of the "PbPbio", "AnoCorrAs" or "TWAnova".')
     }
 
-    if(approach == 'PbPb'){
+    if(approach == 'PbPbio'){
         ncg.set <- supervisedFindNcgPbPbio(
             se.obj = se.obj,
             assay.name = assay.name,
@@ -196,7 +196,7 @@ supervisedFindNCG <- function(
     } else {
         stop('The approach should be one of PbPb or As')
     }
-    printColoredMessage(message = '------------The supervisedFindNCG function finished:',
+    printColoredMessage(message = '------------The supervisedFindNCG function finished.',
                         color = 'white',
                         verbose = verbose)
     return(ncg.set)
