@@ -53,6 +53,7 @@
 #' @importFrom biomaRt getBM useMart useDataset
 #' @importFrom S4Vectors DataFrame
 #' @importFrom utils read.table data
+#' @importFrom knitr kable
 #' @export
 
 createSeObj <- function(
@@ -432,7 +433,7 @@ createSeObj <- function(
         kh.im.genes <- hk_immunStroma
         keep.cols <- c(
             which(colnames(kh.im.genes) %in% gene.group),
-            10:ncol(im.gene.lists))
+            10:ncol(kh.im.genes))
         gene.annotation <- left_join(
             x = gene.annotation,
             y = kh.im.genes[ , keep.cols],
