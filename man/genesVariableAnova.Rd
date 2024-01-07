@@ -69,3 +69,6 @@ and if requested the associated boxplot.
 is used to compute ANOVA between individual gene expression of the assays in a SummarizedExperiment object
 and a categorical variable.
 }
+\author{
+Ramyar Molania
+}

@@ -21,20 +21,24 @@ createHomogeneousUVGroups(
 \arguments{
 \item{se.obj}{A summarized experiment object.}
 
-\item{uv.variables}{Symbol. Indicate of the columns names of unwanted variation variables to specify major groups with respect to unwanted variation.}
+\item{uv.variables}{Symbol. Indicate of the columns names of unwanted variation variables to specify major groups
+with respect to unwanted variation.}
 
-\item{nb.clusters}{Numeric. A value to specify the number of groups for continuous sources of biological variation. The default is 2.
-This means each continuous sources will be divided inot 2 groups using the 'clustering.method'.}
+\item{nb.clusters}{Numeric. A value to specify the number of groups for continuous sources of biological variation.
+The default is 2. This means each continuous sources will be divided inot 2 groups using the 'clustering.method'.}
 
 \item{clustering.method}{A clustering method to group each continuous sources of biological variation.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
-\item{assess.variables}{Logical. Indicates whether to assess association between the unwanted variables. For more details refer to the 'variableCorrelation' function.}
+\item{assess.variables}{Logical. Indicates whether to assess association between the unwanted variables. For more
+details refer to the 'variableCorrelation' function.}
 
-\item{cat.cor.coef}{Numeric. Correlation coefficients (Cramer's V, Pearson's contingency coefficient) cut off for assessing association between categorical sources of biological variation.}
+\item{cat.cor.coef}{Numeric. Correlation coefficients (Cramer's V, Pearson's contingency coefficient) cut off for
+assessing association between categorical sources of biological variation.}
 
-\item{cont.cor.coef}{Spearman coefficients cut off for assessing association between continuous sources of biological variation.}
+\item{cont.cor.coef}{Spearman coefficients cut off for assessing association between continuous sources of biological
+variation.}
 
 \item{remove.na}{To remove NA or missing values from either the assays or sample annotation or both.}
 
@@ -43,7 +47,8 @@ This means each continuous sources will be divided inot 2 groups using the 'clus
 \item{verbose}{Logical. Whether to show the messages of the functions or not.}
 }
 \value{
-SummarizedExperiment A SummarizedExperiment object containing the a set of sutable negatve control genes seleced by the two-way ANOVA approach.
+SummarizedExperiment A SummarizedExperiment object containing the a set of sutable negatve control genes
+seleced by the two-way ANOVA approach.
 }
 \description{
 This is used to create all possible groups with respect to unwanted variation variables in the SummarizedExperiment objct.

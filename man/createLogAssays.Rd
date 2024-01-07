@@ -2,20 +2,24 @@
 % Please edit documentation in R/createLogAssays.R
 \name{createLogAssays}
 \alias{createLogAssays}
-\title{is used to apply a log-transformation to the assay(s) of the summarized experiment object.}
+\title{is used to apply a log-transformation to the assay(s) of a SummarizedExperiment object.}
 \usage{
 createLogAssays(se.obj, assay.names = "All", pseudo.count = 1, verbose = TRUE)
 }
 \arguments{
-\item{se.obj}{A summarized experiment object.}
+\item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{A name or names of the assays in summarized experiment object to apply a log-transformation to the data.}
+\item{assay.names}{Symbol. A symbol or a list of symbols of the names of assays in the SummarizedExperiment object
+to apply a log-transformation to the data.}
 
-\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-by default it is set to 1.}
+\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation. The
+default is 1.}
 
-\item{verbose}{whether to show the messages or not.}
+\item{verbose}{Logical. Whether to show the functions messages or not.}
 }
 \description{
-is used to apply a log-transformation to the assay(s) of the summarized experiment object.
+is used to apply a log-transformation to the assay(s) of a SummarizedExperiment object.
+}
+\author{
+Marie Trussart
 }

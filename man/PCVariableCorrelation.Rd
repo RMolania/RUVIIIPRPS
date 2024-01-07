@@ -2,8 +2,7 @@
 % Please edit documentation in R/PCVariableCorrelation.R
 \name{PCVariableCorrelation}
 \alias{PCVariableCorrelation}
-\title{is used to compute the vector correlation between the first cumulative PCs of the gene expression (assay)
-of a SummarizedExperiment class object and a categorical variable (i.e. batch).}
+\title{is used to compute the vector correlation.}
 \usage{
 PCVariableCorrelation(
   se.obj,
@@ -28,13 +27,13 @@ of the assay(s) of the SummarizedExperiment class object to compute the correlat
 \item{variable}{String of the label of a categorical variable such as
 sample types or batches from colData(se.obj).}
 
-\item{fast.pca}{Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
-to speed up the process, by default is set to 'TRUE'.}
+\item{fast.pca}{Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
+full range to speed up the process, by default is set to 'TRUE'.}
 
 \item{nb.pcs}{Numeric. The number of few first cumulative PCs, by default is set to 10.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
+object 'se.obj' or to output the result. By default it is set to TRUE.}
 
 \item{plot.output}{Logical. Indicates whether to plot the correlation statistics, by default it is set to TRUE.}
 
@@ -52,6 +51,9 @@ SummarizedExperiment A SummarizedExperiment object containing the computed corre
 the continuous variable and if requested the associated plot.
 }
 \description{
-is used to compute the vector correlation between the first cumulative PCs of the gene expression (assay)
-of a SummarizedExperiment class object and a categorical variable (i.e. batch).
+This function calculates the the vector correlation between the first cumulative PCs of the gene expression (assay)
+of a SummarizedExperiment object and a categorical variable (i.e. batch).
+}
+\author{
+Ramyar Molania
 }

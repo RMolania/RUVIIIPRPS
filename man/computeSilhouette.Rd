@@ -31,13 +31,13 @@ sample types or batches from colData(se.obj).}
 is to be used for the differential analysis: 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.
 By default 'euclidean' will be selected.}
 
-\item{fast.pca}{Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
-to speed up the process, by default is set to 'TRUE'.}
+\item{fast.pca}{Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
+full range to speed up the process, by default is set to 'TRUE'.}
 
 \item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 3.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
+object 'se.obj' or to output the result. By default it is set to TRUE.}
 
 \item{plot.output}{Logical. Indicates whether to plot the Silhouette coefficients, by default it is set to FALSE.}
 
@@ -45,13 +45,17 @@ to output the result. By default it is set to TRUE.}
 
 \item{apply.round}{Logical. Indicates whether to round the ARI results,by default it is set to TRUE.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the
+execution of the functions, by default it is set to TRUE.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing the computed silhouette
 on the categorical variable.
 }
 \description{
-A short description...
+This function calculates the mean Silhouette coefficient for categorical variables such as sample subtypes, batches,
+etc., and a distance matrix based on the principal components of assay(s).
+}
+\author{
+Ramyar Molania
 }

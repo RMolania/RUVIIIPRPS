@@ -1,20 +1,24 @@
 #' This is used to create all possible groups with respect to unwanted variation variables in the SummarizedExperiment objct.
 #'
-#'
 #' @param se.obj A summarized experiment object.
-#' @param uv.variables Symbol. Indicate of the columns names of unwanted variation variables to specify major groups with respect to unwanted variation.
-#' @param nb.clusters Numeric. A value to specify the number of groups for continuous sources of biological variation. The default is 2.
-#' This means each continuous sources will be divided inot 2 groups using the 'clustering.method'.
+#' @param uv.variables Symbol. Indicate of the columns names of unwanted variation variables to specify major groups
+#' with respect to unwanted variation.
+#' @param nb.clusters Numeric. A value to specify the number of groups for continuous sources of biological variation.
+#' The default is 2. This means each continuous sources will be divided inot 2 groups using the 'clustering.method'.
 #' @param clustering.method A clustering method to group each continuous sources of biological variation.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param assess.variables Logical. Indicates whether to assess association between the unwanted variables. For more details refer to the 'variableCorrelation' function.
-#' @param cat.cor.coef Numeric. Correlation coefficients (Cramer's V, Pearson's contingency coefficient) cut off for assessing association between categorical sources of biological variation.
-#' @param cont.cor.coef Spearman coefficients cut off for assessing association between continuous sources of biological variation.
+#' @param assess.variables Logical. Indicates whether to assess association between the unwanted variables. For more
+#' details refer to the 'variableCorrelation' function.
+#' @param cat.cor.coef Numeric. Correlation coefficients (Cramer's V, Pearson's contingency coefficient) cut off for
+#' assessing association between categorical sources of biological variation.
+#' @param cont.cor.coef Spearman coefficients cut off for assessing association between continuous sources of biological
+#' variation.
 #' @param remove.na To remove NA or missing values from either the assays or sample annotation or both.
 #' @param save.se.obj Logical. Indicates whether to save the results to SummarizedExperiment object or not.
 #' @param verbose Logical. Whether to show the messages of the functions or not.
 
-#' @return SummarizedExperiment A SummarizedExperiment object containing the a set of sutable negatve control genes seleced by the two-way ANOVA approach.
+#' @return SummarizedExperiment A SummarizedExperiment object containing the a set of sutable negatve control genes
+#' seleced by the two-way ANOVA approach.
 
 #' @importFrom SummarizedExperiment assay
 #' @importFrom DescTools ContCoef

@@ -1,11 +1,9 @@
 #' is used to compute the adjusted rand index (ARI).
-#'
-#'
+
 #' @description
 #' This functions computes the adjusted rand index using the first PCs of the assays in a SummarizedExperiment object
 #' given a categorical variable.
-#'
-#'
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
 #' SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.
@@ -28,14 +26,11 @@
 #' set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
 #' execution of the functions, by default it is set to TRUE.
-#'
-#'
+
 #' @return A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
-#'
-#'
+
 #' @author Ramyar Molania
-#'
-#'
+
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom mclust mclustBIC Mclust adjustedRandIndex
 #' @importFrom stats cutree hclust dist

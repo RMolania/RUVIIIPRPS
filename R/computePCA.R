@@ -1,17 +1,15 @@
-#' is used to perform Principal Component Analysis (PCA) using singular value decomposition.
-#'
-#'
+#' is used to perform Principal Component Analysis (PCA) using singular value decomposition (SVD).
+
 #' @description
 #' A short description...
-#'
-#'
+
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. Optional symbol or list of symbols for the selection of the name(s)
-#' of the assay(s) of the SummarizedExperiment object to compute PCA. By default
-#' all the assays of the SummarizedExperiment object will be selected.
-#' @param fast.pca Logical. Indicates whether to calculate a specific number of left singular vectors instead of the full range
-#' to speed up the process, by default is set to 'TRUE'.
-#' @param nb.pcs Numeric. The number of first left singular vectors to be calculated for the fast PCA process, by default is set to 10.
+#' @param assay.names Symbol. A symbol or list of symbols of the assay(s) in the SummarizedExperiment object to compute
+#' PCA. By default all the assays of the SummarizedExperiment object will be selected.
+#' @param fast.pca Logical. Indicates whether to calculate a specific number of left singular vectors instead of the
+#' full range to speed up the process, by default is set to 'TRUE'.
+#' @param nb.pcs Numeric. The number of first left singular vectors to be calculated for the fast PCA process, by default
+#' is set to 10.
 #' @param scale Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
 #' is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
 #' mean square otherwise. The default is FALSE.
@@ -23,11 +21,11 @@
 #' by default it is set to 1.
 #' @param BSPARAM A BiocParallelParam object specifying how parallelization should be performed.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object 'se.obj' or
-#' to output the result as list. By default it is set to TRUE.
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
+#' 'se.obj' or to output the result as list. By default it is set to TRUE.
 #' @param remove.na To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
+#' execution of the functions, by default it is set to TRUE.
 #' @return SummarizedExperiment A SummarizedExperiment object or a list that containing the SVD results.
 #'
 #' @importFrom SummarizedExperiment assay

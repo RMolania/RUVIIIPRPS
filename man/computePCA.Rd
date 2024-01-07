@@ -2,7 +2,7 @@
 % Please edit documentation in R/computePCA.R
 \name{computePCA}
 \alias{computePCA}
-\title{is used to perform Principal Component Analysis (PCA) using singular value decomposition.}
+\title{is used to perform Principal Component Analysis (PCA) using singular value decomposition (SVD).}
 \usage{
 computePCA(
   se.obj,
@@ -23,14 +23,14 @@ computePCA(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. Optional symbol or list of symbols for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment object to compute PCA. By default
-all the assays of the SummarizedExperiment object will be selected.}
+\item{assay.names}{Symbol. A symbol or list of symbols of the assay(s) in the SummarizedExperiment object to compute
+PCA. By default all the assays of the SummarizedExperiment object will be selected.}
 
-\item{fast.pca}{Logical. Indicates whether to calculate a specific number of left singular vectors instead of the full range
-to speed up the process, by default is set to 'TRUE'.}
+\item{fast.pca}{Logical. Indicates whether to calculate a specific number of left singular vectors instead of the
+full range to speed up the process, by default is set to 'TRUE'.}
 
-\item{nb.pcs}{Numeric. The number of first left singular vectors to be calculated for the fast PCA process, by default is set to 10.}
+\item{nb.pcs}{Numeric. The number of first left singular vectors to be calculated for the fast PCA process, by default
+is set to 10.}
 
 \item{scale}{Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
 is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
@@ -51,11 +51,11 @@ by default it is set to 1.}
 
 \item{remove.na}{To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object 'se.obj' or
-to output the result as list. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
+'se.obj' or to output the result as list. By default it is set to TRUE.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the
+execution of the functions, by default it is set to TRUE.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object or a list that containing the SVD results.

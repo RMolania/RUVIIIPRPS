@@ -1,8 +1,8 @@
 #' is used to compute the average Silhouette coefficient.
 
 #' @description
-#' A short description...
-#'
+#' This function calculates the mean Silhouette coefficient for categorical variables such as sample subtypes, batches,
+#' etc., and a distance matrix based on the principal components of assay(s).
 
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
@@ -13,21 +13,22 @@
 #' @param dist.measure A character string indicating which method
 #' is to be used for the differential analysis: 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.
 #' By default 'euclidean' will be selected.
-#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
-#' to speed up the process, by default is set to 'TRUE'.
+#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
+#' full range to speed up the process, by default is set to 'TRUE'.
 #' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 3.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-#' to output the result. By default it is set to TRUE.
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
+#' object 'se.obj' or to output the result. By default it is set to TRUE.
 #' @param plot.output Logical. Indicates whether to plot the Silhouette coefficients, by default it is set to FALSE.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' @param apply.round Logical. Indicates whether to round the ARI results,by default it is set to TRUE.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
+#' execution of the functions, by default it is set to TRUE.
 
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed silhouette
 #' on the categorical variable.
-#'
-#'
+
+#' @author Ramyar Molania
+
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom stats dist
 #' @importFrom cluster silhouette

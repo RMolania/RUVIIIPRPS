@@ -1,11 +1,9 @@
 #' is used to compute the correlation between individual gene expression and a continuous variable.
-#'
-#'
+
 #' @description
 #' This function computes the correlation between individual gene expression of the assays and a continuous variable in
 #' a SummarizedExperiment object.
-#'
-#'
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. Symbol or list of symbols for the selection of the name(s) of the assay(s) of the
 #' SummarizedExperiment object to compute the correlation. By default all the assays of the SummarizedExperiment class
@@ -30,14 +28,12 @@
 #' object or to output the result. By default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during
 #' the execution of the functions, by default it is set to TRUE.
-#'
-#'
+
 #' @author Ramyar Molania
 
 #' @return A SummarizedExperiment object containing the computed correlation on the continuous variable
 #' and if requested the associated plot.
-#'
-#'
+
 #' @importFrom SummarizedExperiment assays assay colData
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%

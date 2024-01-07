@@ -1,12 +1,9 @@
 #' is used to create a SummarizedExperiment object.
 
-
 #' @description
 #' This function creates a SummarizedExperiment object from tabular expression data and sample annotation. In addition,
 #' the function can remove lowly expressed genes, add a range of annotations for genes, and provide several sets of
 #' housekeeping genes and a immunStroma gene signature.
-
-
 
 #' @param assays A list of assays or expression data. The genes should be in row and samples in the column. The row names
 #' of the assays should be in the same order.
@@ -41,11 +38,9 @@
 #' @param metaData Any metadata data. The metadata can be in any format and dimensions.
 #' @param verbose Logical. If TRUE shows the messages.
 
-
 #' @return A summarizedExperiment that contains assays, gene annotation, samples annotation and metadata.
 
 #' @author Ramyar Molania
-
 
 #' @importFrom Matrix colSums
 #' @importFrom dplyr left_join

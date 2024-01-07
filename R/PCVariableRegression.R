@@ -1,7 +1,6 @@
 #' is used to compute the linear regression between the the first cumulative PCs
 #' of the gene expression (assay) of a SummarizedExperiment class object and a continuous variable (i.e. library size)
-#'
-#'
+
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
 #' of the assay(s) of the SummarizedExperiment class object to compute the regression. By default
@@ -18,12 +17,11 @@
 #' @param remove.na TO BE DEFINED.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
-#'
+
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed regression for
 #' the continuous variable and if requested the associated plot.
+
 #' @importFrom stats lm var
-#' @importFrom dplyr rename mutate
-#' @importFrom tidyr pivot_longer %>%
 #' @import ggplot2
 #' @export
 

@@ -70,7 +70,7 @@
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
 #' execution of the functions, by default it is set to TRUE.
-#'
+
 #' @author Ramyar Molania
 
 #' @importFrom singscore rankGenes simpleScore

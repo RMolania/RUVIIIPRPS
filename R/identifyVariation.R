@@ -36,12 +36,10 @@
 #' of the functions, by default it is set to TRUE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
-#'
-#'
+
 #' @return  SummarizedExperiment A SummarizedExperiment object containing all the assessments plots and metrics.
 #' If specified it will generate a pdf containing the assessments plots and metrics used for the assessment.
-#' @importFrom RColorBrewer brewer.pal
-#' @importFrom grDevices colorRampPalette dev.off pdf
+
 #' @importFrom gridExtra grid.arrange
 #' @importFrom SummarizedExperiment assays colData
 #' @export

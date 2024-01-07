@@ -1,6 +1,6 @@
 #' is used to compute ANOVA between individual gene expression of the assays in a SummarizedExperiment object
 #' and a categorical variable.
-#'
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
 #' of the assay(s) of the SummarizedExperiment class object to compute the ANOVA. By default
@@ -26,20 +26,20 @@
 #' @param plot.output Logical. Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
-#'
+
 #' @return SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous variable
 #' and if requested the associated boxplot.
-#'
-#'
+
+#' @author Ramyar Molania
+
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom matrixTests row_oneway_equalvar row_oneway_welch
 #' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_longer %>%
-#' @importFrom kunstomverse geom_boxplot2
-#' @importFrom stats anova
 #' @import ggplot2
-#'
+
 #' @export
+#'
 genesVariableAnova <- function(
         se.obj,
         assay.names = 'All',
