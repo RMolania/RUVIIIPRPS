@@ -107,26 +107,33 @@ normalise <- function(
         )
     }
 
-
     # create of PRPS ####
-    se.obj = supervisedPRPS(
+    se.obj <- supervisedPRPS(
         se.obj = se.obj,
         assay.name = assay.name,
-        bio.variable = bio.variable.prps,
-        uv.variables = uv.variables.prps,
-        batch.variable = batch.variable.prps,
-        min.sample.for.prps = min.sample.for.prps,
-        min.sample.per.batch = min.sample.per.batch.prps,
-        apply.log = apply.log,
-        pseudo.count = pseudo.count,
-        assess.se.obj = assess.se.obj,
-        assess.variables = assess.cor.variables.prps,
+        bio.variables = bio.variable.prps,
+        uv.variables,
+        apply.other.uv.variables = TRUE,
+        min.sample.for.prps = 3,
+        bio.clustering.method = 'kmeans',
+        nb.bio.clusters = 2,
+        other.uv.clustering.method = 'kmeans',
+        nb.other.uv.clusters = 2,
+        check.prps.connectedness = TRUE,
+        apply.log = TRUE,
+        pseudo.count = 1,
+        assess.se.obj = TRUE,
+        assess.variables = FALSE,
+        cat.cor.coef = c(0.7, 0.7),
+        cont.cor.coef = c(0.7, 0.7),
+        remove.na = 'both',
         save.se.obj = TRUE,
-        verbose = verbose
+        plot.output = TRUE,
+        verbose = TRUE
     )
 
     # find NCG ####
-    se.obj = supervisedFindNCG(
+    se.obj <- supervisedFindNCG(
         se.obj = se.obj,
         assay.name = norm.assay.name.ncg,
         bio.variables = bio.variables.ncg,
@@ -143,8 +150,8 @@ normalise <- function(
     )
 
     # run the RUVIII-PRPS method ####
-    replicate.data = t(do.call(cbind, se.obj@metadata[['PRPS']][['supervised']]))
-    se.obj = ruvIIIMultipleK(
+    replicate.data <- t(do.call(cbind, se.obj@metadata[['PRPS']][['supervised']]))
+    se.obj <- ruvIIIMultipleK(
         se.obj = se.obj,
         assay.name = assay.name,
         apply.log = apply.log,

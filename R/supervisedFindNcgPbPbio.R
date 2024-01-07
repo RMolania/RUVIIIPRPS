@@ -72,6 +72,7 @@
 #' @importFrom dplyr mutate progress_estimated
 #' @importFrom tidyr pivot_longer
 #' @importFrom SummarizedExperiment assay
+#' @importFrom knitr kable
 #' @export
 
 supervisedFindNcgPbPbio <- function(
