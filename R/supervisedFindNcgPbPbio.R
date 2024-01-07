@@ -80,7 +80,7 @@ supervisedFindNcgPbPbio <- function(
         assay.name,
         bio.variables,
         uv.variables,
-        nb.ncg = 0.1,
+        nb.ncg = 10,
         ncg.selection.method = 'Prod',
         grid.nb = 0.05,
         top.rank.bio.genes = 30,
@@ -114,14 +114,14 @@ supervisedFindNcgPbPbio <- function(
         verbose = TRUE
 ){
     printColoredMessage(
-        message = '------------The supervisedFindNcgPbPb function starts:',
+        message = '------------The supervisedFindNcgPbPbio function starts:',
         color = 'white',
         verbose = verbose)
     # check some functions inputs ####
     if(length(assay.name) > 1){
         stop('Please provide a single assay name.')
-    } else if(nb.ncg > 1 | nb.ncg <= 0){
-        stop('The nb.ncg should be a positve value: 0 < nb.ncg < 1.')
+    } else if(nb.ncg > 100 | nb.ncg <= 0){
+        stop('The nb.ncg should be a positve value: 0 < nb.ncg < 100.')
     } else if(min.sample.for.aov <= 1){
         stop('The min.sample.for.aov should be at least 2.')
     } else if(min.sample.for.aov >= ncol(se.obj)){
@@ -322,6 +322,7 @@ supervisedFindNcgPbPbio <- function(
                 clustering.method = bio.clustering.method,
                 assess.se.obj = FALSE,
                 assess.variables = FALSE,
+                save.se.obj = FALSE,
                 remove.na = 'none',
                 verbose = verbose)
         } else {
@@ -344,6 +345,7 @@ supervisedFindNcgPbPbio <- function(
                 clustering.method = bio.clustering.method,
                 assess.se.obj = FALSE,
                 assess.variables = FALSE,
+                save.se.obj = FALSE,
                 remove.na = 'none',
                 verbose = verbose)
         } else {
@@ -365,6 +367,7 @@ supervisedFindNcgPbPbio <- function(
             clustering.method = bio.clustering.method,
             assess.se.obj = FALSE,
             assess.variables = FALSE,
+            save.se.obj = FALSE,
             verbose = verbose)
     } else if(is.null(bio.groups) & length(bio.variables) > 1){
         printColoredMessage(
@@ -379,6 +382,7 @@ supervisedFindNcgPbPbio <- function(
             bio.variables = bio.variables,
             nb.clusters = nb.bio.clusters,
             clustering.method = bio.clustering.method,
+            save.se.obj = FALSE,
             assess.se.obj = FALSE,
             assess.variables = FALSE,
             verbose = verbose)
@@ -1136,10 +1140,9 @@ supervisedFindNcgPbPbio <- function(
         names(all.corr) <- all.variables
         pca.ncg <- as.data.frame(do.call(cbind, all.corr))
         pca.ncg['pcs'] <- c(1:nb.pcs)
-        pca.ncg <- tidyr::pivot_longer(
-                -pcs,
-                names_to = 'groups',
-                values_to = 'ls')
+        pca.ncg <- tidyr::pivot_longer(data = pca.ncg,-pcs,
+                                       names_to = 'groups',
+                                       values_to = 'ls')
         pca.ncg <- ggplot(pca.ncg, aes(x = pcs, y = ls, group = groups)) +
             geom_line(aes(color = groups), size = 1) +
             geom_point(aes(color = groups), size = 2) +
@@ -1193,13 +1196,13 @@ supervisedFindNcgPbPbio <- function(
             color = 'blue',
             verbose = verbose)
         printColoredMessage(
-            message = '------------The supervisedFindNCG function finished.',
+            message = '------------The supervisedFindNcgPbPbio function finished.',
             color = 'white',
             verbose = verbose)
         return(se.obj)
     } else{
         printColoredMessage(
-            message = '------------The supervisedFindNCG function finished.',
+            message = '------------The supervisedFindNcgPbPbio function finished.',
             color = 'white',
             verbose = verbose)
         return(ncg.selected)
