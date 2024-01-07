@@ -19,6 +19,7 @@
 #' @importFrom SummarizedExperiment assay
 #' @importFrom DescTools ContCoef
 #' @importFrom stats kmeans quantile
+#' @importFrom knitr kable
 
 createHomogeneousUVGroups <- function(
         se.obj,
