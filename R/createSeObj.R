@@ -42,12 +42,11 @@
 
 #' @author Ramyar Molania
 
+#' @importFrom SummarizedExperiment SummarizedExperiment assay rowData
 #' @importFrom Matrix colSums
 #' @importFrom dplyr left_join
-#' @importFrom SummarizedExperiment SummarizedExperiment assay rowData
 #' @importFrom biomaRt getBM useMart useDataset
 #' @importFrom S4Vectors DataFrame
-#' @importFrom utils read.table data
 #' @importFrom knitr kable
 #' @export
 
@@ -152,10 +151,16 @@ createSeObj <- function(
     }
     ## gene annotation ####
     if(!is.null(gene.annotation) & create.gene.annotation){
-        stop('A gene annotattion has been provided, then create.gene.annotation must be FALSE.')
+        stop('A gene annotattion is provided, then create.gene.annotation must be FALSE.')
     }
     if(add.gene.details & is.null(gene.annotation) & !create.gene.annotation){
         stop('To add add.gene.details , the create.gene.annotation should be TRUE.')
+    }
+    if(add.housekeeping.genes & is.null(gene.annotation) & !create.gene.annotation){
+        stop('To add add.housekeeping.genes a gene annotattion should be provided or create.gene.annotation should be TRUE.')
+    }
+    if(add.immunStroma.genes & is.null(gene.annotation) & !create.gene.annotation){
+        stop('To add add.immunStroma.genes a gene annotattion should be provided or create.gene.annotation should be TRUE.')
     }
     if(add.gene.details & is.null(gene.group)){
         stop('To add gene details, the gene.group should be specified (entrezgene_id, hgnc_symbol and ensembl_gene_id).')
@@ -183,9 +188,7 @@ createSeObj <- function(
     # grammar
     if(length(assays) == 1){
         assay.n <- 'assay'
-    } else{
-        assay.n <- 'assays'
-    }
+    } else assay.n <- 'assays'
     # remove lowly expressed genes ####
     if(remove.lowly.expressed.genes){
         printColoredMessage(message = paste0('-- Remove lowly expressed genes from the ', raw.count.assay.name, ' assay.'),
@@ -411,7 +414,7 @@ createSeObj <- function(
             color = 'blue',
             verbose = verbose
         )
-        nb.hk.genes <- lapply(colnames(kh.im.genes)[4:9], function(x) sum(gene.annotation[[x]]))
+        nb.hk.genes <- lapply(colnames(kh.im.genes)[4:9], function(x) sum(gene.annotation[[x]] == 'yes'))
         names(nb.hk.genes) <- colnames(kh.im.genes)[4:9]
         if(verbose) print(kable(unlist(nb.hk.genes),
                                 caption = 'Number of genes in each list of housekeeping genes:',
@@ -439,7 +442,7 @@ createSeObj <- function(
             color = 'blue',
             verbose = verbose
         )
-        nb.genes <- lapply(colnames(kh.im.genes)[10:11], function(x) sum(gene.annotation[[x]]))
+        nb.genes <- lapply(colnames(kh.im.genes)[10:11], function(x) sum(gene.annotation[[x]] == 'yes'))
         names(nb.genes) <- colnames(kh.im.genes)[10:11]
         if(verbose) print(
             kable(unlist(nb.genes),
@@ -504,7 +507,7 @@ createSeObj <- function(
         verbose = verbose
     )
     printColoredMessage(
-        message = paste0('-', length(assays(se.obj)), ' data sets (assay)'),
+        message = paste0('-', length(assays(se.obj)), ' data sets (assays)'),
         color = 'blue',
         verbose = verbose
     )
