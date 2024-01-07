@@ -428,7 +428,7 @@ supervisedFindNcgAnoCorrAs <- function(
             })
         names(corr.genes.uv) <- continuous.uv
         rm(data.to.use)
-    }
+    } else corr.genes.uv <- NULL
     ## step2: not highly affected by biology ####
     printColoredMessage(
         message = '-- Find genes that are not highly affected by sources of biological variation:',
