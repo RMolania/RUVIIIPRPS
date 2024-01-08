@@ -7,19 +7,19 @@
 RUVIII.PRPS(
   se.obj,
   assay.name,
-  prps.data = NULL,
+  prps.names = NULL,
   prps.group = "supervised",
-  ncg.sets = NULL,
-  ncg.approach = "supervised",
+  ncg.names = NULL,
+  ncg.group = "supervised",
   k = 1,
-  apply.log = "both",
+  apply.log = "assay",
   pseudo.count = 1,
   alpha = NULL,
   eta = NULL,
   include.intercept = TRUE,
   return.info = FALSE,
   assess.se.obj = TRUE,
-  remove.na = "measurements",
+  remove.na = "none",
   save.se.obj = TRUE,
   verbose = TRUE
 )
@@ -29,13 +29,13 @@ RUVIII.PRPS(
 
 \item{assay.name}{String for the selection of the name of the assay data of the SummarizedExperiment class object}
 
-\item{prps.data}{TTTTT}
+\item{prps.names}{TTTTT}
 
 \item{prps.group}{TTTTT}
 
-\item{ncg.sets}{TTTT}
+\item{ncg.names}{TTTT}
 
-\item{ncg.approach}{TTTT}
+\item{ncg.group}{TTTT}
 
 \item{k}{TTTT}
 
