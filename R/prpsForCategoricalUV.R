@@ -170,6 +170,7 @@ prpsForCategoricalUV <- function(
             assess.variables = assess.variables,
             cont.cor.coef = cont.cor.coef,
             cat.cor.coef = cat.cor.coef,
+            save.se.obj = FALSE,
             remove.na = 'none',
             verbose = verbose)
         if(sum(table(homo.bio.groups) == 1) == length(unique(homo.bio.groups))){
@@ -178,7 +179,10 @@ prpsForCategoricalUV <- function(
     } else{
         homo.bio.groups <- colData(se.obj)[[bio.variables]]
         if(length(unique(homo.bio.groups)) == 1 )
-            printColoredMessage(message = 'The level of the "bio.variables" is only 1.', color = 'red', verbose = verbose)
+            printColoredMessage(
+                message = 'The level of the "bio.variables" is only 1.',
+                color = 'red',
+                verbose = verbose)
     }
 
     # PRPS within homogeneous biological * uv populations ####
@@ -197,6 +201,7 @@ prpsForCategoricalUV <- function(
             assess.variables = FALSE,
             cont.cor.coef = cont.cor.coef,
             cat.cor.coef = cat.cor.coef,
+            save.se.obj = FALSE,
             remove.na = 'none',
             verbose = verbose)
         all.groups <- data.frame(
@@ -312,6 +317,13 @@ prpsForCategoricalUV <- function(
 
         ## check connection between PRPS sets ####
         if(check.prps.connectedness){
+            printColoredMessage(
+                message = paste0(
+                    '-- Check the connection between possible PRPS sets across batches of ',
+                    main.uv.variable,
+                    '.'),
+                color = 'magenta',
+                verbose = verbose )
             samples.dis <- checkPRPSconnectedness(
                 data.input = samples.dis,
                 min.samples = min.sample.for.prps,
@@ -371,14 +383,14 @@ prpsForCategoricalUV <- function(
         printColoredMessage(message = '-- Plot PRPS map:',
                             color = 'magenta',
                             verbose = verbose)
-        if(other.uv.variables){
+        if(!is.null(other.uv.variables)){
             groups <- all.groups$bio.batch
         } else groups <- homo.bio.groups
-        catvar <- groups <- use <- n <- NULL
+        catvar <- use <- n <- NULL
         info <- as.data.frame(colData(se.obj))
         info$catvar <- as.factor(paste0(info[, main.uv.variable]))
         info$groups <- as.factor(groups)
-        df.count <- count(data = info, catvar, groups)
+        df.count <- info %>% dplyr::count(catvar, groups)
         df.count$use <- 'unselected'
         df.count$use[df.count$n >= min.sample.for.prps] <- 'Selected'
         p <- ggplot(df.count, aes(x = catvar, y = groups)) +
@@ -388,13 +400,13 @@ prpsForCategoricalUV <- function(
                 hjust = 0.5,
                 vjust = 0.5
             )) +
-            xlab(paste0(var)) +
-            ylab('Biological groups') +
+            xlab(main.uv.variable) +
+            ylab('Homogeneous groups') +
             theme_bw() +
             theme(
                 axis.line = element_line(colour = 'black', size = .85),
                 axis.title.x = element_text(size = 18),
-                axis.title.y = element_text(size = 0),
+                axis.title.y = element_text(size = 18),
                 axis.text.x = element_text(
                     size = 10,
                     angle = 45,
@@ -407,7 +419,7 @@ prpsForCategoricalUV <- function(
                 ),
                 legend.position = 'none'
             )
-        if(verbose) p
+        if(verbose) print(p)
     }
     # saving the output ####
     if(!is.null(other.uv.variables)) {
