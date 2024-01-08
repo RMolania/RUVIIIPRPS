@@ -169,6 +169,7 @@ prpsForContinuousUV <- function(
         assess.variables = FALSE,
         cat.cor.coef = cat.cor.coef,
         cont.cor.coef = cont.cor.coef,
+        save.se.obj = FALSE,
         remove.na = 'none',
         verbose = verbose
     )
@@ -190,6 +191,7 @@ prpsForContinuousUV <- function(
             assess.variables = FALSE,
             cat.cor.coef = cat.cor.coef,
             cont.cor.coef = cont.cor.coef,
+            save.se.obj = FALSE,
             remove.na = 'none',
             verbose = verbose
         )
@@ -307,7 +309,7 @@ prpsForContinuousUV <- function(
                 facet_grid(.~new.g, scales = 'free_x', space = 'free') +
                 scale_x_discrete(expand = c(0, 0.9)) +
                 ylab(main.uv.variable) +
-                xlab('Biological_batch groups') +
+                xlab('Homogeneous groups') +
                 ylim(c(
                     min(se.obj[[main.uv.variable]]),
                     max(se.obj[[main.uv.variable]])
@@ -434,7 +436,7 @@ prpsForContinuousUV <- function(
                 facet_grid(.~new.g, scales = 'free_x', space = 'free') +
                 scale_x_discrete(expand = c(0, 0.5)) +
                 ylab(main.uv.variable) +
-                xlab('Biological groups') +
+                xlab('Homogeneous groups') +
                 ylim(c(
                     min(se.obj[[main.uv.variable]]),
                     max(se.obj[[main.uv.variable]])
