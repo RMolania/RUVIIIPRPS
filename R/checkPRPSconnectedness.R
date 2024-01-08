@@ -55,7 +55,7 @@ checkPRPSconnectedness <- function(
                         nrow(data.input) - sum(selected.groups),
                         ' homogenous sample groups are removed as they do not have at least ',
                         min.samples,
-                        ' samples in more that one batch of.',
+                        ' samples in more that one batch of ',
                         batch.name,
                         '.'
                     ),
