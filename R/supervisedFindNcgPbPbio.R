@@ -1055,7 +1055,6 @@ supervisedFindNcgPbPbio <- function(
                         })))
                 }
             })))
-
         top.rank.uv.genes <- round(top.rank.uv.genes/100 * nrow(se.obj), digits = 0)
         all.uv.tests <- c('anova.genes.uv', 'corr.genes.uv')
         top.uv.genes <- unique(unlist(lapply(
@@ -1169,10 +1168,9 @@ supervisedFindNcgPbPbio <- function(
         if(verbose) print(pca.ncg)
     }
     # add results to the SummarizedExperiment object ####
-    ncg.selected <- row.names(se.obj) %in% ncg.selected
     out.put.name <- paste0(
         'NCG:',
-        length(ncg.selected),
+        sum(ncg.selected),
         'genes||Bio:',
         paste0(bio.variables, collapse = '&'),
         '||UV:',
@@ -1190,7 +1188,7 @@ supervisedFindNcgPbPbio <- function(
         if(length(se.obj@metadata$NCG) == 0 ) {
             se.obj@metadata[['NCG']] <- list()
         }
-        se.obj@metadata[['NCG']][['Supervised']][[out.put.name]] <- ncg.selected
+        se.obj@metadata[['NCG']][['supervised']][[out.put.name]] <- ncg.selected
         printColoredMessage(
             message = 'The NCGs are saved to metadata of the SummarizedExperiment object.',
             color = 'blue',
