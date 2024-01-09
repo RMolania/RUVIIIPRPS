@@ -1,7 +1,7 @@
-#' is used to perform Principal Component Analysis (PCA) using singular value decomposition (SVD).
+#' is used to perform principal component analysis (PCA) using singular value decomposition (SVD).
 
 #' @description
-#' A short description...
+#' This func
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols of the assay(s) in the SummarizedExperiment object to compute
