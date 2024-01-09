@@ -2,7 +2,7 @@
 % Please edit documentation in R/checkPRPSconnectedness.R
 \name{checkPRPSconnectedness}
 \alias{checkPRPSconnectedness}
-\title{is used to check PRPS sets connection.}
+\title{is used to assess the connectedness of PRPS sets.}
 \usage{
 checkPRPSconnectedness(data.input, min.samples, batch.name, verbose = TRUE)
 }
@@ -16,5 +16,5 @@ checkPRPSconnectedness(data.input, min.samples, batch.name, verbose = TRUE)
 \item{verbose}{TTTTTT}
 }
 \description{
-is used to check PRPS sets connection.
+A short description...
 }
