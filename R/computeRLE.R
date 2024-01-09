@@ -233,7 +233,6 @@ computeRLE <- function(
                 se.obj@metadata[['metric']][[x]][['RLE']] <- list()
             }
             se.obj@metadata[['metric']][[x]][['RLE']] <- outputs[[x]]
-
         }
         printColoredMessage(
             message = paste0('The RLE plots are saved to metadata@$plot$rle'),
