@@ -58,8 +58,16 @@ by default it is set to 1.}
 execution of the functions, by default it is set to TRUE.}
 }
 \value{
-SummarizedExperiment A SummarizedExperiment object or a list that containing the SVD results.
+A SummarizedExperiment object or a list that containing the singular value decomposition results and the
+percentage variation of each PCs.
 }
 \description{
-This func
+This function uses ingular value decomposition to perform principal component on the assay(s) in a SummarizedExperiment
+object. The function provides fast singular value decomposition using the BiocSingular R package.
+}
+\details{
+The PCs (in this context also called singular vectors) of the sample × transcript array of log counts are the linear
+combinations of the transcript measurements having the largest, second largest, third largest, etc., variation,
+standardized to be of unit length and orthogonal to the preceding components. Each will give a single value for
+each sample.
 }
