@@ -143,9 +143,9 @@ computeARI <- function(
                         ' variable.'),
                     color = 'blue',
                     verbose = verbose)
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd.dec$u[colnames(se.obj), ]
+                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u[colnames(se.obj), ]
             } else {
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd.dec$u[colnames(se.obj), ]
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[colnames(se.obj), ]
             }
             if(clustering.method == 'mclust'){
                 bic <- mclustBIC(data = pca.data)
@@ -157,7 +157,7 @@ computeARI <- function(
                     k = length(unique(se.obj@colData[, variable])))
                 ari <- adjustedRandIndex(clusters, se.obj@colData[, variable])
             }
-            return(all.ari)
+            return(ari)
         })
     names(all.ari) <- levels(assay.names)
     # save the results ####
