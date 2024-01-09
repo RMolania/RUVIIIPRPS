@@ -1,5 +1,7 @@
 #' is used to create a SummarizedExperiment object.
 
+#' @author Ramyar Molania
+
 #' @description
 #' This function creates a SummarizedExperiment object from tabular expression data and sample annotation. In addition,
 #' the function can remove lowly expressed genes, add a range of annotations for genes, and provide several sets of
@@ -39,8 +41,6 @@
 #' @param verbose Logical. If TRUE shows the messages.
 
 #' @return A summarizedExperiment that contains assays, gene annotation, samples annotation and metadata.
-
-#' @author Ramyar Molania
 
 #' @importFrom SummarizedExperiment SummarizedExperiment assay rowData
 #' @importFrom Matrix colSums
