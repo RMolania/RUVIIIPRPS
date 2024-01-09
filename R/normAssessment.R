@@ -49,28 +49,28 @@
 
 ## remove n.core and merge all variable together
 
-normAssessment = function(
+normAssessment <- function(
         se.obj,
         assay.names = 'All',
-        apply.log = TRUE,
         variables,
-        output.file = NULL,
         fast.pca = TRUE,
         nb.pcs = 10,
+        apply.log = TRUE,
+        pseudo.count = 1,
         assess.se.obj = FALSE,
-        verbose = TRUE,
-        pseudo.count = 1
-) {
+        output.file = NULL,
+        verbose = TRUE
+){
     printColoredMessage(message = '------------The normAssessment function starts:',
                         color = 'white',
                         verbose = verbose)
     # check the inputs of PCA ####
-    if(length(assay.names) == 1 & assay.names!= 'All'){
-        if(!assay.names %in% names(assays(se.obj)) )
+    if (length(assay.names) == 1 & assay.names != 'All') {
+        if (!assay.names %in% names(assays(se.obj)))
             stop('The assay name cannot be found in the SummarizedExperiment object.')
     }
-    if(length(assay.names) > 1){
-        if(!assay.names %in% names(assays(se.obj)))
+    if (length(assay.names) > 1) {
+        if (!assay.names %in% names(assays(se.obj)))
             stop('The assay names cannot be found in the SummarizedExperiment object.')
     }
     if (fast.pca & is.null(nb.pcs)) {
@@ -86,30 +86,40 @@ normAssessment = function(
             assay.names = assay.names,
             variables = NULL,
             remove.na = 'measurements',
-            verbose = verbose)
+            verbose = verbose
+        )
     }
 
     # find categorical and continuous variables ####
-    categorical.var <- NULL
-    continuous.var <- NULL
+    categorical.var <- continuous.var <- NULL
     if (!is.null(variables)) {
-        var.class <- sapply(
-            variables,
-            function(x) class(colData(se.obj)[[x]]))
-        categorical.var <- var.class[var.class %in% c('character', 'factor')]
-        continuous.var <- var.class[var.class %in% c('numeric', 'integer')]
+        var.class <- sapply(variables,
+                            function(x)
+                                class(colData(se.obj)[[x]]))
+        categorical.var <-
+            var.class[var.class %in% c('character', 'factor')]
+        continuous.var <-
+            var.class[var.class %in% c('numeric', 'integer')]
     }
 
     # find assays ####
     if (length(assay.names) == 1 && assay.names == 'All') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(unlist(assay.names))
+    } else
+        assay.names <- as.factor(unlist(assay.names))
 
     # compute rle #####
-    se.obj <- RUVIIIPRPS::plotRLE(
+    se.obj <- RUVIIIPRPS::computeRLE(
         se.obj = se.obj,
         assay.names = assay.names,
-        apply.log = apply.log)
+        apply.log = apply.log,
+        pseudo.count = pseudo.count,
+        ylim.rle.plot = ylim.rle.plot,
+        assess.se.obj = assess.se.obj,
+        remove.na = remove.na,
+        save.se.obj = TRUE,
+        verbose = verbose
+    )
 
     # compute pca ####
     printColoredMessage(
@@ -120,52 +130,63 @@ normAssessment = function(
     se.obj <- RUVIIIPRPS::computePCA(
         se.obj = se.obj,
         assay.names = assay.names,
-        apply.log = apply.log,
-        pseudo.count = pseudo.count,
         fast.pca = fast.pca,
         nb.pcs = nb.pcs,
+        scale = scale,
+        center = center,
+        apply.log = apply.log,
+        pseudo.count = pseudo.count,
+        BSPARAM = BSPARAM,
         assess.se.obj = assess.se.obj,
-        verbose = verbose)
-
-    # categorical variables ####
+        remove.na = remove.na,
+        save.se.obj = save.se.obj,
+        verbose = verbose
+    )
+    # pca plots ####
     if (length(categorical.var) != 0) {
-        ## plot pca ####
-        pca.plots <- lapply(
-            categorical.var,
-            function(x) {
-                ## pca colors ####
-                group <- as.factor(se.obj@colData[, x])
-                if (length(unique(group)) <= 11) {
-                    colfunc <- colorRampPalette(
-                        RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
-                    color.group <- colfunc(length(unique(group)))
-                    names(color.group) <- unique(group)
-                } else color.group = NULL
-                printColoredMessage(
-                    message = paste0('-- Plot PCA based on the ', x, ' variable.'),
-                    color = 'magenta',
-                    verbose = verbose
-                )
-                ## plot ####
-                pca.res <- RUVIIIPRPS::plotPCA(
-                    se.obj = se.obj,
-                    assay.names = assay.names,
-                    variable = x,
-                    color = color.group,
-                    fast.pca = fast.pca,
-                    assess.se.obj = assess.se.obj,
-                    verbose = verbose)
-                return(pca.res)
-            })
+        pca.plots <- lapply(categorical.var,
+                            function(x) {
+                                printColoredMessage(
+                                    message = paste0('Plot PCA based on the ', x, ' variable.'),
+                                    color = 'blue',
+                                    verbose = verbose
+                                )
+                                ## select colors ####
+                                group <-
+                                    as.factor(se.obj@colData[, x])
+                                if (length(unique(group)) <= 11) {
+                                    colfunc <-
+                                        colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
+                                    color.group <-
+                                        colfunc(length(unique(group)))
+                                    names(color.group) <-
+                                        unique(group)
+                                } else
+                                    color.group = NULL
+                                ## plot ####
+                                pca.res <- RUVIIIPRPS::plotPCA(
+                                    se.obj = se.obj,
+                                    assay.names = assay.names,
+                                    variable = x,
+                                    color = color.group,
+                                    fast.pca = fast.pca,
+                                    assess.se.obj = assess.se.obj,
+                                    verbose = verbose
+                                )
+                                return(pca.res)
+                            })
         names(pca.plots) <- categorical.var
+    }
 
-        # computing other metrics ####
+    # silhouette coefficient ####
+    if (length(categorical.var) != 0) {
         for (x in categorical.var) {
-            ## silhouette coefficient ####
             printColoredMessage(
-                message = paste0('-- Compute Silhouette coefficient based on the ',
-                                 x,
-                                 ' variable.'),
+                message = paste0(
+                    '-- Compute Silhouette coefficient based on the ',
+                    x,
+                    ' variable.'
+                ),
                 color = 'magenta',
                 verbose = verbose
             )
@@ -175,24 +196,36 @@ normAssessment = function(
                 variable = x,
                 fast.pca = fast.pca,
                 assess.se.obj = assess.se.obj,
-                verbose = verbose)
-
-            ## adjusted rand index ####
+                verbose = verbose
+            )
+        }
+    }
+    # adjusted rand index ####
+    if (length(categorical.var) != 0) {
+        for (x in categorical.var) {
             printColoredMessage(
-                message = paste0('-- Compute adjusted rand index based on the ',
-                                 x,
-                                 ' variable.'),
+                message = paste0(
+                    '-- Compute adjusted rand index based on the ',
+                    x,
+                    ' variable.'
+                ),
                 color = 'magenta',
-                verbose = verbose)
+                verbose = verbose
+            )
             se.obj <- RUVIIIPRPS::computeARI(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = x,
                 fast.pca = fast.pca,
                 assess.se.obj = assess.se.obj,
-                verbose = verbose)
+                verbose = verbose
+            )
+        }
+    }
 
-            ## anova ####
+    # anova ####
+    if (length(categorical.var) != 0) {
+        for (x in categorical.var) {
             printColoredMessage(
                 message = paste0('-- Compute ANOVA based on the ',
                                  x,
@@ -209,10 +242,14 @@ normAssessment = function(
                 assess.se.obj = assess.se.obj,
                 verbose = verbose
             )
-
-            ## vector correlation ####
+        }
+    }
+    # vector correlation ####
+    if (length(categorical.var) != 0) {
+        for (x in categorical.var) {
             printColoredMessage(
-                message = paste0('--Compute vector vorrelation between the first cumulative PCs and the ',
+                message = paste0(
+                    '--Compute vector vorrelation between the first cumulative PCs and the ',
                     x,
                     ' variable.'
                 ),
@@ -226,48 +263,45 @@ normAssessment = function(
                 fast.pca = fast.pca,
                 nb.pcs = nb.pcs,
                 assess.se.obj = assess.se.obj,
-                verbose = verbose)
-        }
-
-        ## Plot combined silhouette based on all pairs of cat var
-        nb.cat.var <- length(categorical.var)
-        CombinedSilPlot <- NULL
-        if (nb.cat.var > 1) {
-            printColoredMessage(
-                message = paste0(
-                    '-- Plot all combined silhouette plots of all categorical variables'
-                ),
-                color = 'magenta',
                 verbose = verbose
             )
-            for (v in 1:(nb.cat.var - 1)) {
-                for (v2 in ((v + 1):nb.cat.var)) {
-                    p = RUVIIIPRPS::plotCombinedSilhouette(
-                        se.obj = se.obj,
-                        assay.names = assay.names,
-                        variable1 = categorical.var[v],
-                        variable2 = categorical.var[v2],
-                        assess.se.obj = assess.se.obj,
-                        verbose = verbose
-                    )
-                    CombinedSilPlot[[paste0(categorical.var[v], "_", categorical.var[v2])]] =
-                        p
-                }
+        }
+    }
+    ## Plot combined silhouette based on all pairs of cat var
+    nb.cat.var <- length(categorical.var)
+    CombinedSilPlot <- NULL
+    if (nb.cat.var > 1) {
+        printColoredMessage(
+            message = paste0(
+                '-- Plot all combined silhouette plots of all categorical variables'
+            ),
+            color = 'magenta',
+            verbose = verbose
+        )
+        for (v in 1:(nb.cat.var - 1)) {
+            for (v2 in ((v + 1):nb.cat.var)) {
+                p = RUVIIIPRPS::plotCombinedSilhouette(
+                    se.obj = se.obj,
+                    assay.names = assay.names,
+                    variable1 = categorical.var[v],
+                    variable2 = categorical.var[v2],
+                    assess.se.obj = assess.se.obj,
+                    verbose = verbose
+                )
+                CombinedSilPlot[[paste0(categorical.var[v], "_", categorical.var[v2])]] = p
             }
         }
     }
 
-    # continuous variable ####
-    nb.cont.var <- length(continuous.var)
-    if (nb.cont.var != 0) {
-        ## Computing other metrics
+    # regression analysis ####
+    if (length(continuous.var) != 0) {
         for (x in continuous.var) {
-            ## regression between library size and PCs ####
             printColoredMessage(
                 message = paste0(
                     '-- Computing linear regression between the first cumulative PCs and the ',
                     x,
-                    ' variable.'),
+                    ' variable.'
+                ),
                 color = 'magenta',
                 verbose = verbose
             )
@@ -278,16 +312,23 @@ normAssessment = function(
                 fast.pca = fast.pca,
                 nb.pcs = nb.pcs,
                 assess.se.obj = FALSE,
-                verbose = verbose)
+                verbose = verbose
+            )
+        }
+    }
 
-            ## spearman correlation between gene expression and library size ####
+    # spearman correlation ####
+    if (length(continuous.var) != 0) {
+        for (x in continuous.var) {
             printColoredMessage(
                 message = paste0(
                     '-- Computing Spearman correlation based on',
                     x,
-                    ' variable.'),
+                    ' variable.'
+                ),
                 color = 'magenta',
-                verbose = verbose)
+                verbose = verbose
+            )
             se.obj <- RUVIIIPRPS::genesVariableCorrelation(
                 se.obj,
                 assay.names = assay.names,
@@ -295,7 +336,8 @@ normAssessment = function(
                 apply.log = apply.log,
                 pseudo.count = pseudo.count,
                 assess.se.obj = FALSE,
-                verbose = verbose)
+                verbose = verbose
+            )
         }
     }
     # output the results #####
@@ -316,9 +358,9 @@ normAssessment = function(
             }
             ## Combined silhouette
             if (nb.cat.var > 1) {
-                p <- lapply(
-                    names(CombinedSilPlot),
-                    function(x) plot(CombinedSilPlot[[x]]))
+                p <- lapply(names(CombinedSilPlot),
+                            function(x)
+                                plot(CombinedSilPlot[[x]]))
             }
         }
         # Continuous variable
@@ -329,10 +371,9 @@ normAssessment = function(
             }
         }
         # RLE plot
-        lreg.pcs <- lapply(
-            levels(assay.names),
-            function(x)
-                plot(se.obj@metadata[['plot']][['rle']][[x]]))
+        lreg.pcs <- lapply(levels(assay.names),
+                           function(x)
+                               plot(se.obj@metadata[['plot']][['rle']][[x]]))
         dev.off()
     }
     printColoredMessage(message = '------------The normAssessment function finished.',
