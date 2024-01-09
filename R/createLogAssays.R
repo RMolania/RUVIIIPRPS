@@ -1,13 +1,13 @@
 #' is used to apply a log-transformation to the assay(s) of a SummarizedExperiment object.
 
+#' @author Marie Trussart
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or a list of symbols of the names of assays in the SummarizedExperiment object
 #' to apply a log-transformation to the data.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation. The
 #' default is 1.
 #' @param verbose Logical. Whether to show the functions messages or not.
-
-#' @author Marie Trussart
 
 #' @importFrom SummarizedExperiment assays assay colData
 
