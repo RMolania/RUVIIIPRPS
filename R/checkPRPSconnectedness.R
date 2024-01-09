@@ -1,4 +1,7 @@
-#' is used to check PRPS sets connection.
+#' is used to assess the connectedness of PRPS sets.
+#'
+#' @description
+#' A short description...
 #'
 #' @param data.input TTTTT
 #' @param min.samples TTTTTT
