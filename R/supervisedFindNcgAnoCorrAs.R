@@ -833,15 +833,14 @@ supervisedFindNcgAnoCorrAs <- function(
     }
     # add results to the SummarizedExperiment object ####
     out.put.name <- paste0(
-        'NCG:',
         sum(ncg.selected),
-        'genes||Bio:',
+        '|',
         paste0(bio.variables, collapse = '&'),
-        '||UV:',
+        '|',
         paste0(uv.variables, collapse = '&'),
-        '||Method:AS_Approch:',
+        '|AnoCorrAs:',
         ncg.selection.method,
-        '||Data:',
+        '|',
         assay.name)
     if(save.se.obj == TRUE){
         printColoredMessage(
