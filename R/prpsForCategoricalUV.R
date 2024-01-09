@@ -424,22 +424,19 @@ prpsForCategoricalUV <- function(
     # saving the output ####
     if(!is.null(other.uv.variables)) {
         out.put.name <- paste0(
-            'PRPSfor:',
             main.uv.variable,
-            '||Bio:',
+            '|:',
             paste0(bio.variables, collapse = '&'),
-            '_OtherUV:',
+            '|:',
             paste0(other.uv.variables, collapse = '&'),
-            '||Data:',
+            '|',
             assay.name)
     } else{
         out.put.name <- paste0(
-            'PRPSfor:',
             main.uv.variable,
-            '||Bio:',
+            '|:',
             paste0(bio.variables, collapse = '&'),
-            '_OtherUV:NULL',
-            '||Data:',
+            '|',
             assay.name)
     }
     if (save.se.obj) {
