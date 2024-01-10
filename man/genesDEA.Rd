@@ -56,6 +56,11 @@ associated p-value histograms.
 This function performs differential gene expression analysis using Wilcoxon test between all possible pairs of a
 categorical variable in a SummarizedExperiment object.
 }
+\details{
+DE analyses were performed using the Wilcoxon signed-rank test with log -transformed raw counts and normalized data.
+To evaluate the effects 2 of the different sources of unwanted variation on the data, DE analyses were performed across
+batches. In the absence of any batch effects, the histogram of the resulting unadjusted P values should
+}
 \author{
 Ramyar Molania
 }

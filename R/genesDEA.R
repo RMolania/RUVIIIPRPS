@@ -1,11 +1,16 @@
 #' is used to perform differential gene expression analysis using Wilcoxon test.
-#'
-#'
+
+#' @author Ramyar Molania
+
 #' @description
 #' This function performs differential gene expression analysis using Wilcoxon test between all possible pairs of a
 #' categorical variable in a SummarizedExperiment object.
-#'
-#'
+
+#' @details
+#' DE analyses were performed using the Wilcoxon signed-rank test with log -transformed raw counts and normalized data.
+#' To evaluate the effects 2 of the different sources of unwanted variation on the data, DE analyses were performed across
+#'  batches. In the absence of any batch effects, the histogram of the resulting unadjusted P values should
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. Symbol or list of symbols for the selection of the name(s) of the assay(s) of the
 #' SummarizedExperiment object to compute the differential gene expression analysis. By default all the assays of the
@@ -26,13 +31,9 @@
 #' @param plot.output Logical. Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
-#'
+
 #' @return A SummarizedExperiment object or a list containing all the stats of the Wilcoxon test and if requested the
 #' associated p-value histograms.
-#'
-#'
-#' @author Ramyar Molania
-
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom matrixTests row_wilcoxon_twosample
