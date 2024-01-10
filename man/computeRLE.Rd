@@ -50,7 +50,7 @@ the checkSeObj function for more details.}
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
 to output the result. By default it is set to TRUE.}
 
-\item{verbose}{Logical. If TRUE shows the process messages.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
 A SummarizedExperiment object or a list of the computed RLE and the associated plots.

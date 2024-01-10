@@ -54,8 +54,7 @@ by default it is set to 1.}
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
 'se.obj' or to output the result as list. By default it is set to TRUE.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-execution of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
 A SummarizedExperiment object or a list that containing the singular value decomposition results and the
