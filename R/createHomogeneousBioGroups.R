@@ -1,6 +1,10 @@
 #' This is used to create all possible homogeneous biological groups in the SummarizedExperiment objct.
-#'
-#'
+
+#' @author Ramyar Molania
+
+#' @description
+#' A short description...
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param bio.variables Symbol. Indicates the column names biological variables the SummarizedExperiment object.
 #' @param nb.clusters A value to specify the number of groups of continuous sources of biological variation..
