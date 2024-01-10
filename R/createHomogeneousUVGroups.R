@@ -1,5 +1,10 @@
 #' This is used to create all possible groups with respect to unwanted variation variables in the SummarizedExperiment objct.
-#'
+
+#' @author Ramyar Molania
+
+#' @description
+#' A short description...
+
 #' @param se.obj A summarized experiment object.
 #' @param uv.variables Symbol. Indicate of the columns names of unwanted variation variables to specify major groups
 #' with respect to unwanted variation.
@@ -32,8 +37,8 @@ createHomogeneousUVGroups <- function(
         clustering.method = 'kmeans',
         assess.se.obj = TRUE,
         assess.variables = TRUE,
-        cat.cor.coef = c(0.7, 0.7),
-        cont.cor.coef = c(0.7, 0.7),
+        cat.cor.coef = c(0.9, 0.9),
+        cont.cor.coef = c(0.9, 0.9),
         remove.na = 'sample.annotation',
         save.se.obj = TRUE,
         verbose = TRUE) {
@@ -260,13 +265,12 @@ createHomogeneousUVGroups <- function(
     }
     # add results to the SummarizedExperiment object ####
     out.put.name <- paste0(
-        'HUVG:',
         length(unique(all.groups)),
-        ' groups||UVVariables_',
+        ' groups||UV',
         paste0(uv.variables, collapse = '&'),
-        '||Clusetring:',
+        '||Clus:',
         clustering.method,
-        '_nb.clusters:',
+        '_nb.clus:',
         nb.clusters,
         '.')
     if(save.se.obj == TRUE){
