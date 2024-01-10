@@ -1,5 +1,7 @@
 #' is used to compute the correlation between individual gene expression and a continuous variable.
 
+#' @author Ramyar Molania
+
 #' @description
 #' This function computes the correlation between individual gene expression of the assays and a continuous variable in
 #' a SummarizedExperiment object.
@@ -28,8 +30,6 @@
 #' object or to output the result. By default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during
 #' the execution of the functions, by default it is set to TRUE.
-
-#' @author Ramyar Molania
 
 #' @return A SummarizedExperiment object containing the computed correlation on the continuous variable
 #' and if requested the associated plot.
@@ -88,8 +88,8 @@ genesVariableCorrelation <- function(
 
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'All') {
-        assay.names = as.factor(names(assays(se.obj)))
-    } else assay.names = as.factor(unlist(assay.names))
+        assay.names <- as.factor(names(assays(se.obj)))
+    } else assay.names <- as.factor(unlist(assay.names))
 
     # check SummarizedExperiment object ####
     if (assess.se.obj) {
@@ -188,7 +188,7 @@ genesVariableCorrelation <- function(
                     )
                 plot(p.pos)
 
-                ### negative correlation ####
+                # negative correlation ####
                 temp.corr <- corr.genes.var[order(corr.genes.var[, 'correlation'],
                                          decreasing = FALSE,
                                          na.last = TRUE) ,]
