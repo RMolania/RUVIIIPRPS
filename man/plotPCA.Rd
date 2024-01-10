@@ -2,20 +2,22 @@
 % Please edit documentation in R/plotPCA.R
 \name{plotPCA}
 \alias{plotPCA}
-\title{is used to plot the pairwise plots of the first principal components of the assays of a SummarizedExperiment object.}
+\title{is used to plot principal components.}
 \usage{
 plotPCA(
   se.obj,
   assay.names = "All",
   variable,
-  color = NULL,
   fast.pca = TRUE,
   nb.pcs = 3,
+  plot.type = "scatter",
+  point.color = NULL,
+  point.size = 1.5,
+  stroke.color = "gray30",
+  stroke.size = 0.2,
+  alpha.point = 0.5,
+  alpha.density = 0.5,
   ncol.plot = 4,
-  strokeSize = 0.2,
-  pointSize = 1.5,
-  strokeColor = "gray30",
-  alpha = 0.5,
   assess.se.obj = TRUE,
   verbose = TRUE
 )
@@ -23,33 +25,37 @@ plotPCA(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object that will be used to compute the PCA.}
 
-\item{assay.names}{Optional string or list of strings for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment class object to plot the PCA. By default}
+\item{assay.names}{Optional string or list of strings for the selection of the name(s) of the assay(s) of the
+SummarizedExperiment class object to plot the PCA. By default all the assays of the SummarizedExperiment class object
+will be selected.}
 
 \item{variable}{String of the label of a categorical variable such as
 sample types or batches from colData(se.obj).}
 
-\item{color}{The color of the variable that will be used on the PCA plot}
-
-\item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range
-to speed up the process, by default is set to 'TRUE'.}
+\item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range to speed up
+the process, by default is set to 'TRUE'.}
 
 \item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
 
+\item{plot.type}{Symbol.}
+
+\item{point.color}{The color of the variable that will be used on the PCA plot}
+
+\item{point.size}{geom_point aesthetics}
+
+\item{stroke.color}{geom_point aesthetics}
+
+\item{stroke.size}{geom_point aesthetics}
+
+\item{alpha.point}{geom_point aesthetics}
+
+\item{alpha.density}{geom_point aesthetics}
+
 \item{ncol.plot}{is the argument of gtable for the layout specifying ncol, by default it is set to 4.}
-
-\item{strokeSize}{geom_point aesthetics}
-
-\item{pointSize}{geom_point aesthetics}
-
-\item{strokeColor}{geom_point aesthetics}
-
-\item{alpha}{geom_point aesthetics}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
 plot PCA plot of the data colored by one variable
