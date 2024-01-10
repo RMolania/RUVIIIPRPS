@@ -43,5 +43,8 @@ cut off for assessing association between categorical sources of biological vari
 \item{verbose}{Logical. Whether to show the messages of the functions or not.}
 }
 \description{
-This is used to create all possible homogeneous biological groups in the SummarizedExperiment objct.
+A short description...
+}
+\author{
+Ramyar Molania
 }

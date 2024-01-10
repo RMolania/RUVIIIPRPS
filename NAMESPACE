@@ -3,6 +3,7 @@
 export(PCVariableCorrelation)
 export(PCVariableRegression)
 export(RUVIII.PRPS)
+export(applyOtherNormalizations)
 export(checkSeObj)
 export(computeARI)
 export(computePCA)

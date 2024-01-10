@@ -11,8 +11,8 @@ createHomogeneousUVGroups(
   clustering.method = "kmeans",
   assess.se.obj = TRUE,
   assess.variables = TRUE,
-  cat.cor.coef = c(0.7, 0.7),
-  cont.cor.coef = c(0.7, 0.7),
+  cat.cor.coef = c(0.9, 0.9),
+  cont.cor.coef = c(0.9, 0.9),
   remove.na = "sample.annotation",
   save.se.obj = TRUE,
   verbose = TRUE
@@ -51,5 +51,8 @@ SummarizedExperiment A SummarizedExperiment object containing the a set of sutab
 seleced by the two-way ANOVA approach.
 }
 \description{
-This is used to create all possible groups with respect to unwanted variation variables in the SummarizedExperiment objct.
+A short description...
+}
+\author{
+Ramyar Molania
 }

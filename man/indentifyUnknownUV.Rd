@@ -2,12 +2,13 @@
 % Please edit documentation in R/indentifyUnknownUV.R
 \name{indentifyUnknownUV}
 \alias{indentifyUnknownUV}
-\title{is used to find potential unknown sources of unwanted variation in an assay in a SummarizedExperiment object.}
+\title{is used to find potential unknown sources of unwanted variation RNA-seq data.}
 \usage{
 indentifyUnknownUV(
   se.obj,
   assay.name,
   approach = "RLE",
+  rle.comp = "median",
   regress.out.bio.variables = NULL,
   regress.out.bio.gene.sets = NULL,
   uv.gene.sets = NULL,
@@ -22,14 +23,13 @@ indentifyUnknownUV(
   nbClust.alphaBeale = 0.1,
   max.samples.per.batch = 0.1,
   nb.clusters = 3,
-  rle.comp = "median",
   apply.log = TRUE,
   pseudo.count = 1,
   nb.pcs = 2,
   center = TRUE,
   scale = FALSE,
   BSPARAM = bsparam(),
-  remove.na = "none",
+  remove.na = "assays",
   assess.se.obj = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE
@@ -48,6 +48,9 @@ on either a set of negative control genes or all genes will be applied and then 
 clusters the first principal components to find potential unknown sources of unwanted variation.
 In the sample.scoring approach, first,  all samples will be scored against a set of signature genes related to
 unwanted variation, then clustering method will be applied on the scoring to find potential unknown sources of unwanted variation.}
+
+\item{rle.comp}{A symbol. Indicates which properties: 'median' or 'iqr' or 'both' of the RLE data should be used for
+clustering when the approach is RLE. The default is median.}
 
 \item{regress.out.bio.variables}{Symbol. One or more symbols indicate the names of the columns that contain known
 biological variation in the sample annotation (colData) that will be regress out from the data before finding sources
@@ -85,17 +88,15 @@ This should be one of: "ward.D", "ward.D2", "single", "complete", "average", "mc
 \item{nbClust.index}{The index to be calculated. This should be one of : 'kl', 'ch', 'hartigan', 'ccc', 'scott',
 'marriot', 'trcovw', 'tracew', 'friedman', 'rubin', 'cindex', 'db', 'silhouette', 'duda', 'pseudot2', 'beale',
 'ratkowsky', 'ball', 'ptbiserial', 'gap', 'frey', 'mcclain', 'gamma', 'gplus', 'tau', 'dunn', 'hubert', 'sdindex',
-'dindex', 'sdbw', 'all' (all indices except GAP, Gamma, Gplus and Tau),'alllong' (all indices with Gap, Gamma, Gplus and Tau included).}
+'dindex', 'sdbw', 'all' (all indices except GAP, Gamma, Gplus and Tau),'alllong' (all indices with Gap, Gamma, Gplus
+and Tau included).}
 
 \item{nbClust.alphaBeale}{significance value for Beale's index.}
 
-\item{max.samples.per.batch}{Numeric. Indicates the maximum number of samples per cluster when the clustering.methods is nbClust.
-The default is .1 (10\%) of total samples in the SummarizedExperiment object.}
+\item{max.samples.per.batch}{Numeric. Indicates the maximum number of samples per cluster when the clustering.methods
+is nbClust. The default is .1 (10\%) of total samples in the SummarizedExperiment object.}
 
 \item{nb.clusters}{Numeric. Indicates how many clusters should be found when clustering.methods kmeans, cut and quantile.}
-
-\item{rle.comp}{A symbol. Indicates which properties: 'median' or 'iqr' or 'both' of the RLE data should be used for
-clustering when the approach is RLE. The default is median.}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
 

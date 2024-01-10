@@ -2,7 +2,7 @@
 % Please edit documentation in R/applyOtherNormalizations.R
 \name{applyOtherNormalizations}
 \alias{applyOtherNormalizations}
-\title{is used to perform several normalization methods: CPM, TMM, upper, full, median, VST, Quantile.}
+\title{is used to perform several normalization methods for RNA-seq data.}
 \usage{
 applyOtherNormalizations(
   se.obj,
@@ -45,5 +45,9 @@ during the execution of the functions, by default it is set to TRUE.}
 a SummarizedExperiment object containing an assay with the selected normalisation method
 }
 \description{
-is used to perform several normalization methods: CPM, TMM, upper, full, median, VST, Quantile.
+This functions provides different notmalization methods:  CPM, TMM, upper, full, median, VST, Quantile for RNA-seq
+data.
+}
+\author{
+Ramyar Molania
 }
