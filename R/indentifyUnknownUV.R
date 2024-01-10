@@ -1,4 +1,4 @@
-#' is used to find potential unknown sources of unwanted variation in an assay in a SummarizedExperiment object.
+#' is used to find potential unknown sources of unwanted variation RNA-seq data.
 
 #' @description
 #' This function uses three different approaches: rle, pca and sample.scoring to find potential unknown sources of
@@ -46,10 +46,11 @@
 #' @param nbClust.index The index to be calculated. This should be one of : 'kl', 'ch', 'hartigan', 'ccc', 'scott',
 #' 'marriot', 'trcovw', 'tracew', 'friedman', 'rubin', 'cindex', 'db', 'silhouette', 'duda', 'pseudot2', 'beale',
 #' 'ratkowsky', 'ball', 'ptbiserial', 'gap', 'frey', 'mcclain', 'gamma', 'gplus', 'tau', 'dunn', 'hubert', 'sdindex',
-#' 'dindex', 'sdbw', 'all' (all indices except GAP, Gamma, Gplus and Tau),'alllong' (all indices with Gap, Gamma, Gplus and Tau included).
+#' 'dindex', 'sdbw', 'all' (all indices except GAP, Gamma, Gplus and Tau),'alllong' (all indices with Gap, Gamma, Gplus
+#' and Tau included).
 #' @param nbClust.alphaBeale significance value for Beale's index.
-#' @param max.samples.per.batch Numeric. Indicates the maximum number of samples per cluster when the clustering.methods is nbClust.
-#' The default is .1 (10%) of total samples in the SummarizedExperiment object.
+#' @param max.samples.per.batch Numeric. Indicates the maximum number of samples per cluster when the clustering.methods
+#' is nbClust. The default is .1 (10%) of total samples in the SummarizedExperiment object.
 #' @param nb.clusters Numeric. Indicates how many clusters should be found when clustering.methods kmeans, cut and quantile.
 #' @param rle.comp A symbol. Indicates which properties: 'median' or 'iqr' or 'both' of the RLE data should be used for
 #' clustering when the approach is RLE. The default is median.
@@ -85,6 +86,7 @@ indentifyUnknownUV <- function(
         se.obj,
         assay.name,
         approach = 'RLE',
+        rle.comp = 'median',
         regress.out.bio.variables = NULL,
         regress.out.bio.gene.sets = NULL,
         uv.gene.sets = NULL,
@@ -99,14 +101,13 @@ indentifyUnknownUV <- function(
         nbClust.alphaBeale = 0.1,
         max.samples.per.batch = .1,
         nb.clusters = 3,
-        rle.comp = 'median',
         apply.log = TRUE,
         pseudo.count = 1,
         nb.pcs = 2,
         center = TRUE,
         scale = FALSE,
         BSPARAM = bsparam(),
-        remove.na = 'none',
+        remove.na = 'assays',
         assess.se.obj = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
@@ -121,7 +122,6 @@ indentifyUnknownUV <- function(
     if (!approach %in% c('rle', 'pca', 'sample.scoring') ) {
         stop('The approach should be one of the rle,pca or sample.scoring.')
     }
-
     if (!is.null(regress.out.bio.variables)) {
         if (!regress.out.bio.variables %in% colnames(colData(se.obj)))
             stop('The regress out bio variables are not found in the SummarizedExperiment object.')
@@ -551,8 +551,8 @@ indentifyUnknownUV <- function(
         verbose = verbose)
     # saving the data results ####
     if(save.se.obj == TRUE){
-        se.obj@metadata[['UV']][['Unknown']][[input.data.name]][['batches']] <- uv.sources
-        se.obj@metadata[['UV']][['Unknown']][[input.data.name]][['input.data']] <- input.data
+        se.obj@metadata[['UV']][[assay.name]][['Unknown']][[input.data.name]][['batches']] <- uv.sources
+        se.obj@metadata[['UV']][[assay.name]][['Unknown']][[input.data.name]][['input.data']] <- input.data
         printColoredMessage(
             message = 'The potentail unknow sources of variation are saved to the metadata of the SummarizedExperiment object',
             color = 'blue',
