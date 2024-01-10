@@ -2,14 +2,14 @@
 % Please edit documentation in R/variablesCorrelation.R
 \name{variablesCorrelation}
 \alias{variablesCorrelation}
-\title{is used to assess the association between variables in a SummarizedExperiment object.}
+\title{is used to assess the association between variables.}
 \usage{
 variablesCorrelation(
   se.obj,
   bio.variables,
   uv.variables,
-  cat.cor.coef = c(0.7, 0.7),
-  cont.cor.coef = c(0.7, 0.7),
+  cat.cor.coef = c(0.9, 0.9),
+  cont.cor.coef = c(0.9, 0.9),
   assess.se.obj = TRUE,
   remove.na = "sample.annotation",
   verbose = TRUE
@@ -28,13 +28,13 @@ such as samples types, batch or library size from colData(se) that will be used 
 pair of categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each
 pair of 'bio.variables'. The correlation is computed by the function ContCoef from the DescTools package. If the
 correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest number of
-factor will be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.7.}
+factor will be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.9.}
 
 \item{cont.cor.coef}{Vector of two numerical values. Indicates the cut-off of the Spearman correlation coefficient
 between each pair of continuous variables. The first one is between each pair of 'uv.variables' and the second one is
 between each pair of 'bio.variables'. If the correlation of a pair of variable is higher than the cut-off, then only
 the variable that has the highest variance will be kept and the other one will be excluded from the remaining analysis.
-By default they are both set to 0.7.}
+By default they are both set to 0.9.}
 
 \item{assess.se.obj}{Logical. Whether to assess the SummarizedExperiment object or not.}
 
@@ -44,11 +44,10 @@ is selected, the samples that contains NA or missing values for any 'bio.variabl
 By default, it is set to
 'sample.annotation'.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed
-during the execution of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE shows the process messages.}
 }
 \value{
-a SummarizedExperiment object and the selected 'uv.variables' and 'bio.variables'.
+A SummarizedExperiment object and the selected 'uv.variables' and 'bio.variables'.
 }
 \description{
 The function assesses the association between all selected biological and unwanted variation variables separately.
