@@ -1,5 +1,7 @@
 #' is used to find potential unknown sources of unwanted variation RNA-seq data.
 
+#' @author Ramyar Molania
+
 #' @description
 #' This function uses three different approaches: rle, pca and sample.scoring to find potential unknown sources of
 #' unwanted variation in an assay in a SummarizedExperiment object. In the rle approach, a clustering method will be
@@ -22,7 +24,7 @@
 #' unwanted variation, then clustering method will be applied on the scoring to find potential unknown sources of unwanted variation.
 #' @param regress.out.bio.variables Symbol. One or more symbols indicate the names of the columns that contain known
 #' biological variation in the sample annotation (colData) that will be regress out from the data before finding sources
-#' of unwanted variation.. The default is NULL.
+#' of unwanted variation. The default is NULL.
 #' @param regress.out.bio.gene.sets List. A list of biological gene signatures. Individual gene set will be used to
 #' score samples and then each scores will be regressed out from the data before finding sources of unwanted variation.
 #' @param uv.gene.sets List. A list of unwanted variation gene signatures. Individual gene set will be used to score
@@ -31,8 +33,8 @@
 #' The default is NULL. If is not NULL, the RLE or PCA and sample scoring will be based on only negative control genes.
 #' @param clustering.methods Symbol. Indicates the clustering method to be used to find
 #' possible unknown batches. This must be one of the: 'kmeans', 'cut', 'quantile', 'nbClust'. The default is nbClust.
-#' @param nbClust.diss dissimilarity matrix to be used. By default, diss=NULL,
-#' but if it is replaced by a dissimilarity matrix, distance should be "NULL".
+#' @param nbClust.diss dissimilarity matrix to be used. By default, diss=NULL, but if it is replaced by a dissimilarity
+#' matrix, distance should be "NULL".
 #' @param nbClust.distance the distance measure to be used to compute the dissimilarity matrix. This must be one of:
 #' "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski" or "NULL".
 #' By default, distance="euclidean". If the distance is "NULL", the dissimilarity matrix (diss) should be given by the
@@ -71,8 +73,6 @@
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
 #' execution of the functions, by default it is set to TRUE.
-
-#' @author Ramyar Molania
 
 #' @importFrom singscore rankGenes simpleScore
 #' @importFrom SummarizedExperiment assay colData
