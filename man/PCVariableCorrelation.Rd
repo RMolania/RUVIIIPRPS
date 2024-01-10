@@ -19,7 +19,7 @@ PCVariableCorrelation(
 )
 }
 \arguments{
-\item{se.obj}{A SummarizedExperiment object that will be used to compute the PCA.}
+\item{se.obj}{A SummarizedExperiment object.}
 
 \item{assay.names}{Optional string or list of strings for the selection of the name(s)
 of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default}
@@ -39,7 +39,8 @@ object 'se.obj' or to output the result. By default it is set to TRUE.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
-\item{remove.na}{TO BE DEFINED.}
+\item{remove.na}{Symbol. To remove NA or missing values from the assay(s) or variable or both. The options are
+"assays", "sample.annotation, "both" or "none. "See the checkSeObj function for more details.}
 
 \item{apply.round}{Logical. Indicates whether to round the ARI results, by default it is set to TRUE.}
 
@@ -53,6 +54,12 @@ the continuous variable and if requested the associated plot.
 \description{
 This function calculates the the vector correlation between the first cumulative PCs of the gene expression (assay)
 of a SummarizedExperiment object and a categorical variable (i.e. batch).
+}
+\details{
+We used the Rozeboom squared vector correlation60 to quantify the strength of (linear) relationships between two sets
+of variables, such as the first k PCs (that is 1 ≤ k ≤ 10) and dummy variables representing time, batches, plates and
+biological variables. Not only does this quantity summarize the full set of canonical correlations, but it also reduces
+to the familiar R2 from multiple regression (see below) when one of the variable sets contains just one element.
 }
 \author{
 Ramyar Molania
