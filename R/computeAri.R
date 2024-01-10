@@ -1,8 +1,15 @@
 #' is used to compute the adjusted rand index (ARI).
 
+#' @author Ramyar Molania
+
 #' @description
-#' This functions computes the adjusted rand index using the first PCs of the assays in a SummarizedExperiment object
-#' given a categorical variable.
+#' This functions computes the adjusted rand index for given a categorical variable using the first PCs of the assay(s)
+#' in a SummarizedExperiment object.
+
+#' @details
+#' The ARI64 is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
+#' two label lists. We used the ARI to assess the performance of normalization methods in terms of sample subtype
+#' separation and batch mixing. We first calculated PCs and used the first three PCs to perform ARI.
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
@@ -28,8 +35,6 @@
 #' execution of the functions, by default it is set to TRUE.
 
 #' @return A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
-
-#' @author Ramyar Molania
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom mclust mclustBIC Mclust adjustedRandIndex
@@ -127,34 +132,57 @@ computeARI <- function(
     all.ari <- lapply(
         levels(assay.names),
         function(x) {
+            printColoredMessage(
+                message = paste0('Obtain the first ', nb.pcs, ' PCs of ', x, ' data.'),
+                color = 'blue',
+                verbose = verbose)
             if (fast.pca) {
                 if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]])) {
                     stop('To compute the ARI the fast PCA must be computed first on the assay ', x, ' .')
                 }
-                ### Silhouette on PCs and categorical variable
+                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sv.dec$u
+            } else {
+                if(!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                    stop('To compute the ARI the PCA must be computed first on the assay ', x, ' .')
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$sv.dec$u
+            }
+            if(ncol(pca.data) < nb.pcs){
                 printColoredMessage(
-                    message = paste0(
-                        'Compute ARI using on the first ',
-                        nb.pcs, '
-                        PCs of ',
-                        x,
-                        ' data and the ',
-                        variable,
-                        ' variable.'),
+                    message = paste0('The number of PCs of the assay', x, 'are ', ncol(pca.data), '.'),
                     color = 'blue',
                     verbose = verbose)
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u[colnames(se.obj), ]
-            } else {
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[colnames(se.obj), ]
+                stop(paste0('The number of PCs of the assay ', x, ' are less than', nb.pcs, '.',
+                            'Re-run the computePCA function with nb.pcs = ', nb.pcs, '.'))
             }
+            pca.data <- pca.data[ , seq_len(nb.pcs)]
+            if(!all.equal(row.names(pca.data), colnames(se.obj))){
+                stop('The column names of the SummarizedExperiment object is not the same as row names of the PCA data.')
+            }
+
             if(clustering.method == 'mclust'){
+                printColoredMessage(
+                    message = 'Cluster the PCs using the mclust function.',
+                    color = 'blue',
+                    verbose = verbose)
                 bic <- mclustBIC(data = pca.data)
                 mod <- Mclust(data = pca.data, x = bic, G = length(unique(se.obj@colData[, variable])) )
+                printColoredMessage(
+                    message = 'Calculate the adjusted rand index.',
+                    color = 'blue',
+                    verbose = verbose)
                 ari <- adjustedRandIndex(mod$classification, se.obj@colData[, variable])
             } else {
+                printColoredMessage(
+                    message = 'Cluster the PCs using the hclust function.',
+                    color = 'blue',
+                    verbose = verbose)
                 clusters <- cutree(
                     tree = hclust(d = dist(x = pca.data, method = dist.measure), method = hclust.method),
                     k = length(unique(se.obj@colData[, variable])))
+                printColoredMessage(
+                    message = 'Calculate the adjusted rand index.',
+                    color = 'blue',
+                    verbose = verbose)
                 ari <- adjustedRandIndex(clusters, se.obj@colData[, variable])
             }
             return(ari)
@@ -216,7 +244,7 @@ computeARI <- function(
                             verbose = verbose)
         return(se.obj = se.obj)
 
-        ## Return only the correlation result
+        ## return only the adjusted rand index results ####
     } else if (save.se.obj == FALSE) {
         printColoredMessage(message = '------------The computeARI function finished.',
                             color = 'white',

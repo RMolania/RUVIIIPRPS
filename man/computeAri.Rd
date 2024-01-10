@@ -58,8 +58,13 @@ execution of the functions, by default it is set to TRUE.}
 A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
 }
 \description{
-This functions computes the adjusted rand index using the first PCs of the assays in a SummarizedExperiment object
-given a categorical variable.
+This functions computes the adjusted rand index for given a categorical variable using the first PCs of the assay(s)
+in a SummarizedExperiment object.
+}
+\details{
+The ARI64 is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
+two label lists. We used the ARI to assess the performance of normalization methods in terms of sample subtype
+separation and batch mixing. We first calculated PCs and used the first three PCs to perform ARI.
 }
 \author{
 Ramyar Molania
