@@ -1,5 +1,7 @@
 #' is used to perform principal component analysis (PCA) using singular value decomposition (SVD).
 
+#' @author Ramyar Molania
+
 #' @description
 #' This function uses ingular value decomposition to perform principal component on the assay(s) in a SummarizedExperiment
 #' object. The function provides fast singular value decomposition using the BiocSingular R package.
