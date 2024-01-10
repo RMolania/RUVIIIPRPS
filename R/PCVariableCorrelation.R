@@ -1,10 +1,19 @@
 #' is used to compute the vector correlation.
-#'
+
+#' @author Ramyar Molania
+
 #' @description
 #' This function calculates the the vector correlation between the first cumulative PCs of the gene expression (assay)
 #' of a SummarizedExperiment object and a categorical variable (i.e. batch).
 
-#' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
+#' @details
+#' We used the Rozeboom squared vector correlation60 to quantify the strength of (linear) relationships between two sets
+#' of variables, such as the first k PCs (that is 1 ≤ k ≤ 10) and dummy variables representing time, batches, plates and
+#' biological variables. Not only does this quantity summarize the full set of canonical correlations, but it also reduces
+#' to the familiar R2 from multiple regression (see below) when one of the variable sets contains just one element.
+#'
+
+#' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
 #' of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default
 #  all the assays of the SummarizedExperiment class object will be selected.
@@ -17,7 +26,8 @@
 #' object 'se.obj' or to output the result. By default it is set to TRUE.
 #' @param plot.output Logical. Indicates whether to plot the correlation statistics, by default it is set to TRUE.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param remove.na TO BE DEFINED.
+#' @param remove.na Symbol. To remove NA or missing values from the assay(s) or variable or both. The options are
+#' "assays", "sample.annotation, "both" or "none. "See the checkSeObj function for more details.
 #' @param apply.round Logical. Indicates whether to round the ARI results, by default it is set to TRUE.
 #' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
@@ -25,15 +35,12 @@
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed correlation for
 #' the continuous variable and if requested the associated plot.
 
-#' @author Ramyar Molania
-
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom fastDummies dummy_cols
 #' @importFrom stats cancor
 #' @import ggplot2
 #' @export
 
-## deal with PCA and remove NA from variable
 PCVariableCorrelation <- function(
         se.obj,
         assay.names = 'All',
@@ -68,8 +75,8 @@ PCVariableCorrelation <- function(
 
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'All') {
-        assay.names = as.factor(names(assays(se.obj)))
-    } else  assay.names = as.factor(unlist(assay.names))
+        assay.names <- as.factor(names(assays(se.obj)))
+    } else  assay.names <- as.factor(unlist(assay.names))
 
     # assess the SummarizedExperiment object ####
     if (assess.se.obj) {
@@ -81,9 +88,12 @@ PCVariableCorrelation <- function(
             verbose = verbose)
     }
     ## create dummy variables ####
+    printColoredMessage(
+        message =  '-- Create dummy variables:',
+        color = 'magenta',
+        verbose = verbose)
     catvar.dummies <- dummy_cols(se.obj@colData[, variable])
     catvar.dummies <- catvar.dummies[, c(2:ncol(catvar.dummies))]
-
 
     ### Compute the correlation on all assays
     ### Regression on PCs and continous variable
@@ -94,15 +104,31 @@ PCVariableCorrelation <- function(
     all.vec.corr <- lapply(
         levels(assay.names),
         function(x) {
+            printColoredMessage(
+                message = paste0('Obtain the first ', nb.pcs, ' PCs of ', x, ' data.'),
+                color = 'blue',
+                verbose = verbose)
             if (fast.pca) {
                 if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To compute the regression, the fast PCA must be computed first on the assay ', x, ' .' )
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sv.dec$u
             } else {
                 if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To compute the regression, the PCA must be computed first on the assay ', x,' .')
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$sv.dec$u
             }
+            if(ncol(pca.data) < nb.pcs){
+                printColoredMessage(
+                    message = paste0('The number of PCs of the assay', x, 'are ', ncol(pca.data), '.'),
+                    color = 'blue',
+                    verbose = verbose)
+                stop(paste0('The number of PCs of the assay ', x, ' are less than', nb.pcs, '.',
+                            'Re-run the computePCA function with nb.pcs = ', nb.pcs, '.'))
+            }
+            printColoredMessage(
+                message = 'Calculate vector correlation.',
+                color = 'blue',
+                verbose = verbose)
             cca.pcs <- sapply(
                 1:nb.pcs,
                 function(y) {
@@ -113,7 +139,7 @@ PCVariableCorrelation <- function(
         })
     names(all.vec.corr) <- levels(assay.names)
 
-    ### Add results to the SummarizedExperiment object
+    # add results to the SummarizedExperiment object ####
     if (save.se.obj == TRUE) {
         printColoredMessage(
             message = '-- Save the vector correlation results to the metadata of the SummarizedExperiment object.',

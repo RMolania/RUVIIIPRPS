@@ -1,24 +1,35 @@
-#' is used to compute the linear regression between the the first cumulative PCs
-#' of the gene expression (assay) of a SummarizedExperiment class object and a continuous variable (i.e. library size)
+#' is used to compute the linear regression.
 
-#' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
+#' @author Ramyar Molania
+
+#' @description
+#' This functions calculates the linear regression between the the first cumulative PCs of the gene expression (assays)
+#' of a SummarizedExperiment object and a continuous variable (i.e. library size)
+
+#' @details
+#' R2 values of fitted linear models are used to quantity the strength of the (linear) relationships between a single
+#' quantitative source of unwanted variation, such as sample (log) library size or tumor purity, and global sample
+#' summary statistics, such as the first k PCs (1 ≤ k ≤ 10).
+
+#' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
 #' of the assay(s) of the SummarizedExperiment class object to compute the regression. By default
 #  all the assays of the SummarizedExperiment class object will be selected.
 #' @param variable String of the label of a continuous variable such as
 #' library size from colData(se.obj).
-#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the full range
-#' to speed up the process, by default is set to 'TRUE'.
+#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
+#' full range to speed up the process, by default is set to 'TRUE'.
 #' @param nb.pcs Numeric. The number of few first cumulative PCs, by default is set to 10.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-#' to output the result. By default it is set to TRUE.
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
+#' object 'se.obj' or to output the result. By default it is set to TRUE.
 #' @param plot.output Logical. Indicates whether to plot the regression statistics, by default it is set to TRUE.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param remove.na TO BE DEFINED.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
+#' @param remove.na Symbol. To remove NA or missing values from the assay(s) or variable or both. The options are
+#' "assays", "sample.annotation, "both" or "none. "See the checkSeObj function for more details.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
+#' execution of the functions, by default it is set to TRUE.
 
-#' @return SummarizedExperiment A SummarizedExperiment object containing the computed regression for
+#' @return A SummarizedExperiment object containing the computed regression for
 #' the continuous variable and if requested the associated plot.
 
 #' @importFrom stats lm var
@@ -67,8 +78,8 @@ PCVariableRegression <- function(
 
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'All') {
-        assay.names = as.factor(names(assays(se.obj)))
-    } else assay.names = as.factor(unlist(assay.names))
+        assay.names <- as.factor(names(assays(se.obj)))
+    } else assay.names <- as.factor(unlist(assay.names))
 
     # assess the SummarizedExperiment ####
     if (assess.se.obj) {
@@ -88,24 +99,30 @@ PCVariableRegression <- function(
         levels(assay.names),
         function(x) {
             printColoredMessage(
-                message = paste0(
-                    '-- Compute R^2 of the regression between PCs of the ',
-                    x ,
-                    ' and ',
-                    variable,
-                    ' variable.'),
+                message = paste0('Obtain the first ', nb.pcs, ' PCs of ', x, ' data.'),
                 color = 'blue',
                 verbose = verbose)
             if (fast.pca) {
                 if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To compute the regression,the fast PCA must be computed first on the assay ', x, ' .')
-                pca.data <-
-                    se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u[colnames(se.obj),]
+                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u[colnames(se.obj),]
             } else {
                 if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To compute the regression, the PCA must be computed first on the assay ', x, ' .')
                 pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[colnames(se.obj), ]
             }
+            if(ncol(pca.data) < nb.pcs){
+                printColoredMessage(
+                    message = paste0('The number of PCs of the assay', x, 'are ', ncol(pca.data), '.'),
+                    color = 'blue',
+                    verbose = verbose)
+                stop(paste0('The number of PCs of the assay ', x, ' are less than', nb.pcs, '.',
+                            'Re-run the computePCA function with nb.pcs = ', nb.pcs, '.'))
+            }
+            printColoredMessage(
+                message = 'Obtain the R squared of the regression analysis',
+                color = 'blue',
+                verbose = verbose)
             r.squared <- sapply(
                 1:nb.pcs,
                 function(y) lm.ls <- summary(lm(se.obj@colData[, variable] ~ pca.data[, 1:y]))$r.squared)
