@@ -1,4 +1,10 @@
-#' is used to perform several normalization methods: CPM, TMM, upper, full, median, VST, Quantile.
+#' is used to perform several normalization methods for RNA-seq data.
+
+#' @author Ramyar Molania
+
+#' @description
+#' This functions provides different notmalization methods:  CPM, TMM, upper, full, median, VST, Quantile for RNA-seq
+#' data.
 
 #' @param se.obj A summarized experiment object.
 #' @param assay.name Symbol. Indicates a name of the assay of the SummarizedExperiment object. This assay should be in raw count format.
@@ -23,6 +29,7 @@
 #' @importFrom edgeR cpm normLibSizes
 #' @importFrom EDASeq betweenLaneNormalization
 #' @importFrom DESeq2 vst
+#' @export
 
 applyOtherNormalizations <- function(
         se.obj,
