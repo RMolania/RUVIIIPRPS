@@ -33,8 +33,7 @@
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
 #' 'se.obj' or to output the result as list. By default it is set to TRUE.
 #' @param remove.na To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-#' execution of the functions, by default it is set to TRUE.
+#' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
 #' @return A SummarizedExperiment object or a list that containing the singular value decomposition results and the
 #' percentage variation of each PCs.
