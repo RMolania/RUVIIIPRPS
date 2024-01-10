@@ -1,8 +1,16 @@
 #' is used to compute the average Silhouette coefficient.
 
+#' @author Ramyar Molania
+
 #' @description
 #' This function calculates the mean Silhouette coefficient for categorical variables such as sample subtypes, batches,
 #' etc., and a distance matrix based on the principal components of assay(s).
+
+#' @details
+#' We used silhouette coefficient analysis to assess the separation of biological populations and batch effects. The
+#' silhouette function uses Euclidean distance to calculate both the similarity between one patient and the other patients
+#' in each cluster and the separation between patients in different clusters. A better normalization method will lead to
+#'  higher and lower silhouette coefficients for biological and batch labels, respectively.
 
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
@@ -26,8 +34,6 @@
 
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed silhouette
 #' on the categorical variable.
-
-#' @author Ramyar Molania
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom stats dist
@@ -78,7 +84,7 @@ computeSilhouette <- function(
         stop("The dist.measure should be one of the: 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.")
     }
 
-    # find assays ####
+    # assays ####
     if (length(assay.names) == 1 && assay.names == 'All') {
         assay.names <- as.factor(names(assays(se.obj)))
     } else assay.names <- as.factor(unlist(assay.names))
@@ -101,16 +107,40 @@ computeSilhouette <- function(
     sil.coef <- lapply(
         levels(assay.names),
         function(x) {
+            printColoredMessage(
+                message = paste0('Obtain the first ', nb.pcs, ' PCs of ', x, ' data.'),
+                color = 'blue',
+                verbose = verbose)
             if (fast.pca) {
                 if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To compute the Silhouette coefficient, the fast PCA must be computed first on the assay ', x, '.' )
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sv.dec$u
             } else {
                 if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To compute the Silhouette coefficient, the PCA must be computed first on the assay ', x, ' .')
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd.dec$u
             }
+            if(ncol(pca.data) < nb.pcs){
+                printColoredMessage(
+                    message = paste0('The number of PCs of the assay', x, 'are ', ncol(pca.data), '.'),
+                    color = 'blue',
+                    verbose = verbose)
+                stop(paste0('The number of PCs of the assay ', x, ' are less than', nb.pcs, '.',
+                            'Re-run the computePCA function with nb.pcs = ', nb.pcs, '.'))
+            }
+            pca.data <- pca.data[ , seq_len(nb.pcs)]
+            if(!all.equal(row.names(pca.data), colnames(se.obj))){
+                stop('The column names of the SummarizedExperiment object is not the same as row names of the PCA data.')
+            }
+            printColoredMessage(
+                message = 'Calculate the distance matrix on the PCs.',
+                color = 'blue',
+                verbose = verbose)
             d.matrix <- as.matrix(dist(pca.data[, seq_len(nb.pcs)], method = dist.measure))
+            printColoredMessage(
+                message = 'Calculate the average Silhouette coefficient.',
+                color = 'blue',
+                verbose = verbose)
             avg.width <- summary(silhouette(as.numeric(as.factor(se.obj@colData[, variable])), d.matrix))$avg.width
             return(avg.width)
         })
@@ -155,7 +185,7 @@ computeSilhouette <- function(
                 color = 'magenta',
                 verbose = verbose
             )
-            se.obj = plotMetric(
+            se.obj <- plotMetric(
                 se.obj,
                 assay.names = assay.names,
                 metric = 'sil',
@@ -172,11 +202,11 @@ computeSilhouette <- function(
                             verbose = verbose)
         return(se.obj = se.obj)
 
-        ## Return only the correlation result
+        ## return only the correlation result ####
     } else if (save.se.obj == FALSE) {
         printColoredMessage(message = '------------The computeSilhouette function finished.',
                             color = 'white',
                             verbose = verbose)
-        return(sil = sil.coef)
+        return(sil.coef = sil.coef)
     }
 }

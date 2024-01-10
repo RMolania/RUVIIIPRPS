@@ -56,6 +56,12 @@ on the categorical variable.
 This function calculates the mean Silhouette coefficient for categorical variables such as sample subtypes, batches,
 etc., and a distance matrix based on the principal components of assay(s).
 }
+\details{
+We used silhouette coefficient analysis to assess the separation of biological populations and batch effects. The
+silhouette function uses Euclidean distance to calculate both the similarity between one patient and the other patients
+in each cluster and the separation between patients in different clusters. A better normalization method will lead to
+higher and lower silhouette coefficients for biological and batch labels, respectively.
+}
 \author{
 Ramyar Molania
 }
