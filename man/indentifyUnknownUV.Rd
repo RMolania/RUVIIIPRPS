@@ -54,7 +54,7 @@ clustering when the approach is RLE. The default is median.}
 
 \item{regress.out.bio.variables}{Symbol. One or more symbols indicate the names of the columns that contain known
 biological variation in the sample annotation (colData) that will be regress out from the data before finding sources
-of unwanted variation.. The default is NULL.}
+of unwanted variation. The default is NULL.}
 
 \item{regress.out.bio.gene.sets}{List. A list of biological gene signatures. Individual gene set will be used to
 score samples and then each scores will be regressed out from the data before finding sources of unwanted variation.}
@@ -68,8 +68,8 @@ The default is NULL. If is not NULL, the RLE or PCA and sample scoring will be b
 \item{clustering.methods}{Symbol. Indicates the clustering method to be used to find
 possible unknown batches. This must be one of the: 'kmeans', 'cut', 'quantile', 'nbClust'. The default is nbClust.}
 
-\item{nbClust.diss}{dissimilarity matrix to be used. By default, diss=NULL,
-but if it is replaced by a dissimilarity matrix, distance should be "NULL".}
+\item{nbClust.diss}{dissimilarity matrix to be used. By default, diss=NULL, but if it is replaced by a dissimilarity
+matrix, distance should be "NULL".}
 
 \item{nbClust.distance}{the distance measure to be used to compute the dissimilarity matrix. This must be one of:
 "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski" or "NULL".
