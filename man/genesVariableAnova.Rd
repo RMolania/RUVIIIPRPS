@@ -2,8 +2,7 @@
 % Please edit documentation in R/genesVariableAnova.R
 \name{genesVariableAnova}
 \alias{genesVariableAnova}
-\title{is used to compute ANOVA between individual gene expression of the assays in a SummarizedExperiment object
-and a categorical variable.}
+\title{is used to compute ANOVA.}
 \usage{
 genesVariableAnova(
   se.obj,
@@ -53,8 +52,8 @@ by default it is set to 1.}
 
 \item{apply.round}{Logical. Indicates whether to round the ARI results, by default it is set to TRUE.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
+'se.obj' or to output the result. By default it is set to TRUE.}
 
 \item{plot.output}{Logical. Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.}
 
@@ -62,12 +61,20 @@ to output the result. By default it is set to TRUE.}
 of the functions, by default it is set to TRUE.}
 }
 \value{
-SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous variable
-and if requested the associated boxplot.
+SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous
+variable and if requested the associated boxplot.
 }
 \description{
-is used to compute ANOVA between individual gene expression of the assays in a SummarizedExperiment object
-and a categorical variable.
+This function calculates the ANOVA between individual gene expression of the assays in a SummarizedExperiment object
+and a categorical variable as factor.
+}
+\details{
+ANOVA enables us to assess the effects of a given qualitative variable (which we call a factor) on gene expression
+measurements across any set of groups (labeled by the levels of the factor) under study. We use ANOVA F-statistics
+to summarize the effects of a qualitative source of unwanted variation (for example, batches) on the expression levels
+of individual genes, where genes having large F-statistics are deemed to be affected by the unwanted variation.
+We also use ANOVA tests (the aov() function in R) to assign P values to the association between tumor purity and
+molecular subtypes.
 }
 \author{
 Ramyar Molania

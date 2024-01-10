@@ -1,5 +1,18 @@
-#' is used to compute ANOVA between individual gene expression of the assays in a SummarizedExperiment object
-#' and a categorical variable.
+#' is used to compute ANOVA.
+
+#' @author Ramyar Molania
+
+#' @description
+#' This function calculates the ANOVA between individual gene expression of the assays in a SummarizedExperiment object
+#' and a categorical variable as factor.
+
+#' @details
+#' ANOVA enables us to assess the effects of a given qualitative variable (which we call a factor) on gene expression
+#' measurements across any set of groups (labeled by the levels of the factor) under study. We use ANOVA F-statistics
+#' to summarize the effects of a qualitative source of unwanted variation (for example, batches) on the expression levels
+#' of individual genes, where genes having large F-statistics are deemed to be affected by the unwanted variation.
+#' We also use ANOVA tests (the aov() function in R) to assign P values to the association between tumor purity and
+#' molecular subtypes.
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
@@ -21,16 +34,15 @@
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' @param remove.na TO BE DEFINED.
 #' @param apply.round Logical. Indicates whether to round the ARI results, by default it is set to TRUE.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class object 'se.obj' or
-#' to output the result. By default it is set to TRUE.
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
+#' 'se.obj' or to output the result. By default it is set to TRUE.
 #' @param plot.output Logical. Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 
-#' @return SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous variable
-#' and if requested the associated boxplot.
+#' @return SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous
+#'  variable and if requested the associated boxplot.
 
-#' @author Ramyar Molania
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom matrixTests row_oneway_equalvar row_oneway_welch
@@ -39,7 +51,7 @@
 #' @import ggplot2
 
 #' @export
-#'
+
 genesVariableAnova <- function(
         se.obj,
         assay.names = 'All',
