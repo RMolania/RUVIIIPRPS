@@ -84,11 +84,11 @@ computeRLE <- function(
     if (is.null(ylim.rle.plot) | length(ylim.rle.plot) != 2){
         stop('Please specify the "ylim.rle.plot" argument.')
     }
-    if (sum(outputs.to.save == 'none') > 0 & length(outputs.to.save) > 1){
-        stop('The "outputs.to.save" cannot contain "none" and some data outputs: "all", "rle.data", "rle.medians", "rle.iqrs", "rle.plot".')
+    if (sum(outputs.to.returns == 'none') > 0 & length(outputs.to.returns) > 1){
+        stop('The "outputs.to.returns" cannot contain "none" and some data outputs: "all", "rle.data" or "rle.plot".')
     }
-    if (sum(outputs.to.save %in% c('all', 'rle.data', 'rle.plot', 'none')) != length(outputs.to.save)) {
-        stop('The "outputs.to.save" should be in "all", "rle.data", "rle.plot" and "none".')
+    if (sum(outputs.to.returns %in% c('all', 'rle.data', 'rle.plot', 'none')) != length(outputs.to.returns)) {
+        stop('The "outputs.to.returns" should be in "all", "rle.data", "rle.plot" and "none".')
     }
 
     # pseudo count ####
