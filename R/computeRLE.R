@@ -42,7 +42,7 @@
 #' @param plot.output Logical. If TRUE, the RLE plots will be printed out.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
 #' to output the result. By default it is set to TRUE.
-#' @param verbose Logical. If TRUE shows the process messages.
+#' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
 #' @return A SummarizedExperiment object or a list of the computed RLE and the associated plots.
 
