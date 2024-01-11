@@ -64,7 +64,7 @@ computePCA <- function(
     if (is.null(assay.names)) {
         stop('The "assay.names" cannot be null.')
     }
-    if(length(assay.names) == 1 & assay.names!= 'All'){
+    if(length(assay.names) == 1 & assay.names[1] != 'All'){
         if(!assay.names %in% names(assays(se.obj)) )
             stop('The assay name cannot be found in the SummarizedExperiment object.')
     }
