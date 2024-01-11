@@ -129,6 +129,7 @@ prpsForCategoricalUV <- function(
     }
 
     # data transformation ####
+    if(is.null(pseudo.count)) pseudo.count == 0
     printColoredMessage(
         message = '-- Data transformation:',
         color = 'magenta',
