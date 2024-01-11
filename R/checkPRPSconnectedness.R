@@ -25,18 +25,14 @@ checkPRPSconnectedness <- function(
                 batch.name ,
                 ' do not have at least ',
                 min.samples,
-                ' samples across all the homogenous sample groups.'
-            ),
+                ' samples across all the homogenous sample groups.'),
             color = 'red',
             verbose = verbose
         )
-        stop(
-            message = paste0(
+        stop(message = paste0(
                 'So, no PRPS sets can be created for those batches. This may result in unsatisfactory removal of the ',
                 batch.name,
-                ' effects.'
-            )
-        )
+                ' effects. Possibly, decreasing min.samples value can help.'))
     } else {
         selected.groups <- rowSums(data.input >= min.samples) > 1
         if (sum(selected.groups) == 0) {
@@ -46,8 +42,7 @@ checkPRPSconnectedness <- function(
                     min.samples,
                     ' samples in more that one batch of.',
                     batch.name,
-                    '.'
-                ),
+                    '.'),
                 color = 'blue',
                 verbose = verbose
             )
