@@ -2,16 +2,14 @@
 % Please edit documentation in R/computeRLE.R
 \name{computeRLE}
 \alias{computeRLE}
-\title{is used to calculate and plot relative log expression (RLE) of RNA-seq data.}
+\title{is used to calculate relative log expression (RLE) of RNA-seq data.}
 \usage{
 computeRLE(
   se.obj,
-  assay.names = "All",
+  assay.names = "all",
   apply.log = TRUE,
   pseudo.count = 1,
-  ylim.rle.plot = c(-3, 3),
   outputs.to.returns = "all",
-  plot.output = FALSE,
   assess.se.obj = TRUE,
   remove.na = "assays",
   save.se.obj = TRUE,
@@ -31,14 +29,10 @@ note, any RNA-seq data (assays) must be in log scale before computing RLE.}
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements of the assay(s) before applying
 log transformation to avoid -Inf for measurements that are equal to 0. The default is 1.}
 
-\item{ylim.rle.plot}{Numeric. A vector of two values to specify the ylim of the RLE plot.}
-
 \item{outputs.to.returns}{Symbol. A symbol or list of symbols indicating what kind of outputs should be returened by
 the function. The options are "all", "rle.data", "rle.plot". If "all" is selected, the function returns the RLE data,
 medians and interquartiles of the RLE data and the RLE plot. If "rle.data", the function returns all the outputs except
 the plot. If "rle.plot" is selected, the function returns just the RLE plot.}
-
-\item{plot.output}{Logical. If TRUE, the RLE plots will be printed out.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment object or not. See the checkSeObj
 function for more details.}
@@ -53,11 +47,11 @@ to output the result. By default it is set to TRUE.}
 \item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
-A SummarizedExperiment object or a list of the computed RLE and the associated plots.
+A SummarizedExperiment object or a list that contains all RLE data of individual assay(s).
 }
 \description{
 This functions calculates relative log expression (RLE) of the assay(s) in a SummarizedExperiment object. In addition,
-the function returens the medians,interquartiles and boxplots of indivdial assay's RLE.
+the function returns the medians and interquartiles of RLE boxplots for indivdial assay's RLE.
 }
 \details{
 RLE plots23 are used to reveal trends, temporal clustering and other non-random patterns resulting from unwanted variation
