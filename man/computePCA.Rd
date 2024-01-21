@@ -6,7 +6,7 @@
 \usage{
 computePCA(
   se.obj,
-  assay.names = "All",
+  assay.names = "all",
   fast.pca = TRUE,
   nb.pcs = 10,
   scale = FALSE,
