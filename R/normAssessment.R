@@ -32,11 +32,19 @@
 #' to speed up the process, by default is set to 'TRUE'.
 #' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
+#' @param metrics Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
-#'
+#' @param metrics.to.exclude TTTT
+#' @param center.pca TTT
+#' @param scale.pca TTTT
+#' @param BSPARAM TTTT
+#' @param remove.na TTTT
+#' @param save.se.obj TTTT
+#' @param silhouette.dist.measure TTTT
+#' @param plot.ncol TTTT
 #'
 #' @return  SummarizedExperiment A SummarizedExperiment object containing all the assessments plots and metrics.
 #' If specified it will generate a pdf containing the assessments plots and metrics used for the assessment.
@@ -48,16 +56,24 @@
 #' @export
 
 ## remove n.core and merge all variable together
-
 normAssessment <- function(
         se.obj,
-        assay.names = 'All',
+        assay.names = 'all',
         variables,
+        metrics = 'all',
+        metrics.to.exclude = 'NULL',
         fast.pca = TRUE,
         nb.pcs = 10,
+        center.pca = TRUE,
+        scale.pca = FALSE,
+        BSPARAM = NULL,
         apply.log = TRUE,
         pseudo.count = 1,
+        plot.ncol = 1,
+        silhouette.dist.measure = NULL,
         assess.se.obj = FALSE,
+        remove.na = remove.na,
+        save.se.obj = TRUE,
         output.file = NULL,
         verbose = TRUE
 ){
@@ -65,7 +81,7 @@ normAssessment <- function(
                         color = 'white',
                         verbose = verbose)
     # check the inputs of PCA ####
-    if (length(assay.names) == 1 & assay.names != 'All') {
+    if (length(assay.names) == 1 && assay.names != 'All') {
         if (!assay.names %in% names(assays(se.obj)))
             stop('The assay name cannot be found in the SummarizedExperiment object.')
     }
@@ -79,6 +95,11 @@ normAssessment <- function(
         stop('To perform fast PCA, the number of PCs (nb.pcs) must specified.')
     }
 
+    # assays ####
+    if (length(assay.names) == 1 && assay.names == 'all') {
+        assay.names <- as.factor(names(assays(se.obj)))
+    } else assay.names <- as.factor(unlist(assay.names))
+
     # assess the SummarizedExperiment object ####
     if (assess.se.obj) {
         se.obj <- checkSeObj(
@@ -91,290 +112,378 @@ normAssessment <- function(
     }
 
     # find categorical and continuous variables ####
+
     categorical.var <- continuous.var <- NULL
     if (!is.null(variables)) {
         var.class <- sapply(variables,
                             function(x)
                                 class(colData(se.obj)[[x]]))
-        categorical.var <-
-            var.class[var.class %in% c('character', 'factor')]
-        continuous.var <-
-            var.class[var.class %in% c('numeric', 'integer')]
+        categorical.var <- names(var.class[var.class %in% c('character', 'factor')])
+        continuous.var <- names(var.class[var.class %in% c('numeric', 'integer')])
+    }
+    # all possible metrics for each variable #####
+    all.metrics <- getAssessmentMetrics(
+        se.obj = se.obj,
+        variables = variables)
+
+    # metrics #####
+    metrics.to.compute <- unlist(lapply(
+        all.metrics,
+        function(x){
+            le <- length(strsplit(x , '\\|\\|')[[1]])
+            strsplit(x , '\\|\\|')[[1]][le]}))
+    plots.to.generate <- unlist(lapply(
+        all.metrics,
+        function(x) strsplit(x , '\\|\\|')[[1]][2]))
+
+    ## RLE #####
+    ### compute rle #####
+    if('RLE' %in% metrics.to.compute){
+        se.obj <- computeRLE(
+            se.obj = se.obj,
+            assay.names = assay.names,
+            apply.log = apply.log,
+            pseudo.count = pseudo.count,
+            outputs.to.returns = 'all',
+            assess.se.obj = assess.se.obj,
+            remove.na = remove.na,
+            save.se.obj = TRUE,
+            verbose = verbose)
     }
 
-    # find assays ####
-    if (length(assay.names) == 1 && assay.names == 'All') {
-        assay.names <- as.factor(names(assays(se.obj)))
-    } else
-        assay.names <- as.factor(unlist(assay.names))
-
-    # compute rle #####
-    se.obj <- RUVIIIPRPS::computeRLE(
-        se.obj = se.obj,
-        assay.names = assay.names,
-        apply.log = apply.log,
-        pseudo.count = pseudo.count,
-        ylim.rle.plot = ylim.rle.plot,
-        assess.se.obj = assess.se.obj,
-        remove.na = remove.na,
-        save.se.obj = TRUE,
-        verbose = verbose
-    )
-
-    # compute pca ####
-    printColoredMessage(
-        message = paste0('-- Compute PCA:'),
-        color = 'magenta',
-        verbose = verbose
-    )
-    se.obj <- RUVIIIPRPS::computePCA(
-        se.obj = se.obj,
-        assay.names = assay.names,
-        fast.pca = fast.pca,
-        nb.pcs = nb.pcs,
-        scale = scale,
-        center = center,
-        apply.log = apply.log,
-        pseudo.count = pseudo.count,
-        BSPARAM = BSPARAM,
-        assess.se.obj = assess.se.obj,
-        remove.na = remove.na,
-        save.se.obj = save.se.obj,
-        verbose = verbose
-    )
-    # pca plots ####
-    if (length(categorical.var) != 0) {
-        pca.plots <- lapply(categorical.var,
-                            function(x) {
-                                printColoredMessage(
-                                    message = paste0('Plot PCA based on the ', x, ' variable.'),
-                                    color = 'blue',
-                                    verbose = verbose
-                                )
-                                ## select colors ####
-                                group <-
-                                    as.factor(se.obj@colData[, x])
-                                if (length(unique(group)) <= 11) {
-                                    colfunc <-
-                                        colorRampPalette(RColorBrewer::brewer.pal(n = 11, name = 'Spectral')[-6])
-                                    color.group <-
-                                        colfunc(length(unique(group)))
-                                    names(color.group) <-
-                                        unique(group)
-                                } else
-                                    color.group = NULL
-                                ## plot ####
-                                pca.res <- RUVIIIPRPS::plotPCA(
-                                    se.obj = se.obj,
-                                    assay.names = assay.names,
-                                    variable = x,
-                                    color = color.group,
-                                    fast.pca = fast.pca,
-                                    assess.se.obj = assess.se.obj,
-                                    verbose = verbose
-                                )
-                                return(pca.res)
-                            })
-        names(pca.plots) <- categorical.var
+    ### plot general rle #####
+    if('General||boxPlot||RLE' %in% all.metrics ){
+        se.obj <- plotRLE(
+            se.obj = se.obj,
+            assay.names = assay.names,
+            variable = NULL,
+            ylim.rle.plot = c(-3, 3),
+            median.points.size = 1,
+            median.points.color = "red",
+            iqr.width = 2,
+            geom.hline.color = "cyan",
+            plot.ncol = 1,
+            plot.output = FALSE,
+            save.se.obj = save.se.obj,
+            verbose = TRUE)
     }
 
-    # silhouette coefficient ####
-    if (length(categorical.var) != 0) {
-        for (x in categorical.var) {
-            printColoredMessage(
-                message = paste0(
-                    '-- Compute Silhouette coefficient based on the ',
-                    x,
-                    ' variable.'
-                ),
-                color = 'magenta',
-                verbose = verbose
-            )
-            se.obj <- RUVIIIPRPS::computeSilhouette(
+    ### plot colored rle #####
+    if('coloredRLEplot' %in% plots.to.generate){
+        to.plot <- all.metrics[plots.to.generate == 'coloredRLEplot']
+        vars <- unlist(lapply(
+            to.plot,
+            function(x) strsplit(x = x, split = '\\|\\|')[[1]][1]))
+        for(i in vars){
+            se.obj <- plotRLE(
                 se.obj = se.obj,
                 assay.names = assay.names,
-                variable = x,
-                fast.pca = fast.pca,
-                assess.se.obj = assess.se.obj,
-                verbose = verbose
-            )
+                variable = i,
+                ylim.rle.plot = c(-3, 3),
+                median.points.size = 1,
+                median.points.color = "red",
+                iqr.width = 2,
+                geom.hline.color = "cyan",
+                plot.ncol = 1,
+                plot.output = FALSE,
+                save.se.obj = TRUE,
+                verbose = TRUE)
         }
     }
-    # adjusted rand index ####
-    if (length(categorical.var) != 0) {
-        for (x in categorical.var) {
-            printColoredMessage(
-                message = paste0(
-                    '-- Compute adjusted rand index based on the ',
-                    x,
-                    ' variable.'
-                ),
-                color = 'magenta',
-                verbose = verbose
-            )
-            se.obj <- RUVIIIPRPS::computeARI(
+    # PCA ####
+    ## compute pca ####
+    if('PCA' %in% metrics.to.compute){
+        se.obj <- RUVIIIPRPS::computePCA(
+            se.obj = se.obj,
+            assay.names = assay.names,
+            fast.pca = fast.pca,
+            nb.pcs = nb.pcs,
+            scale = scale.pca,
+            center = center.pca,
+            apply.log = apply.log,
+            pseudo.count = pseudo.count,
+            BSPARAM = BSPARAM,
+            assess.se.obj = assess.se.obj,
+            remove.na = remove.na,
+            save.se.obj = save.se.obj,
+            verbose = verbose)
+    }
+    ## plot pca ####
+    for(i in all.metrics){
+        var.meric <- strsplit(i, '\\|\\|')[[1]]
+        var <- strsplit(var.meric[1], split = '_')[[1]][1]
+        if(var.meric[3]=='PCA' & var.meric[2] == 'boxPlot' | var.meric[2] == 'scatterPlot'){
+            if(var.meric[2] == 'boxPlot'){
+                plot.type.pca <- 'boxplot'
+            } else if (var.meric[2] == 'scatterPlot')
+                plot.type.pca <- 'scatter'
+            print(var)
+            se.obj <- plotPCA(
                 se.obj = se.obj,
                 assay.names = assay.names,
-                variable = x,
+                variable = var,
                 fast.pca = fast.pca,
-                assess.se.obj = assess.se.obj,
-                verbose = verbose
-            )
+                nb.pcs = nb.pcs,
+                save.se.obj = TRUE,
+                verbose = TRUE)
         }
     }
 
-    # anova ####
-    if (length(categorical.var) != 0) {
-        for (x in categorical.var) {
-            printColoredMessage(
-                message = paste0('-- Compute ANOVA based on the ',
-                                 x,
-                                 ' variable.'),
-                color = 'magenta',
-                verbose = verbose
-            )
-            se.obj <- RUVIIIPRPS::genesVariableAnova(
+    # Vector correlation ####
+    ## compute and plot vector correlation ####
+    if('vecCorrPlot' %in% plots.to.generate){
+        var.metric <- all.metrics[plots.to.generate == 'vecCorrPlot']
+        for(i in var.metric){
+            var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
+            var <- strsplit(x = var, split = '_')[[1]][1]
+            se.obj <- computePCVariableCorrelation(
                 se.obj = se.obj,
                 assay.names = assay.names,
-                variable = x,
+                variable = var,
+                fast.pca = fast.pca,
+                nb.pcs = nb.pcs,
+                save.se.obj = save.se.obj,
+                assess.se.obj = assess.se.obj,
+                remove.na = remove.na,
+                verbose = verbose)
+            se.obj <- plotPCVariableCorrelation(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = var,
+                fast.pca = fast.pca,
+                nb.pcs = nb.pcs,
+                plot.output = FALSE,
+                save.se.obj = save.se.obj,
+                assess.se.obj = assess.se.obj,
+                verbose = verbose)
+        }
+    }
+
+    # Linear regression ####
+    ## compute and plot linear regression ####
+    if('regPlot' %in% plots.to.generate){
+        var.metric <- all.metrics[plots.to.generate == 'regPlot']
+        for(i in var.metric){
+            var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
+            var <- strsplit(x = var, split = '_')[[1]][1]
+            se.obj <- computePCVariableRegression(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = var,
+                fast.pca = fast.pca,
+                nb.pcs = nb.pcs,
+                save.se.obj = save.se.obj,
+                assess.se.obj = assess.se.obj,
+                remove.na = remove.na,
+                verbose = verbose)
+            se.obj <- plotPCVariableRegression(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = var,
+                fast.pca = fast.pca,
+                nb.pcs = nb.pcs,
+                plot.output = FALSE,
+                save.se.obj = save.se.obj,
+                assess.se.obj = assess.se.obj,
+                verbose = verbose)
+        }
+    }
+
+    # Silhouette coefficient ####
+    ## compute and plot adjusted Silhouette coefficient ####
+    if('Silhouette' %in% metrics.to.compute){
+        var.metric <- all.metrics[metrics.to.compute == 'Silhouette']
+        vars <- unique(unlist(lapply(
+            var.metric,
+            function(x) {
+                vars <- strsplit(x = x, split = '\\|\\|')[[1]][1]
+                vars <- unlist(strsplit(x = vars, '_'))})))
+        for(i in vars){
+            se.obj <- computeSilhouette(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = i,
+                dist.measure = silhouette.dist.measure,
+                fast.pca = fast.pca,
+                nb.pcs = nb.pcs,
+                save.se.obj = save.se.obj,
+                assess.se.obj = assess.se.obj,
+                verbose = verbose)
+        }
+        for(i in var.metric){
+            plot.type <- strsplit(x = i, split = '\\|\\|')[[1]][2]
+            if(plot.type == 'barPlot'){
+                var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
+                plot.type <- 'single.plot'
+            } else{
+                var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
+                var <- unlist(strsplit(x = var, split = '_'))
+                plot.type <- 'combined.plot'
+            }
+            print(i)
+            se.obj <- plotSilhouette(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variables = var,
+                plot.type = plot.type,
+                silhouette.method = 'sil.euclidian',
+                plot.output = FALSE,
+                save.se.obj = save.se.obj,
+                assess.se.obj = assess.se.obj,
+                verbose = verbose)
+        }
+    }
+
+    # ARI ####
+    ## compute and plot adjusted rand index ####
+    if('ARI' %in% metrics.to.compute){
+        var.metric <- all.metrics[metrics.to.compute == 'ARI']
+        vars <- unique(unlist(lapply(
+            var.metric,
+            function(x) {
+                vars <- strsplit(x = x, split = '\\|\\|')[[1]][1]
+                vars <- unlist(strsplit(x = vars, '_'))})))
+        for(i in vars){
+            se.obj <- computeARI(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = i,
+                clustering.method = 'hclust',
+                hclust.method = 'complete',
+                dist.measure = 'euclidian',
+                fast.pca = fast.pca,
+                nb.pcs = nb.pcs,
+                save.se.obj = save.se.obj,
+                assess.se.obj = assess.se.obj,
+                verbose = verbose)
+        }
+        for(i in var.metric){
+            plot.type <- strsplit(x = i, split = '\\|\\|')[[1]][2]
+            if(plot.type == 'barPlot'){
+                var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
+                plot.type <- 'single.plot'
+            } else{
+                var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
+                var <- unlist(strsplit(x = var, split = '_'))
+                plot.type <- 'combined.plot'
+            }
+            se.obj <- plotARI(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variables = var,
+                plot.type = plot.type,
+                ari.method = 'hclust.complete.euclidian',
+                plot.output = FALSE,
+                save.se.obj = save.se.obj,
+                assess.se.obj = assess.se.obj,
+                verbose = verbose)
+        }
+    }
+    # Gene variable correlation ####
+    ## compute and plot gene variable correlation ####
+    if('GeneVarAov' %in% metrics.to.compute){
+        var.metric <- all.metrics[metrics.to.compute == 'GeneVarCorr']
+        vars <- unique(unlist(lapply(
+            var.metric,
+            function(x) {
+                vars <- strsplit(x = x, split = '\\|\\|')[[1]][1]
+                vars <- unlist(strsplit(x = vars, '_')[[1]][1])})))
+        for(i in vars){
+            se.obj <- computeGenesVariableCorrelation(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = i,
+                method = 'spearman',
+                a = 0.05,
+                rho = 0,
+                plot.output = FALSE,
+                plot.top.genes = FALSE,
+                nb.top.genes = NULL,
+                apply.log = apply.log,
+                pseudo.count = pseudo.count,
+                apply.round = TRUE,
+                assess.se.obj = assess.se.obj,
+                remove.na = remove.na,
+                save.se.obj = save.se.obj)
+            se.obj <- plotGenesVariableCorrelation(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = i,
+                correlation.method = 'gene.spearman.corr',
+                plot.output = FALSE,
+                boxplot.color = 'gray50',
+                geom.hline.color = 'blue',
+                assess.se.obj = assess.se.obj,
+                save.se.obj = save.se.obj,
+                verbose = verbose)
+        }
+    }
+
+    # Gene variable ANOVA ####
+    ## compute and plot gene variable ANOVA ####
+    if('GeneVarAov' %in% metrics.to.compute){
+        var.metric <- all.metrics[metrics.to.compute == 'GeneVarAov']
+        vars <- unique(unlist(lapply(
+            var.metric,
+            function(x) {
+                vars <- strsplit(x = x, split = '\\|\\|')[[1]][1]
+                vars <- unlist(strsplit(x = vars, '_')[[1]][1])})))
+        for(i in vars){
+            se.obj <- computeGenesVariableAnova(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = i,
+                method = 'aov',
+                plot.output = FALSE,
+                plot.top.genes = FALSE,
+                nb.top.genes = NULL,
+                apply.log = apply.log,
+                pseudo.count = pseudo.count,
+                apply.round = TRUE,
+                assess.se.obj = assess.se.obj,
+                remove.na = remove.na,
+                save.se.obj = save.se.obj)
+            se.obj <- plotGenesVariableAnova(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = i,
+                anova.method = "genes.aov.anova",
+                plot.output = FALSE,
+                boxplot.color = 'gray50',
+                geom.hline.color = 'blue',
+                assess.se.obj = assess.se.obj,
+                save.se.obj = save.se.obj,
+                verbose = verbose)
+        }
+    }
+
+    # DGE ####
+    ## compute and plot gene variable ANOVA ####
+    if('DGE' %in% metrics.to.compute){
+        var.metric <- all.metrics[metrics.to.compute == 'DGE']
+        vars <- unique(unlist(lapply(
+            var.metric,
+            function(x) strsplit(x = x, split = '\\|\\|')[[1]][1])))
+        for(i in vars){
+            se.obj <- computeDGE(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = i,
                 apply.log = apply.log,
                 pseudo.count = pseudo.count,
                 assess.se.obj = assess.se.obj,
-                verbose = verbose
-            )
-        }
-    }
-    # vector correlation ####
-    if (length(categorical.var) != 0) {
-        for (x in categorical.var) {
-            printColoredMessage(
-                message = paste0(
-                    '--Compute vector vorrelation between the first cumulative PCs and the ',
-                    x,
-                    ' variable.'
-                ),
-                color = 'magenta',
-                verbose = verbose
-            )
-            se.obj <- RUVIIIPRPS::PCVariableCorrelation(
+                remove.na = remove.na,
+                save.se.obj = save.se.obj,
+                verbose = verbose)
+            se.obj <- plotDGE(
                 se.obj = se.obj,
                 assay.names = assay.names,
-                variable = x,
-                fast.pca = fast.pca,
-                nb.pcs = nb.pcs,
-                assess.se.obj = assess.se.obj,
-                verbose = verbose
-            )
+                variable = i,
+                plot.ncol = plot.ncol,
+                plot.output = FALSE,
+                save.se.obj = save.se.obj,
+                verbose = verbose)
         }
-    }
-    ## Plot combined silhouette based on all pairs of cat var
-    nb.cat.var <- length(categorical.var)
-    CombinedSilPlot <- NULL
-    if (nb.cat.var > 1) {
-        printColoredMessage(
-            message = paste0(
-                '-- Plot all combined silhouette plots of all categorical variables'
-            ),
-            color = 'magenta',
-            verbose = verbose
-        )
-        for (v in 1:(nb.cat.var - 1)) {
-            for (v2 in ((v + 1):nb.cat.var)) {
-                p = RUVIIIPRPS::plotCombinedSilhouette(
-                    se.obj = se.obj,
-                    assay.names = assay.names,
-                    variable1 = categorical.var[v],
-                    variable2 = categorical.var[v2],
-                    assess.se.obj = assess.se.obj,
-                    verbose = verbose
-                )
-                CombinedSilPlot[[paste0(categorical.var[v], "_", categorical.var[v2])]] = p
-            }
-        }
-    }
-
-    # regression analysis ####
-    if (length(continuous.var) != 0) {
-        for (x in continuous.var) {
-            printColoredMessage(
-                message = paste0(
-                    '-- Computing linear regression between the first cumulative PCs and the ',
-                    x,
-                    ' variable.'
-                ),
-                color = 'magenta',
-                verbose = verbose
-            )
-            se.obj <- RUVIIIPRPS::PCVariableRegression(
-                se.obj,
-                assay.names = assay.names,
-                variable = x,
-                fast.pca = fast.pca,
-                nb.pcs = nb.pcs,
-                assess.se.obj = FALSE,
-                verbose = verbose
-            )
-        }
-    }
-
-    # spearman correlation ####
-    if (length(continuous.var) != 0) {
-        for (x in continuous.var) {
-            printColoredMessage(
-                message = paste0(
-                    '-- Computing Spearman correlation based on',
-                    x,
-                    ' variable.'
-                ),
-                color = 'magenta',
-                verbose = verbose
-            )
-            se.obj <- RUVIIIPRPS::genesVariableCorrelation(
-                se.obj,
-                assay.names = assay.names,
-                variable = x,
-                apply.log = apply.log,
-                pseudo.count = pseudo.count,
-                assess.se.obj = FALSE,
-                verbose = verbose
-            )
-        }
-    }
-    # output the results #####
-    ## generate a pdf file to save the plots ####
-    if (!is.null(output.file)) {
-        printColoredMessage(
-            message = paste0('The plots are being saved into the output file'),
-            color = 'blue',
-            verbose = verbose
-        )
-        pdf(output.file)
-        ## Categorical variable
-        if (nb.cat.var != 0) {
-            for (v in 1:(nb.cat.var)) {
-                plot(pca.plots[[categorical.var[v]]])
-                plot(se.obj@metadata[['plot']][['gene.aov.anova']][[categorical.var[v]]])
-                plot(se.obj@metadata[['plot']][['pcs.vect.corr']][[categorical.var[v]]])
-            }
-            ## Combined silhouette
-            if (nb.cat.var > 1) {
-                p <- lapply(names(CombinedSilPlot),
-                            function(x)
-                                plot(CombinedSilPlot[[x]]))
-            }
-        }
-        # Continuous variable
-        if (nb.cont.var != 0) {
-            for (v in 1:(nb.cont.var)) {
-                plot(se.obj@metadata[['plot']][['pcs.lm']][[continuous.var[v]]])
-                plot(se.obj@metadata[['plot']][['gene.spearman.corr']][[continuous.var[v]]])
-            }
-        }
-        # RLE plot
-        lreg.pcs <- lapply(levels(assay.names),
-                           function(x)
-                               plot(se.obj@metadata[['plot']][['rle']][[x]]))
-        dev.off()
     }
     printColoredMessage(message = '------------The normAssessment function finished.',
                         color = 'white',
