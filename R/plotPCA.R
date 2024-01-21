@@ -20,8 +20,8 @@
 #' @param alpha.point geom_point aesthetics
 #' @param alpha.density geom_point aesthetics
 #' @param ncol.plot is the argument of gtable for the layout specifying ncol, by default it is set to 4.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' @param verbose Logical. If TRUE, displaying process messages is enabled.
+#' @param save.se.obj Logical. If TRUE, displaying process messages is enabled.
 
 #' @return plot PCA plot of the data colored by one variable
 
@@ -34,7 +34,7 @@
 
 plotPCA <- function(
         se.obj,
-        assay.names = 'All',
+        assay.names = 'all',
         variable,
         fast.pca = TRUE,
         nb.pcs = 3,
@@ -46,7 +46,7 @@ plotPCA <- function(
         alpha.point = .5,
         alpha.density = .5,
         ncol.plot = 4,
-        assess.se.obj = TRUE,
+        save.se.obj = TRUE,
         verbose = TRUE
 ) {
     printColoredMessage(message = '------------The plotPCA function starts:',
@@ -58,8 +58,8 @@ plotPCA <- function(
         stop('The "assay.names" cannot be empty.')
     } else if (is.null(variable)) {
         stop('The "variable" cannot be empty.')
-    } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
-        stop(paste0('The ', variable, 'must be a categorical variable'))
+    } else if (!variable %in% colnames(colData(se.obj))) {
+        stop('The "variable" cannot be found in the SummarizedExperiment object.')
     } else if (is.null(nb.pcs)){
         stop('The "nb.pcs" cannot be empty.')
     } else if (!plot.type %in% c('scatter', 'boxplot')){
@@ -67,174 +67,233 @@ plotPCA <- function(
     }
 
     # assays ####
-    if (length(assay.names) == 1 && assay.names == 'All') {
+    if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
     } else assay.names <- as.factor(unlist(assay.names))
-
-    # assess the SummarizedExperiment object ####
-    if (assess.se.obj) {
-        se.obj <- checkSeObj(
-            se.obj = se.obj,
-            assay.names = assay.names,
-            variables = variable,
-            remove.na = 'none',
-            verbose = verbose)
+    if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
+        stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
-    # pca plots ####
-    if(plot.type == 'scatter'){
-        printColoredMessage(message = '-- Plot PCA for individual assays:',
-                            color = 'magenta',
-                            verbose = verbose)
-        p.pca <- lapply(
-            levels(assay.names),
-            function(x) {
+
+    # obtain PCs from the SummarizedExperiment object ####
+    printColoredMessage(
+        message = paste0('Obtain the first ', nb.pcs, ' from the SummarizedExperiment object.'),
+        color = 'magenta',
+        verbose = verbose)
+    pc.var <- NULL
+    all.pca.data <- lapply(
+        levels(assay.names),
+        function(x) {
+            printColoredMessage(
+                message = paste0('Obtain the first ', nb.pcs, ' PCs of ', x, ' data.'),
+                color = 'blue',
+                verbose = verbose)
+            if (fast.pca) {
+                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                    stop('To plot the PCA, the fast PCA must be computed first on the assay ', x, ' .')
+                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
+                pc.var <- se.obj@metadata[['metric']][[x]][['fastPCA']]$percentage.variation
+            } else {
+                if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                    stop('To plot the PCA, the PCA must be computed first on the assay ', x, ' .')
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[, 1:nb.pcs]
+                pc.var <- se.obj@metadata[['metric']][[x]][['PCA']]$percentage.variation
+            }
+            if(ncol(pca.data) < nb.pcs){
                 printColoredMessage(
-                    message = paste0('Obtain the first ', nb.pcs, ' PCs of ', x, ' data.'),
+                    message = paste0('The number of PCs of the assay', x, 'are ', ncol(pca.data), '.'),
                     color = 'blue',
                     verbose = verbose)
-                if (fast.pca) {
-                    if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
-                        stop('To plot the PCA, the fast PCA must be computed first on the assay ', x, ' .')
-                    pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
-                    pc.var <- se.obj@metadata[['metric']][[x]][['fastPCA']]$percentage.variation
-                } else {
-                    if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
-                        stop('To plot the PCA, the PCA must be computed first on the assay ', x, ' .')
-                    pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[, 1:nb.pcs]
-                    pc.var <- se.obj@metadata[['metric']][[x]][['PCA']]$percentage.variation
-                }
-                if(ncol(pca.data) < nb.pcs){
+                stop(paste0('The number of PCs of the assay ', x, ' are less than', nb.pcs, '.',
+                            'Re-run the computePCA function with nb.pcs = ', nb.pcs, '.'))
+            }
+            return(list(pca.data = pca.data, pc.var = pc.var))
+        })
+    names(all.pca.data) <- levels(assay.names)
+
+    # plot PCs ####
+    ## categorical variable ####
+    if(class(colData(se.obj)[[variable]]) %in% c('character', 'factor')){
+        ### scatter plots for individual assays  ####
+        if(plot.type == 'scatter'){
+            printColoredMessage(
+                message = '-- Creat scatter PCA plots for individual assays:',
+                color = 'magenta',
+                verbose = verbose)
+            all.scat.pca.plots <- lapply(
+                levels(assay.names),
+                function(x) {
                     printColoredMessage(
-                        message = paste0('The number of PCs of the assay', x, 'are ', ncol(pca.data), '.'),
+                        message = paste0('PCA plots of for ', x, ' data.'),
                         color = 'blue',
                         verbose = verbose)
-                    stop(paste0('The number of PCs of the assay ', x, ' are less than', nb.pcs, '.',
-                                'Re-run the computePCA function with nb.pcs = ', nb.pcs, '.'))
+                    pca.data <- all.pca.data[[x]]$pca.data[ , seq_len(nb.pcs)]
+                    pair.pcs <- combn(ncol(pca.data), 2)
+                    var <- colData(se.obj)[, variable]
+                    printColoredMessage(
+                        message = paste0('-Create all possible pairwise scatter plots of the first ', nb.pcs, ' PCs.'),
+                        color = 'blue',
+                        verbose = verbose)
+                    p.per.data <- lapply(
+                        1:ncol(pair.pcs),
+                        function(i) {
+                            plot1 <- ggplot(mapping = aes(x = pca.data[, pair.pcs[1, i]], y = pca.data[, pair.pcs[2, i]])) +
+                                geom_point(
+                                    aes(fill = se.obj@colData[, variable]),
+                                    color = stroke.color,
+                                    pch = 21,
+                                    stroke = stroke.size,
+                                    size = point.size,
+                                    alpha = alpha.point) +
+                                scale_x_continuous(
+                                    name = paste0('PC', pair.pcs[1, i], ' (', all.pca.data[[x]]$pc.var[pair.pcs[2, i]], '%)'),
+                                    breaks = scales::pretty_breaks(n = 5)) +
+                                scale_y_continuous(
+                                    name = paste0('PC', pair.pcs[2, i], ' (', all.pca.data[[x]]$pc.var[pair.pcs[1, i]], '%)'),
+                                    breaks = scales::pretty_breaks(n = 5)) +
+                                ggtitle(x) +
+                                theme_pubr() +
+                                theme(
+                                    legend.position = "none",
+                                    legend.background = element_blank(),
+                                    legend.text = element_text(size = 12),
+                                    legend.title = element_text(size = 14),
+                                    legend.key = element_blank(),
+                                    axis.text.x = element_text(size = 10),
+                                    axis.text.y = element_text(size = 10),
+                                    axis.title.x = element_text(size = 12),
+                                    axis.title.y = element_text(size = 12)) +
+                                scale_fill_discrete(name = variable) +
+                                guides(fill = guide_legend(override.aes = list(size = 3, shape = 21)))
+                            dense.x <-
+                                ggplot(mapping = aes(x = pca.data[, pair.pcs[1, i]], fill = se.obj@colData[, variable])) +
+                                geom_density(alpha = 0.4) +
+                                theme_void() +
+                                theme(
+                                    legend.position = "none",
+                                    legend.text = element_text(size = 12),
+                                    legend.title = element_text(size = 14)) +
+                                scale_fill_discrete(name = variable) +
+                                guides(fill = guide_legend(override.aes = list(size = 3)))
+
+                            dense.y <- ggplot(mapping = aes(x = pca.data[, pair.pcs[2, i]], fill = se.obj@colData[, variable])) +
+                                geom_density(alpha = 0.4) +
+                                theme_void() +
+                                theme(
+                                    legend.position = "none",
+                                    legend.text = element_text(size = 12),
+                                    legend.title = element_text(size = 14)) +
+                                coord_flip() +
+                                scale_fill_discrete(name = variable) +
+                                guides(fill = guide_legend(override.aes = list(size = 3)))
+
+                            dense.x +
+                                plot_spacer() +
+                                plot1 + dense.y +
+                                plot_layout(
+                                    ncol = 2,
+                                    nrow = 2,
+                                    widths = c(4, 1),
+                                    heights = c(1, 4))
+                        })
+                    p.per.data
+                })
+            names(all.scat.pca.plots) <- levels(assay.names)
+            ## overall scatter plots for all assays  ####
+            printColoredMessage(message = '-- Put all the plots togather:',
+                                color = 'magenta',
+                                verbose = verbose)
+            all.scat.pca.plots.assay <- lapply(
+                levels(assay.names),
+                function(x) {
+                    ggarrange(
+                        plotlist = all.scat.pca.plots[[x]],
+                        common.legend = TRUE,
+                        legend = "bottom",
+                        nrow = 1)
+                })
+            names(all.scat.pca.plots.assay) <- levels(assay.names)
+            if(length(assay.names) > 1){
+                p <- all.scat.pca.plots[[levels(assay.names)[1]]]
+                if (length(assay.names) > 1) {
+                    for (n in 2:length(assay.names))
+                        p <- c(p, all.scat.pca.plots[[levels(assay.names)[n]]])
                 }
-                pca.data <- pca.data[ , seq_len(nb.pcs)]
-                pair.pcs <- combn(ncol(pca.data), 2)
-                var <- colData(se.obj)[, variable]
-                printColoredMessage(
-                    message = paste0('Create all possible pairwise scatter plots of the first ', nb.pcs, ' PCs.'),
-                    color = 'blue',
-                    verbose = verbose)
-                p.per.data <- lapply(
-                    1:ncol(pair.pcs),
-                    function(i) {
-                        plot1 <- ggplot(mapping = aes(x = pca.data[, pair.pcs[1, i]], y = pca.data[, pair.pcs[2, i]])) +
-                            geom_point(
-                                aes(fill = se.obj@colData[, variable]),
-                                color = stroke.color,
-                                pch = 21,
-                                stroke = stroke.size,
-                                size = point.size,
-                                alpha = alpha.point) +
-                            scale_x_continuous(
-                                name = paste0('PC', pair.pcs[1, i], ' (', pc.var[pair.pcs[2, i]], '%)'),
-                                breaks = scales::pretty_breaks(n = 5)) +
-                            scale_y_continuous(
-                                name = paste0('PC', pair.pcs[2, i], ' (', pc.var[pair.pcs[1, i]], '%)'),
-                                breaks = scales::pretty_breaks(n = 5)) +
-                            ggtitle(x) +
-                            theme_pubr() +
-                            theme(
-                                legend.position = "none",
-                                legend.background = element_blank(),
-                                legend.text = element_text(size = 12),
-                                legend.title = element_text(size = 14),
-                                legend.key = element_blank(),
-                                axis.text.x = element_text(size = 10),
-                                axis.text.y = element_text(size = 10),
-                                axis.title.x = element_text(size = 12),
-                                axis.title.y = element_text(size = 12)) +
-                            scale_fill_discrete(name = variable) +
-                            guides(fill = guide_legend(override.aes = list(size = 3, shape = 21)))
-                        dense.x <-
-                            ggplot(mapping = aes(x = pca.data[, pair.pcs[1, i]], fill = se.obj@colData[, variable])) +
-                            geom_density(alpha = 0.4) +
-                            theme_void() +
-                            theme(
-                                legend.position = "none",
-                                legend.text = element_text(size = 12),
-                                legend.title = element_text(size = 14)) +
-                            scale_fill_discrete(name = variable) +
-                            guides(fill = guide_legend(override.aes = list(size = 3)))
-
-                        dense.y <- ggplot(mapping = aes(x = pca.data[, pair.pcs[2, i]], fill = se.obj@colData[, variable])) +
-                            geom_density(alpha = 0.4) +
-                            theme_void() +
-                            theme(
-                                legend.position = "none",
-                                legend.text = element_text(size = 12),
-                                legend.title = element_text(size = 14)) +
-                            coord_flip() +
-                            scale_fill_discrete(name = variable) +
-                            guides(fill = guide_legend(override.aes = list(size = 3)))
-
-                        dense.x +
-                            plot_spacer() +
-                            plot1 + dense.y +
-                            plot_layout(
-                                ncol = 2,
-                                nrow = 2,
-                                widths = c(4, 1),
-                                heights = c(1, 4))
-                    })
-                p.per.data
-            })
-        names(p.pca) <- levels(assay.names)
-        # prepare plot ####
-        printColoredMessage(message = '-- Put all the plots togather:',
-                            color = 'magenta',
-                            verbose = verbose)
-        p <- p.pca[[levels(assay.names)[1]]]
-        if (length(assay.names) > 1) {
-            for (n in 2:length(assay.names))
-                p = c(p, p.pca[[levels(assay.names)[n]]])
+                overall.scat.pca.plot <- ggarrange(
+                    plotlist = p,
+                    common.legend = TRUE,
+                    legend = "bottom",
+                    nrow = length(levels(assay.names)),
+                    ncol = ncol(combn(nb.pcs, 2)))
+            }
+        } else{
+            printColoredMessage(
+                message = '-- Creat boxplot of PCA plots for individual assays:',
+                color = 'magenta',
+                verbose = verbose)
+            all.boxplot.pca.plots <- lapply(
+                levels(assay.names),
+                function(x) {
+                    printColoredMessage(
+                        message = paste0('PCA plots of for ', x, ' data.'),
+                        color = 'blue',
+                        verbose = verbose)
+                    var <- NULL
+                    pca.data <- as.data.frame(all.pca.data[[x]]$pca.data[ , seq_len(nb.pcs)])
+                    colnames(pca.data) <- paste0('PC', seq_len(nb.pcs), ' (',all.pca.data[[x]]$pc.var[seq_len(nb.pcs)], '%)')
+                    pca.data$var <- colData(se.obj)[, variable]
+                    printColoredMessage(
+                        message = paste0('-Create all possible boxplots of the first ', nb.pcs, ' PCs.'),
+                        color = 'blue',
+                        verbose = verbose)
+                    pca.data <- tidyr::pivot_longer(
+                        data = pca.data,
+                        -var,
+                        names_to = 'PCs',
+                        values_to = 'PC')
+                    pca.data <- as.data.frame(pca.data)
+                    plot.p <- ggplot(pca.data, aes(x = var, y =  PC, fill = var)) +
+                        geom_boxplot() +
+                        facet_wrap(~PCs, scales = 'free') +
+                        xlab(variable) +
+                        ylab('PC') +
+                        ggtitle(x) +
+                        # scale_fill_manual(values = studies.color, name = 'Studies') +
+                        theme(
+                            panel.background = element_blank(),
+                            axis.line = element_line(colour = 'black', size = 1),
+                            axis.title.x = element_text(size = 12),
+                            axis.title.y = element_text(size = 12),
+                            plot.title = element_text(size = 18),
+                            axis.text.x = element_text(size = 10, angle = 25, vjust = 1, hjust = 1),
+                            axis.text.y = element_text(size = 10),
+                            strip.text.x = element_text(size = 12),
+                            legend.position = 'none')
+                    plot.p
+                })
+            names(all.boxplot.pca.plots) <- levels(assay.names)
+            if(length(assay.names) > 1){
+                overall.boxplot.pca.plot <- ggarrange(
+                    plotlist = all.boxplot.pca.plots,
+                    nrow = length(levels(assay.names)),
+                    ncol = 1 )
+            }
         }
-        plot <- ggarrange(
-            plotlist = p,
-            common.legend = TRUE,
-            legend = "bottom",
-            nrow = length(levels(assay.names)),
-            ncol = ncol(combn(nb.pcs, 2))
-        )
+        ### continuous variable ####
     } else{
-        printColoredMessage(message = '-- Plot PCA for individual assays:',
-                            color = 'magenta',
-                            verbose = verbose)
-        p.pca <- lapply(
+        #### scatter plots for individual assays ####
+        all.scat.var.pca.plots <- lapply(
             levels(assay.names),
             function(x) {
                 printColoredMessage(
-                    message = paste0('Obtain the first ', nb.pcs, ' PCs of ', x, ' data.'),
+                    message = paste0('PCA plots of for ', x, ' data.'),
                     color = 'blue',
                     verbose = verbose)
-                if (fast.pca) {
-                    if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
-                        stop('To plot the PCA, the fast PCA must be computed first on the assay ', x, ' .')
-                    pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
-                    pc.var <- se.obj@metadata[['metric']][[x]][['fastPCA']]$percentage.variation
-                } else {
-                    if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
-                        stop('To plot the PCA, the PCA must be computed first on the assay ', x, ' .')
-                    pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[, 1:nb.pcs]
-                    pc.var <- se.obj@metadata[['metric']][[x]][['PCA']]$percentage.variation
-                }
-                if(ncol(pca.data) < nb.pcs){
-                    printColoredMessage(
-                        message = paste0('The number of PCs of the assay', x, 'are ', ncol(pca.data), '.'),
-                        color = 'blue',
-                        verbose = verbose)
-                    stop(paste0('The number of PCs of the assay ', x, ' are less than', nb.pcs, '.',
-                                'Re-run the computePCA function with nb.pcs = ', nb.pcs, '.'))
-                }
                 var <- NULL
-                pca.data <- as.data.frame(pca.data[ , seq_len(nb.pcs)])
-                colnames(pca.data) <- paste0('PC', seq_len(nb.pcs), ' (',pc.var[seq_len(nb.pcs)], '%)')
+                pca.data <- as.data.frame(all.pca.data[[x]]$pca.data[ , seq_len(nb.pcs)])
+                colnames(pca.data) <- paste0('PC', seq_len(nb.pcs), ' (',all.pca.data[[x]]$pc.var[seq_len(nb.pcs)], '%)')
                 pca.data$var <- colData(se.obj)[, variable]
                 printColoredMessage(
-                    message = paste0('Create boxplots of the first ', nb.pcs, ' PCs.'),
+                    message = paste0('-Create all possible scatter plots of the first ', nb.pcs, ' PCs.'),
                     color = 'blue',
                     verbose = verbose)
                 pca.data <- tidyr::pivot_longer(
@@ -243,12 +302,18 @@ plotPCA <- function(
                     names_to = 'PCs',
                     values_to = 'PC')
                 pca.data <- as.data.frame(pca.data)
-                plot.p <- ggplot(pca.data, aes(x = var, y =  PC, fill = var)) +
-                    geom_boxplot() +
+                plot.p <- ggplot(pca.data, aes(x = var, y =  PC)) +
+                    geom_point(
+                        color = stroke.color,
+                        pch = 19,
+                        stroke = stroke.size,
+                        size = 3,
+                        alpha = alpha.point) +
                     facet_wrap(~PCs, scales = 'free') +
                     xlab(variable) +
                     ylab('PC') +
                     ggtitle(x) +
+                    geom_smooth(method = 'lm') +
                     # scale_fill_manual(values = studies.color, name = 'Studies') +
                     theme(
                         panel.background = element_blank(),
@@ -256,24 +321,153 @@ plotPCA <- function(
                         axis.title.x = element_text(size = 12),
                         axis.title.y = element_text(size = 12),
                         plot.title = element_text(size = 18),
-                        axis.text.x = element_text(size = 10, angle = 25, vjust = 1, hjust = 1),
+                        axis.text.x = element_text(size = 10),
                         axis.text.y = element_text(size = 10),
                         strip.text.x = element_text(size = 12),
                         legend.position = 'none')
                 plot.p
             })
-        names(p.pca) <- levels(assay.names)
-        # prepare plot ####
-        printColoredMessage(message = '-- Put all the plots togather:',
-                            color = 'magenta',
+        names(all.scat.var.pca.plots) <- levels(assay.names)
+        if(length(assay.names) > 1){
+            overall.scat.var.pca.plot <- ggarrange(
+                plotlist = all.scat.var.pca.plots,
+                nrow = length(levels(assay.names)),
+                ncol = 1 )
+        }
+    }
+
+    # save the results ####
+    printColoredMessage(
+        message = '-- Save the PCA plots:',
+        color = 'magenta',
+        verbose = verbose)
+    ## add the pca plots to the SummarizedExperiment object ####
+    if (save.se.obj == TRUE) {
+        printColoredMessage(
+            message = 'The PCA plots of individual assays are saved to metadata@metric',
+            color = 'blue',
+            verbose = verbose)
+        if(class(colData(se.obj)[[variable]]) %in% c('character', 'factor')){
+            if(plot.type == 'scatter'){
+                for (x in levels(assay.names)) {
+                    if (fast.pca) {
+                        se.obj@metadata[['metric']][[x]][['fastPCA']][[variable]][['pca.scat.plot']] <- all.scat.pca.plots.assay[[x]]
+                    } else se.obj@metadata[['metric']][[x]][['PCA']][[variable]][['pca.scat.plot']] <- all.scat.pca.plots.assay[[x]]
+                }
+            } else{
+                for (x in levels(assay.names)) {
+                    if (fast.pca) {
+                        se.obj@metadata[['metric']][[x]][['fastPCA']][[variable]][['pca.box.plot']] <- all.boxplot.pca.plots[[x]]
+                    } else se.obj@metadata[['metric']][[x]][['PCA']][[variable]][['pca.box.plot']] <- all.boxplot.pca.plots[[x]]
+                }
+            }
+        } else{
+            for (x in levels(assay.names)) {
+                if (fast.pca) {
+                    se.obj@metadata[['metric']][[x]][['fastPCA']][[variable]][['pca.scat.var.plot']] <- all.scat.var.pca.plots[[x]]
+                } else se.obj@metadata[['metric']][[x]][['PCA']][[variable]][['pca.scat.var.plot']] <- all.scat.var.pca.plots[[x]]
+            }
+        }
+
+        ### overall pca plots ####
+        if(length(assay.names) > 1){
+            if (!'plot' %in%  names(se.obj@metadata)) {
+                se.obj@metadata[['plot']] <- list()
+            }
+            if (!'PCA' %in%  names(se.obj@metadata[['plot']])) {
+                se.obj@metadata[['plot']][['PCA']] <- list()
+            }
+            if(fast.pca){
+                if(class(colData(se.obj)[[variable]]) %in% c('character', 'factor')){
+                    if (!'fastPCA' %in%  names(se.obj@metadata[['plot']][['PCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['fastPCA']] <- list()
+                    }
+                    if (!variable %in%  names(se.obj@metadata[['plot']][['PCA']][['fastPCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]] <- list()
+                    }
+                    if(plot.type == 'scatter'){
+                        if (!'ScatPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['fastPCA']])) {
+                            se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['ScatPCA']] <- list()
+                            se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['ScatPCA']] <- overall.scat.pca.plot
+                        }
+                    } else{
+                        if (!'BoxPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['fastPCA']])) {
+                            se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['BoxPCA']] <- list()
+                            se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['BoxPCA']] <- overall.boxplot.pca.plot
+                        }
+                    }
+
+                } else{
+                    if (!'fastPCA' %in%  names(se.obj@metadata[['plot']][['PCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['fastPCA']] <- list()
+                    }
+                    if (!variable %in%  names(se.obj@metadata[['plot']][['PCA']][['fastPCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]] <- list()
+                    }
+                    if (!'ScatVarPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['fastPCA']])){
+                        se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['ScatVarPCA']] <- list()
+                    }
+                    se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['ScatVarPCA']] <- overall.scat.var.pca.plot
+                }
+            }else{
+                if(class(colData(se.obj)[[variable]]) %in% c('character', 'factor')){
+                    if (!'PCA' %in%  names(se.obj@metadata[['plot']][['PCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['PCA']] <- list()
+                    }
+                    if (!variable %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]] <- list()
+                    }
+                    if(plot.type == 'scatter'){
+                        if (!'ScatPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
+                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['ScatPCA']] <- list()
+                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['ScatPCA']] <- overall.scat.pca.plot
+                        }
+                    } else{
+                        if (!'BoxPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
+                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['BoxPCA']] <- list()
+                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['BoxPCA']] <- overall.boxplot.pca.plot
+                        }
+                    }
+
+                } else{
+                    if (!'PCA' %in%  names(se.obj@metadata[['plot']][['PCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['PCA']] <- list()
+                    }
+                    if (!variable %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]] <- list()
+                    }
+                    if (!'ScatVarPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['ScatVarPCA']] <- list()
+                        se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['ScatVarPCA']] <- overall.scat.var.pca.plot
+                    }
+                }
+            }
+        }
+        printColoredMessage(message = '------------The plotPCA function finished.',
+                            color = 'white',
                             verbose = verbose)
-        plot <- ggarrange(
-            plotlist = p.pca,
-            nrow = length(levels(assay.names)),
-            ncol = 1 )
+        return(se.obj)
+    } else if (save.se.obj == FALSE) {
+        ## return a list ####
+        printColoredMessage(
+            message = 'The PCA plots are outputed as a list.',
+            color = 'blue',
+            verbose = verbose)
     }
     printColoredMessage(message = '------------The plotPCA function finished.',
                         color = 'white',
                         verbose = verbose)
-    return(plot)
+    if(length(assay.names) == 1){
+        if(plot.type == 'scatter'){
+            return(pca.plots = list(all.scat.pca.plots.assay = all.scat.pca.plots.assay))
+        } else return(pca.plots = list(all.boxplot.pca.plots = all.boxplot.pca.plots))
+    } else{
+        if(plot.type == 'scatter'){
+            return(pca.plots = list(
+                all.scat.pca.plots.assay = all.scat.pca.plots.assay,
+                overall.scat.pca.plot = overall.scat.pca.plot))
+        } else return(pca.plots = list(
+            all.boxplot.pca.plots = all.boxplot.pca.plots,
+            overall.boxplot.pca.plot = overall.boxplot.pca.plot))
+    }
 }
