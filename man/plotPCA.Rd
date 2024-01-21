@@ -6,7 +6,7 @@
 \usage{
 plotPCA(
   se.obj,
-  assay.names = "All",
+  assay.names = "all",
   variable,
   fast.pca = TRUE,
   nb.pcs = 3,
@@ -18,7 +18,7 @@ plotPCA(
   alpha.point = 0.5,
   alpha.density = 0.5,
   ncol.plot = 4,
-  assess.se.obj = TRUE,
+  save.se.obj = TRUE,
   verbose = TRUE
 )
 }
@@ -53,7 +53,7 @@ the process, by default is set to 'TRUE'.}
 
 \item{ncol.plot}{is the argument of gtable for the layout specifying ncol, by default it is set to 4.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+\item{save.se.obj}{Logical. If TRUE, displaying process messages is enabled.}
 
 \item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
