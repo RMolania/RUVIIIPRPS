@@ -26,7 +26,6 @@
 #' "centroid" (= UPGMC). See the hclust function for more details.
 #' @param dist.measure Symbol. Indicates the distance measure to be used in the dist function. This must be one of
 #' "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". See the dist function for more details.
-#' @param plot.output Logical. Indicates whether to plot the ARI, by default it is set to FALSE.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' object 'se.obj' or to output the result. By default it is set to TRUE.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is
@@ -44,14 +43,13 @@
 
 computeARI <- function(
         se.obj,
-        assay.names = 'All',
+        assay.names = 'all',
         variable,
         fast.pca = TRUE,
         nb.pcs = 3,
         clustering.method = 'hclust',
         hclust.method = 'complete',
         dist.measure = 'euclidian',
-        plot.output = FALSE,
         save.se.obj = TRUE,
         assess.se.obj = TRUE,
         verbose = TRUE
@@ -61,7 +59,7 @@ computeARI <- function(
                         verbose = verbose)
 
     # check the inputs ####
-    if (length(assay.names) == 1 & assay.names != 'All') {
+    if (length(assay.names) == 1 && assay.names != 'all') {
         if (!assay.names %in% names(assays(se.obj)))
             stop('The assay name cannot be found in the SummarizedExperiment object.')
     }
@@ -70,15 +68,15 @@ computeARI <- function(
             stop('The assay names cannot be found in the SummarizedExperiment object.')
     }
     if (is.null(assay.names)) {
-        stop('The assay.names cannot be empty.')
+        stop('The "assay.names" cannot be empty.')
     }
     if (is.null(nb.pcs)) {
         stop('The number of PCs (nb.pcs) must be specified')
     }
     if (is.null(variable)) {
-        stop('The variable cannot be empty.')
+        stop('The "variable" cannot be empty.')
     } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
-        stop('A categorical variable must be specified as variable.')
+        stop('The "variable" must be a categorical variable.')
     }
     if(is.null(clustering.method)){
         stop('The clustering.method cannot be empty.')
@@ -111,9 +109,12 @@ computeARI <- function(
     }
 
     # assays ####
-    if (length(assay.names) == 1 && assay.names == 'All') {
+    if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
     } else  assay.names <- as.factor(unlist(assay.names))
+    if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
+        stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
+    }
 
     # assess the SummarizedExperiment ####
     if (assess.se.obj) {
@@ -133,18 +134,22 @@ computeARI <- function(
         levels(assay.names),
         function(x) {
             printColoredMessage(
-                message = paste0('Obtain the first ', nb.pcs, ' PCs of ', x, ' data.'),
+                message = paste0('Compute ARI for the ', x, ' data:'),
+                color = 'blue',
+                verbose = verbose)
+            printColoredMessage(
+                message = paste0('-Obtain the first ', nb.pcs, ' computed PCs.'),
                 color = 'blue',
                 verbose = verbose)
             if (fast.pca) {
                 if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]])) {
                     stop('To compute the ARI the fast PCA must be computed first on the assay ', x, ' .')
                 }
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$sv.dec$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
             } else {
                 if(!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To compute the ARI the PCA must be computed first on the assay ', x, ' .')
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$sv.dec$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u
             }
             if(ncol(pca.data) < nb.pcs){
                 printColoredMessage(
@@ -161,26 +166,26 @@ computeARI <- function(
 
             if(clustering.method == 'mclust'){
                 printColoredMessage(
-                    message = 'Cluster the PCs using the mclust function.',
+                    message = '-Cluster the PCs using the mclust function.',
                     color = 'blue',
                     verbose = verbose)
                 bic <- mclustBIC(data = pca.data)
                 mod <- Mclust(data = pca.data, x = bic, G = length(unique(se.obj@colData[, variable])) )
                 printColoredMessage(
-                    message = 'Calculate the adjusted rand index.',
+                    message = '-Calculate the adjusted rand index.',
                     color = 'blue',
                     verbose = verbose)
                 ari <- adjustedRandIndex(mod$classification, se.obj@colData[, variable])
             } else {
                 printColoredMessage(
-                    message = 'Cluster the PCs using the hclust function.',
+                    message = '-Cluster the PCs using the hclust function.',
                     color = 'blue',
                     verbose = verbose)
                 clusters <- cutree(
                     tree = hclust(d = dist(x = pca.data, method = dist.measure), method = hclust.method),
                     k = length(unique(se.obj@colData[, variable])))
                 printColoredMessage(
-                    message = 'Calculate the adjusted rand index.',
+                    message = '-Calculate the adjusted rand index.',
                     color = 'blue',
                     verbose = verbose)
                 ari <- adjustedRandIndex(clusters, se.obj@colData[, variable])
@@ -189,11 +194,16 @@ computeARI <- function(
         })
     names(all.ari) <- levels(assay.names)
     # save the results ####
+    printColoredMessage(
+        message = '-- Save all the ARI:',
+        color = 'magenta',
+        verbose = verbose)
     ## add results to the SummarizedExperiment object ####
     if (save.se.obj == TRUE) {
-        printColoredMessage(message = '-- Save the ARI results to the metadata of the SummarizedExperiment object:',
-                            color = 'magenta',
-                            verbose = verbose)
+        printColoredMessage(
+            message = '-Save the ARIs to the metadata of the SummarizedExperiment object:',
+            color = 'blue',
+            verbose = verbose)
 
         for (x in levels(assay.names)) {
             ## check if metadata metric already exist
@@ -213,39 +223,23 @@ computeARI <- function(
                 se.obj@metadata[['metric']][[x]][['ari']] <- list()
             }
             if(clustering.method == 'mclust'){
-                out.put.name <- 'ari.mclust'
-            } else out.put.name <- paste0('ari.hclust.', hclust.method, '.', dist.measure)
-            se.obj@metadata[['metric']][[x]][[out.put.name]][[variable]] <- all.ari[[x]]
+                out.put.name <- 'mclust'
+            } else out.put.name <- paste0('hclust.', hclust.method, '.', dist.measure)
+            se.obj@metadata[['metric']][[x]][['ari']][[out.put.name]][[variable]][['ari']] <- all.ari[[x]]
         }
-        printColoredMessage('The ARI results of induvial assays are saved to metadata@metric',
+        printColoredMessage('The ARI results of induvial assays are saved to metadata@metric.',
             color = 'blue',
             verbose = verbose)
-        ## Plot and save the plot into se.obj@metadata$plot
-        if (plot.output == TRUE) {
-            printColoredMessage(
-                message = '-- Plot of the ARI results:',
-                color = 'magenta',
-                verbose = verbose
-            )
-            printColoredMessage(
-                message = '-- A plot of the ARI results are saved to the metadata of the SummarizedExperiment object.',
-                color = 'blue',
-                verbose = verbose
-            )
-            se.obj <- plotMetric(
-                se.obj,
-                assay.names = assay.names,
-                metric = 'ari',
-                variable = variable,
-                verbose = verbose)
-        }
         printColoredMessage(message = '------------The computeARI function finished.',
                             color = 'white',
                             verbose = verbose)
         return(se.obj = se.obj)
-
         ## return only the adjusted rand index results ####
     } else if (save.se.obj == FALSE) {
+        printColoredMessage(
+            message = '-Save the ARIs as list.',
+            color = 'blue',
+            verbose = verbose)
         printColoredMessage(message = '------------The computeARI function finished.',
                             color = 'white',
                             verbose = verbose)
