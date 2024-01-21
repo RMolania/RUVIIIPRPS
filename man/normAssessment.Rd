@@ -6,13 +6,22 @@
 \usage{
 normAssessment(
   se.obj,
-  assay.names = "All",
+  assay.names = "all",
   variables,
+  metrics = "all",
+  metrics.to.exclude = "NULL",
   fast.pca = TRUE,
   nb.pcs = 10,
+  center.pca = TRUE,
+  scale.pca = FALSE,
+  BSPARAM = NULL,
   apply.log = TRUE,
   pseudo.count = 1,
+  plot.ncol = 1,
+  silhouette.dist.measure = NULL,
   assess.se.obj = FALSE,
+  remove.na = remove.na,
+  save.se.obj = TRUE,
   output.file = NULL,
   verbose = TRUE
 )
@@ -26,10 +35,20 @@ of the assay(s) of the SummarizedExperiment class object. By default}
 \item{variables}{String or vector of strings of the label of continuous or categorical variable(s)
 such as samples types, batch or library size from colData(se).}
 
+\item{metrics}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+
+\item{metrics.to.exclude}{TTTT}
+
 \item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range
 to speed up the process, by default is set to 'TRUE'.}
 
 \item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
+
+\item{center.pca}{TTT}
+
+\item{scale.pca}{TTTT}
+
+\item{BSPARAM}{TTTT}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}
@@ -37,7 +56,15 @@ no transformation will be selected.}
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
 
+\item{plot.ncol}{TTTT}
+
+\item{silhouette.dist.measure}{TTTT}
+
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+
+\item{remove.na}{TTTT}
+
+\item{save.se.obj}{TTTT}
 
 \item{output.file}{Path and name of the output file to save the assessments plots in a pdf format.}
 
