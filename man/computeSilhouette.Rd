@@ -6,15 +6,13 @@
 \usage{
 computeSilhouette(
   se.obj,
-  assay.names = "All",
+  assay.names = "all",
   variable,
   dist.measure = "euclidian",
   fast.pca = TRUE,
   nb.pcs = 3,
   save.se.obj = TRUE,
-  plot.output = FALSE,
   assess.se.obj = TRUE,
-  apply.round = TRUE,
   verbose = TRUE
 )
 }
@@ -39,11 +37,7 @@ full range to speed up the process, by default is set to 'TRUE'.}
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 object 'se.obj' or to output the result. By default it is set to TRUE.}
 
-\item{plot.output}{Logical. Indicates whether to plot the Silhouette coefficients, by default it is set to FALSE.}
-
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
-
-\item{apply.round}{Logical. Indicates whether to round the ARI results,by default it is set to TRUE.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the
 execution of the functions, by default it is set to TRUE.}
