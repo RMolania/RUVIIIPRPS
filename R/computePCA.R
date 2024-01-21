@@ -45,7 +45,7 @@
 
 computePCA <- function(
         se.obj,
-        assay.names = 'All',
+        assay.names = 'all',
         fast.pca = TRUE,
         nb.pcs = 10,
         scale = FALSE,
@@ -64,7 +64,7 @@ computePCA <- function(
     if (is.null(assay.names)) {
         stop('The "assay.names" cannot be null.')
     }
-    if(length(assay.names) == 1 & assay.names[1] != 'All'){
+    if(length(assay.names) == 1 & assay.names[1] != 'all'){
         if(!assay.names %in% names(assays(se.obj)) )
             stop('The assay name cannot be found in the SummarizedExperiment object.')
     }
@@ -91,7 +91,7 @@ computePCA <- function(
     }
 
     # find assays ####
-    if (length(assay.names) == 1 && assay.names == 'All') {
+    if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
     } else  assay.names <- as.factor(unlist(assay.names))
 
@@ -104,21 +104,64 @@ computePCA <- function(
             remove.na = remove.na,
             verbose = verbose)
     }
-    # fast svd ####
+    # data transformation ####
+    printColoredMessage(
+        message = paste0('-- Data transformation:'),
+        color = 'magenta',
+        verbose = verbose)
+    all.assays <- lapply(
+        levels(assay.names),
+        function(x) {
+            temp.data <- as.matrix(assay(x = se.obj, i = x))
+            if (apply.log & !is.null(pseudo.count)) {
+                printColoredMessage(
+                    message = paste0('Apply log2 + ', pseudo.count,  ' (pseudo.count) on the' , x, ' data.'),
+                    color = 'blue',
+                    verbose = verbose)
+                temp.data <- log2(temp.data + pseudo.count)
+            } else if (apply.log & is.null(pseudo.count)) {
+                printColoredMessage(
+                    message = paste0('Apply log2 transformation on the', x, ' data.'),
+                    color = 'blue',
+                    verbose = verbose)
+                temp.data <- temp.data
+            } else if (!apply.log){
+                printColoredMessage(
+                    message = paste0(
+                        'The ',
+                        x,
+                        ' assay will be used without log transformation.'),
+                    color = 'blue',
+                    verbose = verbose)
+                printColoredMessage(
+                    message = 'Please note, the assay should be in log scale before computing SVD.',
+                    color = 'red',
+                    verbose = verbose)
+                temp.data <- temp.data
+            }
+            return(temp.data)
+        })
+    names(all.assays) <- levels(assay.names)
+
+    # svd ####
+    printColoredMessage(
+        message = paste0('-- Perform SVD:'),
+        color = 'magenta',
+        verbose = verbose)
+    ## fast svd ####
     if (fast.pca) {
-        ## fast pca ####
         printColoredMessage(
             message = paste0(
-                '-- Perform fast singular value decomposition with scale=',
+                '-- Perform fast singular value decomposition with scale = ',
                 scale,
-                ' and center= ',
+                ' and center = ',
                 center,
                 '.'),
-            color = 'magenta',
+            color = 'blue',
             verbose = verbose)
         printColoredMessage(
         message = paste0(
-            'Note: in fast svd analysis, the percentage of variation of PCs will be',
+            'Note: in fast svd analysis, the percentage of variation of PCs will be ',
             'computed proportional to the highest selected number of PCs (left singular vectors), not on all the PCs.'),
             color = 'red',
             verbose = verbose)
@@ -128,33 +171,16 @@ computePCA <- function(
         sv.dec.all <- lapply(
             levels(assay.names),
             function(x) {
-                temp.data <- as.matrix(assay(x = se.obj, i = x))
-                if (apply.log & !is.null(pseudo.count)) {
-                    printColoredMessage(
-                        message = paste0('Apply log2 + ', pseudo.count,  ' transformation on the', x, ' assay.'),
-                        color = 'blue',
-                        verbose = verbose)
-                    temp.data <- log2(temp.data + pseudo.count)
-                    } else if (apply.log & is.null(pseudo.count)) {
-                        printColoredMessage(
-                            message = paste0('Apply log2 transformation on the', x, ' assay.'),
-                            color = 'blue',
-                            verbose = verbose)
-                        temp.data <- temp.data
-                    } else if (!apply.log & is.null(pseudo.count)){
-                        printColoredMessage(
-                            message = 'Please note, the assay should be in log scale before computing SVD.',
-                            color = 'red',
-                            verbose = verbose)
-                        temp.data <- temp.data
-                }
+                printColoredMessage(
+                    message = paste0('-- Perform fast singular value decomposition on the ', x , ' data.'),
+                    color = 'blue',
+                    verbose = verbose)
                 sv.dec <- runSVD(
-                    x = t(temp.data),
+                    x = t(all.assays[[x]]),
                     k = nb.pcs,
                     BSPARAM = BSPARAM,
                     center = center,
-                    scale = scale
-                )
+                    scale = scale)
                 rownames(sv.dec$u) <- colnames(se.obj)
                 rownames(sv.dec$v) <- row.names(se.obj)
                 percentage <- sv.dec$d ^ 2 / sum(sv.dec$d ^ 2) * 100
@@ -168,38 +194,22 @@ computePCA <- function(
         ## svd ####
         printColoredMessage(
             message = paste0(
-                '-- Perform singular value decomposition with scale=',
+                '-- Perform singular value decomposition with scale = ',
                 scale,
-                ' and center= ',
+                ' and center = ',
                 center,
                 '.'),
-            color = 'magenta',
+            color = 'blue',
             verbose = verbose)
         sv.dec.all <- lapply(
             levels(assay.names),
             function(x) {
-                temp.data <- as.matrix(assay(x = se.obj, i = x))
-                if (apply.log & !is.null(pseudo.count)) {
-                    printColoredMessage(
-                        message = paste0('Apply log2 + ', pseudo.count,  ' transformation on the', x, ' assay.'),
-                        color = 'blue',
-                        verbose = verbose)
-                    temp.data <- log2(temp.data + pseudo.count)
-                } else if (apply.log & is.null(pseudo.count)) {
-                    printColoredMessage(
-                        message = paste0('Apply log2 transformation on the', x, ' assay.'),
-                        color = 'blue',
-                        verbose = verbose)
-                    temp.data <- temp.data
-                } else if (!apply.log & is.null(pseudo.count)){
-                    printColoredMessage(
-                        message = 'Please note, the assay should be in log scale before computing SVD.',
-                        color = 'red',
-                        verbose = verbose)
-                    temp.data <- temp.data
-                }
+                printColoredMessage(
+                    message = paste0('-- Perform singular value decomposition on the ', x , ' data.'),
+                    color = 'blue',
+                    verbose = verbose)
                 sv.dec <- svd(scale(
-                        x = t(temp.data),
+                        x = t(all.assays[[x]]),
                         center = center,
                         scale = scale
                     ))
