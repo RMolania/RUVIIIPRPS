@@ -6,14 +6,13 @@
 \usage{
 computeARI(
   se.obj,
-  assay.names = "All",
+  assay.names = "all",
   variable,
   fast.pca = TRUE,
   nb.pcs = 3,
   clustering.method = "hclust",
   hclust.method = "complete",
   dist.measure = "euclidian",
-  plot.output = FALSE,
   save.se.obj = TRUE,
   assess.se.obj = TRUE,
   verbose = TRUE
@@ -42,8 +41,6 @@ one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty
 
 \item{dist.measure}{Symbol. Indicates the distance measure to be used in the dist function. This must be one of
 "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". See the dist function for more details.}
-
-\item{plot.output}{Logical. Indicates whether to plot the ARI, by default it is set to FALSE.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 object 'se.obj' or to output the result. By default it is set to TRUE.}
