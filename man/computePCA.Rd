@@ -23,14 +23,15 @@ computePCA(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. A symbol or list of symbols of the assay(s) in the SummarizedExperiment object to compute
-PCA. By default all the assays of the SummarizedExperiment object will be selected.}
+\item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
+SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indicates all
+the assays of the SummarizedExperiment object will be selected.}
 
 \item{fast.pca}{Logical. Indicates whether to calculate a specific number of left singular vectors instead of the
-full range to speed up the process, by default is set to 'TRUE'.}
+full possible vectors to speed up the process. The default is 'TRUE'.}
 
-\item{nb.pcs}{Numeric. The number of first left singular vectors to be calculated for the fast PCA process, by default
-is set to 10.}
+\item{nb.pcs}{Numeric. The number of first left singular vectors to be calculated for the fast PCA process. The
+default is 10.}
 
 \item{center}{Logical. Indicates whether to scale the data or not. If center is TRUE, then centering is done by
 subtracting the column means of the assay from their corresponding columns. The default is TRUE.}
@@ -39,20 +40,22 @@ subtracting the column means of the assay from their corresponding columns. The 
 is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
 mean square otherwise. The default is FALSE.}
 
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
-log2 transformation will be applied.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data before computing the SVD. The
+default is 'TRUE'. The data must be in log scale beofre computing the SVD.}
 
-\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-by default it is set to 1.}
+\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before applying log transformation.
+The default is 1. This argument cannot be NULL or negative.}
 
-\item{bsparam}{A BiocParallelParam object specifying how parallelization should be performed.}
+\item{bsparam}{A BiocParallelParam object specifying how parallelization should be performed. The defualt is bsparam().
+We refer to the 'runSVD' function from the BiocSingular R package.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object. The defualt is TRUE.
+We refer to the checkSeObj function for more details.}
 
 \item{remove.na}{To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
-'se.obj' or to output the result as list. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the SVD results in the metadata of the SummarizedExperiment object
+or to output the results as list. By default it is set to 'TRUE'.}
 
 \item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
@@ -61,7 +64,7 @@ A SummarizedExperiment object or a list that containing the singular value decom
 percentage variation of each PCs.
 }
 \description{
-This function uses ingular value decomposition to perform principal component on the assay(s) in a SummarizedExperiment
+This function uses singular value decomposition to perform principal component on the assay(s) in a SummarizedExperiment
 object. The function provides fast singular value decomposition using the BiocSingular R package.
 }
 \details{

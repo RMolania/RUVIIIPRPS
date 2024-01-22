@@ -3,7 +3,7 @@
 #' @author Ramyar Molania
 
 #' @description
-#' This function uses ingular value decomposition to perform principal component on the assay(s) in a SummarizedExperiment
+#' This function uses singular value decomposition to perform principal component on the assay(s) in a SummarizedExperiment
 #' object. The function provides fast singular value decomposition using the BiocSingular R package.
 
 #' @details
@@ -13,25 +13,28 @@
 #' each sample.
 
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. A symbol or list of symbols of the assay(s) in the SummarizedExperiment object to compute
-#' PCA. By default all the assays of the SummarizedExperiment object will be selected.
+#' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
+#' SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indicates all
+#' the assays of the SummarizedExperiment object will be selected.
 #' @param fast.pca Logical. Indicates whether to calculate a specific number of left singular vectors instead of the
-#' full range to speed up the process, by default is set to 'TRUE'.
-#' @param nb.pcs Numeric. The number of first left singular vectors to be calculated for the fast PCA process, by default
-#' is set to 10.
+#' full possible vectors to speed up the process. The default is 'TRUE'.
+#' @param nb.pcs Numeric. The number of first left singular vectors to be calculated for the fast PCA process. The
+#' default is 10.
+#' @param center Logical. Indicates whether to scale the data or not. If center is TRUE, then centering is done by
+#' subtracting the column means of the assay from their corresponding columns. The default is TRUE.
 #' @param scale Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
 #' is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
 #' mean square otherwise. The default is FALSE.
-#' @param center Logical. Indicates whether to scale the data or not. If center is TRUE, then centering is done by
-#' subtracting the column means of the assay from their corresponding columns. The default is TRUE.
-#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
-#' log2 transformation will be applied.
-#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-#' by default it is set to 1.
-#' @param bsparam A BiocParallelParam object specifying how parallelization should be performed.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
-#' 'se.obj' or to output the result as list. By default it is set to TRUE.
+#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data before computing the SVD. The
+#' default is 'TRUE'. The data must be in log scale beofre computing the SVD.
+#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before applying log transformation.
+#' The default is 1. This argument cannot be NULL or negative.
+#' @param bsparam A BiocParallelParam object specifying how parallelization should be performed. The defualt is bsparam().
+#' We refer to the 'runSVD' function from the BiocSingular R package.
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object. The defualt is TRUE.
+#' We refer to the checkSeObj function for more details.
+#' @param save.se.obj Logical. Indicates whether to save the SVD results in the metadata of the SummarizedExperiment object
+#' or to output the results as list. By default it is set to 'TRUE'.
 #' @param remove.na To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
 #' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
@@ -62,38 +65,38 @@ computePCA <- function(
                         verbose = verbose)
     # check the inputs ####
     if (is.null(assay.names)) {
-        stop('The "assay.names" cannot be null.')
+        stop('The "assay.names" cannot be empty.')
     }
-    if(length(assay.names) == 1 & assay.names[1] != 'all'){
-        if(!assay.names %in% names(assays(se.obj)) )
-            stop('The assay name cannot be found in the SummarizedExperiment object.')
-    }
-    if(length(assay.names) > 1){
-        if(sum(!assay.names %in% names(assays(se.obj))) > 0 )
-            stop('The assay names cannot be found in the SummarizedExperiment object.')
-    }
-    if (fast.pca & is.null(nb.pcs)) {
+    if (isTRUE(fast.pca) & is.null(nb.pcs)) {
         stop('To perform fast PCA, the number of PCs (left singular vectors) must be specified.')
-    } else if (fast.pca & nb.pcs == 0) {
+    } else if (isTRUE(fast.pca) & nb.pcs == 0) {
         stop('To perform fast PCA, the number of PCs (left singular vectors) must be specified.')
     }
-    if(pseudo.count < 0){
-        stop('The value of "pseudo.count" cannot be negative.')
+    if (isTRUE(apply.log)){
+        if(pseudo.count < 0){
+            stop('The value of "pseudo.count" cannot be negative.')
+        }
+        if (is.null(pseudo.count)){
+            stop('A value for the "pseudo.count" must be specified.')
+        }
     }
     if(!remove.na %in% c('assays','none')){
         stop('The "remove.na" must be on of the "assays" or "none"')
     }
-    if (scale) {
+    if (isTRUE(scale)) {
         printColoredMessage(
-            message = 'Note: we highly recommend not to scale the data before computing the PCA.',
+            message = 'Note: highly recommend not to scale the data before computing the PCA.',
             color = 'red',
             verbose = verbose)
     }
 
-    # find assays ####
+    # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else  assay.names <- as.factor(unlist(assay.names))
+    } else  assay.names <- factor(x = assay.names, levels = assay.names)
+    if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
+        stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
+    }
 
     # assess the se.obj ####
     if (assess.se.obj) {
@@ -104,22 +107,23 @@ computePCA <- function(
             remove.na = remove.na,
             verbose = verbose)
     }
+
     # data transformation ####
     printColoredMessage(
-        message = paste0('-- Data transformation:'),
+        message = '-- Data transformation:',
         color = 'magenta',
         verbose = verbose)
     all.assays <- lapply(
         levels(assay.names),
         function(x) {
             temp.data <- as.matrix(assay(x = se.obj, i = x))
-            if (apply.log & !is.null(pseudo.count)) {
+            if (isTRUE(apply.log) & !is.null(pseudo.count)) {
                 printColoredMessage(
                     message = paste0('Apply log2 + ', pseudo.count,  ' (pseudo.count) on the' , x, ' data.'),
                     color = 'blue',
                     verbose = verbose)
                 temp.data <- log2(temp.data + pseudo.count)
-            } else if (apply.log & is.null(pseudo.count)) {
+            } else if (isTRUE(apply.log) & is.null(pseudo.count)) {
                 printColoredMessage(
                     message = paste0('Apply log2 transformation on the', x, ' data.'),
                     color = 'blue',
@@ -127,10 +131,7 @@ computePCA <- function(
                 temp.data <- temp.data
             } else if (!apply.log){
                 printColoredMessage(
-                    message = paste0(
-                        'The ',
-                        x,
-                        ' assay will be used without log transformation.'),
+                    message = paste0('The ', x,' data will be used without log transformation.'),
                     color = 'blue',
                     verbose = verbose)
                 printColoredMessage(
@@ -145,7 +146,7 @@ computePCA <- function(
 
     # svd ####
     printColoredMessage(
-        message = paste0('-- Perform SVD:'),
+        message = '-- Perform SVD:',
         color = 'magenta',
         verbose = verbose)
     ## fast svd ####
@@ -153,21 +154,16 @@ computePCA <- function(
         printColoredMessage(
             message = paste0(
                 '-- Perform fast singular value decomposition with scale = ',
-                scale,
-                ' and center = ',
-                center,
-                '.'),
+                scale, ' and center = ', center, '.'),
             color = 'blue',
             verbose = verbose)
         printColoredMessage(
         message = paste0(
-            'Note: in fast svd analysis, the percentage of variation of PCs will be ',
+            'Note: in the fast svd analysis, the percentage of variation of PCs will be ',
             'computed proportional to the highest selected number of PCs (left singular vectors), not on all the PCs.'),
             color = 'red',
             verbose = verbose)
-        if (is.null(bsparam)) {
-            bsparam = bsparam()
-        }
+        if (is.null(bsparam)) bsparam <- bsparam()
         all.sv.decomposition <- lapply(
             levels(assay.names),
             function(x) {
@@ -191,14 +187,11 @@ computePCA <- function(
             })
         names(all.sv.decomposition) <- levels(assay.names)
     } else {
-        ## svd ####
+        ## ordinary svd ####
         printColoredMessage(
             message = paste0(
                 '-- Perform singular value decomposition with scale = ',
-                scale,
-                ' and center = ',
-                center,
-                '.'),
+                scale, ' and center = ', center, '.'),
             color = 'blue',
             verbose = verbose)
         all.sv.decomposition <- lapply(
@@ -223,6 +216,7 @@ computePCA <- function(
             })
         names(all.sv.decomposition) <- levels(assay.names)
     }
+
     # save the results ####
     printColoredMessage(
         message = '-- Save the SVD results:',
@@ -272,6 +266,6 @@ computePCA <- function(
         printColoredMessage(message = '------------The computePCA function finished.',
                             color = 'white',
                             verbose = verbose)
-        return(PCA = all.sv.decomposition)
+        return(all.sv.decompositions = all.sv.decomposition)
     }
 }
