@@ -15,7 +15,6 @@
 #' @param ylim.rle.med.plot TTTTTTTT
 #' @param ylim.rle.iqr.plot Numeric. A vector of two values to specify the ylim of the RLE plot.
 #' @param points.size Numeric. Indicates the size of the points of the RLE medians in the plot.
-#' @param points.color Symbol. Indicates the color of the points of the RLE medians in the plot.
 #' @param plot.ncol Numeric. Indicates number of columns in the plot grid.
 #' @param plot.output Logical. If TRUE, individual RLE plot(s) will be printed.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
@@ -26,8 +25,6 @@
 
 #' @importFrom SummarizedExperiment assays
 #' @importFrom ggpubr ggarrange
-#' @importFrom matrixStats colQuantiles
-#' @importFrom tidyr pivot_longer
 #' @import ggplot2
 #' @export
 
@@ -36,10 +33,9 @@ plotRleVariable <- function(
         assay.names = "all",
         variable,
         rle.data.type = 'both',
-        ylim.rle.med.plot = c(-3, 3),
-        ylim.rle.iqr.plot = c(0, 2),
+        ylim.rle.med.plot = NULL,
+        ylim.rle.iqr.plot = NULL,
         points.size = 1,
-        points.color = 'red',
         plot.ncol = 1,
         plot.output = TRUE,
         save.se.obj = TRUE,
@@ -102,13 +98,33 @@ plotRleVariable <- function(
         })
     names(all.rle.data) <- levels(assay.names)
 
+    # specify ylim for the RLE plots ####
+    if(is.null(ylim.rle.med.plot)){
+        ylim.rle.med <- unlist(lapply(
+            levels(assay.names),
+            function(x){
+                c(min(all.rle.data[[x]]$rle.medians),
+                  max(all.rle.data[[x]]$rle.medians))
+            }))
+        ylim.rle.med.plot <- c(min(ylim.rle.med), max(ylim.rle.med))
+    }
+    if(is.null(ylim.rle.iqr.plot)){
+        ylim.rle.iqr <- unlist(lapply(
+            levels(assay.names),
+            function(x){
+                c(min(all.rle.data[[x]]$rle.iqrs),
+                  max(all.rle.data[[x]]$rle.iqrs))
+            }))
+        ylim.rle.iqr.plot <- c(min(ylim.rle.iqr), max(ylim.rle.iqr))
+    }
+
     # generate the plots ####
     printColoredMessage(
         message = paste0('-- Generate the plots with the RLE medians:'),
         color = 'magenta',
         verbose = verbose
     )
-    samples <- rle <- everything <- sample <- NULL
+    samples <- rle <- everything <- sample <- rle.medians <- NULL
     all.rle.med.var.plots <- lapply(
         levels(assay.names),
         function(x) {
@@ -187,7 +203,7 @@ plotRleVariable <- function(
         color = 'magenta',
         verbose = verbose
         )
-    samples <- rle <- everything <- sample <- NULL
+    samples <- rle <- everything <- sample <- rle.iqr <- NULL
     all.rle.iqr.var.plots <- lapply(
         levels(assay.names),
         function(x) {
@@ -203,10 +219,10 @@ plotRleVariable <- function(
                     color = 'blue',
                     verbose = verbose)
                 p.rle <- ggplot(rle.med.data, aes(x = var, y = rle.iqr)) +
-                    geom_point() +
-                    ylab('RLE IQRs') +
+                    geom_point(size = points.size) +
                     ggtitle(x) +
                     xlab(variable) +
+                    ylab('RLE IQRs') +
                     coord_cartesian(ylim = ylim.rle.iqr.plot) +
                     theme(
                         panel.background = element_blank(),
@@ -226,9 +242,9 @@ plotRleVariable <- function(
                     verbose = verbose)
                 p.rle <- ggplot(rle.med.data, aes(x = var, y = rle.iqr)) +
                     geom_boxplot() +
+                    xlab(variable) +
                     ylab('RLE IQRs') +
                     ggtitle(x) +
-                    xlab(variable) +
                     coord_cartesian(ylim = ylim.rle.iqr.plot) +
                     theme(
                         panel.background = element_blank(),
