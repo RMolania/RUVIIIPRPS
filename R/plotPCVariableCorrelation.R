@@ -108,6 +108,7 @@ plotPCVariableCorrelation <- function(
             vectos.corrs[1:nb.pcs]
         })
     names(all.pcs.vect.corr) <- levels(assay.names)
+
     # individual plots ####
     printColoredMessage(
         message = paste0('-- Generate the vector correlations plots for each assay:'),
@@ -169,7 +170,7 @@ plotPCVariableCorrelation <- function(
             xlab('Cumulative PCs') +
             ylab('Vector correlations') +
             ggtitle(paste0('Vector correlation, ', variable)) +
-            scale_color_manual(values = c(data.sets.colors), name = 'Datasets') +
+            # scale_color_manual(values = c(data.sets.colors), name = 'Datasets') +
             scale_x_continuous(breaks = seq_len(nb.pcs), labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
             scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0,1)) +
             theme(
