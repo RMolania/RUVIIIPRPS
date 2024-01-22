@@ -21,7 +21,7 @@ normAssessment(
   compute.nb.pcs = 10,
   center.pca = TRUE,
   scale.pca = FALSE,
-  BSPARAM = NULL,
+  bsparam = NULL,
   apply.log = TRUE,
   pseudo.count = 1,
   plot.ncol = 1,
@@ -69,7 +69,7 @@ to speed up the process, by default is set to 'TRUE'.}
 
 \item{scale.pca}{TTTT}
 
-\item{BSPARAM}{TTTT}
+\item{bsparam}{TTTT}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
 no transformation will be selected.}

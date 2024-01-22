@@ -40,7 +40,7 @@
 #' @param metrics.to.exclude TTTT
 #' @param center.pca TTT
 #' @param scale.pca TTTT
-#' @param BSPARAM TTTT
+#' @param bsparam TTTT
 #' @param remove.na TTTT
 #' @param save.se.obj TTTT
 #' @param silhouette.dist.measure TTTT
@@ -158,7 +158,7 @@ normAssessment <- function(
             assay.names = assay.names,
             apply.log = apply.log,
             pseudo.count = pseudo.count,
-            outputs.to.returns = rle.outputs.to.return,
+            outputs.to.return = rle.outputs.to.return,
             assess.se.obj = assess.se.obj,
             remove.na = remove.na,
             save.se.obj = TRUE,
