@@ -87,12 +87,12 @@ plotPCA <- function(
                 message = paste0('Obtain the first ', nb.pcs, ' PCs of ', x, ' data.'),
                 color = 'blue',
                 verbose = verbose)
-            if (fast.pca) {
+            if (isTRUE(fast.pca)) {
                 if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To plot the PCA, the fast PCA must be computed first on the assay ', x, ' .')
                 pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
                 pc.var <- se.obj@metadata[['metric']][[x]][['fastPCA']]$percentage.variation
-            } else {
+            } else if (isFALSE(fast.pca)) {
                 if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
                     stop('To plot the PCA, the PCA must be computed first on the assay ', x, ' .')
                 pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[, 1:nb.pcs]
