@@ -18,8 +18,11 @@
 #' influence of unwanted variation in the data, we should see no such associations.
 
 #' @references
-#' Gandolfo, L. C. & Speed, T. P. RLE plots: visualizing unwanted variation in high dimensional data. PLoS ONE 13,
-#' e0191629 (2018).
+#' Gandolfo L. C. & Speed, T. P., RLE plots: visualizing unwanted variation in high dimensional data. PLoS ONE, 2018.
+#' Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
+#' 2019.
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
