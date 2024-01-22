@@ -34,10 +34,11 @@ getAssessmentMetrics <- function(
             continuous.var,
             metrics.for.cont.var
         )
-        metrics.for.cont.var <- unlist(apply(
+        metrics.for.cont.var <- metrics.for.cont.var[order(metrics.for.cont.var$Var1), ]
+        metrics.for.cont.var <- unname(unlist(apply(
             metrics.for.cont.var,
             1,
-            function(x) paste0(x, collapse = '_')))
+            function(x) paste0(x, collapse = '_'))))
 
     } else metrics.for.cont.var <- NULL
 
@@ -59,10 +60,11 @@ getAssessmentMetrics <- function(
             categorical.var,
             metrics.for.cat.var
             )
-        metrics.for.cat.var <- unlist(apply(
+        metrics.for.cat.var <- metrics.for.cat.var[order(metrics.for.cat.var$Var1) , ]
+        metrics.for.cat.var <- unname(unlist(apply(
             metrics.for.cat.var,
             1,
-            function(x) paste0(x, collapse = '_')))
+            function(x) paste0(x, collapse = '_'))))
         metrics.for.cat.var <- sub("_\\|\\|", "||", metrics.for.cat.var)
     } else metrics.for.cat.var <- NULL
 
