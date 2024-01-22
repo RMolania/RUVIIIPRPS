@@ -9,13 +9,13 @@ computePCA(
   assay.names = "all",
   fast.pca = TRUE,
   nb.pcs = 10,
-  scale = FALSE,
   center = TRUE,
+  scale = FALSE,
   apply.log = TRUE,
   pseudo.count = 1,
-  BSPARAM = NULL,
+  bsparam = bsparam(),
   assess.se.obj = TRUE,
-  remove.na = "assays",
+  remove.na = "none",
   save.se.obj = TRUE,
   verbose = TRUE
 )
@@ -32,12 +32,12 @@ full range to speed up the process, by default is set to 'TRUE'.}
 \item{nb.pcs}{Numeric. The number of first left singular vectors to be calculated for the fast PCA process, by default
 is set to 10.}
 
+\item{center}{Logical. Indicates whether to scale the data or not. If center is TRUE, then centering is done by
+subtracting the column means of the assay from their corresponding columns. The default is TRUE.}
+
 \item{scale}{Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
 is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
 mean square otherwise. The default is FALSE.}
-
-\item{center}{Logical. Indicates whether to scale the data or not. If center is TRUE, then centering is done by
-subtracting the column means of the assay from their corresponding columns. The default is TRUE.}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
 log2 transformation will be applied.}
@@ -45,7 +45,7 @@ log2 transformation will be applied.}
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
 
-\item{BSPARAM}{A BiocParallelParam object specifying how parallelization should be performed.}
+\item{bsparam}{A BiocParallelParam object specifying how parallelization should be performed.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
