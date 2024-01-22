@@ -9,10 +9,9 @@ plotRleVariable(
   assay.names = "all",
   variable,
   rle.data.type = "both",
-  ylim.rle.med.plot = c(-3, 3),
-  ylim.rle.iqr.plot = c(0, 2),
+  ylim.rle.med.plot = NULL,
+  ylim.rle.iqr.plot = NULL,
   points.size = 1,
-  points.color = "red",
   plot.ncol = 1,
   plot.output = TRUE,
   save.se.obj = TRUE,
@@ -36,8 +35,6 @@ the boxplots of the RLE plots. The variable should be a categorical variable. Th
 \item{ylim.rle.iqr.plot}{Numeric. A vector of two values to specify the ylim of the RLE plot.}
 
 \item{points.size}{Numeric. Indicates the size of the points of the RLE medians in the plot.}
-
-\item{points.color}{Symbol. Indicates the color of the points of the RLE medians in the plot.}
 
 \item{plot.ncol}{Numeric. Indicates number of columns in the plot grid.}
 

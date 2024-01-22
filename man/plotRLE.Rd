@@ -8,7 +8,7 @@ plotRLE(
   se.obj,
   assay.names = "all",
   variable = NULL,
-  ylim.rle.plot = c(-3, 3),
+  ylim.rle.plot = NULL,
   median.points.size = 1,
   median.points.color = "red",
   iqr.width = 2,

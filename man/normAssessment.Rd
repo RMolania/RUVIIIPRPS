@@ -10,8 +10,15 @@ normAssessment(
   variables,
   metrics = "all",
   metrics.to.exclude = "NULL",
+  rle.outputs.to.return = "all",
+  ylim.rle.plot = c(-2, 2),
+  rle.median.points.size = 1,
+  rle.median.points.color = "red",
+  rle.iqr.width = 2,
+  rle.geom.hline.color = "cyan",
+  rle.plot.ncol = 1,
   fast.pca = TRUE,
-  nb.pcs = 10,
+  compute.nb.pcs = 10,
   center.pca = TRUE,
   scale.pca = FALSE,
   BSPARAM = NULL,
@@ -20,7 +27,7 @@ normAssessment(
   plot.ncol = 1,
   silhouette.dist.measure = NULL,
   assess.se.obj = FALSE,
-  remove.na = remove.na,
+  remove.na = "none",
   save.se.obj = TRUE,
   output.file = NULL,
   verbose = TRUE
@@ -39,10 +46,24 @@ such as samples types, batch or library size from colData(se).}
 
 \item{metrics.to.exclude}{TTTT}
 
+\item{rle.outputs.to.return}{TTT}
+
+\item{ylim.rle.plot}{TTT}
+
+\item{rle.median.points.size}{TTT}
+
+\item{rle.median.points.color}{TTT}
+
+\item{rle.iqr.width}{TTT}
+
+\item{rle.geom.hline.color}{TTT}
+
+\item{rle.plot.ncol}{TTT}
+
 \item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range
 to speed up the process, by default is set to 'TRUE'.}
 
-\item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
+\item{compute.nb.pcs}{TTT}
 
 \item{center.pca}{TTT}
 
@@ -70,6 +91,8 @@ by default it is set to 1.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 of the functions, by default it is set to TRUE.}
+
+\item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing all the assessments plots and metrics.
