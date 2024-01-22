@@ -28,7 +28,7 @@
 #' log2 transformation will be applied.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
-#' @param BSPARAM A BiocParallelParam object specifying how parallelization should be performed.
+#' @param bsparam A BiocParallelParam object specifying how parallelization should be performed.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
 #' 'se.obj' or to output the result as list. By default it is set to TRUE.
@@ -48,13 +48,13 @@ computePCA <- function(
         assay.names = 'all',
         fast.pca = TRUE,
         nb.pcs = 10,
-        scale = FALSE,
         center = TRUE,
+        scale = FALSE,
         apply.log = TRUE,
         pseudo.count = 1,
-        BSPARAM = NULL,
+        bsparam = bsparam(),
         assess.se.obj = TRUE,
-        remove.na = 'assays',
+        remove.na = 'none',
         save.se.obj = TRUE,
         verbose = TRUE) {
     printColoredMessage(message = '------------The computePCA function starts:',
@@ -149,7 +149,7 @@ computePCA <- function(
         color = 'magenta',
         verbose = verbose)
     ## fast svd ####
-    if (fast.pca) {
+    if (isTRUE(fast.pca)) {
         printColoredMessage(
             message = paste0(
                 '-- Perform fast singular value decomposition with scale = ',
@@ -165,20 +165,20 @@ computePCA <- function(
             'computed proportional to the highest selected number of PCs (left singular vectors), not on all the PCs.'),
             color = 'red',
             verbose = verbose)
-        if (is.null(BSPARAM)) {
-            BSPARAM = bsparam()
+        if (is.null(bsparam)) {
+            bsparam = bsparam()
         }
-        sv.dec.all <- lapply(
+        all.sv.decomposition <- lapply(
             levels(assay.names),
             function(x) {
                 printColoredMessage(
                     message = paste0('-- Perform fast singular value decomposition on the ', x , ' data.'),
                     color = 'blue',
                     verbose = verbose)
-                sv.dec <- runSVD(
+                sv.dec <- BiocSingular::runSVD(
                     x = t(all.assays[[x]]),
                     k = nb.pcs,
-                    BSPARAM = BSPARAM,
+                    BSPARAM = bsparam,
                     center = center,
                     scale = scale)
                 rownames(sv.dec$u) <- colnames(se.obj)
@@ -189,7 +189,7 @@ computePCA <- function(
                     function(i) round(percentage [i], 1))
                 return(list(svd = sv.dec, percentage.variation = percentage))
             })
-        names(sv.dec.all) <- levels(assay.names)
+        names(all.sv.decomposition) <- levels(assay.names)
     } else {
         ## svd ####
         printColoredMessage(
@@ -201,7 +201,7 @@ computePCA <- function(
                 '.'),
             color = 'blue',
             verbose = verbose)
-        sv.dec.all <- lapply(
+        all.sv.decomposition <- lapply(
             levels(assay.names),
             function(x) {
                 printColoredMessage(
@@ -221,7 +221,7 @@ computePCA <- function(
                     function(i) round(percentage [i], 1))
                 return(list(svd = sv.dec, percentage.variation = percentage))
             })
-        names(sv.dec.all) <- levels(assay.names)
+        names(all.sv.decomposition) <- levels(assay.names)
     }
     # save the results ####
     printColoredMessage(
@@ -244,8 +244,16 @@ computePCA <- function(
                 se.obj@metadata[['metric']][[x]] <- list()
             }
             if (fast.pca) {
-                se.obj@metadata[['metric']][[x]][['fastPCA']] <- sv.dec.all[[x]]
-            } else se.obj@metadata[['metric']][[x]][['PCA']] <- sv.dec.all[[x]]
+                if('fastPCA' %in%  names(se.obj@metadata[['metric']][[x]]) ){
+                    se.obj@metadata[['metric']][[x]][['fastPCA']] <- list()
+                }
+                se.obj@metadata[['metric']][[x]][['fastPCA']] <- all.sv.decomposition[[x]]
+            } else {
+                if('PCA' %in%  names(se.obj@metadata[['metric']][[x]]) ){
+                    se.obj@metadata[['metric']][[x]][['PCA']] <- list()
+                }
+                se.obj@metadata[['metric']][[x]][['PCA']] <- all.sv.decomposition[[x]]
+            }
         }
         printColoredMessage(
             message = 'The SVD results of individual assays are saved to metadata@metric',
@@ -264,6 +272,6 @@ computePCA <- function(
         printColoredMessage(message = '------------The computePCA function finished.',
                             color = 'white',
                             verbose = verbose)
-        return(PCA = sv.dec.all)
+        return(PCA = all.sv.decomposition)
     }
 }
