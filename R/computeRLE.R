@@ -34,7 +34,7 @@
 #' log transformation to avoid -Inf for measurements that are equal to 0. The default is 1.
 #' @param outputs.to.return Symbol. Indicates what kind of RLE computations should be performed and data should be
 #' returned. The options are "all", "rle", "rle.med", "rle.iqr" and "rle.med.iqr". If "all" is selected, the function returns the RLE data,
-#' medians and interquartiles. If "rle" is selected, the function returns just the RLE data for each assays. If "rle.med"
+#' medians and interquartiles. If "rle" is selected, the function returns only the RLE data for each assays. If "rle.med"
 #' is selected, the function returns the only the medians of the RLE data. If "rle.iqr" is selected, the function returns
 #' the only the interquartiles. of the RLE data.  If "rle.med.iqr" is selected, the function returns
 #' both the RLE medians and interquartiles of the RLE data.The default is 'all'.

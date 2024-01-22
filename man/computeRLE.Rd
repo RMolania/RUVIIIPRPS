@@ -9,7 +9,7 @@ computeRLE(
   assay.names = "all",
   apply.log = TRUE,
   pseudo.count = 1,
-  outputs.to.returns = "all",
+  outputs.to.return = "all",
   assess.se.obj = TRUE,
   remove.na = "assays",
   save.se.obj = TRUE,
@@ -20,19 +20,21 @@ computeRLE(
 \item{se.obj}{A SummarizedExperiment object.}
 
 \item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-SummarizedExperiment object to calculate and plot RLE. By default all the assays of the SummarizedExperiment object
-will be selected.}
+SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indcates all
+the assays of the SummarizedExperiment object will be selected.}
 
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. The default is TRUE. Please,
-note, any RNA-seq data (assays) must be in log scale before computing RLE.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data or not. The default is TRUE.
+Please, note, any RNA-seq data (assays) must be in log scale before computing RLE.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements of the assay(s) before applying
 log transformation to avoid -Inf for measurements that are equal to 0. The default is 1.}
 
-\item{outputs.to.returns}{Symbol. A symbol or list of symbols indicating what kind of outputs should be returened by
-the function. The options are "all", "rle.data", "rle.plot". If "all" is selected, the function returns the RLE data,
-medians and interquartiles of the RLE data and the RLE plot. If "rle.data", the function returns all the outputs except
-the plot. If "rle.plot" is selected, the function returns just the RLE plot.}
+\item{outputs.to.return}{Symbol. Indicates what kind of RLE computations should be performed and data should be
+returned. The options are "all", "rle", "rle.med", "rle.iqr" and "rle.med.iqr". If "all" is selected, the function returns the RLE data,
+medians and interquartiles. If "rle" is selected, the function returns only the RLE data for each assays. If "rle.med"
+is selected, the function returns the only the medians of the RLE data. If "rle.iqr" is selected, the function returns
+the only the interquartiles. of the RLE data.  If "rle.med.iqr" is selected, the function returns
+both the RLE medians and interquartiles of the RLE data.The default is 'all'.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment object or not. See the checkSeObj
 function for more details.}
@@ -41,32 +43,36 @@ function for more details.}
 The default is "assays", so all the NA or missing values from the assay(s) will be removed before computing RLE. See
 the checkSeObj function for more details.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
-to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the RLE results in the metadata of the SummarizedExperiment object or
+to output the result as list. By default it is set to TRUE.}
 
 \item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
-A SummarizedExperiment object or a list that contains all RLE data of individual assay(s).
+A SummarizedExperiment object or a list that contains all the RLE data of individual assay(s) in the
+SummarizedExperiment object.
 }
 \description{
 This functions calculates relative log expression (RLE) of the assay(s) in a SummarizedExperiment object. In addition,
-the function returns the medians and interquartiles of RLE boxplots for indivdial assay's RLE.
+the function returns the RLE medians and interquartiles ranges (IQRs) of each sample for individual assays.
 }
 \details{
-RLE plots23 are used to reveal trends, temporal clustering and other non-random patterns resulting from unwanted variation
-in gene expression data. To generate RLE plots, we first formed the log ratio log(yig/yg) of the raw count yig for
+RLE plots are used to reveal trends, temporal clustering and other non-random patterns resulting from unwanted variation
+in gene expression data. To generate RLE plots, we first form the log ratio log(yig/yg) of the raw count yig for
 gene g in the sample labeled i relative to the median value yg of the counts for gene g taken across all samples. We
-then generated a box plot from all the log ratios for sample i and plotted all such box plots along a line, where i
+then generate a box plot from all the log ratios for sample i and plotted all such box plots along a line, where i
 varies in a meaningful order, usually sample processing date. An ideal RLE plot should have its medians centered around
 zero, and its box widths and their interquartile ranges (IQRs) should be similar in magnitude. Because of their
-sensitivity to unwanted variation, we also examined the relationships between RLE medians with potential sources of
-unwanted variation and individual gene expression levels in the datasets. In the absence of any influence of unwanted
-variation in the data, we should see no such associations.
+sensitivity to unwanted variation, we also examine the relationships between RLE medians and interquartiles  with
+potential sources of unwanted variation and individual gene expression levels in the datasets. In the absence of any
+influence of unwanted variation in the data, we should see no such associations.
 }
 \references{
-Gandolfo, L. C. & Speed, T. P. RLE plots: visualizing unwanted variation in high dimensional data. PLoS ONE 13,
-e0191629 (2018).
+Gandolfo L. C. & Speed, T. P., RLE plots: visualizing unwanted variation in high dimensional data. PLoS ONE, 2018.
+Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
+2019.
+Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+Nature Biotechnology, 2023
 }
 \author{
 Ramyar Molania
