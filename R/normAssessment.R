@@ -45,6 +45,14 @@
 #' @param save.se.obj TTTT
 #' @param silhouette.dist.measure TTTT
 #' @param plot.ncol TTTT
+#' @param rle.outputs.to.return TTT
+#' @param ylim.rle.plot TTT
+#' @param rle.median.points.size TTT
+#' @param rle.median.points.color TTT
+#' @param rle.iqr.width TTT
+#' @param rle.geom.hline.color TTT
+#' @param rle.plot.ncol TTT
+#' @param compute.nb.pcs TTT
 #'
 #' @return  SummarizedExperiment A SummarizedExperiment object containing all the assessments plots and metrics.
 #' If specified it will generate a pdf containing the assessments plots and metrics used for the assessment.
@@ -62,17 +70,24 @@ normAssessment <- function(
         variables,
         metrics = 'all',
         metrics.to.exclude = 'NULL',
+        rle.outputs.to.return = 'all',
+        ylim.rle.plot = c(-2,2),
+        rle.median.points.size = 1,
+        rle.median.points.color = "red",
+        rle.iqr.width = 2,
+        rle.geom.hline.color = "cyan",
+        rle.plot.ncol = 1,
         fast.pca = TRUE,
-        nb.pcs = 10,
+        compute.nb.pcs = 10,
         center.pca = TRUE,
         scale.pca = FALSE,
-        BSPARAM = NULL,
+        bsparam = NULL,
         apply.log = TRUE,
         pseudo.count = 1,
         plot.ncol = 1,
         silhouette.dist.measure = NULL,
         assess.se.obj = FALSE,
-        remove.na = remove.na,
+        remove.na = 'none',
         save.se.obj = TRUE,
         output.file = NULL,
         verbose = TRUE
@@ -112,7 +127,6 @@ normAssessment <- function(
     }
 
     # find categorical and continuous variables ####
-
     categorical.var <- continuous.var <- NULL
     if (!is.null(variables)) {
         var.class <- sapply(variables,
@@ -144,12 +158,11 @@ normAssessment <- function(
             assay.names = assay.names,
             apply.log = apply.log,
             pseudo.count = pseudo.count,
-            outputs.to.returns = 'all',
+            outputs.to.returns = rle.outputs.to.return,
             assess.se.obj = assess.se.obj,
             remove.na = remove.na,
             save.se.obj = TRUE,
-            verbose = verbose)
-    }
+            verbose = verbose)}
 
     ### plot general rle #####
     if('General||boxPlot||RLE' %in% all.metrics ){
@@ -157,14 +170,14 @@ normAssessment <- function(
             se.obj = se.obj,
             assay.names = assay.names,
             variable = NULL,
-            ylim.rle.plot = c(-3, 3),
+            ylim.rle.plot = ylim.rle.plot,
             median.points.size = 1,
             median.points.color = "red",
             iqr.width = 2,
             geom.hline.color = "cyan",
             plot.ncol = 1,
             plot.output = FALSE,
-            save.se.obj = save.se.obj,
+            save.se.obj = TRUE,
             verbose = TRUE)
     }
 
@@ -179,9 +192,9 @@ normAssessment <- function(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = i,
-                ylim.rle.plot = c(-3, 3),
-                median.points.size = 1,
-                median.points.color = "red",
+                ylim.rle.plot = c(-2, 2),
+                median.points.size = .5,
+                median.points.color = "black",
                 iqr.width = 2,
                 geom.hline.color = "cyan",
                 plot.ncol = 1,
@@ -190,10 +203,39 @@ normAssessment <- function(
                 verbose = TRUE)
         }
     }
+    ### plot rle medinas\iqr with variable #####
+    rle.var.plots <- c(
+        all.metrics[plots.to.generate == 'scatterPlot' & metrics.to.compute == 'RLE'],
+        all.metrics[plots.to.generate == 'boxPlot' & metrics.to.compute == 'RLE']
+    )
+    rle.var.plots <- rle.var.plots[!rle.var.plots %in% "General||boxPlot||RLE"]
+    if(length(rle.var.plots) > 0){
+        vars <- unlist(lapply(
+            rle.var.plots,
+            function(x) {
+                x <- strsplit(x = x, split = '\\|\\|')[[1]][1]
+                strsplit(x = x, split = '_')[[1]][1]
+            }))
+        for(i in vars){
+            se.obj <- plotRleVariable(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = i,
+                rle.data.type = 'both',
+                ylim.rle.med.plot = NULL,
+                ylim.rle.iqr.plot = NULL,
+                points.size = 1,
+                plot.ncol = 1,
+                plot.output = FALSE,
+                save.se.obj = TRUE,
+                verbose = verbose)
+        }
+    }
+
     # PCA ####
     ## compute pca ####
     if('PCA' %in% metrics.to.compute){
-        se.obj <- RUVIIIPRPS::computePCA(
+        se.obj <- computePCA(
             se.obj = se.obj,
             assay.names = assay.names,
             fast.pca = fast.pca,
@@ -202,37 +244,40 @@ normAssessment <- function(
             center = center.pca,
             apply.log = apply.log,
             pseudo.count = pseudo.count,
-            BSPARAM = BSPARAM,
+            bsparam = NULL,
             assess.se.obj = assess.se.obj,
             remove.na = remove.na,
             save.se.obj = save.se.obj,
             verbose = verbose)
     }
     ## plot pca ####
-    for(i in all.metrics){
-        var.meric <- strsplit(i, '\\|\\|')[[1]]
-        var <- strsplit(var.meric[1], split = '_')[[1]][1]
-        if(var.meric[3]=='PCA' & var.meric[2] == 'boxPlot' | var.meric[2] == 'scatterPlot'){
-            if(var.meric[2] == 'boxPlot'){
-                plot.type.pca <- 'boxplot'
-            } else if (var.meric[2] == 'scatterPlot')
+    pca.var.plots <- c(
+        all.metrics[plots.to.generate == 'scatterPlot' & metrics.to.compute == 'PCA'],
+        all.metrics[plots.to.generate == 'boxPlot' & metrics.to.compute == 'PCA']
+    )
+    if(length(pca.var.plots) > 0){
+        for(i in pca.var.plots){
+            var.meric <- strsplit(i, '\\|\\|')
+            var <- strsplit(var.meric[[1]], split = '_')[[1]][1]
+            if(var.meric[[1]][2] == 'scatterPlot'){
                 plot.type.pca <- 'scatter'
-            print(var)
-            se.obj <- plotPCA(
-                se.obj = se.obj,
-                assay.names = assay.names,
-                variable = var,
-                fast.pca = fast.pca,
-                nb.pcs = nb.pcs,
-                save.se.obj = TRUE,
-                verbose = TRUE)
+            } else plot.type.pca <- 'boxplot'
+                se.obj <- plotPCA(
+                    se.obj = se.obj,
+                    assay.names = assay.names,
+                    variable = var,
+                    plot.type = plot.type.pca,
+                    fast.pca = fast.pca,
+                    nb.pcs = 3,
+                    save.se.obj = TRUE,
+                    verbose = TRUE)
+            }
         }
-    }
 
     # Vector correlation ####
     ## compute and plot vector correlation ####
-    if('vecCorrPlot' %in% plots.to.generate){
-        var.metric <- all.metrics[plots.to.generate == 'vecCorrPlot']
+    if('PcaVecCorr' %in% metrics.to.compute){
+        var.metric <- all.metrics[metrics.to.compute == 'PcaVecCorr']
         for(i in var.metric){
             var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
             var <- strsplit(x = var, split = '_')[[1]][1]
@@ -261,8 +306,8 @@ normAssessment <- function(
 
     # Linear regression ####
     ## compute and plot linear regression ####
-    if('regPlot' %in% plots.to.generate){
-        var.metric <- all.metrics[plots.to.generate == 'regPlot']
+    if('PcaReg' %in% metrics.to.compute){
+        var.metric <- all.metrics[metrics.to.compute == 'PcaReg']
         for(i in var.metric){
             var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
             var <- strsplit(x = var, split = '_')[[1]][1]
@@ -320,7 +365,6 @@ normAssessment <- function(
                 var <- unlist(strsplit(x = var, split = '_'))
                 plot.type <- 'combined.plot'
             }
-            print(i)
             se.obj <- plotSilhouette(
                 se.obj = se.obj,
                 assay.names = assay.names,
@@ -485,6 +529,28 @@ normAssessment <- function(
                 verbose = verbose)
         }
     }
+
+    # save all plots ####
+    # all.vars <- unique(unlist(lapply(
+    #     all.metrics,
+    #     function(x){
+    #         vars <- strsplit(x , '\\|\\|')[[1]][1]
+    #         strsplit(vars , '_')[[1]][1]})))
+    #
+    # pdf_file <- "output.pdf"
+    # pdf(pdf_file)
+    # plot.new()
+    # text(.5, .5, "Hello, this is some text in the PDF.", font = 2, cex = 1.5)
+    # if("General||boxPlot||RLE" %in% all.metrics){
+    #     print(se.obj@metadata$plot$RLE$GeneralRLE)
+    # }
+    # for(i in all.vars){
+    #     if(colData(se.obj)[[i]] %in% c('numeric', 'integer')){
+    #         if(i %in% se.obj@metadata$plot$PCA$fastPCA)
+    #     }
+    # }
+
+    dev.off()
     printColoredMessage(message = '------------The normAssessment function finished.',
                         color = 'white',
                         verbose = verbose)
