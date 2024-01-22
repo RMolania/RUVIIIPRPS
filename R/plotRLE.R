@@ -1,33 +1,38 @@
-#' is used to plot relative log expression (RLE) of RNA-seq data.
+#' is used to generate boxplot of the relative log expression (RLE) distributions of RNA-seq data.
 
 #' @author Ramyar Molania
 
 #' @description
-#' This functions generate a boxplot of individual RLE data. The RLE data can be obtained using the computeRLE function.
+#' This function generates a boxplot of individual RLE data. The RLE data can be obtained using the computeRLE function.
+#' We refer to the computeRLE function for more detail about RLE.
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-#' SummarizedExperiment object to plot RLE. By default all the assays of the SummarizedExperiment object
-#' will be selected.
-#' @param variable Symbol. Indicates a name of column in the sample annotation for the SummarizedExperiment object to color
-#' the boxplots of the RLE plots. The variable should be a categorical variable. The default is NULL.
-#' @param ylim.rle.plot Numeric. A vector of two values to specify the ylim of the RLE plot.
-#' @param median.points.size Numeric. Indicates the size of the points of the RLE medians in the plot.
-#' @param median.points.color Symbol. Indicates the color of the points of the RLE medians in the plot.
-#' @param iqr.width Numeric. Indicates the width size of RLE iqr in the plot.
-#' @param geom.hline.color Symbol. Indicates the color of the geom.hline in the RLE plot.
-#' @param plot.ncol Numeric. Indicates number of columns in the plot grid.
-#' @param plot.output Logical. If TRUE, individual RLE plot(s) will be printed.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
-#' to output the result. By default it is set to TRUE.
+#' SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indicates all
+#' the assays of the SummarizedExperiment object will be selected.
+#' @param variable Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
+#' The interquartile ranges of the RLE boxplot will be colored based on the variable. The variable must be a categorical
+#' variable. The default is NULL.
+#' @param ylim.rle.plot Numeric. A vector of two values to specify the ylim of the RLE plot(s). If is NULL, the function
+#' uses the minimum and maximum interquartile ranges of all the RLE data as ylim. The default is NULL.
+#' @param iqr.width Numeric. Indicates the width size of RLE interquartile ranges in the plot. The default is 1.
+#' @param median.points.size Numeric. Indicates the size of the points of the RLE medians in the boxplot(s). The default is 1.
+#' @param median.points.color Symbol. Indicates the color of the points of the RLE medians in the boxplot(s).
+#' @param geom.hline.color Symbol. Indicates the color of the horizontal line (geom.hline) across 0 in the RLE boxplot(s).
+#' This line helps to see the deviation of the RLE medians of the RLE boxplot(s).
+#' @param plot.ncol Numeric. Indicates number of columns in the plot grid. When the number of selected assay is more than
+#' 1, the function puts all the RLE boxplots in one grid.
+#' @param plot.output Logical. If TRUE, the individual RLE plot(s) will be printed while functions is running.
+#' @param save.se.obj Logical. Indicates whether to save the RLE plots in the metadata of the SummarizedExperiment object
+#'  or to output the result as list. By default it is set to TRUE.
 #' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
 #' @return A SummarizedExperiment object or a list that contains all the RLE plot(s).
 
 #' @importFrom SummarizedExperiment assays
-#' @importFrom ggpubr ggarrange
 #' @importFrom matrixStats colQuantiles
 #' @importFrom tidyr pivot_longer
+#' @importFrom ggpubr ggarrange
 #' @import ggplot2
 #' @export
 
@@ -36,9 +41,9 @@ plotRLE <- function(
         assay.names = "all",
         variable = NULL,
         ylim.rle.plot = NULL,
+        iqr.width = 1,
         median.points.size = 1,
-        median.points.color = 'red',
-        iqr.width = 2,
+        median.points.color = 'black',
         geom.hline.color = 'cyan',
         plot.ncol = 1,
         plot.output = TRUE,
@@ -52,14 +57,20 @@ plotRLE <- function(
     if (is.null(assay.names)) {
         stop('The "assay.names" cannot be empty.')
     }
-    if (is.null(ylim.rle.plot) | length(ylim.rle.plot) != 2) {
-        stop('Please specify the "ylim.rle.plot" argument.')
+    if (!is.null(variable)){
+        if (length(variable) > 1){
+            stop('The "variable" must contain only one variable.')
+        } else if (!class(colData(se.obj)[[variable]]) %in% c('factor', 'character'))
+            stop('The "variable" must be a categorical variable.')
+    }
+    if (!is.null(ylim.rle.plot) & !length(ylim.rle.plot) != 2) {
+        stop('Please specify the approprate "ylim.rle.plot" argument.')
     }
 
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
-        assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(assay.names)
+        assay.names <- as.factor(x = names(assays(se.obj)))
+    } else assay.names <- factor(x = assay.names, levels = assay.names)
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
@@ -68,10 +79,10 @@ plotRLE <- function(
     if(!is.null(variable)){
         variable.data <- as.factor(colData(se.obj)[[variable]])
         if(length(levels(variable)) < 9 ){
-            rle.plot.colors <- RColorBrewer::brewer.pal(9, 'Set1')[-9][1:length(levels(variable.data))]
+            rle.plot.colors <- RColorBrewer::brewer.pal(8, 'Dark2')[1:length(levels(variable.data))]
             names(rle.plot.colors) <- levels(variable.data)
         } else{
-            colfunc <- grDevices::colorRampPalette( RColorBrewer::brewer.pal(9, 'Set1')[-9])
+            colfunc <- grDevices::colorRampPalette( RColorBrewer::brewer.pal(8, 'Dark2'))
             rle.plot.colors <- colfunc(n = length(levels(assay.names)))
             names(rle.plot.colors) <- levels(variable.data)
         }
@@ -88,17 +99,20 @@ plotRLE <- function(
         function(x) {
             if (!'RLE' %in% names(se.obj@metadata[['metric']][[x]])) {
                 stop(paste0(
-                        'The RLE data has not been computed yet for the ',
-                        x,
-                        ' assay. Please run the computeRLE function first.'))
+                        'The RLE data has not been computed yet for the ', x,
+                        ' data. Please run the computeRLE function first.'))
             }
             if (!'rle.data' %in% names(se.obj@metadata[['metric']][[x]][['RLE']])) {
                 stop(paste0(
-                        'The "rle.data" cannot be found for the ',
-                        x,
-                        ' assay. Please run the computeRLE function first.'))
+                        'The "rle.data" cannot be found for the ', x,
+                        ' data. Please run the computeRLE function first.'))
             }
-            rle.data <- se.obj@metadata[['metric']][[x]][['RLE']][['rle.data']]$rle.data
+            if (!'rle.data' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.data']])) {
+                stop(paste0(
+                        'The "rle.data" cannot be found for the ', x,
+                        ' data. Please run the computeRLE function with the "outputs.to.return" equal to "all" or "rle.data".'))
+            }
+            se.obj@metadata[['metric']][[x]][['RLE']][['rle.data']]$rle.data
         })
     names(all.rle.data) <- levels(assay.names)
 
@@ -114,13 +128,14 @@ plotRLE <- function(
             })))
         ylim.rle.plot <- c(-max(ylim.rle.plot), max(ylim.rle.plot))
     }
+
     # generate the RLE plots ####
     printColoredMessage(
-        message = paste0('-- Generate the RLE plots:'),
+        message = '-- Generate the RLE plots:',
         color = 'magenta',
         verbose = verbose
     )
-    samples <- rle <- everything <- sample <- NULL
+    rle <- sample <- NULL
     all.rle.plots <- lapply(
         levels(assay.names),
         function(x) {
@@ -146,7 +161,7 @@ plotRLE <- function(
                                aes(group = range),
                                size = median.points.size ,
                                colour = median.points.color) +
-                    scale_color_manual(name = 'Group', values = rle.plot.colors) +
+                    scale_color_manual(name = 'Groups:', values = rle.plot.colors) +
                     ylab('RLE') +
                     xlab('Samples') +
                     ggtitle(x) +
@@ -156,12 +171,12 @@ plotRLE <- function(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', linewidth = 1),
                         axis.title.x = element_text(size = 14),
-                        legend.position = 'bottom',
                         axis.title.y = element_text(size = 14),
                         axis.text.x = element_blank(),
                         axis.text.y = element_text(size = 10),
-                        axis.ticks.x = element_blank())
-            } else{
+                        axis.ticks.x = element_blank(),
+                        legend.position = 'bottom')
+            } else if (is.null(variable)){
                 # general RLE plots ####
                 samples.quantiles <- tidyr::pivot_longer(
                     data = samples.quantiles,
@@ -200,7 +215,7 @@ plotRLE <- function(
             plotlist = all.rle.plots,
             ncol = plot.ncol,
             legend = "bottom",
-            common.legend = T)
+            common.legend = TRUE)
         if (plot.output) print(overall.rle.plot)
     }
 
@@ -279,7 +294,7 @@ plotRLE <- function(
         return(se.obj = se.obj)
     } else if (save.se.obj == FALSE) {
         printColoredMessage(
-            message = '-- Save all the RLE plots as list.',
+            message = '-- All the RLE plots are outputed as a list.',
             color = 'blue',
             verbose = verbose)
         printColoredMessage(message = '------------The plotRLE function finished.',

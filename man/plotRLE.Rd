@@ -2,16 +2,16 @@
 % Please edit documentation in R/plotRLE.R
 \name{plotRLE}
 \alias{plotRLE}
-\title{is used to plot relative log expression (RLE) of RNA-seq data.}
+\title{is used to generate boxplot of the relative log expression (RLE) distributions of RNA-seq data.}
 \usage{
 plotRLE(
   se.obj,
   assay.names = "all",
   variable = NULL,
   ylim.rle.plot = NULL,
+  iqr.width = 1,
   median.points.size = 1,
-  median.points.color = "red",
-  iqr.width = 2,
+  median.points.color = "black",
   geom.hline.color = "cyan",
   plot.ncol = 1,
   plot.output = TRUE,
@@ -23,28 +23,32 @@ plotRLE(
 \item{se.obj}{A SummarizedExperiment object.}
 
 \item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-SummarizedExperiment object to plot RLE. By default all the assays of the SummarizedExperiment object
-will be selected.}
+SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indicates all
+the assays of the SummarizedExperiment object will be selected.}
 
-\item{variable}{Symbol. Indicates a name of column in the sample annotation for the SummarizedExperiment object to color
-the boxplots of the RLE plots. The variable should be a categorical variable. The default is NULL.}
+\item{variable}{Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
+The interquartile ranges of the RLE boxplot will be colored based on the variable. The variable must be a categorical
+variable. The default is NULL.}
 
-\item{ylim.rle.plot}{Numeric. A vector of two values to specify the ylim of the RLE plot.}
+\item{ylim.rle.plot}{Numeric. A vector of two values to specify the ylim of the RLE plot(s). If is NULL, the function
+uses the minimum and maximum interquartile ranges of all the RLE data as ylim. The default is NULL.}
 
-\item{median.points.size}{Numeric. Indicates the size of the points of the RLE medians in the plot.}
+\item{iqr.width}{Numeric. Indicates the width size of RLE interquartile ranges in the plot. The default is 1.}
 
-\item{median.points.color}{Symbol. Indicates the color of the points of the RLE medians in the plot.}
+\item{median.points.size}{Numeric. Indicates the size of the points of the RLE medians in the boxplot(s). The default is 1.}
 
-\item{iqr.width}{Numeric. Indicates the width size of RLE iqr in the plot.}
+\item{median.points.color}{Symbol. Indicates the color of the points of the RLE medians in the boxplot(s).}
 
-\item{geom.hline.color}{Symbol. Indicates the color of the geom.hline in the RLE plot.}
+\item{geom.hline.color}{Symbol. Indicates the color of the horizontal line (geom.hline) across 0 in the RLE boxplot(s).
+This line helps to see the deviation of the RLE medians of the RLE boxplot(s).}
 
-\item{plot.ncol}{Numeric. Indicates number of columns in the plot grid.}
+\item{plot.ncol}{Numeric. Indicates number of columns in the plot grid. When the number of selected assay is more than
+1, the function puts all the RLE boxplots in one grid.}
 
-\item{plot.output}{Logical. If TRUE, individual RLE plot(s) will be printed.}
+\item{plot.output}{Logical. If TRUE, the individual RLE plot(s) will be printed while functions is running.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
-to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the RLE plots in the metadata of the SummarizedExperiment object
+or to output the result as list. By default it is set to TRUE.}
 
 \item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
@@ -52,7 +56,8 @@ to output the result. By default it is set to TRUE.}
 A SummarizedExperiment object or a list that contains all the RLE plot(s).
 }
 \description{
-This functions generate a boxplot of individual RLE data. The RLE data can be obtained using the computeRLE function.
+This function generates a boxplot of individual RLE data. The RLE data can be obtained using the computeRLE function.
+We refer to the computeRLE function for more detail about RLE.
 }
 \author{
 Ramyar Molania

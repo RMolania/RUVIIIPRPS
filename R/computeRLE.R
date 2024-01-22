@@ -75,10 +75,10 @@ computeRLE <- function(
         if (pseudo.count < 0)
             stop('The value of "pseudo.count" cannot be negative.')
     }
-    if (outputs.to.return %in% c('all', 'rle', 'rle.med', 'rle.iqr', 'rle.med.iqr')) {
+    if (!outputs.to.return %in% c('all', 'rle', 'rle.med', 'rle.iqr', 'rle.med.iqr')) {
         stop('The "outputs.to.return" must be in on of the "all", "rle", "rle.med", "rle.iqr" or "rle.med.iqr".')
     }
-    if (remove.na %in% c('assays', 'none')) {
+    if (!remove.na %in% c('assays', 'none')) {
         stop('The "remove.na" must be in on of the "assays" or "none".')
     }
 
