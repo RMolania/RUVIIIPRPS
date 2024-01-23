@@ -1,4 +1,4 @@
-#' is used to perform differential gene expression analysis using Wilcoxon test.
+#' is used to perform differential gene expression analysis using the Wilcoxon test.
 
 #' @author Ramyar Molania
 
@@ -7,20 +7,21 @@
 #' categorical variable in a SummarizedExperiment object.
 
 #' @details
-#' DE analyses were performed using the Wilcoxon signed-rank test with log -transformed raw counts and normalized data.
-#' To evaluate the effects 2 of the different sources of unwanted variation on the data, DE analyses were performed across
-#'  batches. In the absence of any batch effects, the histogram of the resulting unadjusted P values should
+#' DE analyses is performed using the Wilcoxon signed-rank test with log-transformed data e.g. raw counts, normalized data, ....
+#' To evaluate the effects of the different sources of unwanted variation on the data, DE analyses is performed across
+#' batches. In the absence of any batch effects, the histogram of the resulting unadjusted P values should be uniformly
+#' distributed
 
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. Symbol or list of symbols for the selection of the name(s) of the assay(s) of the
+#' @param assay.names Symbol. Symbol or a vector of symbols for the selection of the name(s) of the assay(s) of the
 #' SummarizedExperiment object to compute the differential gene expression analysis. By default all the assays of the
 #' SummarizedExperiment object will be selected.
-#' @param variable  Symbol. Indicates the columns of the SummarizedExperiment object that contains a categorical variable
-#' such as batches.
-#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
-#' the log transformation will be selected.
-#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-#' by default it is set to 1.
+#' @param variable  Symbol. Indicates a column name of the SummarizedExperiment object that contains a categorical variable
+#' such as batches. If the variable has more than two levels, the function perform DEG between all possible pariwise groups.
+#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data before compuritn DGE. The
+#' default is 'TRUE'.
+#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation. The
+#' default is 1.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' @param remove.na Symbol. Indicates whether to remove missing/NA values from either the 'assays', 'sample.annotation',
 #' 'both' or 'none'. If 'assays' is selected, the genes that contains missing/NA values will be excluded. If 'sample.annotation'
@@ -70,7 +71,10 @@ computeDGE <- function(
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(unlist(assay.names))
+    } else assay.names <- factor(x = assay.names, levels = assay.names)
+    if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
+        stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
+    }
 
     # assess the SummarizedExperiment object ####
     if (assess.se.obj) {
@@ -81,10 +85,12 @@ computeDGE <- function(
             remove.na = remove.na,
             verbose = verbose)
     }
+
     # data transformation ####
-    printColoredMessage(message = '-- Data transformation:',
-                        color = 'magenta',
-                        verbose = verbose)
+    printColoredMessage(
+        message = '-- Data transformation:',
+        color = 'magenta',
+        verbose = verbose)
     all.log.data <- lapply(
         levels(assay.names),
         function(x){
@@ -108,7 +114,7 @@ computeDGE <- function(
     })
     names(all.log.data) <- levels(assay.names)
     printColoredMessage(
-        message = paste0('-- Perform Wilcoxon test:'),
+        message = '-- Perform Wilcoxon test:',
         color = 'magenta',
         verbose = verbose)
     all.contrasts <- combn(
@@ -118,7 +124,7 @@ computeDGE <- function(
         levels(assay.names),
         function(x){
             printColoredMessage(
-                message = paste0('Apply Wilcoxon test on the ', x, ' data:'),
+                message = paste0('Apply the Wilcoxon test on the ', x, ' data:'),
                 color = 'blue',
                 verbose = verbose)
             de.results <- lapply(
@@ -139,6 +145,7 @@ computeDGE <- function(
             de.results
         })
     names(all.wilcoxon.tests) <- levels(assay.names)
+
     # save the results ####
     printColoredMessage(
         message = '-- Save the Wilcoxon test results:',
@@ -178,7 +185,7 @@ computeDGE <- function(
         ## return the results as a list ####
     } else if (save.se.obj == FALSE) {
         printColoredMessage(
-            message = 'The Wilcoxon results for indiviaul assay are saved as list.',
+            message = 'The Wilcoxon results for indiviaul assay are outputed as list.',
             color = 'blue',
             verbose = verbose)
         printColoredMessage(message = '------------The computeDGE function finished.',
