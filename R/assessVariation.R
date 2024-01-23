@@ -64,7 +64,7 @@
 #' @export
 
 ## remove n.core and merge all variable together
-normAssessment <- function(
+assessVariation <- function(
         se.obj,
         assay.names = 'all',
         variables,
@@ -96,7 +96,7 @@ normAssessment <- function(
                         color = 'white',
                         verbose = verbose)
     # check the inputs of PCA ####
-    if (length(assay.names) == 1 && assay.names != 'All') {
+    if (length(assay.names) == 1 && assay.names != 'all') {
         if (!assay.names %in% names(assays(se.obj)))
             stop('The assay name cannot be found in the SummarizedExperiment object.')
     }
@@ -113,7 +113,10 @@ normAssessment <- function(
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(unlist(assay.names))
+    } else assay.names <- factor(x = assay.names, levels = assay.names)
+    if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
+        stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
+    }
 
     # assess the SummarizedExperiment object ####
     if (assess.se.obj) {
@@ -127,7 +130,7 @@ normAssessment <- function(
     }
 
     # find categorical and continuous variables ####
-    categorical.var <- continuous.var <- NULL
+    categorical.vars <- continuous.vars <- NULL
     if (!is.null(variables)) {
         var.class <- sapply(variables,
                             function(x)

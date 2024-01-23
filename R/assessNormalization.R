@@ -44,7 +44,7 @@
 #' @importFrom SummarizedExperiment assays colData
 #' @export
 
-assessVariation <- function(
+assessNormalization <- function(
         se.obj,
         assay.names = 'All',
         variables = NULL,
@@ -60,7 +60,7 @@ assessVariation <- function(
                         color = 'white',
                         verbose = verbose)
 
-    se.obj <- RUVIIIPRPS::normAssessment(
+    se.obj <- assessVariation(
         se.obj = se.obj,
         assay.names = assay.names,
         apply.log = apply.log,
