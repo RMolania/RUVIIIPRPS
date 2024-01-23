@@ -7,33 +7,33 @@
 #' in a SummarizedExperiment object.
 
 #' @details
-#' The ARI64 is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
-#' two label lists. We used the ARI to assess the performance of normalization methods in terms of sample subtype
-#' separation and batch mixing. We first calculated PCs and used the first three PCs to perform ARI.
+#' The ARI is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
+#' two label lists. We use the ARI to assess the performance of normalization methods in terms of sample subtype
+#' separation and batch mixing. We first calculate PCs and use the first PCs to perform ARI.
 
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-#' SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.
+#' @param assay.names Symbol. A symbol or a vector of symbols for the selection of the name(s) of the assay(s) in the
+#' SummarizedExperiment object to compute ARI. By default all the assays of the SummarizedExperiment object will be selected.
 #' @param variable Symbol. Indicates the column name in the SummarizedExperiment object that contains a categorical
 #' variable such as sample types or batches.
-#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
-#' full range to speed up the process, by default is set to 'TRUE'.
-#' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 3.
-#' @param clustering.method Symbol. Indicates which clustering methods to be used. The function provides the mclust or
-#' hclust methods. The default is hclust.
-#' @param hclust.method Symbol. Indicate the agglomeration method to be used for the hclust methid. This should be
-#' one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or
-#' "centroid" (= UPGMC). See the hclust function for more details.
-#' @param dist.measure Symbol. Indicates the distance measure to be used in the dist function. This must be one of
-#' "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". See the dist function for more details.
+#' @param fast.pca Logical. Indicates whether to use calculated fast PCA or PCA. The default is 'TRUE'.
+#' @param nb.pcs Numeric. The number of first PCs to be used to compute ARI. The default is 3.
+#' @param clustering.method Symbol. Indicates which clustering methods should be applied on the PCs calculate the ARI.
+#' The function provides the 'mclust' or 'hclust' methods. The default is 'hclust'.
+#' @param hclust.method Symbol. Indicate the agglomeration method to be used for the 'hclust' method. This should be
+#' one of 'ward.D', 'ward.D2', 'single', 'complete', 'average' (= UPGMA), 'mcquitty' (= WPGMA), 'median' (= WPGMC) or
+#' 'centroid' (= UPGMC). See the hclust function for more details.
+#' @param hclust.dist.measure Symbol. Indicates the distance measure to be used in the dist function. This must be one of
+#' 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'. See the dist function for more details.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' object 'se.obj' or to output the result. By default it is set to TRUE.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is
-#' set to TRUE.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-#' execution of the functions, by default it is set to TRUE.
+#' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
 #' @return A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
+
+#' @references
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom mclust mclustBIC Mclust adjustedRandIndex
@@ -49,9 +49,8 @@ computeARI <- function(
         nb.pcs = 3,
         clustering.method = 'hclust',
         hclust.method = 'complete',
-        dist.measure = 'euclidian',
+        hclust.dist.measure = 'euclidian',
         save.se.obj = TRUE,
-        assess.se.obj = TRUE,
         verbose = TRUE
         ) {
     printColoredMessage(message = '------------The computeARI function starts:',
@@ -59,43 +58,45 @@ computeARI <- function(
                         verbose = verbose)
 
     # check the inputs ####
-    if (length(assay.names) == 1 && assay.names != 'all') {
-        if (!assay.names %in% names(assays(se.obj)))
-            stop('The assay name cannot be found in the SummarizedExperiment object.')
-    }
-    if (length(assay.names) > 1) {
-        if (sum(!assay.names %in% names(assays(se.obj))) > 0 )
-            stop('The assay names cannot be found in the SummarizedExperiment object.')
-    }
     if (is.null(assay.names)) {
         stop('The "assay.names" cannot be empty.')
+    } else if (!is.vector(assay.names)){
+        stop('The "assay.names" must be a vector of the assay names(s) or "assay.names = all".')
+    } else if (is.null(variable)) {
+        stop('The "variable" cannot be empty.')
+    } else if (length(variable) > 1){
+        stop('The "variable" must contain only one variable.')
+    } else if (!variable %in% colnames(se.obj@colData)){
+        stop('The "variable" cannot be found in the SummarizedExperiment object.')
+    } else if (length(unique(se.obj[[variable]])) == 1) {
+        stop('The "variable" must have at least two levels.')
+    } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
+        stop('The "variable" must be a categorical varible.')
     }
     if (is.null(nb.pcs)) {
         stop('The number of PCs (nb.pcs) must be specified')
     }
-    if (is.null(variable)) {
-        stop('The "variable" cannot be empty.')
-    } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
-        stop('The "variable" must be a categorical variable.')
+    if(length(clustering.method) > 1){
+        stop('The "clustering.method" must be only one of the "mclust" or "hclust".')
     }
     if(is.null(clustering.method)){
-        stop('The clustering.method cannot be empty.')
+        stop('The "clustering.method" cannot be empty.')
     } else if(!clustering.method %in% c('mclust', 'hclust')){
-        stop('The clustering.method method should be one of "mclust" or "hclust" .')
+        stop('The "clustering.method" method must be one of the "mclust" or "hclust".')
     }
     if(clustering.method == 'hclust'){
-        if(is.null(dist.measure)){
-            stop('The dist.measure cannot be empty when the clustering.method is hclust.')
-        } else if (!dist.measure %in% c('euclidian',
+        if(is.null(hclust.dist.measure)){
+            stop('The "hclust.dist.measure" cannot be empty when the "clustering.method = hclust".')
+        } else if (!hclust.dist.measure %in% c('euclidian',
                                        'maximum',
                                        'manhattan',
                                        'canberra',
                                        'binary',
                                        'minkowski')) {
-            stop("The dist.measure should be one of the:'euclidean','maximum','manhattan','canberra','binary'or'minkowski'.")
+            stop('The "hclust.dist.measure" should be one of the:"euclidean","maximum","manhattan","canberra","binary" or "minkowski".')
         }
         if(is.null(hclust.method)){
-            stop('The hclust.method cannot be when the clustering.method is hclust.')
+            stop('The "hclust.method" cannot be when the "clustering.method = hclust".')
         } else if (!hclust.method %in% c('complete',
                                        'ward.D',
                                        'ward.D2',
@@ -104,27 +105,24 @@ computeARI <- function(
                                        'mcquitty',
                                        'median',
                                        'centroid')) {
-            stop("The hclust.method should be one of the:'complete','ward.D','ward.D2','single','average', 'mcquitty', 'median' or 'centroid'.")
+            stop('The hclust.method should be one of the:"complete","ward.D","ward.D2","single","average", "mcquitty", "median" or "centroid".')
         }
     }
+    if (sum(is.na(se.obj@colData[[variable]])) > 0){
+        stop(paste0('The "', variable, '" contains NA.',
+                    ' Run the checkSeObj function with "remove.na = both"',
+                    ', then "computePCA"-->"computeARI".'))
+    }
+
 
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else  assay.names <- as.factor(unlist(assay.names))
+    } else  assay.names <- factor(x = assay.names, levels = assay.names)
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
 
-    # assess the SummarizedExperiment ####
-    if (assess.se.obj) {
-        se.obj <- checkSeObj(
-            se.obj = se.obj,
-            assay.names = assay.names,
-            variables = variable,
-            remove.na = 'both',
-            verbose = verbose)
-    }
     # ari on all assays ####
     printColoredMessage(
         message = '-- Compute ARI: ',
@@ -182,7 +180,7 @@ computeARI <- function(
                     color = 'blue',
                     verbose = verbose)
                 clusters <- cutree(
-                    tree = hclust(d = dist(x = pca.data, method = dist.measure), method = hclust.method),
+                    tree = hclust(d = dist(x = pca.data, method = hclust.dist.measure), method = hclust.method),
                     k = length(unique(se.obj@colData[, variable])))
                 printColoredMessage(
                     message = '-Calculate the adjusted rand index.',
@@ -193,6 +191,7 @@ computeARI <- function(
             return(ari)
         })
     names(all.ari) <- levels(assay.names)
+
     # save the results ####
     printColoredMessage(
         message = '-- Save all the ARI:',
@@ -224,7 +223,7 @@ computeARI <- function(
             }
             if(clustering.method == 'mclust'){
                 out.put.name <- 'mclust'
-            } else out.put.name <- paste0('hclust.', hclust.method, '.', dist.measure)
+            } else out.put.name <- paste0('hclust.', hclust.method, '.', hclust.dist.measure)
             se.obj@metadata[['metric']][[x]][['ari']][[out.put.name]][[variable]][['ari']] <- all.ari[[x]]
         }
         printColoredMessage('The ARI results of induvial assays are saved to metadata@metric.',
