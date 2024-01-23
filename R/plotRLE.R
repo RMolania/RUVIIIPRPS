@@ -60,8 +60,15 @@ plotRLE <- function(
     if (!is.null(variable)){
         if (length(variable) > 1){
             stop('The "variable" must contain only one variable.')
-        } else if (!class(colData(se.obj)[[variable]]) %in% c('factor', 'character'))
+        }
+        if (!class(colData(se.obj)[[variable]]) %in% c('factor', 'character')){
             stop('The "variable" must be a categorical variable.')
+        }
+        if (sum(is.na(se.obj@colData[[variable]])) > 0){
+            stop(paste0('The "', variable, '" variable contains NA. ',
+                        'Run the checkSeObj function with "remove.na = both"',
+                        ', then re-run the computeRLE function.'))
+        }
     }
     if (!is.null(ylim.rle.plot) & !length(ylim.rle.plot) != 2) {
         stop('Please specify the approprate "ylim.rle.plot" argument.')
@@ -81,7 +88,7 @@ plotRLE <- function(
         if(length(levels(variable)) < 9 ){
             rle.plot.colors <- RColorBrewer::brewer.pal(8, 'Dark2')[1:length(levels(variable.data))]
             names(rle.plot.colors) <- levels(variable.data)
-        } else{
+        } else {
             colfunc <- grDevices::colorRampPalette( RColorBrewer::brewer.pal(8, 'Dark2'))
             rle.plot.colors <- colfunc(n = length(levels(assay.names)))
             names(rle.plot.colors) <- levels(variable.data)
