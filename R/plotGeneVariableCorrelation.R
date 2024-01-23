@@ -1,37 +1,31 @@
-#' is used to compute the adjusted rand index (ARI).
+#' is used to Spearman or Pearson correlations coefficients.
 
 #' @author Ramyar Molania
 
 #' @description
-#' This functions computes the adjusted rand index for given a categorical variable using the first PCs of the assay(s)
-#' in a SummarizedExperiment object.
+#' This function generates boxplots of computed Spearman or Pearson correlations coefficients of indivdial assays in a
+#' SummarizedExperiment object
 
-#' @details
-#' The ARI64 is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
-#' two label lists. We used the ARI to assess the performance of normalization methods in terms of sample subtype
-#' separation and batch mixing. We first calculated PCs and used the first three PCs to perform ARI.
 
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-#' SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.
-#' @param variable Symbol. Indicates the column name in the SummarizedExperiment object that contains a categorical
-#' variable such as sample types or batches.
-#' @param correlation.method TTTT
-#' @param boxplot.color TTTT
-#' @param geom.hline.color TTTT
-#' @param correlation.method TTTT
+#' @param assay.names Symbol. A symbol or vector of symbols for the selection of the name(s) of the assay(s) of the
+#' SummarizedExperiment object to compute the correlation. By default all the assays of the SummarizedExperiment class
+#' object will be selected.
+#' @param variable Symbol. Indicates the column name in the SummarizedExperiment object that contains a continuous variable
+#' such as library size, tumor purity, ... .
+#' @param correlation.method Symbol. Indicates which computed correlation coefficient should be used for plotting. The
+#' default is 'gene.spearman.corr'. We refer to the 'computeGenesVariableCorrelation' function for more details.
 #' @param plot.output Logical. Indicates whether to plot the ARI, by default it is set to FALSE.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' object 'se.obj' or to output the result. By default it is set to TRUE.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is
-#' set to TRUE.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-#' execution of the functions, by default it is set to TRUE.
+#' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
-#' @return A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
+#' @return A SummarizedExperiment object or a list that containing the boxplots of the Spearman or Pearson correlations
+#' coefficients for individual assays.
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom tidyr pivot_longer
+#' @importFrom dplyr everything
 #' @import ggplot2
 #' @export
 
@@ -41,9 +35,6 @@ plotGenesVariableCorrelation <- function(
         variable,
         correlation.method = 'gene.spearman.corr',
         plot.output = TRUE,
-        boxplot.color = 'black',
-        geom.hline.color = 'gray',
-        assess.se.obj = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
 ){
@@ -66,15 +57,8 @@ plotGenesVariableCorrelation <- function(
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
     } else assay.names <- as.factor(unlist(assay.names))
-
-    # assess the SummarizedExperiment object ####
-    if (assess.se.obj) {
-        se.obj <- checkSeObj(
-            se.obj = se.obj,
-            assay.names = assay.names,
-            variables = variable,
-            remove.na = 'none',
-            verbose = verbose)
+    if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
+        stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
 
     # check metric ####
@@ -126,10 +110,10 @@ plotGenesVariableCorrelation <- function(
             )
             corr.coeff <- all.corr.coeff[[x]]
             p.corr.coeff <- ggplot() +
-                geom_boxplot(aes(y = corr.coeff, x = 1), colour = boxplot.color) +
+                geom_boxplot(aes(y = corr.coeff, x = 1)) +
                 ylab('Spearman correlation coefficient') +
                 xlab(x) +
-                geom_hline(yintercept = 0, colour = geom.hline.color) +
+                geom_hline(yintercept = 0) +
                 ggtitle('Spearman correlation analysis') +
                 theme(
                     panel.background = element_blank(),
@@ -158,10 +142,10 @@ plotGenesVariableCorrelation <- function(
                 names_to = 'datasets',
                 values_to = 'corr.coff')
         overall.corr.coeff.plot <- ggplot(all.corr.coeff, aes(x = datasets, y = corr.coff)) +
-            geom_boxplot(colour = boxplot.color) +
+            geom_boxplot() +
             ylab('Spearman correlation coefficient') +
             xlab('Datasets') +
-            geom_hline(yintercept = 0, colour = geom.hline.color) +
+            geom_hline(yintercept = 0) +
             ggtitle('Spearman correlation analysis') +
             theme(
                 panel.background = element_blank(),
