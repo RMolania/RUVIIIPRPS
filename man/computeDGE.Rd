@@ -2,7 +2,7 @@
 % Please edit documentation in R/computeDGE.R
 \name{computeDGE}
 \alias{computeDGE}
-\title{is used to perform differential gene expression analysis using Wilcoxon test.}
+\title{is used to perform differential gene expression analysis using the Wilcoxon test.}
 \usage{
 computeDGE(
   se.obj,
@@ -19,18 +19,18 @@ computeDGE(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. Symbol or list of symbols for the selection of the name(s) of the assay(s) of the
+\item{assay.names}{Symbol. Symbol or a vector of symbols for the selection of the name(s) of the assay(s) of the
 SummarizedExperiment object to compute the differential gene expression analysis. By default all the assays of the
 SummarizedExperiment object will be selected.}
 
-\item{variable}{Symbol. Indicates the columns of the SummarizedExperiment object that contains a categorical variable
-such as batches.}
+\item{variable}{Symbol. Indicates a column name of the SummarizedExperiment object that contains a categorical variable
+such as batches. If the variable has more than two levels, the function perform DEG between all possible pariwise groups.}
 
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
-the log transformation will be selected.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data before compuritn DGE. The
+default is 'TRUE'.}
 
-\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-by default it is set to 1.}
+\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation. The
+default is 1.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
@@ -54,9 +54,10 @@ This function performs differential gene expression analysis using Wilcoxon test
 categorical variable in a SummarizedExperiment object.
 }
 \details{
-DE analyses were performed using the Wilcoxon signed-rank test with log -transformed raw counts and normalized data.
-To evaluate the effects 2 of the different sources of unwanted variation on the data, DE analyses were performed across
-batches. In the absence of any batch effects, the histogram of the resulting unadjusted P values should
+DE analyses is performed using the Wilcoxon signed-rank test with log-transformed data e.g. raw counts, normalized data, ....
+To evaluate the effects of the different sources of unwanted variation on the data, DE analyses is performed across
+batches. In the absence of any batch effects, the histogram of the resulting unadjusted P values should be uniformly
+distributed
 }
 \author{
 Ramyar Molania
