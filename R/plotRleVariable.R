@@ -1,27 +1,42 @@
-#' is used to plot relative log expression (RLE) of RNA-seq data.
+#' is used to plot a variable against the medians and IQR of relative log expression (RLE)
 
 #' @author Ramyar Molania
 
 #' @description
-#' This functions generate a boxplot of individual RLE data. The RLE data can be obtained using the computeRLE function.
+#' This function plots a variable against the medians and IQR of a relative log expression (RLE) data. Because of the
+#' sensitivity of the RLE medians and IQR to unwanted variation, we  examine the relationships between RLE medians and
+#' IQR with potential sources of unwanted variation. In the absence of any influence of unwanted variation in the data,
+#' we should see no such associations.
+
+#' @details
+#' If the variable is categorical, the, boxplots of the RLE medians and IQR against the variable will be generated. If
+#' the variable is continuous, scatter plots will be created.
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-#' SummarizedExperiment object to plot RLE. By default all the assays of the SummarizedExperiment object
-#' will be selected.
-#' @param variable Symbol. Indicates a name of column in the sample annotation for the SummarizedExperiment object to color
-#' the boxplots of the RLE plots. The variable should be a categorical variable. The default is NULL.
-#' @param rle.data.type TTTTT
-#' @param ylim.rle.med.plot TTTTTTTT
-#' @param ylim.rle.iqr.plot Numeric. A vector of two values to specify the ylim of the RLE plot.
-#' @param points.size Numeric. Indicates the size of the points of the RLE medians in the plot.
+#' SummarizedExperiment object to plot. By default all the assays of the SummarizedExperiment object will be selected.
+#' @param variable Symbol. Indicates a name of the columns in the sample annotation of the SummarizedExperiment object.
+#' The variable can be either categorical or continuous.
+#' @param rle.data.type Symbol. Indicates which RLE data should be used for plotting. The options are 'rle.medians',
+#' 'rle.iqr' or 'both'. If 'rle.medians' is selected, the RLE medians will be plotted against the variable. If 'rle.iqr',
+#' is selected, the RLE IQRs will be plotted against the variable, and if 'both', both RLE medians and IQRs will be plotted
+#' against the variable. The default is 'both'.
+#' @param ylim.rle.med.plot Numeric. Indicates the ylim of the boxplot or scatter plots when the RLE medians are used. If
+#' is NULL, the function will automatically find an suitable ylim for the plots.
+#' @param ylim.rle.iqr.plot Numeric. Indicates the ylim of the boxplot or scatter plots when the RLE IQRs are used. If
+#' is NULL, the function will automatically find an suitable ylim for the plots. The default is NULL.
+#' @param points.size Numeric. Indicates the size of the points of the scatter plots. The default is 1.
 #' @param plot.ncol Numeric. Indicates number of columns in the plot grid.
-#' @param plot.output Logical. If TRUE, individual RLE plot(s) will be printed.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
-#' to output the result. By default it is set to TRUE.
+#' @param plot.output Logical. If TRUE, individual RLE plot(s) will be printed while the function is running.
+#' @param save.se.obj Logical. Indicates whether to save the plots in the metadata of the SummarizedExperiment object or
+#' to output them as list. Default is set to TRUE.
 #' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
-#' @return A SummarizedExperiment object or a list that contains all the RLE plot(s).
+#' @return A SummarizedExperiment object or a list that contains all the plot(s).
+
+#' @references
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
 
 #' @importFrom SummarizedExperiment assays
 #' @importFrom ggpubr ggarrange
@@ -48,6 +63,9 @@ plotRleVariable <- function(
     if (is.null(assay.names)) {
         stop('The "assay.names" cannot be empty.')
     }
+    if(!is.vector(assay.names)){
+        stop('The "assay.names" must be a vector of assay names(s) or "assay.names = all".')
+    }
     if (is.null(variable)) {
         stop('The "variable" cannot be empty.')
     }
@@ -63,11 +81,16 @@ plotRleVariable <- function(
     if (is.null(ylim.rle.iqr.plot) | length(ylim.rle.iqr.plot) != 2) {
         stop('Please specify the "ylim.rle.iqr.plot" argument.')
     }
+    if (sum(is.na(se.obj@colData[[variable]])) > 0){
+        stop(paste0('The "', variable, '" variable contains NA. ',
+                    'Run the checkSeObj function with "remove.na = both"',
+                    ', then re-run the computeRLE function.'))
+    }
 
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(assay.names)
+    } else assay.names <- factor(x = assay.names, levels = assay.names)
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
@@ -141,42 +164,38 @@ plotRleVariable <- function(
                     verbose = verbose)
                 p.rle <- ggplot(rle.med.data, aes(x = var, y = rle.medians)) +
                     geom_point() +
-                    ylab('RLE medians') +
                     ggtitle(x) +
                     xlab(variable) +
+                    ylab('RLE medians') +
                     coord_cartesian(ylim = ylim.rle.med.plot) +
-                    theme(
-                        panel.background = element_blank(),
-                        axis.line = element_line(colour = 'black', linewidth = 1),
-                        axis.title.x = element_text(size = 14),
-                        legend.position = 'bottom',
-                        axis.title.y = element_text(size = 14),
-                        axis.text.x = element_text(size = 14),
-                        axis.text.y = element_text(size = 10)
-                    )
+                    theme(panel.background = element_blank(),
+                           axis.line = element_line(colour = 'black', linewidth = 1),
+                           axis.title.x = element_text(size = 14),
+                           axis.title.y = element_text(size = 14),
+                           axis.text.x = element_text(size = 14),
+                           axis.text.y = element_text(size = 10),
+                           legend.position = 'bottom')
             } else{
                 # boxplot ####
                       printColoredMessage(
-                          message = paste0('-Generate a boxplot between the RLE medians of the ',
-                                           x,
-                                           ' data and the variable:'),
+                          message = paste0(
+                              '-Generate a boxplot between the RLE medians of the ', x,
+                              ' data and the variable:'),
                           color = 'blue',
                           verbose = verbose)
                 p.rle <- ggplot(rle.med.data, aes(x = var, y = rle.medians)) +
                     geom_boxplot() +
-                    ylab('RLE medians') +
                     ggtitle(x) +
                     xlab(variable) +
+                    ylab('RLE medians') +
                     coord_cartesian(ylim = ylim.rle.med.plot) +
-                    theme(
-                        panel.background = element_blank(),
-                        axis.line = element_line(colour = 'black', linewidth = 1),
-                        axis.title.x = element_text(size = 14),
-                        legend.position = 'bottom',
-                        axis.title.y = element_text(size = 14),
-                        axis.text.x = element_text(size = 12, angle = 35, vjust = 1, hjust = 1),
-                        axis.text.y = element_text(size = 10)
-                    )
+                    theme(panel.background = element_blank(),
+                          axis.line = element_line(colour = 'black', linewidth = 1),
+                          axis.title.x = element_text(size = 14),
+                          axis.title.y = element_text(size = 14),
+                          axis.text.x = element_text(size = 12, angle = 35, vjust = 1, hjust = 1),
+                          axis.text.y = element_text(size = 10),
+                          legend.position = 'bottom')
             }
             if (plot.output) print(p.rle)
             p.rle
@@ -193,7 +212,7 @@ plotRleVariable <- function(
         overall.rle.med.var.plots <- ggpubr::ggarrange(
             plotlist = all.rle.med.var.plots,
             ncol = plot.ncol,
-            common.legend = T)
+            common.legend = TRUE)
         if (plot.output) print(overall.rle.med.var.plots)
     }
 
@@ -213,9 +232,9 @@ plotRleVariable <- function(
             if(class(colData(se.obj)[[variable]]) %in% c('numeric', 'integr')){
                 # scatter plot ####
                 printColoredMessage(
-                    message = paste0('-Generate a scatter plot between the RLE IQR of the ',
-                                     x,
-                                     ' data and the variable:'),
+                    message = paste0(
+                        '-Generate a scatter plot between the RLE IQR of the ', x,
+                        ' data and the variable:'),
                     color = 'blue',
                     verbose = verbose)
                 p.rle <- ggplot(rle.med.data, aes(x = var, y = rle.iqr)) +
@@ -224,36 +243,34 @@ plotRleVariable <- function(
                     xlab(variable) +
                     ylab('RLE IQRs') +
                     coord_cartesian(ylim = ylim.rle.iqr.plot) +
-                    theme(
-                        panel.background = element_blank(),
-                        axis.line = element_line(colour = 'black', linewidth = 1),
-                        axis.title.x = element_text(size = 14),
-                        legend.position = 'bottom',
-                        axis.title.y = element_text(size = 14),
-                        axis.text.x = element_text(size = 14),
-                        axis.text.y = element_text(size = 10))
+                    theme(panel.background = element_blank(),
+                          axis.line = element_line(colour = 'black', linewidth = 1),
+                          axis.title.x = element_text(size = 14),
+                          axis.title.y = element_text(size = 14),
+                          axis.text.x = element_text(size = 14),
+                          axis.text.y = element_text(size = 10),
+                          legend.position = 'bottom')
             } else{
                 # boxplot ####
                 printColoredMessage(
-                    message = paste0('-Generate a boxplot between the RLE IQR of the ',
-                                     x,
-                                     ' data and the variable:'),
+                    message = paste0(
+                        '-Generate a boxplot between the RLE IQR of the ', x,
+                        ' data and the variable:'),
                     color = 'blue',
                     verbose = verbose)
                 p.rle <- ggplot(rle.med.data, aes(x = var, y = rle.iqr)) +
                     geom_boxplot() +
+                    ggtitle(x) +
                     xlab(variable) +
                     ylab('RLE IQRs') +
-                    ggtitle(x) +
                     coord_cartesian(ylim = ylim.rle.iqr.plot) +
-                    theme(
-                        panel.background = element_blank(),
-                        axis.line = element_line(colour = 'black', linewidth = 1),
-                        axis.title.x = element_text(size = 14),
-                        legend.position = 'bottom',
-                        axis.title.y = element_text(size = 14),
-                        axis.text.x = element_text(size = 14),
-                        axis.text.y = element_text(size = 10))
+                    theme(panel.background = element_blank(),
+                          axis.line = element_line(colour = 'black', linewidth = 1),
+                          axis.title.x = element_text(size = 14),
+                          legend.position = 'bottom',
+                          axis.title.y = element_text(size = 14),
+                          axis.text.x = element_text(size = 14),
+                          axis.text.y = element_text(size = 10))
             }
             if (plot.output) print(p.rle)
             p.rle
@@ -265,12 +282,11 @@ plotRleVariable <- function(
         printColoredMessage(
             message = '-- Put together all the plots of the RLE medians and the variable:',
             color = 'magenta',
-            verbose = verbose
-        )
+            verbose = verbose)
         overall.rle.iqr.var.plots <- ggpubr::ggarrange(
             plotlist = all.rle.iqr.var.plots,
             ncol = plot.ncol,
-            common.legend = T)
+            common.legend = TRUE)
         if (plot.output) print(overall.rle.iqr.var.plots)
     }
     # save the plots ####
