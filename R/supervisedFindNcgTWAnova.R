@@ -78,7 +78,7 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom SummarizedExperiment assay
 #' @importFrom stats aov
-#' @importFrom ggplot
+#' @import ggplot2
 #' @export
 
 supervisedFindNcgTWAnova <- function(
