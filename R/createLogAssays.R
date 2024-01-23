@@ -3,19 +3,18 @@
 #' @author Marie Trussart
 
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. A symbol or a list of symbols of the names of assays in the SummarizedExperiment object
-#' to apply a log-transformation to the data.
+#' @param assay.names Symbol. A symbol or a vector of symbols of the names of assays in the SummarizedExperiment object
+#' to apply a log-transformation.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation. The
 #' default is 1.
-#' @param verbose Logical. Whether to show the functions messages or not.
+#' @param verbose Logical. If TRUE shows the messages of different steps of the function.
 
 #' @importFrom SummarizedExperiment assays assay colData
-
 #' @export
 
 createLogAssays <- function(
         se.obj,
-        assay.names = 'All',
+        assay.names = 'all',
         pseudo.count = 1,
         verbose = TRUE
 ){
@@ -29,7 +28,7 @@ createLogAssays <- function(
     }
 
     # assays ####
-    if (length(assay.names) == 1 && assay.names == 'All') {
+    if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
     } else assay.names <- as.factor(unlist(assay.names))
 
@@ -41,17 +40,13 @@ createLogAssays <- function(
             verbose = verbose)
         if(!is.null(pseudo.count)){
             printColoredMessage(
-                message = paste0('Performing log2 + ',
-                                 pseudo.count,
-                                 ' transformation on the',
-                                 x,
-                                 ' data.'),
+                message = paste0('Apply log2 + ', pseudo.count,' (pseudo.count) on the', x,' data.'),
                 color = 'blue',
                 verbose = verbose)
             temp.data <- log2(assay(x = se.obj, i = x) +  pseudo.count)
         } else {
             printColoredMessage(
-                message = paste0('Performing log2 transformation on the', x, ' data.'),
+                message = paste0('Apply log2 transformation on the', x, ' data.'),
                 color = 'blue',
                 verbose = verbose)
             temp.data <- log2(assay(x = se.obj, i = x))
