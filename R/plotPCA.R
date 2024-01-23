@@ -1,7 +1,10 @@
 #' is used to plot principal components.
 
 #' @description
-#' is used to plot the pairwise plots of the first principal components of the assays of a SummarizedExperiment object.
+#' is used to plot the first principal components of the assays of a SummarizedExperiment object. The function can generate
+#' pairwise scatter plots of the first principal components colored by a categrocal variable or creates boxplots of each
+#' PC across a categrocal variable. The boxplot of PCs is usefull when the levels of a categrocal variablen is too many to
+#' viisualze using colored scatter plots
 
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s) of the assay(s) of the
@@ -13,13 +16,13 @@
 #' the process, by default is set to 'TRUE'.
 #' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.
 #' @param plot.type Symbol.
-#' @param point.color The color of the variable that will be used on the PCA plot
-#' @param point.size geom_point aesthetics
+#' @param points.color The color of the variable that will be used on the PCA plot
+#' @param points.size geom_point aesthetics
 #' @param stroke.color geom_point aesthetics
 #' @param stroke.size geom_point aesthetics
-#' @param alpha.point geom_point aesthetics
-#' @param alpha.density geom_point aesthetics
-#' @param ncol.plot is the argument of gtable for the layout specifying ncol, by default it is set to 4.
+#' @param points.alpha geom_point aesthetics
+#' @param densities.alpha geom_point aesthetics
+#' @param plot.ncol is the argument of gtable for the layout specifying ncol, by default it is set to 4.
 #' @param verbose Logical. If TRUE, displaying process messages is enabled.
 #' @param save.se.obj Logical. If TRUE, displaying process messages is enabled.
 
@@ -39,13 +42,13 @@ plotPCA <- function(
         fast.pca = TRUE,
         nb.pcs = 3,
         plot.type = 'scatter',
-        point.color = NULL,
-        point.size = 1.5,
+        points.color = NULL,
+        points.size = 1,
         stroke.color = 'gray30',
         stroke.size = .2,
-        alpha.point = .5,
-        alpha.density = .5,
-        ncol.plot = 4,
+        points.alpha = .5,
+        densities.alpha = .5,
+        plot.ncol = 4,
         save.se.obj = TRUE,
         verbose = TRUE
 ) {
@@ -58,18 +61,20 @@ plotPCA <- function(
         stop('The "assay.names" cannot be empty.')
     } else if (is.null(variable)) {
         stop('The "variable" cannot be empty.')
+    } else if (length(variable) > 1){
+        stop('The "variable" must contain only one variable.')
     } else if (!variable %in% colnames(colData(se.obj))) {
         stop('The "variable" cannot be found in the SummarizedExperiment object.')
     } else if (is.null(nb.pcs)){
         stop('The "nb.pcs" cannot be empty.')
     } else if (!plot.type %in% c('scatter', 'boxplot')){
-        stop('The "plot.type" must be one of "scatter" or "boxplot"')
+        stop('The "plot.type" must be one of "scatter" or "boxplot".')
     }
 
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(unlist(assay.names))
+    } else assay.names <- factor(x = assay.names, levels = assay.names)
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
@@ -89,12 +94,16 @@ plotPCA <- function(
                 verbose = verbose)
             if (isTRUE(fast.pca)) {
                 if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
-                    stop('To plot the PCA, the fast PCA must be computed first on the assay ', x, ' .')
+                    stop(paste0(
+                        'To plot the PCA, the fast PCA must be computed first on the assay ', x,
+                        '. Please run the computePCA function first.'))
                 pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
                 pc.var <- se.obj@metadata[['metric']][[x]][['fastPCA']]$percentage.variation
             } else if (isFALSE(fast.pca)) {
                 if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
-                    stop('To plot the PCA, the PCA must be computed first on the assay ', x, ' .')
+                    stop(paste0(
+                        'To plot the PCA, the PCA must be computed first on the assay ', x,
+                        '. Please run the computePCA function first.'))
                 pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[, 1:nb.pcs]
                 pc.var <- se.obj@metadata[['metric']][[x]][['PCA']]$percentage.variation
             }
@@ -116,7 +125,7 @@ plotPCA <- function(
         ### scatter plots for individual assays  ####
         if(plot.type == 'scatter'){
             printColoredMessage(
-                message = '-- Creat scatter PCA plots for individual assays:',
+                message = '-- Creat scatter PCA plots for the individual assay(s):',
                 color = 'magenta',
                 verbose = verbose)
             all.scat.pca.plots <- lapply(
@@ -142,8 +151,8 @@ plotPCA <- function(
                                     color = stroke.color,
                                     pch = 21,
                                     stroke = stroke.size,
-                                    size = point.size,
-                                    alpha = alpha.point) +
+                                    size = points.size,
+                                    alpha = points.alpha) +
                                 scale_x_continuous(
                                     name = paste0('PC', pair.pcs[1, i], ' (', all.pca.data[[x]]$pc.var[pair.pcs[2, i]], '%)'),
                                     breaks = scales::pretty_breaks(n = 5)) +
@@ -153,7 +162,6 @@ plotPCA <- function(
                                 ggtitle(x) +
                                 theme_pubr() +
                                 theme(
-                                    legend.position = "none",
                                     legend.background = element_blank(),
                                     legend.text = element_text(size = 12),
                                     legend.title = element_text(size = 14),
@@ -161,12 +169,13 @@ plotPCA <- function(
                                     axis.text.x = element_text(size = 10),
                                     axis.text.y = element_text(size = 10),
                                     axis.title.x = element_text(size = 12),
-                                    axis.title.y = element_text(size = 12)) +
+                                    axis.title.y = element_text(size = 12),
+                                    legend.position = "none") +
                                 scale_fill_discrete(name = variable) +
                                 guides(fill = guide_legend(override.aes = list(size = 3, shape = 21)))
                             dense.x <-
                                 ggplot(mapping = aes(x = pca.data[, pair.pcs[1, i]], fill = se.obj@colData[, variable])) +
-                                geom_density(alpha = 0.4) +
+                                geom_density(alpha = densities.alpha) +
                                 theme_void() +
                                 theme(
                                     legend.position = "none",
@@ -176,7 +185,7 @@ plotPCA <- function(
                                 guides(fill = guide_legend(override.aes = list(size = 3)))
 
                             dense.y <- ggplot(mapping = aes(x = pca.data[, pair.pcs[2, i]], fill = se.obj@colData[, variable])) +
-                                geom_density(alpha = 0.4) +
+                                geom_density(alpha = densities.alpha) +
                                 theme_void() +
                                 theme(
                                     legend.position = "none",
@@ -198,6 +207,7 @@ plotPCA <- function(
                     p.per.data
                 })
             names(all.scat.pca.plots) <- levels(assay.names)
+
             ## overall scatter plots for all assays  ####
             printColoredMessage(message = '-- Put all the plots togather:',
                                 color = 'magenta',
@@ -257,7 +267,6 @@ plotPCA <- function(
                         xlab(variable) +
                         ylab('PC') +
                         ggtitle(x) +
-                        # scale_fill_manual(values = studies.color, name = 'Studies') +
                         theme(
                             panel.background = element_blank(),
                             axis.line = element_line(colour = 'black', size = 1),
@@ -302,19 +311,18 @@ plotPCA <- function(
                     names_to = 'PCs',
                     values_to = 'PC')
                 pca.data <- as.data.frame(pca.data)
-                plot.p <- ggplot(pca.data, aes(x = var, y =  PC)) +
+                plot.p <- ggplot(pca.data, aes(x = var, y = PC)) +
                     geom_point(
                         color = stroke.color,
                         pch = 19,
                         stroke = stroke.size,
                         size = 3,
-                        alpha = alpha.point) +
+                        alpha = points.alpha) +
                     facet_wrap(~PCs, scales = 'free') +
                     xlab(variable) +
                     ylab('PC') +
                     ggtitle(x) +
                     geom_smooth(method = 'lm') +
-                    # scale_fill_manual(values = studies.color, name = 'Studies') +
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', size = 1),
@@ -332,7 +340,7 @@ plotPCA <- function(
             overall.scat.var.pca.plot <- ggarrange(
                 plotlist = all.scat.var.pca.plots,
                 nrow = length(levels(assay.names)),
-                ncol = 1 )
+                ncol = plot.ncol)
         }
     }
 
