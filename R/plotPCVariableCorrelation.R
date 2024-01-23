@@ -3,29 +3,34 @@
 #' @author Ramyar Molania
 
 #' @description
-#' This function calculates the the vector correlation between the first cumulative PCs of the gene expression (assay)
-#' of a SummarizedExperiment object and a categorical variable (i.e. batch).
+#' This function generate a dot-line plot between the first cumulative PCs and the correlation coefficient (R2) obtained
+#' from the vector correlation analysis. An ideal normalization should results a low correlation with unwanted variation
+#' variables and high correlation with known biology.
 
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Optional string or list of strings for the selection of the name(s)
-#' of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default
-#  all the assays of the SummarizedExperiment class object will be selected.
-#' @param variable String of the label of a categorical variable such as
-#' sample types or batches from colData(se.obj).
-#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
-#' full range to speed up the process, by default is set to 'TRUE'.
-#' @param nb.pcs Numeric. The number of few first cumulative PCs, by default is set to 10.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
-#' object 'se.obj' or to output the result. By default it is set to TRUE.
-#' @param plot.output Logical. Indicates whether to plot the correlation statistics, by default it is set to TRUE.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
+#' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
+#' SummarizedExperiment object to generate a vector correlation. The default is "all, which indicates all
+#' the assays of the SummarizedExperiment object will be selected.
+#' @param variable Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
+#' The variable must be a categorical variable.
+#' @param fast.pca Logical. Indicates whether to use the fast PCA or PCA results computed by the computePCA function. The
+#' default is 'TRUE'.
+#' @param nb.pcs Numeric. The number of first PCs to use to plot the vector correlation. The default is 10.
+#' @param plot.output Logical. If TRUE, the individual vector correlation plot(s) will be printed while functions is running.
+#' @param save.se.obj Logical. Indicates whether to save the vector correlation plots to the meta data of the
+#' SummarizedExperiment object or to output the result as list. By default it is set to TRUE.
+#' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
-#' @return SummarizedExperiment A SummarizedExperiment object containing the computed correlation for
-#' the continuous variable and if requested the associated plot.
+#' @return A SummarizedExperiment object or a list that contains all the vector correlation plots for the individual
+#' assay(s).
+
+#' @references
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
 
 #' @importFrom tidyr pivot_longer
+#' @importFrom dplyr mutate
+#' @importFrom grDevices colorRampPalette
 #' @import ggplot2
 #' @export
 
@@ -37,7 +42,6 @@ plotPCVariableCorrelation <- function(
         nb.pcs = 10,
         plot.output = TRUE,
         save.se.obj = TRUE,
-        assess.se.obj = TRUE,
         verbose = TRUE) {
     printColoredMessage(message = '------------The plotPCVariableCorrelation function starts:',
                         color = 'white',
@@ -45,27 +49,42 @@ plotPCVariableCorrelation <- function(
 
     # check the inputs ####
     if (is.null(assay.names)) {
-        stop('The "assay.names" cannot be empty')
+        stop('The "assay.names" cannot be empty.')
+    } else if (!is.vector(assay.names)){
+        stop('The "assay.names" must be a vector of the assay names(s).')
     } else if (is.null(variable)) {
-        stop('The "variable" cannot be empty')
+        stop('The "variable" cannot be empty.')
+    } else if(length(variable) > 1){
+        stop('The "variable" must contain only one variable.')
+    } else if (!variable %in% colnames(se.obj@colData)){
+        stop('The "variable" cannot be found in the SummarizedExperiment object.')
+    } else if (class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
+        stop('The "variable" must be a categorical varible.')
+    } else if (length(unique(se.obj@colData[, variable])) < 2) {
+        stop('The "variable" must have at least two levels.')
+    }
+    if (sum(is.na(se.obj@colData[[variable]])) > 0){
+        stop(paste0('The "', variable, '" contains NA.',
+        ' Run the checkSeObj function with "remove.na = both"',
+        ', then "computePCA"-->"computePCVariableCorrelation"-->"plotPCVariableCorrelation".'))
     }
 
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(assay.names)
+    } else  assay.names <- factor(x = assay.names, levels = assay.names)
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
 
-    # assess the SummarizedExperiment object ####
-    if (assess.se.obj) {
-        se.obj <- checkSeObj(
-            se.obj = se.obj,
-            assay.names = assay.names,
-            variables = variable,
-            remove.na = 'none',
-            verbose = verbose)
+    # select colors ####
+    if(length(levels(assay.names)) < 9 ){
+        data.sets.colors <- RColorBrewer::brewer.pal(8, 'Dark2')[1:length(levels(assay.names))]
+        names(data.sets.colors) <- levels(assay.names)
+    } else{
+        colfunc <- grDevices::colorRampPalette( RColorBrewer::brewer.pal(8, 'Dark2'))
+        data.sets.colors <- colfunc(n = length(levels(assay.names)))
+        names(data.sets.colors) <- levels(assay.names)
     }
 
     # check metric exist ####
@@ -73,12 +92,12 @@ plotPCVariableCorrelation <- function(
         levels(assay.names),
         function(x) {
             if (!x %in% names(se.obj@metadata[['metric']]))
-                stop(paste0('Any PCA analysis has not been computed yet on the  ', x, ' data.'))
+                stop(paste0('Any metrics has not been computed yet on the  ', x, ' data.'))
         })
 
     # obtain vector correlations ####
     printColoredMessage(
-        message = paste0('-- Obtain the vector correlations from the SummarizedExperiment object:'),
+        message = '-- Obtain the computed vector correlations from the SummarizedExperiment object:',
         color = 'magenta',
         verbose = verbose
     )
@@ -86,16 +105,16 @@ plotPCVariableCorrelation <- function(
         levels(assay.names),
         function(x) {
             if (!'pcs.vect.corr' %in% names(se.obj@metadata[['metric']][[x]]) ) {
-                stop(paste0('Any "pcs.vect.corr" is found for the ', x, ' assay. Please run the "PCVariableCorrelation" function first.'))
+                stop(paste0('Any "pcs.vect.corr" is found for the ', x, ' data. Please run the "computePCVariableCorrelation" function first.'))
             }
             if (!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.vect.corr']]) ) {
-                stop(paste0('The "pcs.vect.corr" is not found for the ', variable, ' variable and the ', x, ' assay.'))
+                stop(paste0('The "pcs.vect.corr" is not found for the ', variable, ' variable and the ', x, ' data.'))
             }
             if (!'corrs' %in% names(se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]]) ) {
-                stop(paste0('The "pcs.vect.corr" is not found for the ', variable, ' variable and the ', x, ' assay.'))
+                stop(paste0('The "pcs.vect.corr" is not found for the ', variable, ' variable and the ', x, ' data.'))
             }
             printColoredMessage(
-                message = paste0('-Obtain the vector correlations fro', x , ' data.'),
+                message = paste0('-Obtain the vector correlations for', x , ' data.'),
                 color = 'blue',
                 verbose = verbose
             )
@@ -123,11 +142,11 @@ plotPCVariableCorrelation <- function(
                 color = 'blue',
                 verbose = verbose
             )
-            to.plot <- data.frame(
+            data.to.plot <- data.frame(
                 vec.corr = all.pcs.vect.corr[[x]],
                 pcs = seq_len(nb.pcs)
                 )
-            vect.corr.plot <- ggplot(to.plot, aes(x = pcs, y = vec.corr, group = 1)) +
+            vect.corr.plot <- ggplot(data.to.plot, aes(x = pcs, y = vec.corr, group = 1)) +
                 geom_line(color = 'gray80', size = 1) +
                 geom_point(color = 'gray40', size = 3) +
                 xlab('Cumulative PCs') +
@@ -163,14 +182,14 @@ plotPCVariableCorrelation <- function(
                 -pcs,
                 names_to = 'datasets',
                 values_to = 'vec.corr') %>%
-            mutate(datasets = factor(datasets, levels = levels(assay.names)))
+            dplyr::mutate(datasets = factor(datasets, levels = levels(assay.names)))
         overall.vect.corr.plot <- ggplot(all.pcs.vect.corr, aes(x = pcs, y = vec.corr, group = datasets)) +
             geom_line(aes(color = datasets), size = 1) +
             geom_point(aes(color = datasets), size = 3) +
             xlab('Cumulative PCs') +
             ylab('Vector correlations') +
             ggtitle(paste0('Vector correlation, ', variable)) +
-            # scale_color_manual(values = c(data.sets.colors), name = 'Datasets') +
+            scale_color_manual(values = c(data.sets.colors), name = 'Datasets') +
             scale_x_continuous(breaks = seq_len(nb.pcs), labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
             scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0,1)) +
             theme(
@@ -237,7 +256,7 @@ plotPCVariableCorrelation <- function(
         return(se.obj = se.obj)
     } else if (save.se.obj == FALSE) {
         printColoredMessage(
-            message = '-Save the vector correlation plots as a list.',
+            message = '-The vector correlation plots are outputed as a list.',
             color = 'blue',
             verbose = verbose)
         printColoredMessage(message = '------------The plotPCVariableCorrelation function finished.',
