@@ -1,28 +1,35 @@
-#' is used to plot the computed the adjusted rand index (ARI).
+#' is used to plot the adjusted rand index (ARI).
 
 #' @author Ramyar Molania
 
 #' @description
-#' This functions computes the adjusted rand index for given a categorical variable using the first PCs of the assay(s)
-#' in a SummarizedExperiment object.
-
+#' This functions generates barplots of adjusted rand index for individual assays. If two variables are provided, the
+#' function create scatter plots of the adjusted rand index of each variable for individual assays.
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-#' SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.
-#' @param variables Symbol. Indicates the column name in the SummarizedExperiment object that contains a categorical
-#' variable such as sample types or batches.
-#' @param plot.type Symbol.Indicates what plot types to plot.
-#' @param ari.method Symbol.Indicates what plot types to plot.
-#' @param plot.output Logical. Indicates whether to plot the ARI, by default it is set to FALSE.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
-#' object 'se.obj' or to output the result. By default it is set to TRUE.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is
-#' set to TRUE.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-#' execution of the functions, by default it is set to TRUE.
+#' SummarizedExperiment object to generate barplot or scatter plots of the computed adjusted rand index. By default all
+#' the assays of the SummarizedExperiment object will be selected.
+#' @param variables Symbol. Indicates one or two column names in the SummarizedExperiment object that contains categorical
+#' variables such as sample subtypes or batches.
+#' @param ari.method Symbol.Indicates what computed ARI methods should be used for plotting. The "ari.method" must be
+#' specified based on the "computeARI" function. The default is "hclust.complete.euclidian", which is the default of the
+#' the "computeARI" function. We refer to the "computeARI" function for more detail
+#' @param plot.type Symbol.Indicates how to plot the adjusted rand index. The options are "single.plot" and "combined.plot".
+#' If a variable is provided, then the "plot.type" must be set to "single.plot", so, the function generates a barplot of the
+#' adjusted rand index. If two variables are provided and "plot.type" is set to "combined.plot", then the function generates
+#' a scatter plot of the adjusted rand index of each variable against each other.
+#' @param plot.output Logical. If TRUE, the individual barplots or scatter plots will be printed while functions is running.
+#' @param save.se.obj Logical. Indicates whether to save the plots in the metadata of the SummarizedExperiment  object
+#' or to output the result as list. By default it is set to TRUE.
+#' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
-#' @return A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
+#' @return A SummarizedExperiment object or a list that containing all the plots of the computed ARI on the categorical
+#' variable.
+
+#' @references
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom ggrepel geom_text_repel
@@ -34,11 +41,10 @@ plotARI <- function(
         se.obj,
         assay.names = 'all',
         variables,
-        plot.type = 'single.plot',
         ari.method = 'hclust.complete.euclidian',
+        plot.type = 'single.plot',
         plot.output = TRUE,
         save.se.obj = TRUE,
-        assess.se.obj = TRUE,
         verbose = TRUE
 ) {
     printColoredMessage(message = '------------The plotARI function starts:',
@@ -67,15 +73,6 @@ plotARI <- function(
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
 
-    # assess the SummarizedExperiment object ####
-    if (assess.se.obj) {
-        se.obj <- checkSeObj(
-            se.obj = se.obj,
-            assay.names = assay.names,
-            variables = variables,
-            remove.na = 'none',
-            verbose = verbose)}
-
     # check ari metric exist ####
     m.out <- lapply(
         levels(assay.names),
@@ -83,6 +80,7 @@ plotARI <- function(
             if (!'ari' %in% names(se.obj@metadata[['metric']][[x]]))
                 stop(paste0('Any ARI analysis has not been computed yet on the  ', x, ' assay'))
         })
+
     # plots ####
     ## single plot ####
     if (plot.type == 'single.plot') {
