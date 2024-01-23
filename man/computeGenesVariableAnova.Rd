@@ -2,20 +2,20 @@
 % Please edit documentation in R/computeGenesVariableAnova.R
 \name{computeGenesVariableAnova}
 \alias{computeGenesVariableAnova}
-\title{is used to compute ANOVA.}
+\title{is used to compute ANOVA between individual gene expression and a categorical variable.}
 \usage{
 computeGenesVariableAnova(
   se.obj,
   assay.names = "all",
   variable,
   method = "aov",
-  plot.top.genes = FALSE,
-  nb.top.genes = 3,
   apply.log = TRUE,
   pseudo.count = 1,
+  plot.top.genes = FALSE,
+  nb.top.genes = 3,
+  apply.round = TRUE,
   assess.se.obj = TRUE,
   remove.na = "both",
-  apply.round = TRUE,
   save.se.obj = TRUE,
   plot.output = TRUE,
   verbose = TRUE
@@ -34,23 +34,23 @@ sample types or batches from colData(se.obj).}
 is to be used for the differential analysis: "aov" or "welch.correction". By default "aov" will
 be selected.}
 
-\item{plot.top.genes}{Logical. Indicates whether to plot the gene expression of the number of genes
-from the top listing of anova by default it is set to FALSE.}
-
-\item{nb.top.genes}{Defines the number of genes from the top or bottom listing of anova to plot,
-by default is set to 3.}
-
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default
 the log transformation will be selected.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
 
+\item{plot.top.genes}{Logical. Indicates whether to plot the gene expression of the number of genes
+from the top listing of anova by default it is set to FALSE.}
+
+\item{nb.top.genes}{Defines the number of genes from the top or bottom listing of anova to plot,
+by default is set to 3.}
+
+\item{apply.round}{Logical. Indicates whether to round the ARI results, by default it is set to TRUE.}
+
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
 \item{remove.na}{TO BE DEFINED.}
-
-\item{apply.round}{Logical. Indicates whether to round the ARI results, by default it is set to TRUE.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
 'se.obj' or to output the result. By default it is set to TRUE.}
