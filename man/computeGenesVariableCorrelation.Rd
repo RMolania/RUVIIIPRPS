@@ -11,11 +11,10 @@ computeGenesVariableCorrelation(
   method = "spearman",
   a = 0.05,
   rho = 0,
-  plot.output = TRUE,
-  plot.top.genes = FALSE,
-  nb.top.genes = 3,
   apply.log = TRUE,
   pseudo.count = 1,
+  plot.top.genes = FALSE,
+  nb.top.genes = 3,
   apply.round = TRUE,
   assess.se.obj = TRUE,
   remove.na = "both",
@@ -26,51 +25,59 @@ computeGenesVariableCorrelation(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. Symbol or list of symbols for the selection of the name(s) of the assay(s) of the
+\item{assay.names}{Symbol. A symbol or vector of symbols for the selection of the name(s) of the assay(s) of the
 SummarizedExperiment object to compute the correlation. By default all the assays of the SummarizedExperiment class
 object will be selected.}
 
-\item{variable}{String of the label of a continuous variable such as library size from colData(se.obj).}
+\item{variable}{Symbol. Indicates a column name of the SummarizedExperiment object that contains a continuous variable
+such as library size, tumor purity, ....}
 
-\item{method}{A character string indicating which correlation coefficient is to be used for the test: 'pearson',
-'kendall', or "spearman". The default is 'spearman'.}
+\item{method}{Symbol. Indicates which correlation methods should be used. The options are 'pearson', 'kendall', or
+"spearman". The default is 'spearman'.}
 
-\item{a}{The significance level used for the confidence intervals in the correlation, by default it is set to 0.05.}
+\item{a}{Numeric. The significance level used for the confidence intervals in the correlation, by default it is set to
+0.05. We refer to the correls function from the Rfast package for more details.}
 
-\item{rho}{The value of the hypothesised correlation to be used in the hypothesis testing, by default it is set to 0.}
+\item{rho}{Numeric. The value of the hypothesized correlation to be used in the hypothesis testing, by default it is
+set to 0. We refer to the correls function from the Rfast package for more details.}
 
-\item{plot.output}{Logical. Indicates whether to plot the boxplot of the correlation, by default it is set to TRUE.}
-
-\item{plot.top.genes}{Logical. Indicates whether to plot the gene expression of the number of genes from the high or
-low correlation, by default it is set to FALSE.}
-
-\item{nb.top.genes}{Defines the number of genes from the high or low correlation to plot, by default is set to 3.}
-
-\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data. By default the log
-transformation will be selected.}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data before computing the correlation.
+By default the log transformation will be selected.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 by default it is set to 1.}
 
-\item{apply.round}{Logical. Indicates whether to round the ARI results, by default it is set to TRUE.}
+\item{plot.top.genes}{Logical. Indicates whether to plot the gene expression of the number of genes from the high or
+low correlation, by default it is set to FALSE.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+\item{nb.top.genes}{Numeric. Defines the number of genes that show the highest or lowest correlation with variable to
+plot. The default is 3.}
 
-\item{remove.na}{TO BE DEFINED.}
+\item{apply.round}{Logical. Indicates whether to round the correlation coefficients. The default it TRUE.}
+
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object. We refer to the
+checkSeObj function for more details. The default is TRUE.}
+
+\item{remove.na}{To remove NA or missing values from the assays and variable.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the current SummarizedExperiment
 object or to output the result. By default it is set to TRUE.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during
-the execution of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
-A SummarizedExperiment object containing the computed correlation on the continuous variable
-and if requested the associated plot.
+A SummarizedExperiment object or a list that contains the  correlation coefficients on the continuous variable.
 }
 \description{
-This function computes the correlation between individual gene expression of the assays and a continuous variable in
-a SummarizedExperiment object.
+This function computes Spearman or Pearson correlations between individual gene-level expression of each assay and
+a continuous variable in SummarizedExperiment object.
+}
+\details{
+Additional details...
+}
+\references{
+Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+Nature Biotechnology, 2023
 }
 \author{
 Ramyar Molania
