@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotGeneVariableCorrelation.R
 \name{plotGenesVariableCorrelation}
 \alias{plotGenesVariableCorrelation}
-\title{is used to compute the adjusted rand index (ARI).}
+\title{is used to Spearman or Pearson correlations coefficients.}
 \usage{
 plotGenesVariableCorrelation(
   se.obj,
@@ -10,9 +10,6 @@ plotGenesVariableCorrelation(
   variable,
   correlation.method = "gene.spearman.corr",
   plot.output = TRUE,
-  boxplot.color = "black",
-  geom.hline.color = "gray",
-  assess.se.obj = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE
 )
@@ -20,40 +17,30 @@ plotGenesVariableCorrelation(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.}
+\item{assay.names}{Symbol. A symbol or vector of symbols for the selection of the name(s) of the assay(s) of the
+SummarizedExperiment object to compute the correlation. By default all the assays of the SummarizedExperiment class
+object will be selected.}
 
-\item{variable}{Symbol. Indicates the column name in the SummarizedExperiment object that contains a categorical
-variable such as sample types or batches.}
+\item{variable}{Symbol. Indicates the column name in the SummarizedExperiment object that contains a continuous variable
+such as library size, tumor purity, ... .}
 
-\item{correlation.method}{TTTT}
+\item{correlation.method}{Symbol. Indicates which computed correlation coefficient should be used for plotting. The
+default is 'gene.spearman.corr'. We refer to the 'computeGenesVariableCorrelation' function for more details.}
 
 \item{plot.output}{Logical. Indicates whether to plot the ARI, by default it is set to FALSE.}
-
-\item{boxplot.color}{TTTT}
-
-\item{geom.hline.color}{TTTT}
-
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is
-set to TRUE.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 object 'se.obj' or to output the result. By default it is set to TRUE.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-execution of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
-A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
+A SummarizedExperiment object or a list that containing the boxplots of the Spearman or Pearson correlations
+coefficients for individual assays.
 }
 \description{
-This functions computes the adjusted rand index for given a categorical variable using the first PCs of the assay(s)
-in a SummarizedExperiment object.
-}
-\details{
-The ARI64 is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
-two label lists. We used the ARI to assess the performance of normalization methods in terms of sample subtype
-separation and batch mixing. We first calculated PCs and used the first three PCs to perform ARI.
+This function generates boxplots of computed Spearman or Pearson correlations coefficients of indivdial assays in a
+SummarizedExperiment object
 }
 \author{
 Ramyar Molania

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotPCVariableRegression.R
 \name{plotPCVariableRegression}
 \alias{plotPCVariableRegression}
-\title{is used to plot the vector correlation.}
+\title{is used to plot the regression analysis.}
 \usage{
 plotPCVariableRegression(
   se.obj,
@@ -12,8 +12,6 @@ plotPCVariableRegression(
   nb.pcs = 10,
   save.se.obj = TRUE,
   plot.output = TRUE,
-  assess.se.obj = TRUE,
-  remove.na = "both",
   verbose = TRUE
 )
 }
@@ -36,21 +34,16 @@ object 'se.obj' or to output the result. By default it is set to TRUE.}
 
 \item{plot.output}{Logical. Indicates whether to plot the correlation statistics, by default it is set to TRUE.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
-
-\item{remove.na}{Symbol. To remove NA or missing values from the assay(s) or variable or both. The options are
-"assays", "sample.annotation, "both" or "none. "See the checkSeObj function for more details.}
-
-\item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
-SummarizedExperiment A SummarizedExperiment object containing the computed correlation for
+A SummarizedExperiment object containing the computed correlation for
 the continuous variable and if requested the associated plot.
 }
 \description{
-This function calculates the the vector correlation between the first cumulative PCs of the gene expression (assay)
-of a SummarizedExperiment object and a categorical variable (i.e. batch).
+This function generate a dot-line plot between the first cumulative PCs and the regression R squared obtained
+from the regression analysis. An ideal normalization should results a low R squared with unwanted variation
+variables and high R squared with known biology.
 }
 \author{
 Ramyar Molania

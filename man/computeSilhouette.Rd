@@ -12,7 +12,6 @@ computeSilhouette(
   fast.pca = TRUE,
   nb.pcs = 3,
   save.se.obj = TRUE,
-  assess.se.obj = TRUE,
   verbose = TRUE
 )
 }
@@ -37,8 +36,6 @@ full range to speed up the process, by default is set to 'TRUE'.}
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 object 'se.obj' or to output the result. By default it is set to TRUE.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
-
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the
 execution of the functions, by default it is set to TRUE.}
 }
@@ -51,10 +48,14 @@ This function calculates the mean Silhouette coefficient for categorical variabl
 etc., and a distance matrix based on the principal components of assay(s).
 }
 \details{
-We used silhouette coefficient analysis to assess the separation of biological populations and batch effects. The
+We use silhouette coefficient analysis to assess the separation of biological populations and batch effects. The
 silhouette function uses Euclidean distance to calculate both the similarity between one patient and the other patients
 in each cluster and the separation between patients in different clusters. A better normalization method will lead to
 higher and lower silhouette coefficients for biological and batch labels, respectively.
+}
+\references{
+Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+Nature Biotechnology, 2023
 }
 \author{
 Ramyar Molania

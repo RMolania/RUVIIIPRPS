@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotGeneVariableAnova.R
 \name{plotGenesVariableAnova}
 \alias{plotGenesVariableAnova}
-\title{is used to compute the adjusted rand index (ARI).}
+\title{is used to plot F-stattistics of ANOVA.}
 \usage{
 plotGenesVariableAnova(
   se.obj,
@@ -10,9 +10,6 @@ plotGenesVariableAnova(
   variable,
   anova.method = "genes.aov.anova",
   plot.output = TRUE,
-  boxplot.color = "black",
-  geom.hline.color = "gray",
-  assess.se.obj = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE
 )
@@ -31,13 +28,6 @@ full range to speed up the process, by default is set to 'TRUE'.}
 
 \item{plot.output}{Logical. Indicates whether to plot the ARI, by default it is set to FALSE.}
 
-\item{boxplot.color}{TTTTTT}
-
-\item{geom.hline.color}{TTTTTT}
-
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is
-set to TRUE.}
-
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 object 'se.obj' or to output the result. By default it is set to TRUE.}
 
@@ -50,11 +40,6 @@ A SummarizedExperiment object or a list that containing the computed ARI on the 
 \description{
 This functions computes the adjusted rand index for given a categorical variable using the first PCs of the assay(s)
 in a SummarizedExperiment object.
-}
-\details{
-The ARI64 is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
-two label lists. We used the ARI to assess the performance of normalization methods in terms of sample subtype
-separation and batch mixing. We first calculated PCs and used the first three PCs to perform ARI.
 }
 \author{
 Ramyar Molania

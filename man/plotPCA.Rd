@@ -11,13 +11,13 @@ plotPCA(
   fast.pca = TRUE,
   nb.pcs = 3,
   plot.type = "scatter",
-  point.color = NULL,
-  point.size = 1.5,
+  points.color = NULL,
+  points.size = 1,
   stroke.color = "gray30",
   stroke.size = 0.2,
-  alpha.point = 0.5,
-  alpha.density = 0.5,
-  ncol.plot = 4,
+  points.alpha = 0.5,
+  densities.alpha = 0.5,
+  plot.ncol = 4,
   save.se.obj = TRUE,
   verbose = TRUE
 )
@@ -39,19 +39,19 @@ the process, by default is set to 'TRUE'.}
 
 \item{plot.type}{Symbol.}
 
-\item{point.color}{The color of the variable that will be used on the PCA plot}
+\item{points.color}{The color of the variable that will be used on the PCA plot}
 
-\item{point.size}{geom_point aesthetics}
+\item{points.size}{geom_point aesthetics}
 
 \item{stroke.color}{geom_point aesthetics}
 
 \item{stroke.size}{geom_point aesthetics}
 
-\item{alpha.point}{geom_point aesthetics}
+\item{points.alpha}{geom_point aesthetics}
 
-\item{alpha.density}{geom_point aesthetics}
+\item{densities.alpha}{geom_point aesthetics}
 
-\item{ncol.plot}{is the argument of gtable for the layout specifying ncol, by default it is set to 4.}
+\item{plot.ncol}{is the argument of gtable for the layout specifying ncol, by default it is set to 4.}
 
 \item{save.se.obj}{Logical. If TRUE, displaying process messages is enabled.}
 
@@ -61,5 +61,8 @@ the process, by default is set to 'TRUE'.}
 plot PCA plot of the data colored by one variable
 }
 \description{
-is used to plot the pairwise plots of the first principal components of the assays of a SummarizedExperiment object.
+is used to plot the first principal components of the assays of a SummarizedExperiment object. The function can generate
+pairwise scatter plots of the first principal components colored by a categrocal variable or creates boxplots of each
+PC across a categrocal variable. The boxplot of PCs is usefull when the levels of a categrocal variablen is too many to
+viisualze using colored scatter plots
 }

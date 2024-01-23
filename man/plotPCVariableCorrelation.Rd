@@ -12,41 +12,43 @@ plotPCVariableCorrelation(
   nb.pcs = 10,
   plot.output = TRUE,
   save.se.obj = TRUE,
-  assess.se.obj = TRUE,
   verbose = TRUE
 )
 }
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Optional string or list of strings for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment class object to compute the correlation. By default}
+\item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
+SummarizedExperiment object to generate a vector correlation. The default is "all, which indicates all
+the assays of the SummarizedExperiment object will be selected.}
 
-\item{variable}{String of the label of a categorical variable such as
-sample types or batches from colData(se.obj).}
+\item{variable}{Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
+The variable must be a categorical variable.}
 
-\item{fast.pca}{Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
-full range to speed up the process, by default is set to 'TRUE'.}
+\item{fast.pca}{Logical. Indicates whether to use the fast PCA or PCA results computed by the computePCA function. The
+default is 'TRUE'.}
 
-\item{nb.pcs}{Numeric. The number of few first cumulative PCs, by default is set to 10.}
+\item{nb.pcs}{Numeric. The number of first PCs to use to plot the vector correlation. The default is 10.}
 
-\item{plot.output}{Logical. Indicates whether to plot the correlation statistics, by default it is set to TRUE.}
+\item{plot.output}{Logical. If TRUE, the individual vector correlation plot(s) will be printed while functions is running.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
-object 'se.obj' or to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the vector correlation plots to the meta data of the
+SummarizedExperiment object or to output the result as list. By default it is set to TRUE.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
-
-\item{verbose}{Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
-SummarizedExperiment A SummarizedExperiment object containing the computed correlation for
-the continuous variable and if requested the associated plot.
+A SummarizedExperiment object or a list that contains all the vector correlation plots for the individual
+assay(s).
 }
 \description{
-This function calculates the the vector correlation between the first cumulative PCs of the gene expression (assay)
-of a SummarizedExperiment object and a categorical variable (i.e. batch).
+This function generate a dot-line plot between the first cumulative PCs and the correlation coefficient (R2) obtained
+from the vector correlation analysis. An ideal normalization should results a low correlation with unwanted variation
+variables and high correlation with known biology.
+}
+\references{
+Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+Nature Biotechnology, 2023
 }
 \author{
 Ramyar Molania

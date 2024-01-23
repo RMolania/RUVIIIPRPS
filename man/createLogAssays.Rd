@@ -4,18 +4,18 @@
 \alias{createLogAssays}
 \title{is used to apply a log-transformation to the assay(s) of a SummarizedExperiment object.}
 \usage{
-createLogAssays(se.obj, assay.names = "All", pseudo.count = 1, verbose = TRUE)
+createLogAssays(se.obj, assay.names = "all", pseudo.count = 1, verbose = TRUE)
 }
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. A symbol or a list of symbols of the names of assays in the SummarizedExperiment object
-to apply a log-transformation to the data.}
+\item{assay.names}{Symbol. A symbol or a vector of symbols of the names of assays in the SummarizedExperiment object
+to apply a log-transformation.}
 
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation. The
 default is 1.}
 
-\item{verbose}{Logical. Whether to show the functions messages or not.}
+\item{verbose}{Logical. If TRUE shows the messages of different steps of the function.}
 }
 \description{
 is used to apply a log-transformation to the assay(s) of a SummarizedExperiment object.

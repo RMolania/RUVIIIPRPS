@@ -26,13 +26,14 @@ createSeObj(
 )
 }
 \arguments{
-\item{assays}{A list of assays or expression data. The genes should be in row and samples in the column. The row names
-of the assays should be in the same order.}
+\item{assays}{A list of assay(s) or expression data. The genes should be in the rows and samples in the columns. The
+row names of the assays should be in the same order.}
 
-\item{raw.count.assay.name}{Symbol. The name of raw counts data in the assays.}
+\item{raw.count.assay.name}{Symbol. The name of raw counts RNA-seq data in the list of assay(s). The raw counts data
+must be provided if "remove.lowly.expressed.genes" or "calculate.library.size" are "TRUE".}
 
-\item{remove.lowly.expressed.genes}{Logical. If TRUE the function removes lowly expressed genes from the assay that
-is provide in the raw.count.assay.name argument.}
+\item{remove.lowly.expressed.genes}{Logical. If TRUE the function finds and removes lowly expressed genes from the
+assay that is provided in the "raw.count.assay.name" argument. The default is FALSE.}
 
 \item{count.cutoff}{Numeric. Minimum count required for at least some sample groups. If the "biological.group" argument
 is equal to NULL, all samples will be considered as one group. Otherwise, the smallest subgroups of the "biological.group"
@@ -74,15 +75,30 @@ be added to the gene annotation. These gene signatures, can be used to estimate 
 
 \item{metaData}{Any metadata data. The metadata can be in any format and dimensions.}
 
-\item{verbose}{Logical. If TRUE shows the messages.}
+\item{verbose}{Logical. If TRUE shows the messages of different steps of the function.}
 }
 \value{
-A summarizedExperiment that contains assays, gene annotation, samples annotation and metadata.
+A summarizedExperiment object that contains assays, gene annotation, samples annotation and metadata.
 }
 \description{
-This function creates a SummarizedExperiment object from tabular expression data and sample annotation. In addition,
-the function can remove lowly expressed genes, add a range of annotations for genes, and provide several sets of
-housekeeping genes and a immunStroma gene signature.
+This function creates a SummarizedExperiment object from tabular expression data and sample annotation (if available).
+In addition, the function can remove lowly expressed genes if a raw count data is provided, add a range of annotations
+for genes e.g. bio type, chromosome names , and provide several sets of housekeeping genes and a immunStroma gene signature.
+}
+\details{
+The SummarizedExperiment object is a data structure used in the R for representing and manipulating high-dimensional
+experimental data. Here are some key features and components of the SummarizedExperiment object:
+Assays:
+The SummarizedExperiment allows for the incorporation of multiple assays (data). Each assay is a separate matrix of data
+associated with the same features and samples. Rows typically represent features (e.g., genes, transcripts), and columns
+represent samples or experimental conditions.
+Row and Column Metadata:
+The SummarizedExperiment object includes metadata associated with both rows and columns. Row metadata can contain
+information about the features, such as gene annotations or genomic coordinates. Column metadata may include sample
+information, experimental conditions, or other relevant details.
+Metadata
+The Metadata of the SummarizedExperiment allows for flexibility in terms of data types and
+structures. This makes it suitable for saving plots.
 }
 \author{
 Ramyar Molania

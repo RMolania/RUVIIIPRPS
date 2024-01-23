@@ -2,17 +2,16 @@
 % Please edit documentation in R/plotARI.R
 \name{plotARI}
 \alias{plotARI}
-\title{is used to plot the computed the adjusted rand index (ARI).}
+\title{is used to plot the adjusted rand index (ARI).}
 \usage{
 plotARI(
   se.obj,
   assay.names = "all",
   variables,
-  plot.type = "single.plot",
   ari.method = "hclust.complete.euclidian",
+  plot.type = "single.plot",
   plot.output = TRUE,
   save.se.obj = TRUE,
-  assess.se.obj = TRUE,
   verbose = TRUE
 )
 }
@@ -20,32 +19,39 @@ plotARI(
 \item{se.obj}{A SummarizedExperiment object.}
 
 \item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.}
+SummarizedExperiment object to generate barplot or scatter plots of the computed adjusted rand index. By default all
+the assays of the SummarizedExperiment object will be selected.}
 
-\item{variables}{Symbol. Indicates the column name in the SummarizedExperiment object that contains a categorical
-variable such as sample types or batches.}
+\item{variables}{Symbol. Indicates one or two column names in the SummarizedExperiment object that contains categorical
+variables such as sample subtypes or batches.}
 
-\item{plot.type}{Symbol.Indicates what plot types to plot.}
+\item{ari.method}{Symbol.Indicates what computed ARI methods should be used for plotting. The "ari.method" must be
+specified based on the "computeARI" function. The default is "hclust.complete.euclidian", which is the default of the
+the "computeARI" function. We refer to the "computeARI" function for more detail}
 
-\item{ari.method}{Symbol.Indicates what plot types to plot.}
+\item{plot.type}{Symbol.Indicates how to plot the adjusted rand index. The options are "single.plot" and "combined.plot".
+If a variable is provided, then the "plot.type" must be set to "single.plot", so, the function generates a barplot of the
+adjusted rand index. If two variables are provided and "plot.type" is set to "combined.plot", then the function generates
+a scatter plot of the adjusted rand index of each variable against each other.}
 
-\item{plot.output}{Logical. Indicates whether to plot the ARI, by default it is set to FALSE.}
+\item{plot.output}{Logical. If TRUE, the individual barplots or scatter plots will be printed while functions is running.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
-object 'se.obj' or to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the plots in the metadata of the SummarizedExperiment  object
+or to output the result as list. By default it is set to TRUE.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is
-set to TRUE.}
-
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-execution of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
-A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
+A SummarizedExperiment object or a list that containing all the plots of the computed ARI on the categorical
+variable.
 }
 \description{
-This functions computes the adjusted rand index for given a categorical variable using the first PCs of the assay(s)
-in a SummarizedExperiment object.
+This functions generates barplots of adjusted rand index for individual assays. If two variables are provided, the
+function create scatter plots of the adjusted rand index of each variable for individual assays.
+}
+\references{
+Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+Nature Biotechnology, 2023
 }
 \author{
 Ramyar Molania

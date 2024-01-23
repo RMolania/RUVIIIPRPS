@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotRleVariable.R
 \name{plotRleVariable}
 \alias{plotRleVariable}
-\title{is used to plot relative log expression (RLE) of RNA-seq data.}
+\title{is used to plot a variable against the medians and IQR of relative log expression (RLE)}
 \usage{
 plotRleVariable(
   se.obj,
@@ -22,34 +22,49 @@ plotRleVariable(
 \item{se.obj}{A SummarizedExperiment object.}
 
 \item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-SummarizedExperiment object to plot RLE. By default all the assays of the SummarizedExperiment object
-will be selected.}
+SummarizedExperiment object to plot. By default all the assays of the SummarizedExperiment object will be selected.}
 
-\item{variable}{Symbol. Indicates a name of column in the sample annotation for the SummarizedExperiment object to color
-the boxplots of the RLE plots. The variable should be a categorical variable. The default is NULL.}
+\item{variable}{Symbol. Indicates a name of the columns in the sample annotation of the SummarizedExperiment object.
+The variable can be either categorical or continuous.}
 
-\item{rle.data.type}{TTTTT}
+\item{rle.data.type}{Symbol. Indicates which RLE data should be used for plotting. The options are 'rle.medians',
+'rle.iqr' or 'both'. If 'rle.medians' is selected, the RLE medians will be plotted against the variable. If 'rle.iqr',
+is selected, the RLE IQRs will be plotted against the variable, and if 'both', both RLE medians and IQRs will be plotted
+against the variable. The default is 'both'.}
 
-\item{ylim.rle.med.plot}{TTTTTTTT}
+\item{ylim.rle.med.plot}{Numeric. Indicates the ylim of the boxplot or scatter plots when the RLE medians are used. If
+is NULL, the function will automatically find an suitable ylim for the plots.}
 
-\item{ylim.rle.iqr.plot}{Numeric. A vector of two values to specify the ylim of the RLE plot.}
+\item{ylim.rle.iqr.plot}{Numeric. Indicates the ylim of the boxplot or scatter plots when the RLE IQRs are used. If
+is NULL, the function will automatically find an suitable ylim for the plots. The default is NULL.}
 
-\item{points.size}{Numeric. Indicates the size of the points of the RLE medians in the plot.}
+\item{points.size}{Numeric. Indicates the size of the points of the scatter plots. The default is 1.}
 
 \item{plot.ncol}{Numeric. Indicates number of columns in the plot grid.}
 
-\item{plot.output}{Logical. If TRUE, individual RLE plot(s) will be printed.}
+\item{plot.output}{Logical. If TRUE, individual RLE plot(s) will be printed while the function is running.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
-to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the plots in the metadata of the SummarizedExperiment object or
+to output them as list. Default is set to TRUE.}
 
 \item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
-A SummarizedExperiment object or a list that contains all the RLE plot(s).
+A SummarizedExperiment object or a list that contains all the plot(s).
 }
 \description{
-This functions generate a boxplot of individual RLE data. The RLE data can be obtained using the computeRLE function.
+This function plots a variable against the medians and IQR of a relative log expression (RLE) data. Because of the
+sensitivity of the RLE medians and IQR to unwanted variation, we  examine the relationships between RLE medians and
+IQR with potential sources of unwanted variation. In the absence of any influence of unwanted variation in the data,
+we should see no such associations.
+}
+\details{
+If the variable is categorical, the, boxplots of the RLE medians and IQR against the variable will be generated. If
+the variable is continuous, scatter plots will be created.
+}
+\references{
+Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+Nature Biotechnology, 2023
 }
 \author{
 Ramyar Molania

@@ -11,35 +11,28 @@ computePCVariableRegression(
   fast.pca = TRUE,
   nb.pcs = 10,
   save.se.obj = TRUE,
-  assess.se.obj = TRUE,
-  remove.na = "both",
   verbose = TRUE
 )
 }
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Optional string or list of strings for the selection of the name(s)
-of the assay(s) of the SummarizedExperiment class object to compute the regression. By default}
+\item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
+SummarizedExperiment object to calculate regression analysis. The default is "all, which indicates all
+the assays of the SummarizedExperiment object will be selected.}
 
-\item{variable}{String of the label of a continuous variable such as
-library size from colData(se.obj).}
+\item{variable}{Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
+The variable must be a continuous variable.}
 
-\item{fast.pca}{Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
-full range to speed up the process, by default is set to 'TRUE'.}
+\item{fast.pca}{Logical. Indicates whether to use the computed fast PCA or PCA results computed by the computePCA function. The
+default is 'TRUE'.}
 
-\item{nb.pcs}{Numeric. The number of few first cumulative PCs, by default is set to 10.}
+\item{nb.pcs}{Numeric. The number of first PCs to use to plot the vector correlation. The default is 10.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
-object 'se.obj' or to output the result. By default it is set to TRUE.}
+\item{save.se.obj}{Logical. Indicates whether to save the vector correlation plots to the meta data of the
+SummarizedExperiment object or to output the result as list. By default it is set to TRUE.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
-
-\item{remove.na}{Symbol. To remove NA or missing values from the assay(s) or variable or both. The options are
-"assays", "sample.annotation, "both" or "none. "See the checkSeObj function for more details.}
-
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-execution of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
 A SummarizedExperiment object containing the computed regression for
@@ -47,7 +40,7 @@ the continuous variable and if requested the associated plot.
 }
 \description{
 This functions calculates the linear regression between the the first cumulative PCs of the gene expression (assays)
-of a SummarizedExperiment object and a continuous variable (i.e. library size)
+of a SummarizedExperiment object and a continuous variable (i.e. library size).
 }
 \details{
 R2 values of fitted linear models are used to quantity the strength of the (linear) relationships between a single
