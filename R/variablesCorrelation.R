@@ -47,6 +47,7 @@
 
 #' @importFrom SummarizedExperiment assay colData
 #' @importFrom DescTools ContCoef
+#' @importFrom stats cor.test
 #' @export
 
 variablesCorrelation <- function(
