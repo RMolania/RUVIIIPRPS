@@ -44,7 +44,7 @@
 #' @importFrom SummarizedExperiment assays colData
 #' @export
 
-identifyVariation <- function(
+assessVariation <- function(
         se.obj,
         assay.names = 'All',
         variables = NULL,
