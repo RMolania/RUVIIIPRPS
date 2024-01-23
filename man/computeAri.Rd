@@ -12,44 +12,38 @@ computeARI(
   nb.pcs = 3,
   clustering.method = "hclust",
   hclust.method = "complete",
-  dist.measure = "euclidian",
+  hclust.dist.measure = "euclidian",
   save.se.obj = TRUE,
-  assess.se.obj = TRUE,
   verbose = TRUE
 )
 }
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.}
+\item{assay.names}{Symbol. A symbol or a vector of symbols for the selection of the name(s) of the assay(s) in the
+SummarizedExperiment object to compute ARI. By default all the assays of the SummarizedExperiment object will be selected.}
 
 \item{variable}{Symbol. Indicates the column name in the SummarizedExperiment object that contains a categorical
 variable such as sample types or batches.}
 
-\item{fast.pca}{Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
-full range to speed up the process, by default is set to 'TRUE'.}
+\item{fast.pca}{Logical. Indicates whether to use calculated fast PCA or PCA. The default is 'TRUE'.}
 
-\item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 3.}
+\item{nb.pcs}{Numeric. The number of first PCs to be used to compute ARI. The default is 3.}
 
-\item{clustering.method}{Symbol. Indicates which clustering methods to be used. The function provides the mclust or
-hclust methods. The default is hclust.}
+\item{clustering.method}{Symbol. Indicates which clustering methods should be applied on the PCs calculate the ARI.
+The function provides the 'mclust' or 'hclust' methods. The default is 'hclust'.}
 
-\item{hclust.method}{Symbol. Indicate the agglomeration method to be used for the hclust methid. This should be
-one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or
-"centroid" (= UPGMC). See the hclust function for more details.}
+\item{hclust.method}{Symbol. Indicate the agglomeration method to be used for the 'hclust' method. This should be
+one of 'ward.D', 'ward.D2', 'single', 'complete', 'average' (= UPGMA), 'mcquitty' (= WPGMA), 'median' (= WPGMC) or
+'centroid' (= UPGMC). See the hclust function for more details.}
 
-\item{dist.measure}{Symbol. Indicates the distance measure to be used in the dist function. This must be one of
-"euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". See the dist function for more details.}
+\item{hclust.dist.measure}{Symbol. Indicates the distance measure to be used in the dist function. This must be one of
+'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'. See the dist function for more details.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 object 'se.obj' or to output the result. By default it is set to TRUE.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is
-set to TRUE.}
-
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-execution of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
 A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
@@ -59,9 +53,13 @@ This functions computes the adjusted rand index for given a categorical variable
 in a SummarizedExperiment object.
 }
 \details{
-The ARI64 is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
-two label lists. We used the ARI to assess the performance of normalization methods in terms of sample subtype
-separation and batch mixing. We first calculated PCs and used the first three PCs to perform ARI.
+The ARI is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
+two label lists. We use the ARI to assess the performance of normalization methods in terms of sample subtype
+separation and batch mixing. We first calculate PCs and use the first PCs to perform ARI.
+}
+\references{
+Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+Nature Biotechnology, 2023
 }
 \author{
 Ramyar Molania
