@@ -67,12 +67,12 @@
 #' or a logical vector of the selected negative control genes.
 
 #' @importFrom BiocSingular runSVD bsparam
-#' @importFrom ggplot
 #' @importFrom fastDummies dummy_cols
 #' @importFrom dplyr mutate progress_estimated
 #' @importFrom tidyr pivot_longer
 #' @importFrom SummarizedExperiment assay
 #' @importFrom knitr kable
+#' @import ggplot2
 #' @export
 
 supervisedFindNcgPbPbio <- function(
