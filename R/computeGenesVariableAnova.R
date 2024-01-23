@@ -1,4 +1,4 @@
-#' is used to compute ANOVA.
+#' is used to compute ANOVA between individual gene expression and a categorical variable.
 
 #' @author Ramyar Molania
 
@@ -57,13 +57,13 @@ computeGenesVariableAnova <- function(
         assay.names = 'all',
         variable,
         method = 'aov',
-        plot.top.genes = FALSE,
-        nb.top.genes = 3,
         apply.log = TRUE,
         pseudo.count = 1,
+        plot.top.genes = FALSE,
+        nb.top.genes = 3,
+        apply.round = TRUE,
         assess.se.obj = TRUE,
         remove.na = 'both',
-        apply.round = TRUE,
         save.se.obj = TRUE,
         plot.output = TRUE,
         verbose = TRUE
@@ -101,7 +101,10 @@ computeGenesVariableAnova <- function(
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(unlist(assay.names))
+    } else assay.names <- factor(x = assay.names, levels = assay.names)
+    if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
+        stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
+    }
 
     # assess the SummarizedExperiment object ####
     if (assess.se.obj) {
@@ -115,7 +118,7 @@ computeGenesVariableAnova <- function(
 
     # data transformation ####
     printColoredMessage(
-        message = paste0('-- Data transformation:'),
+        message = '-- Data transformation:',
         color = 'magenta',
         verbose = verbose)
     all.assays <- lapply(
@@ -136,10 +139,7 @@ computeGenesVariableAnova <- function(
                 expr <- log2(assay(x = se.obj, i = x))
             } else {
                 printColoredMessage(
-                    message = paste0(
-                        'The ',
-                        x,
-                        ' assay will be used without log transformation.'),
+                    message = paste0('The ',x, ' assay will be used without log transformation.'),
                     color = 'blue',
                     verbose = verbose)
                 printColoredMessage(
@@ -164,24 +164,22 @@ computeGenesVariableAnova <- function(
                 printColoredMessage(
                     message = paste0(
                         'Perform ANOVA with equal variance between individual genes expression of the ',
-                        x,
-                        ' data and the ',
-                        variable,
-                        ' variable.'),
+                        x, ' data and the ', variable, ' variable.'),
                     color = 'blue',
                     verbose = verbose)
-                anova.genes.var <- row_oneway_equalvar(x = all.assays[[x]], g = se.obj@colData[, variable])
+                anova.genes.var <- row_oneway_equalvar(
+                    x = all.assays[[x]],
+                    g = se.obj@colData[, variable])
             } else if (method == 'welch.correction') {
                 printColoredMessage(
                     message = paste0(
                         'Perform ANOVA with Welch correction between individual genes expression of the ',
-                        x,
-                        ' data and the ',
-                        variable,
-                        ' variable.'),
+                        x, ' data and the ', variable, ' variable.'),
                     color = 'blue',
                     verbose = verbose)
-                anova.genes.var <- row_oneway_welch(x =  all.assays[[x]], g = se.obj@colData[, variable])
+                anova.genes.var <- row_oneway_welch(
+                    x =  all.assays[[x]],
+                    g = se.obj@colData[, variable])
             }
             row.names(anova.genes.var) <- row.names(se.obj)
 
@@ -209,12 +207,7 @@ computeGenesVariableAnova <- function(
                     ylab(expression(Log[2] ~ 'gene expression')) +
                     xlab(variable) +
                     facet_wrap( ~ genes) +
-                    ggtitle(paste0(
-                        nb.top.genes,
-                        " Top affected genes by the variable ",
-                        variable,
-                        " for ",
-                        x)) +
+                    ggtitle(paste0(nb.top.genes," Top affected genes by the variable ", variable, " for ", x)) +
                     theme(panel.background = element_blank(),
                           axis.line = element_line(colour = 'black', linewidth = 1),
                           axis.title.x = element_text(size = 14),
@@ -229,7 +222,7 @@ computeGenesVariableAnova <- function(
                           legend.title = element_text(size = 14),
                           strip.text.x = element_text(size = 10),
                           plot.title = element_text(size = 12))
-                plot(p.high)
+                print(p.high)
                 rm(temp.anova)
             }
             results <- NULL
