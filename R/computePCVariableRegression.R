@@ -4,7 +4,7 @@
 
 #' @description
 #' This functions calculates the linear regression between the the first cumulative PCs of the gene expression (assays)
-#' of a SummarizedExperiment object and a continuous variable (i.e. library size)
+#' of a SummarizedExperiment object and a continuous variable (i.e. library size).
 
 #' @details
 #' R2 values of fitted linear models are used to quantity the strength of the (linear) relationships between a single
@@ -12,21 +12,17 @@
 #' summary statistics, such as the first k PCs (1 ≤ k ≤ 10).
 
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Optional string or list of strings for the selection of the name(s)
-#' of the assay(s) of the SummarizedExperiment class object to compute the regression. By default
-#  all the assays of the SummarizedExperiment class object will be selected.
-#' @param variable String of the label of a continuous variable such as
-#' library size from colData(se.obj).
-#' @param fast.pca Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
-#' full range to speed up the process, by default is set to 'TRUE'.
-#' @param nb.pcs Numeric. The number of few first cumulative PCs, by default is set to 10.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
-#' object 'se.obj' or to output the result. By default it is set to TRUE.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param remove.na Symbol. To remove NA or missing values from the assay(s) or variable or both. The options are
-#' "assays", "sample.annotation, "both" or "none. "See the checkSeObj function for more details.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-#' execution of the functions, by default it is set to TRUE.
+#' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
+#' SummarizedExperiment object to calculate regression analysis. The default is "all, which indicates all
+#' the assays of the SummarizedExperiment object will be selected.
+#' @param variable Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
+#' The variable must be a continuous variable.
+#' @param fast.pca Logical. Indicates whether to use the computed fast PCA or PCA results computed by the computePCA function. The
+#' default is 'TRUE'.
+#' @param nb.pcs Numeric. The number of first PCs to use to plot the vector correlation. The default is 10.
+#' @param save.se.obj Logical. Indicates whether to save the vector correlation plots to the meta data of the
+#' SummarizedExperiment object or to output the result as list. By default it is set to TRUE.
+#' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
 #' @return A SummarizedExperiment object containing the computed regression for
 #' the continuous variable and if requested the associated plot.
@@ -35,7 +31,6 @@
 #' @import ggplot2
 #' @export
 
-## deal with PCA and remove NA from variable
 computePCVariableRegression <- function(
         se.obj,
         assay.names = 'all',
@@ -43,8 +38,6 @@ computePCVariableRegression <- function(
         fast.pca = TRUE,
         nb.pcs = 10,
         save.se.obj = TRUE,
-        assess.se.obj = TRUE,
-        remove.na = 'both',
         verbose = TRUE
 ) {
     printColoredMessage(message = '------------The computePCVariableRegression function starts:',
@@ -54,8 +47,12 @@ computePCVariableRegression <- function(
     # check the inputs ####
     if (is.null(assay.names)) {
         stop('The "assay.names" cannot be empty.')
+    } else if (!is.vector(assay.names)){
+        stop('The "assay.names" must be a vector of the assay names(s).')
     } else if (is.null(variable)) {
         stop('The "variable" cannot be empty.')
+    } else if (length(variable) > 1){
+        stop('The "variable" must contain only one variable.')
     } else if (!variable %in% colnames(se.obj@colData)){
         stop('The "variable" cannot be found in the SummarizedExperiment object.')
     } else if (var(se.obj[[variable]]) == 0) {
@@ -63,25 +60,21 @@ computePCVariableRegression <- function(
     } else if (!class(se.obj@colData[, variable]) %in% c('numeric', 'integer')) {
         stop('The "variable" must be a continuous varible.')
     }
+    if (sum(is.na(se.obj@colData[[variable]])) > 0){
+        stop(paste0('The "', variable, '" contains NA.',
+                    ' Run the checkSeObj function with "remove.na = both"',
+                    ', then "computePCA"-->"computePCVariableRegression".'))
+    }
 
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(unlist(assay.names))
+    } else  assay.names <- factor(x = assay.names, levels = assay.names)
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
 
-    # assess the SummarizedExperiment ####
-    if (assess.se.obj) {
-        se.obj <- checkSeObj(
-            se.obj = se.obj,
-            assay.names = assay.names,
-            variables = variable,
-            remove.na = remove.na,
-            verbose = verbose)
-    }
-    ### Compute the regression on all assays
+    # Compute the regression on all assays ####
     printColoredMessage(
         message = '-- Compute regression:',
         color = 'magenta',
@@ -171,7 +164,7 @@ computePCVariableRegression <- function(
         ## save the  regression r squared as a list ####
     } else if (save.se.obj == FALSE) {
         printColoredMessage(
-            message = '-Save the regression r squared as a list.',
+            message = 'The regression r squared valuse for individual assay(s) are outputed as a list.',
             color = 'blue',
             verbose = verbose)
         printColoredMessage(message = '------------The computePCVariableRegression function finished.',
