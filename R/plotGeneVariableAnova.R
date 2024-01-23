@@ -1,4 +1,4 @@
-#' is used to compute the adjusted rand index (ARI).
+#' is used to plot F-stattistics of ANOVA.
 
 #' @author Ramyar Molania
 
@@ -6,10 +6,6 @@
 #' This functions computes the adjusted rand index for given a categorical variable using the first PCs of the assay(s)
 #' in a SummarizedExperiment object.
 
-#' @details
-#' The ARI64 is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
-#' two label lists. We used the ARI to assess the performance of normalization methods in terms of sample subtype
-#' separation and batch mixing. We first calculated PCs and used the first three PCs to perform ARI.
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
@@ -18,14 +14,9 @@
 #' variable such as sample types or batches.
 #' @param anova.method Logical. Indicates whether to use the PCA calculated using a specific number of PCs instead of the
 #' full range to speed up the process, by default is set to 'TRUE'.
-#' @param boxplot.color TTTTTT
-#' @param geom.hline.color TTTTTT
-#' @param geom.hline.color TTTTTT
 #' @param plot.output Logical. Indicates whether to plot the ARI, by default it is set to FALSE.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' object 'se.obj' or to output the result. By default it is set to TRUE.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is
-#' set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
 #' execution of the functions, by default it is set to TRUE.
 
@@ -41,9 +32,6 @@ plotGenesVariableAnova <- function(
         variable,
         anova.method = 'genes.aov.anova',
         plot.output = TRUE,
-        boxplot.color = 'black',
-        geom.hline.color = 'gray',
-        assess.se.obj = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
 ){
@@ -65,16 +53,9 @@ plotGenesVariableAnova <- function(
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(unlist(assay.names))
-
-    # assess the SummarizedExperiment object ####
-    if (assess.se.obj) {
-        se.obj <- checkSeObj(
-            se.obj = se.obj,
-            assay.names = assay.names,
-            variables = variable,
-            remove.na = 'none',
-            verbose = verbose)
+    } else assay.names <- factor(x = assay.names, levels = assay.names)
+    if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
+        stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
 
     # check metric ####
@@ -106,21 +87,19 @@ plotGenesVariableAnova <- function(
         function(x){
             aov.fvals <- all.aov.fvals[[x]]
             p.corr.coeff <- ggplot() +
-                geom_boxplot(aes(y = aov.fvals, x = 1), colour = boxplot.color) +
-                ylab(expression(Log[2]~'F-statistic')) +
-                xlab(x) +
-                geom_hline(yintercept = 0, colour = geom.hline.color) +
+                geom_boxplot(aes(y = aov.fvals, x = 1)) +
                 ggtitle('ANOVA') +
-                theme(
-                    panel.background = element_blank(),
-                    axis.line = element_line(colour = 'black', linewidth = 1),
-                    axis.title.x = element_text(size = 18),
-                    axis.title.y = element_text(size = 18),
-                    plot.title = element_text(size = 15),
-                    axis.ticks.x = element_blank(),
-                    axis.text.x = element_text(size = 0),
-                    axis.text.y = element_text(size = 12))
-
+                xlab(x) +
+                ylab(expression(Log[2]~'F-statistic')) +
+                geom_hline(yintercept = 0) +
+                theme(panel.background = element_blank(),
+                      axis.line = element_line(colour = 'black', linewidth = 1),
+                      axis.title.x = element_text(size = 18),
+                      axis.title.y = element_text(size = 18),
+                      plot.title = element_text(size = 15),
+                      axis.ticks.x = element_blank(),
+                      axis.text.x = element_text(size = 0),
+                      axis.text.y = element_text(size = 12))
         })
     names(all.aov.fvals.plots) <- levels(assay.names)
 
@@ -133,11 +112,11 @@ plotGenesVariableAnova <- function(
                 names_to = 'datasets',
                 values_to = 'aov.fvals')
         overall.aov.fvals.plot <- ggplot(all.aov.fvals, aes(x = datasets, y = aov.fvals)) +
-            geom_boxplot(colour = boxplot.color) +
-            ylab('F-statistic') +
-            xlab('Datasets') +
-            geom_hline(yintercept = 0, colour = geom.hline.color) +
+            geom_boxplot() +
             ggtitle('ANOVA') +
+            xlab('Datasets') +
+            ylab('F-statistic') +
+            geom_hline(yintercept = 0) +
             theme(
                 panel.background = element_blank(),
                 axis.line = element_line(colour = 'black', linewidth = 1),
@@ -147,6 +126,7 @@ plotGenesVariableAnova <- function(
                 axis.text.x = element_text(size = 12, angle = 25, hjust = 1),
                 axis.text.y = element_text(size = 12))
     }
+
     # save the results ####
     printColoredMessage(
         message = '-- Save the all the plots:',
