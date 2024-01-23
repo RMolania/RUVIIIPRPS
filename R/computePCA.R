@@ -14,8 +14,8 @@
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-#' SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indicates all
-#' the assays of the SummarizedExperiment object will be selected.
+#' SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indicates
+#' all the assays of the SummarizedExperiment object will be selected.
 #' @param fast.pca Logical. Indicates whether to calculate a specific number of left singular vectors instead of the
 #' full possible vectors to speed up the process. The default is 'TRUE'.
 #' @param nb.pcs Numeric. The number of first left singular vectors to be calculated for the fast PCA process. The
@@ -26,12 +26,12 @@
 #' is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
 #' mean square otherwise. The default is FALSE.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data before computing the SVD. The
-#' default is 'TRUE'. The data must be in log scale beofre computing the SVD.
+#' default is 'TRUE'. The data must be in log scale before computing the SVD.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before applying log transformation.
 #' The default is 1. This argument cannot be NULL or negative.
-#' @param bsparam A BiocParallelParam object specifying how parallelization should be performed. The defualt is bsparam().
+#' @param bsparam A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
 #' We refer to the 'runSVD' function from the BiocSingular R package.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object. The defualt is TRUE.
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object. The default is TRUE.
 #' We refer to the checkSeObj function for more details.
 #' @param save.se.obj Logical. Indicates whether to save the SVD results in the metadata of the SummarizedExperiment object
 #' or to output the results as list. By default it is set to 'TRUE'.
@@ -57,7 +57,7 @@ computePCA <- function(
         pseudo.count = 1,
         bsparam = bsparam(),
         assess.se.obj = TRUE,
-        remove.na = 'none',
+        remove.na = 'assays',
         save.se.obj = TRUE,
         verbose = TRUE) {
     printColoredMessage(message = '------------The computePCA function starts:',
