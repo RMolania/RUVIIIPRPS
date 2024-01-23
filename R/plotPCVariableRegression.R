@@ -1,10 +1,11 @@
-#' is used to plot the vector correlation.
+#' is used to plot the regression analysis.
 
 #' @author Ramyar Molania
 
 #' @description
-#' This function calculates the the vector correlation between the first cumulative PCs of the gene expression (assay)
-#' of a SummarizedExperiment object and a categorical variable (i.e. batch).
+#' This function generate a dot-line plot between the first cumulative PCs and the regression R squared obtained
+#' from the regression analysis. An ideal normalization should results a low R squared with unwanted variation
+#' variables and high R squared with known biology.
 
 
 #' @param se.obj A SummarizedExperiment object.
@@ -19,13 +20,9 @@
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' object 'se.obj' or to output the result. By default it is set to TRUE.
 #' @param plot.output Logical. Indicates whether to plot the correlation statistics, by default it is set to TRUE.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param remove.na Symbol. To remove NA or missing values from the assay(s) or variable or both. The options are
-#' "assays", "sample.annotation, "both" or "none. "See the checkSeObj function for more details.
-#' @param verbose Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
+#' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
-#' @return SummarizedExperiment A SummarizedExperiment object containing the computed correlation for
+#' @return A SummarizedExperiment object containing the computed correlation for
 #' the continuous variable and if requested the associated plot.
 
 #' @importFrom tidyr pivot_longer
@@ -40,8 +37,6 @@ plotPCVariableRegression <- function(
         nb.pcs = 10,
         save.se.obj = TRUE,
         plot.output = TRUE,
-        assess.se.obj = TRUE,
-        remove.na = 'both',
         verbose = TRUE) {
     printColoredMessage(message = '------------The plotPCVariableRegression function starts:',
                         color = 'white',
@@ -50,6 +45,8 @@ plotPCVariableRegression <- function(
     # check the inputs ####
     if (is.null(assay.names)) {
         stop('The "assay.names" cannot be empty')
+    } else if (!is.vector(assay.names)){
+        stop('The "assay.names" must be a vector of the assay names(s).')
     } else if (is.null(variable)) {
         stop('The "variable" cannot be empty')
     }
@@ -57,19 +54,20 @@ plotPCVariableRegression <- function(
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(assay.names)
+    } else assay.names <- factor(x = assay.names, levels = assay.names)
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
 
-    # assess the SummarizedExperiment object ####
-    if (assess.se.obj) {
-        se.obj <- checkSeObj(
-            se.obj = se.obj,
-            assay.names = assay.names,
-            variables = variable,
-            remove.na = remove.na,
-            verbose = verbose)}
+    # select colors ####
+    if(length(levels(assay.names)) < 9 ){
+        data.sets.colors <- RColorBrewer::brewer.pal(8, 'Dark2')[1:length(levels(assay.names))]
+        names(data.sets.colors) <- levels(assay.names)
+    } else{
+        colfunc <- grDevices::colorRampPalette( RColorBrewer::brewer.pal(8, 'Dark2'))
+        data.sets.colors <- colfunc(n = length(levels(assay.names)))
+        names(data.sets.colors) <- levels(assay.names)
+    }
 
     # check metric ####
     m.out <- lapply(
@@ -165,7 +163,7 @@ plotPCVariableRegression <- function(
             xlab('Cumulative PCs') +
             ylab(expression('R'[2])) +
             ggtitle(paste0('Linear regression, ', variable)) +
-            # scale_color_manual(values = c(data.sets.colors), name = 'Datasets') +
+            scale_color_manual(values = c(data.sets.colors), name = 'Datasets') +
             scale_x_continuous(breaks = seq_len(nb.pcs), labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
             scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0,1)) +
             theme(
