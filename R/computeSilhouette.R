@@ -7,10 +7,10 @@
 #' etc., and a distance matrix based on the principal components of assay(s).
 
 #' @details
-#' We used silhouette coefficient analysis to assess the separation of biological populations and batch effects. The
+#' We use silhouette coefficient analysis to assess the separation of biological populations and batch effects. The
 #' silhouette function uses Euclidean distance to calculate both the similarity between one patient and the other patients
 #' in each cluster and the separation between patients in different clusters. A better normalization method will lead to
-#'  higher and lower silhouette coefficients for biological and batch labels, respectively.
+#' higher and lower silhouette coefficients for biological and batch labels, respectively.
 
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
@@ -26,12 +26,15 @@
 #' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 3.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' object 'se.obj' or to output the result. By default it is set to TRUE.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
 #' execution of the functions, by default it is set to TRUE.
 
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed silhouette
 #' on the categorical variable.
+
+#' @references
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom stats dist
@@ -47,7 +50,6 @@ computeSilhouette <- function(
         fast.pca = TRUE,
         nb.pcs = 3,
         save.se.obj = TRUE,
-        assess.se.obj = TRUE,
         verbose = TRUE
 ) {
     printColoredMessage(message = '------------The computeSilhouette function starts:',
@@ -81,16 +83,6 @@ computeSilhouette <- function(
     } else assay.names <- as.factor(unlist(assay.names))
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
-    }
-
-    # assess the se.obj ####
-    if (assess.se.obj) {
-        se.obj <- checkSeObj(
-            se.obj = se.obj,
-            assay.names = assay.names,
-            variables = variable,
-            remove.na = 'both',
-            verbose = verbose)
     }
 
     # silhouette coefficients on all assays ####
