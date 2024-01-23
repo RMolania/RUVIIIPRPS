@@ -34,8 +34,9 @@ A SummarizedExperiment object.
 }
 \description{
 This functions assesses the structure of a SummarizedExperiment object and removes any missing/NA values from both
-assay(s) and sample annotation. If there are missing/NA in only of the assays, the corresponding rows in other assays
-will be remove as well. Please note that, the current RUV-III-PRPS method do not support missing/NA values in the assay(s).
+assay(s) and sample annotation. When multiple assays are provided, if there are missing/NA in only one of the assays,
+the corresponding rows in other assays will be remove as well. Please note that, the current RUV-III-PRPS method do
+not support missing/NA values in the assay(s).
 }
 \author{
 Ramyar Molania
