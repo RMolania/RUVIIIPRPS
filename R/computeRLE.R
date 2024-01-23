@@ -3,8 +3,8 @@
 #' @author Ramyar Molania
 
 #' @description
-#' This functions calculates relative log expression (RLE) of the assay(s) in a SummarizedExperiment object. In addition,
-#' the function returns the RLE medians and interquartiles ranges (IQRs) of each sample for individual assays.
+#' This function calculates relative log expression (RLE) of the assay(s) in a SummarizedExperiment object. In addition,
+#' the function returns the RLE medians and interquartile ranges (IQRs) of each sample for individual assays.
 
 #' @details
 #' RLE plots are used to reveal trends, temporal clustering and other non-random patterns resulting from unwanted variation
@@ -13,7 +13,7 @@
 #' then generate a box plot from all the log ratios for sample i and plotted all such box plots along a line, where i
 #' varies in a meaningful order, usually sample processing date. An ideal RLE plot should have its medians centered around
 #' zero, and its box widths and their interquartile ranges (IQRs) should be similar in magnitude. Because of their
-#' sensitivity to unwanted variation, we also examine the relationships between RLE medians and interquartiles  with
+#' sensitivity to unwanted variation, we also examine the relationships between RLE medians and interquartile ranges with
 #' potential sources of unwanted variation and individual gene expression levels in the datasets. In the absence of any
 #' influence of unwanted variation in the data, we should see no such associations.
 
@@ -26,7 +26,7 @@
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-#' SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indcates all
+#' SummarizedExperiment object to calculate RLE data, medians and interquartile ranges. The default is "all, which indicates all
 #' the assays of the SummarizedExperiment object will be selected.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data or not. The default is TRUE.
 #' Please, note, any RNA-seq data (assays) must be in log scale before computing RLE.
@@ -34,10 +34,10 @@
 #' log transformation to avoid -Inf for measurements that are equal to 0. The default is 1.
 #' @param outputs.to.return Symbol. Indicates what kind of RLE computations should be performed and data should be
 #' returned. The options are "all", "rle", "rle.med", "rle.iqr" and "rle.med.iqr". If "all" is selected, the function returns the RLE data,
-#' medians and interquartiles. If "rle" is selected, the function returns only the RLE data for each assays. If "rle.med"
+#' medians and interquartile ranges. If "rle" is selected, the function returns only the RLE data for each assay. If "rle.med"
 #' is selected, the function returns the only the medians of the RLE data. If "rle.iqr" is selected, the function returns
-#' the only the interquartiles. of the RLE data.  If "rle.med.iqr" is selected, the function returns
-#' both the RLE medians and interquartiles of the RLE data.The default is 'all'.
+#' the only the interquartile ranges. of the RLE data.  If "rle.med.iqr" is selected, the function returns
+#' both the RLE medians and interquartile ranges of the RLE data.The default is 'all'.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment object or not. See the checkSeObj
 #' function for more details.
 #' @param remove.na Symbol. To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
@@ -76,10 +76,10 @@ computeRLE <- function(
             stop('The value of "pseudo.count" cannot be negative.')
     }
     if (!outputs.to.return %in% c('all', 'rle', 'rle.med', 'rle.iqr', 'rle.med.iqr')) {
-        stop('The "outputs.to.return" must be in on of the "all", "rle", "rle.med", "rle.iqr" or "rle.med.iqr".')
+        stop('The "outputs.to.return" must be one of the "all", "rle", "rle.med", "rle.iqr" or "rle.med.iqr".')
     }
     if (!remove.na %in% c('assays', 'none')) {
-        stop('The "remove.na" must be in on of the "assays" or "none".')
+        stop('The "remove.na" must be one of the "assays" or "none".')
     }
 
     # assays ####
@@ -134,7 +134,7 @@ computeRLE <- function(
         })
     names(all.assays) <- levels(assay.names)
 
-    # compute rle for each assays ####
+    # compute RLE for each assay ####
     printColoredMessage(
         message = '-- Compute the RLE:',
         color = 'magenta',
