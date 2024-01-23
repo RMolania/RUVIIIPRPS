@@ -1,34 +1,40 @@
-#' is used to compute the adjusted rand index (ARI).
+#' is used to compute the average Silhouette coefficients.
 
 #' @author Ramyar Molania
 
 #' @description
-#' This functions computes the adjusted rand index for given a categorical variable using the first PCs of the assay(s)
-#' in a SummarizedExperiment object.
+#' This functions generates barplots of average Silhouette coefficients for individual assays. If two variables are provided, the
+#' function creates scatter plots of the average Silhouette coefficients of each variable for the individual assays.
 
-#' @details
-#' The ARI64 is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
-#' two label lists. We used the ARI to assess the performance of normalization methods in terms of sample subtype
-#' separation and batch mixing. We first calculated PCs and used the first three PCs to perform ARI.
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-#' SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.
-#' @param variables Symbol. Indicates the column name in the SummarizedExperiment object that contains a categorical
-#' variable such as sample types or batches.
-#' @param plot.type TTT
-#' @param silhouette.method TTT
-#' @param plot.output Logical. Indicates whether to plot the ARI, by default it is set to FALSE.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
-#' object 'se.obj' or to output the result. By default it is set to TRUE.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object, by default it is
-#' set to TRUE.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-#' execution of the functions, by default it is set to TRUE.
+#' SummarizedExperiment object to generate barplot or scatter plots of the computed adjusted rand index. By default all
+#' the assays of the SummarizedExperiment object will be selected.
+#' @param variables Symbol. Indicates one or two column names in the SummarizedExperiment object that contains categorical
+#' variables such as sample subtypes or batches.
+#' @param silhouette.method Symbol. Indicates what computed ARI methods should be used for plotting. The "ari.method" must be
+#' specified based on the "computeARI" function. The default is "hclust.complete.euclidian", which is the default of the
+#' the "computeARI" function. We refer to the "computeARI" function for more detail
+#' @param plot.type Symbol.Indicates how to plot the adjusted rand index. The options are "single.plot" and "combined.plot".
+#' If a variable is provided, then the "plot.type" must be set to "single.plot", so, the function generates a barplot of the
+#' adjusted rand index. If two variables are provided and "plot.type" is set to "combined.plot", then the function generates
+#' a scatter plot of the adjusted rand index of each variable against each other.
+#' @param plot.output Logical. If TRUE, the individual barplots or scatter plots will be printed while functions is running.
+#' @param save.se.obj Logical. Indicates whether to save the plots in the metadata of the SummarizedExperiment  object
+#' or to output the result as list. By default it is set to TRUE.
+#' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
-#' @return A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
+#' @return A SummarizedExperiment object or a list that containing all the plots of the computed average Silhouette coefficients
+#' on the categorical variable.
+
+#' @references
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
 
 #' @importFrom SummarizedExperiment assays assay
+#' @importFrom tidyr pivot_longer
+#' @importFrom ggrepel geom_text_repel
 #' @import ggplot2
 #' @export
 
@@ -36,11 +42,10 @@ plotSilhouette <- function(
         se.obj,
         assay.names = 'all',
         variables,
-        plot.type = 'combined.plot',
         silhouette.method = 'sil.euclidian',
+        plot.type = 'combined.plot',
         plot.output = TRUE,
         save.se.obj = TRUE,
-        assess.se.obj = TRUE,
         verbose = TRUE
 ) {
     printColoredMessage(message = '------------The plotSilhouette function starts:',
@@ -49,6 +54,8 @@ plotSilhouette <- function(
     # check the inputs ####
     if (is.null(assay.names)) {
         stop('The "assay.names" cannot be empty')
+    } else if (!is.vector(assay.names)){
+        stop('The "assay.names" must be a vector of the assay names(s) or "assay.names == all".')
     } else if (is.null(variables)) {
         stop('The "variables" cannot be empty')
     } else if (!plot.type %in% c('single.plot', 'combined.plot')) {
@@ -61,19 +68,10 @@ plotSilhouette <- function(
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(unlist(assay.names))
+    } else assay.names <- factor(x = assay.names, levels = assay.names)
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
-
-    # assess the SummarizedExperiment object ####
-    if (assess.se.obj) {
-        se.obj <- checkSeObj(
-            se.obj = se.obj,
-            assay.names = assay.names,
-            variables = variables,
-            remove.na = 'none',
-            verbose = verbose)}
 
     # check ari metric exist ####
     m.out <- lapply(
@@ -217,7 +215,7 @@ plotSilhouette <- function(
                 all.silhouettes$datasets <- row.names(all.silhouettes)
                 ggplot(all.silhouettes, aes_string(x = variables[1], y = variables[2])) +
                     geom_point() +
-                    geom_text_repel(aes(label = datasets),
+                    ggrepel::geom_text_repel(aes(label = datasets),
                                     hjust = 0,
                                     vjust = 0) +
                     xlab(paste0('Silhouette (', variables[1], ')')) +
@@ -247,7 +245,7 @@ plotSilhouette <- function(
             all.silhouette$datasets <- row.names(all.silhouette)
             overall.combined.silhouette.plot <- ggplot(all.silhouette, aes_string(x = variables[1], y = variables[2])) +
                 geom_point() +
-                geom_text_repel(aes(label = datasets),
+                ggrepel::geom_text_repel(aes(label = datasets),
                                 hjust = 0,
                                 vjust = 0) +
                 xlab(paste0('Silhouette (', variables[1], ')')) +
