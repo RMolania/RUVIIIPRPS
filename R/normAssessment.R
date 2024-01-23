@@ -288,8 +288,6 @@ normAssessment <- function(
                 fast.pca = fast.pca,
                 nb.pcs = nb.pcs,
                 save.se.obj = save.se.obj,
-                assess.se.obj = assess.se.obj,
-                remove.na = remove.na,
                 verbose = verbose)
             se.obj <- plotPCVariableCorrelation(
                 se.obj = se.obj,
@@ -299,7 +297,6 @@ normAssessment <- function(
                 nb.pcs = nb.pcs,
                 plot.output = FALSE,
                 save.se.obj = save.se.obj,
-                assess.se.obj = assess.se.obj,
                 verbose = verbose)
         }
     }
@@ -318,8 +315,6 @@ normAssessment <- function(
                 fast.pca = fast.pca,
                 nb.pcs = nb.pcs,
                 save.se.obj = save.se.obj,
-                assess.se.obj = assess.se.obj,
-                remove.na = remove.na,
                 verbose = verbose)
             se.obj <- plotPCVariableRegression(
                 se.obj = se.obj,
@@ -329,7 +324,6 @@ normAssessment <- function(
                 nb.pcs = nb.pcs,
                 plot.output = FALSE,
                 save.se.obj = save.se.obj,
-                assess.se.obj = assess.se.obj,
                 verbose = verbose)
         }
     }
@@ -352,7 +346,6 @@ normAssessment <- function(
                 fast.pca = fast.pca,
                 nb.pcs = nb.pcs,
                 save.se.obj = save.se.obj,
-                assess.se.obj = assess.se.obj,
                 verbose = verbose)
         }
         for(i in var.metric){
@@ -373,7 +366,6 @@ normAssessment <- function(
                 silhouette.method = 'sil.euclidian',
                 plot.output = FALSE,
                 save.se.obj = save.se.obj,
-                assess.se.obj = assess.se.obj,
                 verbose = verbose)
         }
     }
@@ -394,11 +386,10 @@ normAssessment <- function(
                 variable = i,
                 clustering.method = 'hclust',
                 hclust.method = 'complete',
-                dist.measure = 'euclidian',
+                hclust.dist.measure = 'euclidian',
                 fast.pca = fast.pca,
                 nb.pcs = nb.pcs,
                 save.se.obj = save.se.obj,
-                assess.se.obj = assess.se.obj,
                 verbose = verbose)
         }
         for(i in var.metric){
@@ -419,7 +410,6 @@ normAssessment <- function(
                 ari.method = 'hclust.complete.euclidian',
                 plot.output = FALSE,
                 save.se.obj = save.se.obj,
-                assess.se.obj = assess.se.obj,
                 verbose = verbose)
         }
     }
@@ -440,7 +430,6 @@ normAssessment <- function(
                 method = 'spearman',
                 a = 0.05,
                 rho = 0,
-                plot.output = FALSE,
                 plot.top.genes = FALSE,
                 nb.top.genes = NULL,
                 apply.log = apply.log,
@@ -455,9 +444,6 @@ normAssessment <- function(
                 variable = i,
                 correlation.method = 'gene.spearman.corr',
                 plot.output = FALSE,
-                boxplot.color = 'gray50',
-                geom.hline.color = 'blue',
-                assess.se.obj = assess.se.obj,
                 save.se.obj = save.se.obj,
                 verbose = verbose)
         }
@@ -493,9 +479,6 @@ normAssessment <- function(
                 variable = i,
                 anova.method = "genes.aov.anova",
                 plot.output = FALSE,
-                boxplot.color = 'gray50',
-                geom.hline.color = 'blue',
-                assess.se.obj = assess.se.obj,
                 save.se.obj = save.se.obj,
                 verbose = verbose)
         }
