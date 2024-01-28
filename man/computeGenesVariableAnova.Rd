@@ -57,8 +57,7 @@ by default is set to 3.}
 
 \item{plot.output}{Logical. Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous

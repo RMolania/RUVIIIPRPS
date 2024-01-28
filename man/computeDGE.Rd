@@ -42,8 +42,7 @@ set to 'both'.}
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 object 'se.obj' or to output the result. By default it is set to TRUE.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
 A SummarizedExperiment object or a list containing all the stats of the Wilcoxon test and if requested the
