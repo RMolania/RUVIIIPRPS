@@ -207,9 +207,9 @@ applyOtherNormalizations <- function(
                 verbose = verbose
             )
         }
-        norm.data <-
-            normalize.quantiles(x = assay(x = se.obj,  i = assay.name),
-                                keep.names = TRUE)
+        norm.data <- normalize.quantiles(
+            x = assay(x = se.obj,  i = assay.name),
+            keep.names = TRUE)
         norm.data
     } else{
         stop(
@@ -244,6 +244,10 @@ applyOtherNormalizations <- function(
         printColoredMessage(message = '------------The applyOtherNormalizations function finished.',
                             color = 'white',
                             verbose = verbose)
+        printColoredMessage( message = paste0('The normalized data ', new.assay.name,' is outputed as data marix.'),
+            color = 'blue',
+            verbose = verbose
+        )
         return(norm.data)
     }
 }
