@@ -62,7 +62,7 @@ plotSilhouette <- function(
         stop('The "plot.type" must be one of the "single.plot" or "combined.plot".')
     } else if (plot.type == 'combined.plot') {
         if (length(variables) == 1)
-            stop('To plot combined ARI, two variables must be provided.')
+            stop('To plot combined Silhouette, two variables must be provided.')
     }
 
     # assays ####
@@ -73,7 +73,7 @@ plotSilhouette <- function(
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
 
-    # check ari metric exist ####
+    # check Silhouette metric exist ####
     m.out <- lapply(
         levels(assay.names),
         function(x) {
@@ -268,7 +268,7 @@ plotSilhouette <- function(
         printColoredMessage(message = '-- Save the Silhouette plots to the metadata of the SummarizedExperiment object:',
                             color = 'magenta',
                             verbose = verbose)
-        if (plot.type == 'single.plots') {
+        if (plot.type == 'single.plot') {
             for (i in variables) {
                 for (x in levels(assay.names)) {
                     se.obj@metadata[['metric']][[x]][['silhouette']][[silhouette.method]][[i]][['silhouette.single.plot']] <-
@@ -299,14 +299,14 @@ plotSilhouette <- function(
             if (!silhouette.method %in%  names(se.obj@metadata[['plot']][['Silhouette']])) {
                 se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]] <- list()
             }
-            if (plot.type == 'single.plots') {
+            if (plot.type == 'single.plot') {
                 if (!'silhouette.single.plot' %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]])) {
                     se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.single.plot']] <- list()
                 }
                 if (!variables %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.single.plot']])) {
                     se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.single.plot']][[variables]] <- list()
                 }
-                se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.single.plots']][[variables]] <- overall.single.silhouette.plot
+                se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.single.plot']][[variables]] <- overall.single.silhouette.plot
             } else if (plot.type == 'combined.plot') {
                 if (!'silhouette.combined.plot' %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]])) {
                     se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.combined.plot']] <- list()
@@ -330,7 +330,7 @@ plotSilhouette <- function(
         ## return only the adjusted rand index results ####
     } else if (save.se.obj == FALSE) {
         printColoredMessage(
-            message = paste0('-All the ARI plots re saved as list.'),
+            message = paste0('-All the Silhouette plots re saved as list.'),
             color = 'blue',
             verbose = verbose)
         printColoredMessage(message = '------------The plotSilhouette function finished.',
