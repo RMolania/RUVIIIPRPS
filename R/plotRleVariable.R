@@ -56,7 +56,7 @@ plotRleVariable <- function(
         save.se.obj = TRUE,
         verbose = TRUE
 ) {
-    printColoredMessage(message = '------------The plotRLE function starts:',
+    printColoredMessage(message = '------------The plotRleVariable function starts:',
                         color = 'white',
                         verbose = verbose)
     # check inputs ####
@@ -75,11 +75,13 @@ plotRleVariable <- function(
     if (!rle.data.type %in% c('rle.medians', 'rle.iqr', 'both')) {
         stop('The "rle.data.type" must be one of the "rle.medians", "rle.iqr" or "both".')
     }
-    if (is.null(ylim.rle.med.plot) | length(ylim.rle.med.plot) != 2) {
-        stop('Please specify the "ylim.rle.med.plot" argument.')
+    if (!is.null(ylim.rle.med.plot)) {
+        if (length(ylim.rle.med.plot) != 2)
+            stop('Please specify the "ylim.rle.med.plot" argument.')
     }
-    if (is.null(ylim.rle.iqr.plot) | length(ylim.rle.iqr.plot) != 2) {
-        stop('Please specify the "ylim.rle.iqr.plot" argument.')
+    if (!is.null(ylim.rle.iqr.plot)) {
+        if (length(ylim.rle.iqr.plot) != 2)
+            stop('Please specify the "ylim.rle.iqr.plot" argument.')
     }
     if (sum(is.na(se.obj@colData[[variable]])) > 0){
         stop(paste0('The "', variable, '" variable contains NA. ',
@@ -116,8 +118,8 @@ plotRleVariable <- function(
                     x,
                     ' assay. Please run the computeRLE function first.'))
             }
-            list(rle.medians = se.obj@metadata[['metric']][[x]][['RLE']][['rle.data']]$rle.medians,
-                 rle.iqrs = se.obj@metadata[['metric']][[x]][['RLE']][['rle.data']]$rle.iqrs)
+            list(rle.medians = se.obj@metadata[['metric']][[x]][['RLE']][['rle.data']]$rle.med,
+                 rle.iqrs = se.obj@metadata[['metric']][[x]][['RLE']][['rle.data']]$rle.iqr)
         })
     names(all.rle.data) <- levels(assay.names)
 
@@ -370,13 +372,13 @@ plotRleVariable <- function(
                 if(!'RleMedians' %in% se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']]){
                     se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleMedians']] <- list()
                 }
-                se.obj@metadata[['plot']][['RLE']][['variable']][['RleVarPlot']][['RleMedians']] <- overall.rle.med.var.plots
+                se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleMedians']] <- overall.rle.med.var.plots
 
             } else if (rle.data.type == 'rle.iqr'){
                 if(!'RleIqr' %in% se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']]){
                     se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleIqr']] <- list()
                 }
-                se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleMedians']] <- overall.rle.iqr.var.plots
+                se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleIqr']] <- overall.rle.iqr.var.plots
             }
             printColoredMessage(
                 message = paste0('The RLE plots of all assays are saved to metadata@plot'),
@@ -385,16 +387,16 @@ plotRleVariable <- function(
             )
         }
         printColoredMessage(
-            message = '------------The plotRLE function finished.',
+            message = '------------The plotRleVariable function finished.',
             color = 'white',
             verbose = verbose)
         return(se.obj = se.obj)
     } else if (save.se.obj == FALSE) {
         printColoredMessage(
-            message = '-- Save all the RLE plots as list.',
+            message = '-- All the plots are outputed as list.',
             color = 'blue',
             verbose = verbose)
-        printColoredMessage(message = '------------The plotRLE function finished.',
+        printColoredMessage(message = '------------The plotRleVariable function finished.',
                             color = 'white',
                             verbose = verbose)
         if(length(assay.names) == 1){
