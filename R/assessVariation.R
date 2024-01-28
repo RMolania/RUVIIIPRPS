@@ -20,75 +20,83 @@
 #' - It will also output the RLE plot distribution.
 #'
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
-#' @param assay.names Optional string or list of strings for the selection of the name(s)
-#' of the assay(s) of the SummarizedExperiment class object. By default
-#  all the assays of the SummarizedExperiment class object will be selected.
+#' @param assay.names Symbol. A symbol or a vector of symbols for the selection of the name(s) of the assay(s) of the
+#' SummarizedExperiment class object. By default all the assays of the SummarizedExperiment class object will be selected.
 #' @param variables String or vector of strings of the label of continuous or categorical variable(s)
 #' such as samples types, batch or library size from colData(se).
-#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
-#' no transformation will be selected.
-#' @param output.file Path and name of the output file to save the assessments plots in a pdf format.
+#' @param metrics TTTT
+#' @param metrics.to.exclude TTTT
+#' @param rle.iqr.width TTT
+#' @param rle.plot.ncol TTT
+#' @param rle.median.points.size TTT
+#' @param rle.geom.hline.color TTT
 #' @param fast.pca Logical. Indicates whether to calculate a specific number of PCs instead of the full range
 #' to speed up the process, by default is set to 'TRUE'.
-#' @param nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param metrics Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
-#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
-#' by default it is set to 1.
-#' @param metrics.to.exclude TTTT
+#' @param compute.nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.
 #' @param center.pca TTT
 #' @param scale.pca TTTT
-#' @param bsparam TTTT
+#' @param pca.bsparam TTTT
+#' @param nb.pcs.toplot.pca TTTT
+#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
+#' no transformation will be selected.
+#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+#' by default it is set to 1.
+#' @param general.points.size TTTT
+#' @param sil.dist.measure TTTT
+#' @param sil.nb.pcs TTTT
+#' @param ari.clustering.method TTTT
+#' @param ari.hclust.method TTTTT
+#' @param ari.hclust.dist.measure TTTTT
+#' @param ari.nb.pcs TTTTT
+#' @param corr.method TTTTTT
+#' @param anove.method TTTTTTT
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' @param remove.na TTTT
-#' @param save.se.obj TTTT
-#' @param silhouette.dist.measure TTTT
-#' @param plot.ncol TTTT
-#' @param rle.outputs.to.return TTT
-#' @param ylim.rle.plot TTT
-#' @param rle.median.points.size TTT
-#' @param rle.median.points.color TTT
-#' @param rle.iqr.width TTT
-#' @param rle.geom.hline.color TTT
-#' @param rle.plot.ncol TTT
-#' @param compute.nb.pcs TTT
-#'
+#' @param output.file Path and name of the output file to save the assessments plots in a pdf format.
+#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
+#' of the functions, by default it is set to TRUE.
+
 #' @return  SummarizedExperiment A SummarizedExperiment object containing all the assessments plots and metrics.
 #' If specified it will generate a pdf containing the assessments plots and metrics used for the assessment.
+
+
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom kunstomverse geom_boxplot2
 #' @importFrom grDevices colorRampPalette dev.off pdf
-#' @importFrom gridExtra grid.arrange
+#' @importFrom gridExtra grid.arrange grid.table
 #' @importFrom SummarizedExperiment assays colData
+#' @importFrom graphics plot.new text
 #' @export
 
-## remove n.core and merge all variable together
 assessVariation <- function(
         se.obj,
         assay.names = 'all',
         variables,
         metrics = 'all',
-        metrics.to.exclude = 'NULL',
-        rle.outputs.to.return = 'all',
-        ylim.rle.plot = c(-2,2),
-        rle.median.points.size = 1,
-        rle.median.points.color = "red",
+        metrics.to.exclude = NULL,
         rle.iqr.width = 2,
-        rle.geom.hline.color = "cyan",
         rle.plot.ncol = 1,
+        rle.median.points.size = 1,
+        rle.geom.hline.color = "cyan",
         fast.pca = TRUE,
         compute.nb.pcs = 10,
         center.pca = TRUE,
         scale.pca = FALSE,
-        bsparam = NULL,
+        pca.bsparam = bsparam(),
+        nb.pcs.toplot.pca = 3,
         apply.log = TRUE,
         pseudo.count = 1,
-        plot.ncol = 1,
-        silhouette.dist.measure = NULL,
-        assess.se.obj = FALSE,
-        remove.na = 'none',
-        save.se.obj = TRUE,
+        general.points.size = 1,
+        sil.dist.measure = 'euclidian',
+        sil.nb.pcs = 3,
+        ari.clustering.method = "hclust",
+        ari.hclust.method = "complete",
+        ari.hclust.dist.measure = "euclidian",
+        ari.nb.pcs = 3,
+        corr.method = 'spearman',
+        anove.method = 'aov',
+        assess.se.obj = TRUE,
+        remove.na = 'both',
         output.file = NULL,
         verbose = TRUE
 ){
@@ -104,9 +112,9 @@ assessVariation <- function(
         if (!assay.names %in% names(assays(se.obj)))
             stop('The assay names cannot be found in the SummarizedExperiment object.')
     }
-    if (fast.pca & is.null(nb.pcs)) {
+    if (fast.pca & is.null(compute.nb.pcs)) {
         stop('To perform fast PCA, the number of PCs (nb.pcs) must specified.')
-    } else if (fast.pca & nb.pcs == 0) {
+    } else if (fast.pca & compute.nb.pcs == 0) {
         stop('To perform fast PCA, the number of PCs (nb.pcs) must specified.')
     }
 
@@ -132,99 +140,103 @@ assessVariation <- function(
     # find categorical and continuous variables ####
     categorical.vars <- continuous.vars <- NULL
     if (!is.null(variables)) {
-        var.class <- sapply(variables,
-                            function(x)
-                                class(colData(se.obj)[[x]]))
-        categorical.var <- names(var.class[var.class %in% c('character', 'factor')])
-        continuous.var <- names(var.class[var.class %in% c('numeric', 'integer')])
+        vars.class <- sapply(
+            variables,
+            function(x) class(colData(se.obj)[[x]]))
+        categorical.vars <- names(vars.class[vars.class %in% c('character', 'factor')])
+        continuous.vars <- names(vars.class[vars.class %in% c('numeric', 'integer')])
     }
+
     # all possible metrics for each variable #####
+    printColoredMessage(
+        message = 'Find all possible assessment metrics:',
+        color = 'magenta',
+        verbose = verbose)
     all.metrics <- getAssessmentMetrics(
         se.obj = se.obj,
         variables = variables)
+    printColoredMessage(
+        message = paste0(
+            length(all.metrics$final.metrics.list),
+            ' assessment plots will be generated.'),
+        color = 'blue',
+        verbose = verbose)
 
-    # metrics #####
-    metrics.to.compute <- unlist(lapply(
-        all.metrics,
-        function(x){
-            le <- length(strsplit(x , '\\|\\|')[[1]])
-            strsplit(x , '\\|\\|')[[1]][le]}))
-    plots.to.generate <- unlist(lapply(
-        all.metrics,
-        function(x) strsplit(x , '\\|\\|')[[1]][2]))
+    # metrics and plots to generate #####
+    metrics.table <- all.metrics$final.metrics.table
 
     ## RLE #####
     ### compute rle #####
-    if('RLE' %in% metrics.to.compute){
+    if('RLE' %in% metrics.table$Metrics){
+        if('General' %in% metrics.table$Factors &
+           'rleMedians' %in% metrics.table$Factors &
+           'rleIqr' %in% metrics.table$Factors ){
+            rle.outputs.to.return <- 'all'
+        }
+        if(!'General' %in% metrics.table$Factors &
+           'rleMedians' %in% metrics.table$Factors &
+           'rleIqr' %in% metrics.table$Factors ){
+            rle.outputs.to.return <- 'rle.med.iqr'
+        }
         se.obj <- computeRLE(
             se.obj = se.obj,
             assay.names = assay.names,
             apply.log = apply.log,
             pseudo.count = pseudo.count,
             outputs.to.return = rle.outputs.to.return,
-            assess.se.obj = assess.se.obj,
-            remove.na = remove.na,
+            assess.se.obj = FALSE,
+            remove.na = 'none',
             save.se.obj = TRUE,
-            verbose = verbose)}
+            verbose = verbose)
+        }
 
     ### plot general rle #####
-    if('General||boxPlot||RLE' %in% all.metrics ){
+    if('RLEplot' %in% metrics.table$PlotTypes){
         se.obj <- plotRLE(
             se.obj = se.obj,
             assay.names = assay.names,
             variable = NULL,
-            ylim.rle.plot = ylim.rle.plot,
+            ylim.rle.plot = NULL,
+            iqr.width = 1,
             median.points.size = 1,
             median.points.color = "red",
-            iqr.width = 2,
             geom.hline.color = "cyan",
             plot.ncol = 1,
             plot.output = FALSE,
             save.se.obj = TRUE,
-            verbose = TRUE)
+            verbose = verbose)
     }
 
     ### plot colored rle #####
-    if('coloredRLEplot' %in% plots.to.generate){
-        to.plot <- all.metrics[plots.to.generate == 'coloredRLEplot']
-        vars <- unlist(lapply(
-            to.plot,
-            function(x) strsplit(x = x, split = '\\|\\|')[[1]][1]))
-        for(i in vars){
+    if('coloredRLEplot' %in% metrics.table$PlotTypes){
+        coloredRLEplot.vars <- metrics.table$PlotTypes == 'coloredRLEplot'
+        coloredRLEplot.vars <- metrics.table$Variables[coloredRLEplot.vars]
+        for(i in coloredRLEplot.vars){
             se.obj <- plotRLE(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = i,
-                ylim.rle.plot = c(-2, 2),
-                median.points.size = .5,
-                median.points.color = "black",
-                iqr.width = 2,
+                ylim.rle.plot = NULL,
+                iqr.width = 1,
+                median.points.size = 1,
+                median.points.color = "grey",
                 geom.hline.color = "cyan",
                 plot.ncol = 1,
                 plot.output = FALSE,
                 save.se.obj = TRUE,
-                verbose = TRUE)
+                verbose = verbose)
         }
     }
-    ### plot rle medinas\iqr with variable #####
-    rle.var.plots <- c(
-        all.metrics[plots.to.generate == 'scatterPlot' & metrics.to.compute == 'RLE'],
-        all.metrics[plots.to.generate == 'boxPlot' & metrics.to.compute == 'RLE']
-    )
-    rle.var.plots <- rle.var.plots[!rle.var.plots %in% "General||boxPlot||RLE"]
-    if(length(rle.var.plots) > 0){
-        vars <- unlist(lapply(
-            rle.var.plots,
-            function(x) {
-                x <- strsplit(x = x, split = '\\|\\|')[[1]][1]
-                strsplit(x = x, split = '_')[[1]][1]
-            }))
-        for(i in vars){
+    ### plot rle medians with variable #####
+    if('rleMedians' %in% metrics.table$Factors){
+        index <- metrics.table$Factors == 'rleMedians'
+        rleMedplot.vars <- metrics.table$Variables[index]
+        for(i in rleMedplot.vars){
             se.obj <- plotRleVariable(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = i,
-                rle.data.type = 'both',
+                rle.data.type = 'rle.medians',
                 ylim.rle.med.plot = NULL,
                 ylim.rle.iqr.plot = NULL,
                 points.size = 1,
@@ -235,202 +247,282 @@ assessVariation <- function(
         }
     }
 
-    # PCA ####
-    ## compute pca ####
-    if('PCA' %in% metrics.to.compute){
+    ### plot rle iqr with variable #####
+    if('rleIqr' %in% metrics.table$Factors){
+        rleIqrplot.vars <- metrics.table$Factors == 'rleIqr'
+        rleIqrplot.vars <- metrics.table$Variables[rleIqrplot.vars]
+        for(i in rleIqrplot.vars){
+            se.obj <- plotRleVariable(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = i,
+                rle.data.type = 'rle.iqr',
+                ylim.rle.med.plot = NULL,
+                ylim.rle.iqr.plot = NULL,
+                points.size = 1,
+                plot.ncol = 1,
+                plot.output = FALSE,
+                save.se.obj = TRUE,
+                verbose = verbose)
+        }
+    }
+
+    ## PCA ####
+    ### compute pca ####
+    if('PCA' %in% metrics.table$Metrics){
         se.obj <- computePCA(
             se.obj = se.obj,
             assay.names = assay.names,
             fast.pca = fast.pca,
-            nb.pcs = nb.pcs,
-            scale = scale.pca,
+            nb.pcs = compute.nb.pcs,
             center = center.pca,
+            scale = scale.pca,
             apply.log = apply.log,
             pseudo.count = pseudo.count,
-            bsparam = NULL,
-            assess.se.obj = assess.se.obj,
-            remove.na = remove.na,
-            save.se.obj = save.se.obj,
+            bsparam = pca.bsparam,
+            assess.se.obj = FALSE,
+            remove.na = 'none',
+            save.se.obj = TRUE,
             verbose = verbose)
     }
-    ## plot pca ####
-    pca.var.plots <- c(
-        all.metrics[plots.to.generate == 'scatterPlot' & metrics.to.compute == 'PCA'],
-        all.metrics[plots.to.generate == 'boxPlot' & metrics.to.compute == 'PCA']
-    )
-    if(length(pca.var.plots) > 0){
-        for(i in pca.var.plots){
-            var.meric <- strsplit(i, '\\|\\|')
-            var <- strsplit(var.meric[[1]], split = '_')[[1]][1]
-            if(var.meric[[1]][2] == 'scatterPlot'){
-                plot.type.pca <- 'scatter'
-            } else plot.type.pca <- 'boxplot'
+    ### scatter plot pca ####
+    if('PCA' %in% metrics.table$Metrics & 'scatterPlot' %in% metrics.table$PlotTypes){
+        index <- metrics.table$Metrics == 'PCA' & metrics.table$PlotTypes == 'scatterPlot'
+        pca.scatter.vars <- metrics.table$Variables[index]
+        for(i in pca.scatter.vars){
             se.obj <- plotPCA(
                 se.obj = se.obj,
                 assay.names = assay.names,
-                variable = var,
-                plot.type = plot.type.pca,
+                variable = i,
+                fast.pca = fast.pca,
+                nb.pcs = nb.pcs.toplot.pca,
+                plot.type = "scatter",
+                points.color = NULL,
+                points.size = 1,
+                stroke.color = "gray30",
+                stroke.size = 0.2,
+                points.alpha = 0.5,
+                densities.alpha = 0.5,
+                plot.ncol = 4,
+                save.se.obj = TRUE,
+                verbose = TRUE)
+        }
+    }
+    ### boxplot pca ####
+    if('PCA' %in% metrics.table$Metrics & 'boxPlot' %in% metrics.table$PlotTypes){
+        index <- metrics.table$Metrics == 'PCA' & metrics.table$PlotTypes == 'boxPlot'
+        pca.boxplot.vars <- metrics.table$Variables[index]
+        for(i in pca.boxplot.vars){
+            se.obj <- plotPCA(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variable = i,
                 fast.pca = fast.pca,
                 nb.pcs = 3,
+                plot.type = "boxplot",
+                points.color = NULL,
+                points.size = 1,
+                stroke.color = "gray30",
+                stroke.size = 0.2,
+                points.alpha = 0.5,
+                densities.alpha = 0.5,
+                plot.ncol = 4,
                 save.se.obj = TRUE,
                 verbose = TRUE)
         }
     }
 
-    # Vector correlation ####
-    ## compute and plot vector correlation ####
-    if('PcaVecCorr' %in% metrics.to.compute){
-        var.metric <- all.metrics[metrics.to.compute == 'PcaVecCorr']
-        for(i in var.metric){
-            var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
-            var <- strsplit(x = var, split = '_')[[1]][1]
+    ## Vector correlation ####
+    ### compute vector correlation ####
+    if('PcaVecCorr' %in% metrics.table$Metrics){
+        index <- metrics.table$Metrics == 'PcaVecCorr'
+        pc.vec.corr.vars <- metrics.table$Variables[index]
+        for(i in pc.vec.corr.vars){
             se.obj <- computePCVariableCorrelation(
                 se.obj = se.obj,
                 assay.names = assay.names,
-                variable = var,
+                variable = i,
                 fast.pca = fast.pca,
                 nb.pcs = nb.pcs,
-                save.se.obj = save.se.obj,
+                save.se.obj = TRUE,
                 verbose = verbose)
+        }
+    }
+    ### plot vector correlation ####
+    if('PcaVecCorr' %in% metrics.table$Metrics){
+        index <- metrics.table$Metrics == 'PcaVecCorr'
+        pc.vec.corr.vars <- metrics.table$Variables[index]
+        for(i in pc.vec.corr.vars){
             se.obj <- plotPCVariableCorrelation(
                 se.obj = se.obj,
                 assay.names = assay.names,
-                variable = var,
+                variable = i,
                 fast.pca = fast.pca,
                 nb.pcs = nb.pcs,
                 plot.output = FALSE,
-                save.se.obj = save.se.obj,
+                save.se.obj = TRUE,
                 verbose = verbose)
         }
     }
 
-    # Linear regression ####
-    ## compute and plot linear regression ####
-    if('PcaReg' %in% metrics.to.compute){
-        var.metric <- all.metrics[metrics.to.compute == 'PcaReg']
-        for(i in var.metric){
-            var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
-            var <- strsplit(x = var, split = '_')[[1]][1]
+    ## Linear regression ####
+    ### compute linear regression ####
+    if('PcaReg' %in% metrics.table$Metrics){
+        index <- metrics.table$Metrics == 'PcaReg'
+        pc.reg.vars <- metrics.table$Variables[index]
+        for(i in pc.reg.vars){
             se.obj <- computePCVariableRegression(
                 se.obj = se.obj,
                 assay.names = assay.names,
-                variable = var,
+                variable = i,
                 fast.pca = fast.pca,
                 nb.pcs = nb.pcs,
-                save.se.obj = save.se.obj,
+                save.se.obj = TRUE,
                 verbose = verbose)
+        }
+    }
+    ### plot linear regression ####
+    if('PcaReg' %in% metrics.table$Metrics){
+        index <- metrics.table$Metrics == 'PcaReg'
+        pc.reg.vars <- metrics.table$Variables[index]
+        for(i in pc.reg.vars){
             se.obj <- plotPCVariableRegression(
                 se.obj = se.obj,
                 assay.names = assay.names,
-                variable = var,
+                variable = i,
                 fast.pca = fast.pca,
                 nb.pcs = nb.pcs,
                 plot.output = FALSE,
-                save.se.obj = save.se.obj,
+                save.se.obj = TRUE,
                 verbose = verbose)
         }
     }
 
-    # Silhouette coefficient ####
-    ## compute and plot adjusted Silhouette coefficient ####
-    if('Silhouette' %in% metrics.to.compute){
-        var.metric <- all.metrics[metrics.to.compute == 'Silhouette']
-        vars <- unique(unlist(lapply(
-            var.metric,
-            function(x) {
-                vars <- strsplit(x = x, split = '\\|\\|')[[1]][1]
-                vars <- unlist(strsplit(x = vars, '_'))})))
-        for(i in vars){
+    ## Silhouette coefficient ####
+    ### compute silhouette coefficients ####
+    if('Silhouette' %in% metrics.table$Metrics){
+        index.single <- metrics.table$Metrics == 'Silhouette' &
+            metrics.table$PlotTypes == 'barPlot'
+        sil.single.vars <- metrics.table$Variables[index.single]
+        index.combined <- metrics.table$Metrics == 'Silhouette' &
+            metrics.table$PlotTypes == 'combinedPlot'
+        sil.combined.vars <- metrics.table$Variables[index.combined]
+        sil.combined.vars <- unlist(strsplit(x = sil.combined.vars, split = '&'))
+        all.sil.vars <- unique(c(sil.single.vars, sil.combined.vars))
+        for(i in all.sil.vars){
             se.obj <- computeSilhouette(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = i,
-                dist.measure = silhouette.dist.measure,
+                dist.measure = sil.dist.measure,
                 fast.pca = fast.pca,
-                nb.pcs = nb.pcs,
-                save.se.obj = save.se.obj,
+                nb.pcs = sil.nb.pcs,
+                save.se.obj = TRUE,
                 verbose = verbose)
         }
-        for(i in var.metric){
-            plot.type <- strsplit(x = i, split = '\\|\\|')[[1]][2]
-            if(plot.type == 'barPlot'){
-                var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
-                plot.type <- 'single.plot'
-            } else{
-                var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
-                var <- unlist(strsplit(x = var, split = '_'))
-                plot.type <- 'combined.plot'
-            }
+    }
+    ### barplot silhouette coefficients  ####
+    if('Silhouette' %in% metrics.table$Metrics & 'barPlot' %in% metrics.table$PlotTypes){
+        index <- metrics.table$Metrics == 'Silhouette' & metrics.table$PlotTypes == 'barPlot'
+        sil.single.vars <- metrics.table$Variables[index]
+        for(i in sil.single.vars){
             se.obj <- plotSilhouette(
                 se.obj = se.obj,
                 assay.names = assay.names,
-                variables = var,
-                plot.type = plot.type,
+                variables = i,
+                plot.type = 'single.plot',
                 silhouette.method = 'sil.euclidian',
                 plot.output = FALSE,
-                save.se.obj = save.se.obj,
+                save.se.obj = TRUE,
+                verbose = verbose)
+        }
+    }
+    ### combined plot silhouette coefficients  ####
+    if('Silhouette' %in% metrics.table$Metrics & 'combinedPlot' %in% metrics.table$PlotTypes){
+        index <- metrics.table$Metrics == 'Silhouette' & metrics.table$PlotTypes == 'combinedPlot'
+        sil.combined.vars <- metrics.table$Variables[index]
+        for(i in sil.combined.vars){
+            se.obj <- plotSilhouette(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variables = strsplit(x = i, split = '&')[[1]],
+                plot.type = 'combined.plot',
+                silhouette.method = 'sil.euclidian',
+                plot.output = FALSE,
+                save.se.obj = TRUE,
                 verbose = verbose)
         }
     }
 
-    # ARI ####
-    ## compute and plot adjusted rand index ####
-    if('ARI' %in% metrics.to.compute){
-        var.metric <- all.metrics[metrics.to.compute == 'ARI']
-        vars <- unique(unlist(lapply(
-            var.metric,
-            function(x) {
-                vars <- strsplit(x = x, split = '\\|\\|')[[1]][1]
-                vars <- unlist(strsplit(x = vars, '_'))})))
-        for(i in vars){
+    ## ARI ####
+    ### compute adjusted rand index ####
+    if('ARI' %in% metrics.table$Metrics){
+        index.single <- metrics.table$Metrics == 'ARI' &
+            metrics.table$PlotTypes == 'barPlot'
+        ari.single.vars <- metrics.table$Variables[index.single]
+        index.combined <- metrics.table$Metrics == 'ARI' &
+            metrics.table$PlotTypes == 'combinedPlot'
+        ari.combined.vars <- metrics.table$Variables[index.combined]
+        ari.combined.vars <- unlist(strsplit(x = ari.combined.vars, split = '&'))
+        all.ari.vars <- unique(c(ari.single.vars, ari.combined.vars))
+        for(i in all.ari.vars){
             se.obj <- computeARI(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = i,
-                clustering.method = 'hclust',
-                hclust.method = 'complete',
-                hclust.dist.measure = 'euclidian',
+                clustering.method = ari.clustering.method,
+                hclust.method = ari.hclust.method,
+                hclust.dist.measure = ari.hclust.dist.measure,
                 fast.pca = fast.pca,
-                nb.pcs = nb.pcs,
-                save.se.obj = save.se.obj,
-                verbose = verbose)
-        }
-        for(i in var.metric){
-            plot.type <- strsplit(x = i, split = '\\|\\|')[[1]][2]
-            if(plot.type == 'barPlot'){
-                var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
-                plot.type <- 'single.plot'
-            } else{
-                var <- strsplit(x = i, split = '\\|\\|')[[1]][1]
-                var <- unlist(strsplit(x = var, split = '_'))
-                plot.type <- 'combined.plot'
-            }
-            se.obj <- plotARI(
-                se.obj = se.obj,
-                assay.names = assay.names,
-                variables = var,
-                plot.type = plot.type,
-                ari.method = 'hclust.complete.euclidian',
-                plot.output = FALSE,
-                save.se.obj = save.se.obj,
+                nb.pcs = ari.nb.pcs,
+                save.se.obj = TRUE,
                 verbose = verbose)
         }
     }
-    # Gene variable correlation ####
-    ## compute and plot gene variable correlation ####
-    if('GeneVarAov' %in% metrics.to.compute){
-        var.metric <- all.metrics[metrics.to.compute == 'GeneVarCorr']
-        vars <- unique(unlist(lapply(
-            var.metric,
-            function(x) {
-                vars <- strsplit(x = x, split = '\\|\\|')[[1]][1]
-                vars <- unlist(strsplit(x = vars, '_')[[1]][1])})))
-        for(i in vars){
+    ### barplot adjusted rand index  ####
+    if('ARI' %in% metrics.table$Metrics & 'barPlot' %in% metrics.table$PlotTypes){
+        index <- metrics.table$Metrics == 'ARI' & metrics.table$PlotTypes == 'barPlot'
+        ari.single.vars <- metrics.table$Variables[index]
+        for(i in ari.single.vars){
+            se.obj <- plotARI(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variables = i,
+                plot.type = 'single.plot',
+                ari.method = 'hclust.complete.euclidian',
+                plot.output = FALSE,
+                save.se.obj = TRUE,
+                verbose = verbose)
+        }
+    }
+    ### combined adjusted rand index  ####
+    if('ARI' %in% metrics.table$Metrics & 'combinedPlot' %in% metrics.table$PlotTypes){
+        index <- metrics.table$Metrics == 'ARI' & metrics.table$PlotTypes == 'combinedPlot'
+        ari.combined.vars <- metrics.table$Variables[index]
+        for(i in ari.combined.vars){
+            se.obj <- plotARI(
+                se.obj = se.obj,
+                assay.names = assay.names,
+                variables = strsplit(x = i, split = '&')[[1]],
+                plot.type = 'combined.plot',
+                ari.method = 'hclust.complete.euclidian',
+                plot.output = FALSE,
+                save.se.obj = TRUE,
+                verbose = verbose)
+        }
+    }
+
+    ## Gene variable correlation ####
+    ### compute gene variable correlations ####
+    if('GeneVarCorr' %in% metrics.table$Metrics){
+        index <- metrics.table$Metrics == 'GeneVarCorr'
+        gene.var.corr.vars <- metrics.table$Variables[index]
+        for(i in gene.var.corr.vars){
             se.obj <- computeGenesVariableCorrelation(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = i,
-                method = 'spearman',
+                method = corr.method,
                 a = 0.05,
                 rho = 0,
                 plot.top.genes = FALSE,
@@ -438,103 +530,172 @@ assessVariation <- function(
                 apply.log = apply.log,
                 pseudo.count = pseudo.count,
                 apply.round = TRUE,
-                assess.se.obj = assess.se.obj,
-                remove.na = remove.na,
-                save.se.obj = save.se.obj)
+                assess.se.obj = FALSE,
+                remove.na = 'none',
+                save.se.obj = TRUE)
+        }
+    }
+    ### plot gene variable correlations ####
+    if('GeneVarCorr' %in% metrics.table$Metrics){
+        index <- metrics.table$Metrics == 'GeneVarCorr'
+        gene.var.corr.vars <- metrics.table$Variables[index]
+        for(i in gene.var.corr.vars){
             se.obj <- plotGenesVariableCorrelation(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = i,
                 correlation.method = 'gene.spearman.corr',
                 plot.output = FALSE,
-                save.se.obj = save.se.obj,
+                save.se.obj = TRUE,
                 verbose = verbose)
-        }
+            }
     }
 
-    # Gene variable ANOVA ####
-    ## compute and plot gene variable ANOVA ####
-    if('GeneVarAov' %in% metrics.to.compute){
-        var.metric <- all.metrics[metrics.to.compute == 'GeneVarAov']
-        vars <- unique(unlist(lapply(
-            var.metric,
-            function(x) {
-                vars <- strsplit(x = x, split = '\\|\\|')[[1]][1]
-                vars <- unlist(strsplit(x = vars, '_')[[1]][1])})))
-        for(i in vars){
+    ## Gene variable anova ####
+    ### compute gene variable anova ####
+    if('GeneVarAov' %in% metrics.table$Metrics){
+        index <- metrics.table$Metrics == 'GeneVarAov'
+        gene.var.anova.vars <- metrics.table$Variables[index]
+        for(i in gene.var.anova.vars){
             se.obj <- computeGenesVariableAnova(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = i,
-                method = 'aov',
+                method = anove.method,
                 plot.output = FALSE,
                 plot.top.genes = FALSE,
                 nb.top.genes = NULL,
                 apply.log = apply.log,
                 pseudo.count = pseudo.count,
                 apply.round = TRUE,
-                assess.se.obj = assess.se.obj,
-                remove.na = remove.na,
-                save.se.obj = save.se.obj)
+                assess.se.obj = FALSE,
+                remove.na = 'none',
+                save.se.obj = TRUE)
+        }
+    }
+    ### plot gene variable anova ####
+    if('GeneVarAov' %in% metrics.table$Metrics){
+        index <- metrics.table$Metrics == 'GeneVarAov'
+        gene.var.corr.vars <- metrics.table$Variables[index]
+        for(i in gene.var.corr.vars){
             se.obj <- plotGenesVariableAnova(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = i,
                 anova.method = "genes.aov.anova",
                 plot.output = FALSE,
-                save.se.obj = save.se.obj,
-                verbose = verbose)
+                save.se.obj = TRUE,
+                verbose = TRUE)
         }
     }
 
-    # DGE ####
-    ## compute and plot gene variable ANOVA ####
-    if('DGE' %in% metrics.to.compute){
-        var.metric <- all.metrics[metrics.to.compute == 'DGE']
-        vars <- unique(unlist(lapply(
-            var.metric,
-            function(x) strsplit(x = x, split = '\\|\\|')[[1]][1])))
-        for(i in vars){
+    ## DGE ####
+    ### compute dge ####
+    if('DGE' %in% metrics.table$Metrics){
+        index <- metrics.table$Metrics == 'DGE'
+        dge.vars <- metrics.table$Variables[index]
+        for(i in dge.vars){
             se.obj <- computeDGE(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = i,
                 apply.log = apply.log,
                 pseudo.count = pseudo.count,
-                assess.se.obj = assess.se.obj,
-                remove.na = remove.na,
-                save.se.obj = save.se.obj,
+                assess.se.obj = FALSE,
+                remove.na = 'none',
+                save.se.obj = TRUE,
                 verbose = verbose)
+        }
+    }
+    ### plot p value hist ####
+    if('DGE' %in% metrics.table$Metrics){
+        index <- metrics.table$Metrics == 'DGE'
+        dge.vars <- metrics.table$Variables[index]
+        for(i in dge.vars){
             se.obj <- plotDGE(
                 se.obj = se.obj,
                 assay.names = assay.names,
                 variable = i,
-                plot.ncol = plot.ncol,
+                plot.ncol = 1,
                 plot.output = FALSE,
-                save.se.obj = save.se.obj,
+                save.se.obj = TRUE,
                 verbose = verbose)
         }
     }
 
     # save all plots ####
-    # all.vars <- unique(unlist(lapply(
-    #     all.metrics,
-    #     function(x){
-    #         vars <- strsplit(x , '\\|\\|')[[1]][1]
-    #         strsplit(vars , '_')[[1]][1]})))
-    #
-    # pdf_file <- "output.pdf"
-    # pdf(pdf_file)
-    # plot.new()
-    # text(.5, .5, "Hello, this is some text in the PDF.", font = 2, cex = 1.5)
-    # if("General||boxPlot||RLE" %in% all.metrics){
-    #     print(se.obj@metadata$plot$RLE$GeneralRLE)
-    # }
-    # for(i in all.vars){
-    #     if(colData(se.obj)[[i]] %in% c('numeric', 'integer')){
-    #         if(i %in% se.obj@metadata$plot$PCA$fastPCA)
-    #     }
-    # }
+    mytheme <- gridExtra::ttheme_default(
+        core = list(fg_params=list(cex = 1)),
+        colhead = list(fg_params=list(cex = 1)),
+        rowhead = list(fg_params=list(cex = 1)))
+    pdf('RUVIIIPRPS_R_Package.pdf')
+    plot.new()
+    text(.5, .5, "Assess variation", font = 2, cex = 1.5)
+    grid.table(metrics.table, theme = mytheme)
+    dev.off()
+
+
+    if('General' %in% metrics.table$Variables  & 'RLEplot' %in% metrics.table$PlotTypes){
+        print(se.obj@metadata$plot$RLE$GeneralRLE)
+    }
+    for(i in continuous.vars){
+        plot.new()
+        text(.5, .5, paste0(i , " Assess variation"), font = 2, cex = 1.5)
+
+        metrics.table.var <- metrics.table[metrics.table$Variables == i, ]
+        for(j in 1:nrow(metrics.table.var)){
+            if(metrics.table.var$Factors[j] == 'rleMedians'){
+                print(se.obj@metadata$plot$RLE[[i]]$RleVarPlot$RleMedians)
+            }
+            if(metrics.table.var$Factors[j] == 'rleIqr'){
+                print(se.obj@metadata$plot$RLE[[i]]$RleVarPlot$RleIqr)
+            }
+            if(metrics.table.var$Factors[j] == 'pcs' & metrics.table.var$Metrics[j] == 'PCA'){
+                print(se.obj@metadata$plot$PCA$fastPCA[[i]]$ScatVarPCA)
+            }
+            if(metrics.table.var$Factors[j] == 'pcs' & metrics.table.var$Metrics[j] == 'PcaReg'){
+                print(se.obj@metadata$plot$PcaReg[[i]])
+            }
+            if(metrics.table.var$Factors[j] == 'geneCorr'){
+                print(se.obj@metadata$plot$GeneVarCorr$gene.spearman.corr[[i]])
+            }
+        }
+    }
+    for(i in categorical.vars){
+        plot.new()
+        text(.5, .5, paste0(i , " Assess variation"), font = 2, cex = 1.5)
+        metrics.table.var <- metrics.table[metrics.table$Variables == i, ]
+            if('coloredRLEplot' %in% metrics.table.var$PlotTypes){
+                print(se.obj@metadata$plot$RLE[[i]]$ColoredRLE)
+            }
+            if('rleMedians' %in% metrics.table.var$Factors){
+                print(se.obj@metadata$plot$RLE[[i]]$RleVarPlot$RleMedians)
+            }
+            if('rleIqr' %in% metrics.table.var$Factors){
+                print(se.obj@metadata$plot$RLE[[i]]$RleVarPlot$RleIqr)
+            }
+            if('pcsboxPlot' %in% paste0(metrics.table.var$Factors, metrics.table.var$PlotTypes) ){
+                print(se.obj@metadata$plot$PCA$fastPCA[[i]]$BoxPCA)
+            }
+            if('pcsscatterPlot' %in% paste0(metrics.table.var$Factors, metrics.table.var$PlotTypes)){
+                print(se.obj@metadata$plot$PCA$fastPCA[[i]]$ScatPCA)
+            }
+            if( 'PcaVecCorr' %in% metrics.table.var$Metrics ){
+                print(se.obj@metadata$plot$VecCorr[[i]])
+            }
+            if('ARI' %in% metrics.table.var$Metrics ){
+                print(se.obj@metadata$plot$ARI$hclust.complete.euclidian$ari.single.plot[[i]])
+            }
+            if('silhouetteCoeff' %in% metrics.table.var$Factors ){
+                print(se.obj@metadata$plot$Silhouette$sil.euclidian[[i]])
+            }
+            if('geneAnov' %in% metrics.table.var$Factors ){
+                print(se.obj@metadata$plot$GeneVarAnova$genes.aov.anova[[i]])
+            }
+            if('pvaluse' %in% metrics.table.var$Factors ){
+                print(se.obj@metadata$plot$DEG[[i]])
+            }
+    }
 
     dev.off()
     printColoredMessage(message = '------------The normAssessment function finished.',
