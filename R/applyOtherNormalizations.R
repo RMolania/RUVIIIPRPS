@@ -241,13 +241,13 @@ applyOtherNormalizations <- function(
         return(se.obj)
 
     } else{
-        printColoredMessage(message = '------------The applyOtherNormalizations function finished.',
-                            color = 'white',
-                            verbose = verbose)
         printColoredMessage( message = paste0('The normalized data ', new.assay.name,' is outputed as data marix.'),
             color = 'blue',
             verbose = verbose
         )
+        printColoredMessage(message = '------------The applyOtherNormalizations function finished.',
+                            color = 'white',
+                            verbose = verbose)
         return(norm.data)
     }
 }
