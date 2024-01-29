@@ -247,7 +247,7 @@ plotPCA <- function(
                         message = paste0('PCA plots of for ', x, ' data.'),
                         color = 'blue',
                         verbose = verbose)
-                    var <- NULL
+                    var <- PC <- NULL
                     pca.data <- as.data.frame(all.pca.data[[x]]$pca.data[ , seq_len(nb.pcs)])
                     colnames(pca.data) <- paste0('PC', seq_len(nb.pcs), ' (',all.pca.data[[x]]$pc.var[seq_len(nb.pcs)], '%)')
                     pca.data$var <- colData(se.obj)[, variable]
@@ -297,7 +297,7 @@ plotPCA <- function(
                     message = paste0('PCA plots of for ', x, ' data.'),
                     color = 'blue',
                     verbose = verbose)
-                var <- NULL
+                var <- PC <- NULL
                 pca.data <- as.data.frame(all.pca.data[[x]]$pca.data[ , seq_len(nb.pcs)])
                 colnames(pca.data) <- paste0('PC', seq_len(nb.pcs), ' (',all.pca.data[[x]]$pc.var[seq_len(nb.pcs)], '%)')
                 pca.data$var <- colData(se.obj)[, variable]
