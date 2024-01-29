@@ -162,14 +162,14 @@ computeRLE <- function(
                     rle.data = rle.data,
                     rle.med = rle.med,
                     rle.iqr = rle.iqr)
-            } else if (outputs.to.return == 'all.data'){
+            } else if (outputs.to.return == 'rle.data'){
                 printColoredMessage(
                     message = '-Obtain the RLE data.',
                     color = 'blue',
                     verbose = verbose)
                 rle.data <- all.assays[[x]] - rowMedians(all.assays[[x]])
                 rle <- list(rle.data = rle.data)
-            } else if (outputs.to.return == 'all.med'){
+            } else if (outputs.to.return == 'rle.med'){
                 printColoredMessage(
                     message = '-Obtain the RLE data.',
                     color = 'blue',
@@ -181,7 +181,7 @@ computeRLE <- function(
                     verbose = verbose)
                 rle.med <- colMedians(rle.data)
                 rle <- list( rle.data = rle.data, rle.med = rle.med)
-            } else if (outputs.to.return == 'all.iqr'){
+            } else if (outputs.to.return == 'rle.iqr'){
                 printColoredMessage(
                     message = '-Obtain the RLE data.',
                     color = 'blue',
@@ -193,7 +193,7 @@ computeRLE <- function(
                     verbose = verbose)
                 rle.iqr <- colIQRs(rle.data)
                 rle <- list(rle.data = rle.data, rle.iqr = rle.iqr)
-            } else if (outputs.to.return == 'all.med.iqr'){
+            } else if (outputs.to.return == 'rle.med.iqr'){
                 printColoredMessage(
                     message = '-Obtain the RLE data.',
                     color = 'blue',
