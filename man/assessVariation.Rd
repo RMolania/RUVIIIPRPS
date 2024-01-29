@@ -18,7 +18,7 @@ assessVariation(
   compute.nb.pcs = 10,
   center.pca = TRUE,
   scale.pca = FALSE,
-  pca.bsparam = bsparam(),
+  svd.bsparam = bsparam(),
   nb.pcs.toplot.pca = 3,
   apply.log = TRUE,
   pseudo.count = 1,
@@ -70,7 +70,7 @@ subtracting the column means of the assay from their corresponding columns. The 
 is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
 mean square otherwise. The default is FALSE.}
 
-\item{pca.bsparam}{A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
+\item{svd.bsparam}{A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
 We refer to the 'runSVD' function from the BiocSingular R package.}
 
 \item{nb.pcs.toplot.pca}{Numeric. Indicates the number of PCs to plotted against each other.}

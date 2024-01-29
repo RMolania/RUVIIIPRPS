@@ -38,7 +38,7 @@
 #' @param scale.pca Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
 #' is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
 #' mean square otherwise. The default is FALSE.
-#' @param pca.bsparam A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
+#' @param svd.bsparam A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
 #' We refer to the 'runSVD' function from the BiocSingular R package.
 #' @param nb.pcs.toplot.pca Numeric. Indicates the number of PCs to plotted against each other.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
@@ -93,7 +93,7 @@ assessVariation <- function(
         compute.nb.pcs = 10,
         center.pca = TRUE,
         scale.pca = FALSE,
-        pca.bsparam = bsparam(),
+        svd.bsparam = bsparam(),
         nb.pcs.toplot.pca = 3,
         apply.log = TRUE,
         pseudo.count = 1,
@@ -124,9 +124,9 @@ assessVariation <- function(
             stop('The assay names cannot be found in the SummarizedExperiment object.')
     }
     if (fast.pca & is.null(compute.nb.pcs)) {
-        stop('To perform fast PCA, the number of PCs (nb.pcs) must specified.')
+        stop('To perform fast PCA, the number of PCs (compute.nb.pcs) must specified.')
     } else if (fast.pca & compute.nb.pcs == 0) {
-        stop('To perform fast PCA, the number of PCs (nb.pcs) must specified.')
+        stop('To perform fast PCA, the number of PCs (compute.nb.pcs) must specified.')
     }
 
     # assays ####
@@ -290,7 +290,7 @@ assessVariation <- function(
             scale = scale.pca,
             apply.log = apply.log,
             pseudo.count = pseudo.count,
-            bsparam = pca.bsparam,
+            svd.bsparam = svd.bsparam,
             assess.se.obj = FALSE,
             remove.na = 'none',
             save.se.obj = TRUE,
@@ -329,7 +329,7 @@ assessVariation <- function(
                 assay.names = assay.names,
                 variable = i,
                 fast.pca = fast.pca,
-                nb.pcs = 3,
+                nb.pcs = nb.pcs.toplot.pca,
                 plot.type = "boxplot",
                 points.color = NULL,
                 points.size = 1,
@@ -354,7 +354,7 @@ assessVariation <- function(
                 assay.names = assay.names,
                 variable = i,
                 fast.pca = fast.pca,
-                nb.pcs = nb.pcs,
+                nb.pcs = compute.nb.pcs,
                 save.se.obj = TRUE,
                 verbose = verbose)
         }
@@ -369,7 +369,7 @@ assessVariation <- function(
                 assay.names = assay.names,
                 variable = i,
                 fast.pca = fast.pca,
-                nb.pcs = nb.pcs,
+                nb.pcs = compute.nb.pcs,
                 plot.output = FALSE,
                 save.se.obj = TRUE,
                 verbose = verbose)
@@ -387,7 +387,7 @@ assessVariation <- function(
                 assay.names = assay.names,
                 variable = i,
                 fast.pca = fast.pca,
-                nb.pcs = nb.pcs,
+                nb.pcs = compute.nb.pcs,
                 save.se.obj = TRUE,
                 verbose = verbose)
         }
@@ -402,7 +402,7 @@ assessVariation <- function(
                 assay.names = assay.names,
                 variable = i,
                 fast.pca = fast.pca,
-                nb.pcs = nb.pcs,
+                nb.pcs = compute.nb.pcs,
                 plot.output = FALSE,
                 save.se.obj = TRUE,
                 verbose = verbose)
