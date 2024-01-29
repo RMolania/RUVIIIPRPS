@@ -2,7 +2,7 @@
 % Please edit documentation in R/supervisedPRPS.R
 \name{supervisedPRPS}
 \alias{supervisedPRPS}
-\title{is used to create pseudo-replicates of pseudo samples (PRPS).}
+\title{is used to create pseudo-replicates of pseudo samples (PRPS) in supervised.}
 \usage{
 supervisedPRPS(
   se.obj,
@@ -33,30 +33,33 @@ supervisedPRPS(
 
 \item{assay.name}{String for the selection of the name of the assay of the SummarizedExperiment class object.}
 
-\item{bio.variables}{String of the label of (a) categorical or continuous variable(s) used to define homogeneous biological groups of samples
-such as samples types from colData(se).}
+\item{bio.variables}{String of the label of (a) categorical or continuous variable(s) used to define homogeneous
+biological groups of samples such as samples types from colData(se).}
 
 \item{uv.variables}{String of the label of a categorical variable
 such as samples types or batch from colData(se) that will be used to define PRPS.}
 
-\item{apply.other.uv.variables}{String of the label of (a) categorical or continuous variable(s) used to define homogeneous groups of samples
-such as library size, plates from colData(se). By default it is set to 'NULL' meaning the samples will be assigned to homogeneous biological groups
-of samples using the 'bio.variables'.}
+\item{apply.other.uv.variables}{String of the label of (a) categorical or continuous variable(s) used to define
+homogeneous groups of samples such as library size, plates from colData(se). By default it is set to 'NULL' meaning the
+samples will be assigned to homogeneous biological groups of samples using the 'bio.variables'.}
 
 \item{min.sample.for.prps}{Numeric. Indicates the minimum number of samples to create one pseudo-sample,
 by default it is set to 3.
-to create a PRPS set for each continuous variable. The minimum should be '2*min.sample.for.prps'. By default it is set to 6.}
+to create a PRPS set for each continuous variable. The minimum should be '2*min.sample.for.prps'. By default it is set
+to 6.}
 
-\item{bio.clustering.method}{String of the clustering method to assign each sample to an homogeneous biological clusters/group using the function 'kmeans',
-'cut' from base or the function 'quantile'. By default it is to 'kmeans'.}
+\item{bio.clustering.method}{String of the clustering method to assign each sample to an homogeneous biological
+clusters/group using the function 'kmeans', cut' from base or the function 'quantile'. By default it is to 'kmeans'.}
 
-\item{nb.bio.clusters}{Numeric. A value to specify the number of homogeneous biological clusters/groups of samples. By default it is set to 3.}
+\item{nb.bio.clusters}{Numeric. A value to specify the number of homogeneous biological clusters/groups of samples.
+By default it is set to 3.}
 
-\item{other.uv.clustering.method}{String of the clustering method to assign each sample to an homogeneous clusters/group of samples based on the 'other.uv.variables'
-using the function 'kmeans','cut' from base or the function 'quantile'.By default it is to 'kmeans'.}
+\item{other.uv.clustering.method}{String of the clustering method to assign each sample to an homogeneous clusters/group
+of samples based on the 'other.uv.variables' using the function 'kmeans','cut' from base or the function 'quantile'.
+By default it is to 'kmeans'.}
 
-\item{nb.other.uv.clusters}{Numeric. A value to specify the number of groups for continuous sources of biological variation. The default is 2.
-This means each continuous sources will be divided into 2 groups using the 'clustering.method'.}
+\item{nb.other.uv.clusters}{Numeric. A value to specify the number of groups for continuous sources of biological
+variation. The default is 2. This means each continuous sources will be divided into 2 groups using the 'clustering.method'.}
 
 \item{check.prps.connectedness}{TTTTT}
 
@@ -70,16 +73,17 @@ By default it is set to TRUE.}
 
 \item{assess.variables}{TTTTTT}
 
-\item{cat.cor.coef}{Vector of two numerical values. Indicates the cut-off of the correlation coefficient between each pair of
-categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
-The correlation is computed by the function ContCoef from the DescTools package. If the correlation of a pair of variable is higher than
-the cut-off, then only the variable that has the highest number of factor will be kept and the other one will be excluded from the
-remaining analysis. By default they are both set to 0.7.}
+\item{cat.cor.coef}{Vector of two numerical values. Indicates the cut-off of the correlation coefficient between each
+pair of categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each
+pair of 'bio.variables'. The correlation is computed by the function ContCoef from the DescTools package. If the correlation
+of a pair of variable is higher than the cut-off, then only the variable that has the highest number of factor will be
+kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.7.}
 
-\item{cont.cor.coef}{Vector of two numerical values. Indicates the cut-off of the Spearman correlation coefficient between each pair of
-continuous variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
-If the correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest variance will
-be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.7.}
+\item{cont.cor.coef}{Vector of two numerical values. Indicates the cut-off of the Spearman correlation coefficient between
+each pair of continuous variables. The first one is between each pair of 'uv.variables' and the second one is between
+each pair of 'bio.variables'. If the correlation of a pair of variable is higher than the cut-off, then only the variable
+that has the highest variance will be kept and the other one will be excluded from the remaining analysis. By default
+they are both set to 0.7.}
 
 \item{remove.na}{String. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
@@ -98,17 +102,17 @@ messages displayed during the execution of the functions, by default it is set t
 A SummarizedExperiment object or a list that contains all the PRPS sets.
 }
 \description{
-This function creates different PRPS sets when all sources of unwanted and biological variation are known.
-We will create distinct group of pseudo-replicates for each source of unwanted variation defined in the 'uv.variables'
-argument. For example to correct for batch effect if defined in the 'uv.variables' argument, several group of pseudo-samples
-will be created by averaging the samples of the same biological subtype defined in 'bio.variables' in each batch. Then those
-pseudo-samples will be defined as pseudo-replicates which constitutes a PRPS set.
-For example to correct for library size if defined in the 'uv.variables' argument, several group of pseudo-samples
-will be created by averaging the top and bottom-ranked samples by library size of the same biological subtype in each batch.
-Then those pseudo-samples will be defined as pseudo-replicates which constitutes a PRPS set.
-Similarly to correct for purity if defined in the 'uv.variables' argument, several group of pseudo-samples
-will be created by averaging the top and bottom-ranked samples by purity of the same biological subtype in each batch.
-Then those pseudo-samples will be defined as pseudo-replicates which constitutes a PRPS set.
+This function creates different PRPS sets when all sources of unwanted and biological variation are known. We will create
+distinct group of pseudo-replicates for each source of unwanted variation defined in the 'uv.variables' argument. For
+example to correct for batch effect if defined in the 'uv.variables' argument, several group of pseudo-samples will be
+created by averaging the samples of the same biological subtype defined in 'bio.variables' in each batch. Then those
+pseudo-samples will be defined as pseudo-replicates which constitutes a PRPS set. For example to correct for library
+size if defined in the 'uv.variables' argument, several group of pseudo-samples will be created by averaging the top
+and bottom-ranked samples by library size of the same biological subtype in each batch. Then those pseudo-samples will
+be defined as pseudo-replicates which constitutes a PRPS set. Similarly to correct for purity if defined in the
+'uv.variables' argument, several group of pseudo-samples will be created by averaging the top and bottom-ranked samples
+by purity of the same biological subtype in each batch. Then those pseudo-samples will be defined as pseudo-replicates
+which constitutes a PRPS set.
 }
 \author{
 Ramyar Molania
