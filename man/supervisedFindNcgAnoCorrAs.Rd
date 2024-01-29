@@ -11,7 +11,7 @@ supervisedFindNcgAnoCorrAs(
   uv.variables,
   nb.ncg = 10,
   ncg.selection.method = "AbsNoneOverlap",
-  grid.nb = 0.05,
+  grid.nb = 1,
   top.rank.bio.genes = 50,
   top.rank.uv.genes = 50,
   min.sample.for.aov = 3,
@@ -146,8 +146,7 @@ to output the result. The default is TRUE.}
 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
 samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to both'.}
 
-\item{verbose}{Logical. Indicates whether to display or not a detailed level of output or messages during the execution
-of the function. The default setting is TRUE.}
+\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
 Either the SummarizedExperiment object containing the a set of negative control genes or a logical vector of

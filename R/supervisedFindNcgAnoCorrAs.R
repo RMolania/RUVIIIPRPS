@@ -85,8 +85,7 @@
 #' be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.7.
 #' @param save.se.obj Logical. Indicates whether to save the result of the function in the metadata of the SummarizedExperiment object or
 #' to output the result. The default is TRUE.
-#' @param verbose Logical. Indicates whether to display or not a detailed level of output or messages during the execution
-#' of the function. The default setting is TRUE.
+#' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
 #' @return Either the SummarizedExperiment object containing the a set of negative control genes or a logical vector of
 #' the selected negative control genes
@@ -102,7 +101,7 @@ supervisedFindNcgAnoCorrAs <- function(
         uv.variables,
         nb.ncg = 10,
         ncg.selection.method = 'AbsNoneOverlap',
-        grid.nb = 0.05,
+        grid.nb = 1,
         top.rank.bio.genes = 50,
         top.rank.uv.genes = 50,
         min.sample.for.aov = 3,
@@ -662,55 +661,76 @@ supervisedFindNcgAnoCorrAs <- function(
                 }
             })))
         top.rank.uv.genes <- round(c(top.rank.uv.genes/100) * nrow(se.obj), digits = 0)
-        top.uv.genes <- c()
-        ncg.selected <- c()
-        lo <- nrow(se.obj) - top.rank.uv.genes
-        grid.nb <- round(c(grid.nb/100) * nrow(se.obj), digits = 0)
-        pro.bar <- progress_estimated(round(lo/grid.nb, digits = 0) + 2)
+        top.uv.genes <- unique(unlist(lapply(
+            all.uv.tests,
+            function(x){
+                if(!is.null(x)){
+                    temp.data <- get(x)
+                    ranks.data <- unique(unlist(lapply(
+                        names(temp.data),
+                        function(y){
+                            index <- temp.data[[y]]$ranked.genes < top.rank.uv.genes
+                            row.names(temp.data[[y]])[index] })))
+                }
+            })))
+        ncg.selected <- top.uv.genes[!top.uv.genes %in% top.bio.genes]
         nb.ncg <- round(c(nb.ncg/100) * nrow(se.obj), digits = 0)
-        while(length(ncg.selected) < nb.ncg){
-            pro.bar$pause(0.1)$tick()$print()
-            all.uv.tests <- c('anova.genes.uv', 'corr.genes.uv')
-            top.uv.genes <- unique(unlist(lapply(
-                all.uv.tests,
-                function(x){
-                    if(!is.null(x)){
-                        temp.data <- get(x)
-                        ranks.data <- unique(unlist(lapply(
-                            names(temp.data),
-                            function(y){
-                                index <- temp.data[[y]]$ranked.genes < top.rank.uv.genes
-                                row.names(temp.data[[y]])[index] })))
-                    }
-                })))
-            top.rank.uv.genes <- top.rank.uv.genes + grid.nb
-            if(top.rank.uv.genes > nrow(se.obj)){
-                message(' ')
-                printColoredMessage(
-                    message = paste0(length(ncg.selected), ' genes are found based on the current parameters.'),
-                                    color = 'red', verbose = verbose)
-                stop('Any NCG cannot be found. Please lower either the values of top.rank.bio.genes or nb.ncg.')
+        if(length(ncg.selected) > nb.ncg){
+            lo <- top.rank.uv.genes
+            grid.nb <- round(c(grid.nb/100) * nrow(se.obj), digits = 0)
+            pro.bar <- progress_estimated(round(lo/grid.nb, digits = 0) + 2)
+            while(length(ncg.selected) > nb.ncg | top.rank.uv.genes == 0){
+                pro.bar$pause(0.1)$tick()$print()
+                all.uv.tests <- c('anova.genes.uv', 'corr.genes.uv')
+                top.uv.genes <- unique(unlist(lapply(
+                    all.uv.tests,
+                    function(x){
+                        if(!is.null(x)){
+                            temp.data <- get(x)
+                            ranks.data <- unique(unlist(lapply(
+                                names(temp.data),
+                                function(y){
+                                    index <- temp.data[[y]]$ranked.genes < top.rank.uv.genes
+                                    row.names(temp.data[[y]])[index] })))
+                        }
+                    })))
+                top.rank.uv.genes <- top.rank.uv.genes - grid.nb
+                if(top.rank.uv.genes > nrow(se.obj)){
+                    message(' ')
+                    printColoredMessage(
+                        message = paste0(length(ncg.selected), ' genes are found based on the current parameters.'),
+                        color = 'red', verbose = verbose)
+                    stop('Any NCG cannot be found. Please lower either the values of top.rank.bio.genes or nb.ncg.')
+                }
+                ncg.selected <- top.uv.genes[!top.uv.genes %in% top.bio.genes]
+                ncg.selected
             }
-            ncg.selected <- top.uv.genes[!top.uv.genes %in% top.bio.genes]
-            ncg.selected
-        }
-        ncg.selected <- row.names(se.obj) %in% ncg.selected
-        top.rank.uv.genes <- round(top.rank.uv.genes/nrow(se.obj) * 100, digits = 0)
-        if(top.rank.uv.genes >= 100){
-            top.rank.uv.genes = 100
-        }
-        message(' ')
-        printColoredMessage(
-            message = paste0(
-                'The non-overlap set of genes between top ',
-                top.rank.bio.genes ,
-                '% of highly affected genes by the bioloigcal variation and top ',
-                top.rank.uv.genes,
-                '% of highly affected genes by the unwanted variation.'),
-            color = 'blue',
-            verbose = verbose)
+            ncg.selected <- row.names(se.obj) %in% ncg.selected
+            top.rank.uv.genes <- round(top.rank.uv.genes/nrow(se.obj) * 100, digits = 0)
+            if(top.rank.uv.genes >= 100){
+                top.rank.uv.genes = 100
+            }
+            message(' ')
+            printColoredMessage(
+                message = paste0(
+                    'The non-overlap set of genes between top ',
+                    top.rank.bio.genes ,
+                    '% of highly affected genes by the bioloigcal variation and top ',
+                    top.rank.uv.genes,
+                    '% of highly affected genes by the unwanted variation.'),
+                color = 'blue',
+                verbose = verbose)
+        } else {
+            message(' ')
+            printColoredMessage(
+                message = paste0(
+                    length(ncg.selected),
+                    ' genes are found based on the current parameters.'),
+                color = 'blue',
+                verbose = verbose)
+            }
         ## AbsNoneOverlap of ranks ####
-    } else if (ncg.selection.method == 'AbsNoneOverlap'){
+        } else if (ncg.selection.method == 'AbsNoneOverlap'){
         printColoredMessage(
             message = 'A set of NCG is selected based on the AbsNoneOverlab approach.',
             color = 'blue',
@@ -825,12 +845,9 @@ supervisedFindNcgAnoCorrAs <- function(
             geom_point(aes(color = Groups), size = 2) +
             xlab('PCs') +
             ylab (expression("Correlations")) +
-            scale_x_continuous(
-                breaks = (1:nb.pcs),
-                labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
-            scale_y_continuous(
-                breaks = scales::pretty_breaks(n = 5),
-                limits = c(0,1)) +
+            ggtitle('Assessment of the NCGs') +
+            scale_x_continuous(breaks = (1:nb.pcs), labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
+            scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0,1)) +
             theme(
                 panel.background = element_blank(),
                 axis.line = element_line(colour = 'black', size = 1),
