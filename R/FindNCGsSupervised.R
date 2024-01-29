@@ -112,7 +112,7 @@
 #' @importFrom S4Vectors DataFrame
 #' @export
 
-supervisedFindNCG <- function(
+FindNCGsSupervised <- function(
     se.obj,
     assay.name,
     approach = 'TWAnova',
