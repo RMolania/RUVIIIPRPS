@@ -1,23 +1,27 @@
-#' is used to create pseudo-replicates of pseudo-samples (PRPS) for a categorical variable as source of unwanted variation.
+#' is used to create PRPS for a categorical source of unwanted variation.
+
+#' @author Ramyar Molania
 
 #' @description
-#' Distinct group of PRPS are created for each source of unwanted variation defined in the 'main.uv.variable' argument within
-#' an homogeneous group of samples. The grouping of samples are created based on each biological subtype defined using the 'bio.variables'
-#' using the 'bio.clustering.method' selected and it might be also be combined with 'other.uv.variables' if requested.
-#' By default 'other.uv.variables' is set up to NULL, meaning that the homogeneous grouping of samples created is based solely on the biological subtype(s)
-#' defined in 'bio.variables'. If 'other.uv.variables' is not set to NULL, the creation of homogeneous groups of samples is based on the biological
-#' subtype defined in 'bio.variables' combined with 'other.uv.variables' using the 'other.uv.clustering.method' selected.
-#' A pseudo-sample will be created for each homogeneous group of samples by averaging all the samples within that group of samples.
-#' For example to correct for batch effect arising related to a batch variable defined in the 'main.uv.variable' argument, several group
-#' of pseudo-samples will be created, one for each homogeneous group of samples and for each batch.
-#' All those pseudo-samples belonging to the same group across batches will be defined as pseudo-replicates which constitutes a PRPS set.
+#' Distinct group of PRPS are created for each source of unwanted variation defined in the 'main.uv.variable' argument
+#' within an homogeneous group of samples. The grouping of samples are created based on each biological subtype defined
+#' using the 'bio.variables' using the 'bio.clustering.method' selected and it might be also be combined with
+#' 'other.uv.variables' if requested. By default 'other.uv.variables' is set up to NULL, meaning that the homogeneous
+#' grouping of samples created is based solely on the biological subtype(s) defined in 'bio.variables'. If
+#' 'other.uv.variables' is not set to NULL, the creation of homogeneous groups of samples is based on the biological subtype
+#' defined in 'bio.variables' combined with 'other.uv.variables' using the 'other.uv.clustering.method' selected. A
+#' pseudo-sample will be created for each homogeneous group of samples by averaging all the samples within that group of
+#' samples.For example to correct for batch effect arising related to a batch variable defined in the 'main.uv.variable'
+#' argument, several group of pseudo-samples will be created, one for each homogeneous group of samples and for each batch.
+#' All those pseudo-samples belonging to the same group across batches will be defined as pseudo-replicates which constitutes
+#' a PRPS set.
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.name Symbol. Indicates a name of an assay in the SummarizedExperiment object. The selected assay should
 #' be the one that will be used for RUV-III-PRPS normalization.
-#' @param bio.variables Symbol. A symbol or a list of symbols indicating the column names that contain biological variables.
-#' All categorical and continuous variables can be provided. If more than one symbols are specified, all possible
-#' homogeneous biological groups will be created by the createHomogeneousBioGroups function.
+#' @param bio.variables Symbol. A symbol or a list of symbols indicating the column names that contain biological
+#' variables. All categorical and continuous variables can be provided. If more than one symbols are specified, all
+#' possible homogeneous biological groups will be created by the createHomogeneousBioGroups function.
 #' @param main.uv.variable Symbol. Indicates a name of the column that contains a source of categorical variable of
 #' unwanted variation that PRPS should be created for.
 #' @param other.uv.variables String of the label of (a) categorical or continuous variable(s) used to define homogeneous
@@ -25,23 +29,27 @@
 #' will be assigned to homogeneous biological groups of samples using the 'bio.variables'.
 #' @param min.sample.for.prps Numeric. Indicates the minimum number of samples to be averaged to create one pseudo-sample,
 #'  by default is 3.
-#' to create a PRPS set for each continuous variable. The minimum should be '2*min.sample.for.prps'. By default it is set to 6.
-#' @param bio.clustering.method String of the clustering method to assign each sample to an homogeneous biological clusters/group using the function 'kmeans',
-#' 'cut' from base or the function 'quantile'. By default it is to 'kmeans'.
-#' @param other.uv.clustering.method String of the clustering method to assign each sample to an homogeneous clusters/group of samples based on the 'other.uv.variables'
-#' using the function 'kmeans','cut' from base or the function 'quantile'.By default it is to 'kmeans'.
-#' @param nb.bio.clusters Numeric. A value to specify the number of homogeneous biological clusters/groups of samples. By default it is set to 3.
-#' @param nb.other.uv.clusters Numeric. A value to specify the number of groups for continuous sources of biological variation. The default is 2.
-#' This means each continuous sources will be divided into 2 groups using the 'clustering.method'.
-#' @param cat.cor.coef Vector of two numerical values. Indicates the cut-off of the correlation coefficient between each pair of
-#' categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
-#' The correlation is computed by the function ContCoef from the DescTools package. If the correlation of a pair of variable is higher than
-#' the cut-off, then only the variable that has the highest number of factor will be kept and the other one will be excluded from the
-#' remaining analysis. By default they are both set to 0.7.
-#' @param cont.cor.coef Vector of two numerical values. Indicates the cut-off of the Spearman correlation coefficient between each pair of
-#' continuous variables. The first one is between each pair of 'uv.variables' and the second one is between each pair of 'bio.variables'.
-#' If the correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest variance will
-#' be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.7.
+#' to create a PRPS set for each continuous variable. The minimum should be '2*min.sample.for.prps'. By default it is
+#' set to 6.
+#' @param bio.clustering.method String of the clustering method to assign each sample to an homogeneous biological
+#' clusters/group using the function 'kmeans', cut' from base or the function 'quantile'. By default it is to 'kmeans'.
+#' @param other.uv.clustering.method String of the clustering method to assign each sample to an homogeneous clusters/group
+#' of samples based on the 'other.uv.variables' using the function 'kmeans','cut' from base or the function 'quantile'.
+#' By default it is to 'kmeans'.
+#' @param nb.bio.clusters Numeric. A value to specify the number of homogeneous biological clusters/groups of samples.
+#' By default it is set to 3.
+#' @param nb.other.uv.clusters Numeric. A value to specify the number of groups for continuous sources of biological
+#' variation. The default is 2. This means each continuous sources will be divided into 2 groups using the 'clustering.method'.
+#' @param cat.cor.coef Vector of two numerical values. Indicates the cut-off of the correlation coefficient between each
+#' pair of categorical variables. The first one is between each pair of 'uv.variables' and the second one is between
+#' each pair of 'bio.variables'. The correlation is computed by the function ContCoef from the DescTools package. If the
+#' correlation of a pair of variable is higher than the cut-off, then only the variable that has the highest number of
+#' factor will be kept and the other one will be excluded from the remaining analysis. By default they are both set to 0.7.
+#' @param cont.cor.coef Vector of two numerical values. Indicates the cut-off of the Spearman correlation coefficient
+#' between each pair of continuous variables. The first one is between each pair of 'uv.variables' and the second one is
+#' between each pair of 'bio.variables'. If the correlation of a pair of variable is higher than the cut-off, then only
+#' the variable that has the highest variance will be kept and the other one will be excluded from the remaining analysis.
+#' By default they are both set to 0.7.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
@@ -50,9 +58,9 @@
 #' @param check.prps.connectedness TTTTT
 #' @param plot.output TTTTTTT
 #' @param remove.na String. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
-#' 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
-#' samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
-#' 'both'.
+#' 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If
+#' 'sample.annotation' is selected, the samples that contains NA or missing values for any 'bio.variables' and
+#' 'uv.variables' will be excluded. By default, it is set to both'.
 #' @param assess.variables TTTTT
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' object 'se.obj' or to output the result, by default it is set to TRUE.
@@ -60,8 +68,6 @@
 #' messages displayed during the execution of the functions, by default it is set to TRUE.
 
 #' @return A SummarizedExperiment object or a list that containing the PRPS data.
-
-#' @author Ramyar Molania
 
 #' @importFrom SummarizedExperiment assay
 #' @importFrom dplyr count
