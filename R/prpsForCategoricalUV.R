@@ -56,7 +56,7 @@
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' By default it is set to TRUE.
 #' @param check.prps.connectedness TTTTT
-#' @param plot.output TTTTTTT
+#' @param plot.prps.map TTTTTTT
 #' @param remove.na String. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
 #' 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If
 #' 'sample.annotation' is selected, the samples that contains NA or missing values for any 'bio.variables' and
@@ -90,12 +90,12 @@ prpsForCategoricalUV <- function(
         check.prps.connectedness = TRUE,
         apply.log = TRUE,
         pseudo.count = 1,
-        remove.na = 'both',
         assess.se.obj = TRUE,
+        remove.na = 'both',
         assess.variables = FALSE,
         cat.cor.coef = c(0.95, 0.95),
         cont.cor.coef = c(0.95, 0.95),
-        plot.output = TRUE,
+        plot.prps.map = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE) {
     printColoredMessage(message = '------------The prpsForCategoricalUV function starts:',
@@ -134,34 +134,30 @@ prpsForCategoricalUV <- function(
             remove.na = remove.na)
     }
 
-    # data transformation ####
-    if(is.null(pseudo.count)) pseudo.count == 0
-    printColoredMessage(
-        message = '-- Data transformation:',
-        color = 'magenta',
-        verbose = verbose)
-    if (apply.log) {
+    # log transformation ####
+    printColoredMessage(message = '-- Data transformation and normalization:',
+                        color = 'magenta',
+                        verbose = verbose)
+    if (isTRUE(apply.log) & !is.null(pseudo.count)){
         printColoredMessage(
-            message = paste0(
-                'Applying log2 + ',
-                pseudo.count,
-                ' (pseudo.count',
-                ') on the ',
-                assay.name,
-                ' data before creating PRPS.'),
+            message = paste0('Applying log2 + ', pseudo.count, ' (pseudo.count) on the ', assay.name,' data.'),
             color = 'blue',
             verbose = verbose)
-        expre.data <- log2(assay(se.obj, assay.name) + pseudo.count)
-    } else{
+        expr.data <- log2(assay(x = se.obj, i = assay.name) + pseudo.count)
+    } else if (isTRUE(apply.log) & is.null(pseudo.count)){
         printColoredMessage(
-            message = paste0(
-                'The ',
-                assay.name,
-                ' data will be used without log transformation for creating PRPS.'),
+            message = paste0('Applying log2 on the ', assay.name,' data.'),
             color = 'blue',
             verbose = verbose)
-        expre.data <- assay(se.obj, assay.name)
+        expr.data <- log2(assay(x = se.obj, i = assay.name))
+    } else if (isFALSE(apply.log)) {
+        printColoredMessage(
+            message = paste0('The ', assay.name, ' data will be used without any log transformation.'),
+            color = 'blue',
+            verbose = verbose)
+        expr.data <- assay(x = se.obj, i = assay.name)
     }
+
     # assign homogeneous biological groups of samples to each sample ####
     if(length(bio.variables) > 1){
         printColoredMessage(
@@ -385,7 +381,7 @@ prpsForCategoricalUV <- function(
             verbose = verbose)
     }
     # plot output #####
-    if (plot.output) {
+    if (plot.prps.map) {
         ## PRPS map plot
         printColoredMessage(message = '-- Plot PRPS map:',
                             color = 'magenta',
@@ -417,13 +413,11 @@ prpsForCategoricalUV <- function(
                 axis.text.x = element_text(
                     size = 10,
                     angle = 45,
-                    hjust = 1
-                ),
+                    hjust = 1),
                 axis.text.y = element_text(
                     size = 12,
                     angle = 45,
-                    hjust = 1
-                ),
+                    hjust = 1),
                 legend.position = 'none'
             )
         if(verbose) print(p)
@@ -456,14 +450,14 @@ prpsForCategoricalUV <- function(
             se.obj@metadata[['PRPS']] <- list()
         }
         ## check if metadata PRPS already exist for supervised
-        if (!'supervised' %in% names(se.obj@metadata[['PRPS']])) {
-            se.obj@metadata[['PRPS']][['supervised']] <- list()
+        if (!'Supervised' %in% names(se.obj@metadata[['PRPS']])) {
+            se.obj@metadata[['PRPS']][['Supervised']] <- list()
         }
         ## Check if metadata PRPS already exist for supervised
-        se.obj@metadata[['PRPS']][['supervised']][[out.put.name]] <- prps.sets
+        se.obj@metadata[['PRPS']][['Supervised']][[out.put.name]] <- prps.sets
         printColoredMessage(
             message = paste0(
-                'The PRPS are saved to metadata@PRPS$supervised: ',
+                'The PRPS are saved to metadata@PRPS$Supervised: ',
                 out.put.name,
                 '.'),
             color = 'blue',
@@ -480,29 +474,3 @@ prpsForCategoricalUV <- function(
     }
 }
 
-
-#
-#     ### Add plots to SummarizedExperiment object
-#     printColoredMessage(message = '### Saving the PRPS map plot to the metadata of the SummarizedExperiment object.',
-#                         color = 'magenta',
-#                         verbose = verbose)
-#     ## Check if metadata plot already exist
-#     if (length(se.obj@metadata) == 0) {
-#         se.obj@metadata[['plot']] <- list()
-#     }
-#     ## Check if metadata plot already exist
-#     if (!'plot' %in% names(se.obj@metadata)) {
-#         se.obj@metadata[['plot']] <- list()
-#     }
-#     ## Check if metadata plot already exist for this metric
-#     if (!'PRPS' %in% names(se.obj@metadata[['plot']])) {
-#         se.obj@metadata[['plot']][['PRPS']] <- list()
-#     }
-#
-#     for (v in categorical.uv) {
-#         ## Save the new plot
-#         se.obj@metadata[['plot']][['PRPS']][[v]] <-
-#             plot.all[[v]]
-#     }
-#
-# }
