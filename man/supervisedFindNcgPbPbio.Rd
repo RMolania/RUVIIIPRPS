@@ -149,3 +149,6 @@ or a logical vector of the selected negative control genes.
 \description{
 is used to find a set of negative control genes using ANOVA and correlation analyses per homogeneous batches and per homogeneous biological groups.
 }
+\author{
+Ramyar Molania
+}

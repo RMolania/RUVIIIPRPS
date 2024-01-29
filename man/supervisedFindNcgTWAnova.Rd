@@ -10,14 +10,14 @@ supervisedFindNcgTWAnova(
   bio.variables,
   uv.variables,
   nb.ncg = 10,
-  ncg.selection.method = "Prod",
-  grid.nb = 10,
-  top.rank.bio.genes = 50,
-  top.rank.uv.genes = 50,
+  ncg.selection.method = "noneOverlap",
+  grid.nb = 1,
+  top.rank.bio.genes = 70,
+  top.rank.uv.genes = 70,
   bio.clustering.method = "kmeans",
-  nb.bio.clusters = 2,
+  nb.bio.clusters = 3,
   uv.clustering.method = "kmeans",
-  nb.uv.clusters = 2,
+  nb.uv.clusters = 3,
   apply.log = TRUE,
   pseudo.count = 1,
   assess.ncg = TRUE,
@@ -38,9 +38,13 @@ supervisedFindNcgTWAnova(
 \item{assay.name}{Symbol. Indicates a name of an assay in the SummarizedExperiment object. The selected assay should
 be the one that will be used for RUV-III-PRPS normalization.}
 
-\item{bio.variables}{Symbols. Indicates the columns names that contain biological variables in the SummarizedExperiment object.}
+\item{bio.variables}{Symbols. Indicates the columns names that contain known biological variables in the
+SummarizedExperiment object. The biological variables cab be categorical and continuous. The continuous variable will
+be grouped into 'nb.bio.clusters' based on a clustering method selected in 'bio.clustering.method'.}
 
-\item{uv.variables}{Symbols. Indicates the columns names that contains UV variables in the SummarizedExperiment object.}
+\item{uv.variables}{Symbols. Indicates the columns names that contains UV variables in the SummarizedExperiment object.
+The unwanted variables can be categorical and continuous. The continuous variables will
+be grouped into 'nb.uv.clusters' based on a clustering method selected in 'uv.clustering.method'.}
 
 \item{nb.ncg}{Numeric. Indicates how many genes should be selected as NCG. The value is the percentage of the total
 genes in the SummarizedExperiment object. The default is 10 percent.}
@@ -117,12 +121,18 @@ Either the SummarizedExperiment object containing the a set of negative control 
 logical vector of the selected negative control genes.
 }
 \description{
-This functions uses the two-way ANOVA approach to find a set of genes as negative control genes (NCG) for RUV-III-PRPS
-normalization. Sources of biological and unwanted variation should be specified. First, th functions creates all possible
-samples groups with respect to biological and unwanted variation separately Then uses the group as factors in two-way ANOVA
-to find genes that are highly affected by biological and unwanted variation separately. Finally, the function selects
-genes that have possible high F-statistics for the unwanted variation and low F-statistics for the biological variation.
-The function uses different approaches to perform the final selection.
+This function uses the two-way ANOVA approach to find a set of genes as negative control genes (NCG) for RUV-III-PRPS
+normalization. Sources of known biological and unwanted variation should be specified. First, the function creates all
+possible sample groups with respect to biological and unwanted variation separately. Then, the function uses the groups
+as factors in two-way ANOVA to find genes that are highly affected by biological and unwanted variation separately.
+Finally, the function selects genes that have possible high F-statistics for the unwanted variation and low F-statistics
+for the biological variation. The function uses different approaches to perform the final selection.
+}
+\details{
+The function uses 5 ways to summarize two gene-level F-statistics obtained for the biological and unwanted variation
+separately. The options are 'Prod', 'Sum', 'Average', 'AbsNoneOverlap' or 'noneOverlap'. The 'Prod', 'Sum', 'Average'
+are based on the rank of the gene-level F-statistics. The 'prod' stands for the product of of the ranks, 'Sum' stands
+for the sum of the ranks and the 'Average' stands for the average of the rank.
 }
 \author{
 Ramyar Molania
