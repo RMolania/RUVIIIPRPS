@@ -38,7 +38,7 @@
 #' @param scale.pca Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
 #' is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
 #' mean square otherwise. The default is FALSE.
-#' @param pca.bsparam A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
+#' @param svd.bsparam A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
 #' We refer to the 'runSVD' function from the BiocSingular R package.
 #' @param nb.pcs.toplot.pca Numeric. Indicates the number of PCs to plotted against each other.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data. By default
@@ -88,7 +88,7 @@ assessNormalization <- function(
         compute.nb.pcs = 10,
         center.pca = TRUE,
         scale.pca = FALSE,
-        pca.bsparam = bsparam(),
+        svd.bsparam = bsparam(),
         nb.pcs.toplot.pca = 3,
         apply.log = TRUE,
         pseudo.count = 1,
@@ -124,7 +124,7 @@ assessNormalization <- function(
         compute.nb.pcs = 10,
         center.pca = TRUE,
         scale.pca = FALSE,
-        pca.bsparam = bsparam(),
+        svd.bsparam = bsparam(),
         nb.pcs.toplot.pca = 3,
         apply.log = TRUE,
         pseudo.count = 1,
