@@ -2,7 +2,7 @@
 % Please edit documentation in R/createHomogeneousUVGroups.R
 \name{createHomogeneousUVGroups}
 \alias{createHomogeneousUVGroups}
-\title{This is used to create all possible groups with respect to unwanted variation variables in the SummarizedExperiment objct.}
+\title{This is used to create all possible groups with respect to unwanted variables in the SummarizedExperiment objct.}
 \usage{
 createHomogeneousUVGroups(
   se.obj,
