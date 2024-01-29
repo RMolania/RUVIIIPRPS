@@ -1,4 +1,4 @@
-#' This is used to create all possible groups with respect to unwanted variation variables in the SummarizedExperiment objct.
+#' This is used to create all possible groups with respect to unwanted variables in the SummarizedExperiment objct.
 
 #' @author Ramyar Molania
 
