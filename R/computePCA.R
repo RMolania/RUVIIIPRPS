@@ -55,7 +55,7 @@ computePCA <- function(
         scale = FALSE,
         apply.log = TRUE,
         pseudo.count = 1,
-        bsparam = bsparam(),
+        svd.bsparam = bsparam(),
         assess.se.obj = TRUE,
         remove.na = 'assays',
         save.se.obj = TRUE,
@@ -163,18 +163,19 @@ computePCA <- function(
             'computed proportional to the highest selected number of PCs (left singular vectors), not on all the PCs.'),
             color = 'red',
             verbose = verbose)
-        if (is.null(bsparam)) bsparam <- bsparam()
+        if (is.null(svd.bsparam))
+            svd.bsparam <- bsparam()
         all.sv.decomposition <- lapply(
             levels(assay.names),
             function(x) {
                 printColoredMessage(
-                    message = paste0('-- Perform fast singular value decomposition on the ', x , ' data.'),
+                    message = paste0('- Perform fast singular value decomposition on the ', x , ' data.'),
                     color = 'blue',
                     verbose = verbose)
                 sv.dec <- BiocSingular::runSVD(
                     x = t(all.assays[[x]]),
                     k = nb.pcs,
-                    BSPARAM = bsparam,
+                    BSPARAM = svd.bsparam,
                     center = center,
                     scale = scale)
                 rownames(sv.dec$u) <- colnames(se.obj)
@@ -198,7 +199,7 @@ computePCA <- function(
             levels(assay.names),
             function(x) {
                 printColoredMessage(
-                    message = paste0('-- Perform singular value decomposition on the ', x , ' data.'),
+                    message = paste0('- Perform singular value decomposition on the ', x , ' data.'),
                     color = 'blue',
                     verbose = verbose)
                 sv.dec <- svd(scale(
