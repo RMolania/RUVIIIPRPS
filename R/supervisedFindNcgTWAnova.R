@@ -1,23 +1,32 @@
 #' is used to find a set of negative control genes (NCG) using two-way ANOVA.
-#'
-#'
+
+#' @author Ramyar Molania
+
 #' @description
-#' This functions uses the two-way ANOVA approach to find a set of genes as negative control genes (NCG) for RUV-III-PRPS
-#' normalization. Sources of biological and unwanted variation should be specified. First, th functions creates all possible
-#' samples groups with respect to biological and unwanted variation separately Then uses the group as factors in two-way ANOVA
-#' to find genes that are highly affected by biological and unwanted variation separately. Finally, the function selects
-#' genes that have possible high F-statistics for the unwanted variation and low F-statistics for the biological variation.
-#' The function uses different approaches to perform the final selection.
-#'
-#'
-#'
+#' This function uses the two-way ANOVA approach to find a set of genes as negative control genes (NCG) for RUV-III-PRPS
+#' normalization. Sources of known biological and unwanted variation should be specified. First, the function creates all
+#' possible sample groups with respect to biological and unwanted variation separately. Then, the function uses the groups
+#' as factors in two-way ANOVA to find genes that are highly affected by biological and unwanted variation separately.
+#' Finally, the function selects genes that have possible high F-statistics for the unwanted variation and low F-statistics
+#' for the biological variation. The function uses different approaches to perform the final selection.
+
+#' @details
+#' The function uses 5 ways to summarize two gene-level F-statistics obtained for the biological and unwanted variation
+#' separately. The options are 'Prod', 'Sum', 'Average', 'AbsNoneOverlap' or 'noneOverlap'. The 'Prod', 'Sum', 'Average'
+#' are based on the rank of the gene-level F-statistics. The 'prod' stands for the product of of the ranks, 'Sum' stands
+#' for the sum of the ranks and the 'Average' stands for the average of the rank.
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.name Symbol. Indicates a name of an assay in the SummarizedExperiment object. The selected assay should
 #' be the one that will be used for RUV-III-PRPS normalization.
+#' @param bio.variables Symbols. Indicates the columns names that contain known biological variables in the
+#' SummarizedExperiment object. The biological variables cab be categorical and continuous. The continuous variable will
+#' be grouped into 'nb.bio.clusters' based on a clustering method selected in 'bio.clustering.method'.
+#' @param uv.variables Symbols. Indicates the columns names that contains UV variables in the SummarizedExperiment object.
+#' The unwanted variables can be categorical and continuous. The continuous variables will
+#' be grouped into 'nb.uv.clusters' based on a clustering method selected in 'uv.clustering.method'.
 #' @param nb.ncg Numeric. Indicates how many genes should be selected as NCG. The value is the percentage of the total
 #' genes in the SummarizedExperiment object. The default is 10 percent.
-#' @param bio.variables Symbols. Indicates the columns names that contain biological variables in the SummarizedExperiment object.
-#' @param uv.variables Symbols. Indicates the columns names that contains UV variables in the SummarizedExperiment object.
 #' @param ncg.selection.method Symbol. Indicates how to select a set genes as NCG after performing two-way ANOVA. For individual
 #' genes, the two-way ANOVA calculates F-statistics for biological and unwanted variation factors separately. An ideal NCG
 #' set should have high F-statistics for the unwanted variation variables and low F-statistics for the biological variables.
@@ -65,18 +74,15 @@
 #' to output the result. By default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
-#'
+
 #' @return Either the SummarizedExperiment object containing the a set of negative control genes in the metadata  or a
 #' logical vector of the selected negative control genes.
-#'
-#'
-#' @author Ramyar Molania
 
+#' @importFrom SummarizedExperiment assay
 #' @importFrom BiocSingular runSVD bsparam
 #' @importFrom fastDummies dummy_cols
 #' @importFrom dplyr mutate progress_estimated
 #' @importFrom tidyr pivot_longer
-#' @importFrom SummarizedExperiment assay
 #' @importFrom stats aov
 #' @import ggplot2
 #' @export
@@ -112,24 +118,30 @@ supervisedFindNcgTWAnova <- function(
         message = '------------The supervisedFindNcgTWAnova function starts:',
         color = 'white',
         verbose = verbose)
+
     # check inputs ####
-    if(length(assay.name) > 1){
-        stop('Please provide a single assay name.')
-    } else if(nb.ncg > 100 | nb.ncg <= 0){
-        stop('The nb.ncg should be a positve value  0 < nb.ncg < 100.')
+    if(!is.vector(assay.name)){
+        stop('The "assay.name" must be a single assay name.')
+    } else if (length(assay.name) > 1){
+        stop('The "assay.name" must be a single assay name.')
     } else if (is.null(bio.variables)){
-        stop('The bio.variables cannot be empty.')
+        stop('The "bio.variables" cannot be empty.')
     } else if (is.null(uv.variables)){
-        stop('The uv.variables cannot be empty.')
+        stop('The "uv.variables" cannot be empty.')
+    } else if(!is.vector(bio.variables) | !is.vector(uv.variables) ){
+        stop('The "uv.variables" and "bio.variables" must be a vector of variables names.')
     } else if (length(intersect(bio.variables, uv.variables)) > 0){
-        stop('The variables should be either bio.variables or uv.variables.')
+        stop('Any variables must be either in "bio.variables" or "uv.variables".')
+    } else if (nb.ncg >= 100 | nb.ncg <= 0){
+        stop('The "nb.ncg" must be a positve value 0 < nb.ncg =< 100.')
     } else if (!ncg.selection.method %in% c('Prod', 'Sum', 'Average', 'AbsNoneOverlap', 'noneOverlap')){
-        stop('The ncg.selection.method should be one of Prod, Sum, Average, AbsNoneOverlap or noneOverlap')
+        stop('The ncg.selection.method should be one of "Prod", "Sum", "Average", "AbsNoneOverlap" or "noneOverlap".')
     } else if (top.rank.bio.genes > 100 | top.rank.bio.genes <= 0){
-        stop('The top.rank.bio.genes should be a positve value  0 < top.rank.bio.genes < 100.')
+        stop('The "top.rank.bio.genes" should be a positve value  0 < top.rank.bio.genes < 100.')
     } else if (top.rank.uv.genes > 100 | top.rank.uv.genes <= 0){
-        stop('The top.rank.uv.genes should be a positve value  0 < top.rank.uv.genes < 100.')
+        stop('The "top.rank.uv.genes" should be a positve value  0 < top.rank.uv.genes < 100.')
     }
+
     # check the SummarizedExperiment object ####
     if (assess.se.obj) {
         se.obj <- checkSeObj(
@@ -139,30 +151,41 @@ supervisedFindNcgTWAnova <- function(
             remove.na = remove.na,
             verbose = verbose)
     }
+
     # data transformation and normalization ####
     printColoredMessage(
         message = '-- Data transformation and normalization:',
         color = 'magenta',
         verbose = verbose)
     ## apply log ####
-    if(apply.log){
+    if (isTRUE(apply.log) & !is.null(pseudo.count)){
         printColoredMessage(
             message = paste0(
                 'Applying log2 + ',
                 pseudo.count,
-                '(pseudo.count) on the ',
+                ' (pseudo.count) on the ',
                 assay.name,
                 ' data.'),
             color = 'blue',
             verbose = verbose)
-        expr.data <- log2(assay(se.obj, assay.name) + pseudo.count)
-    } else {
+        expr.data <- log2(assay(x = se.obj, i = assay.name) + pseudo.count)
+    } else if (isTRUE(apply.log) & is.null(pseudo.count)){
+        printColoredMessage(
+            message = paste0(
+                'Applying log2 on the ',
+                assay.name,
+                ' data.'),
+            color = 'blue',
+            verbose = verbose)
+        expr.data <- log2(assay(x = se.obj, i = assay.name))
+    } else if (isFALSE(apply.log)) {
         printColoredMessage(
             message = paste0('The ', assay.name, ' data will be used without any log transformation.'),
             color = 'blue',
             verbose = verbose)
-        expr.data <- assay(se.obj, assay.name)
+        expr.data <- assay(x = se.obj, i = assay.name)
     }
+
     # create all possible homogeneous biological groups ####
     printColoredMessage(
         message = '-- Create all possible major homogeneous biological groups:',
@@ -178,6 +201,7 @@ supervisedFindNcgTWAnova <- function(
         save.se.obj = FALSE,
         remove.na = 'none',
         verbose = verbose)
+
     # create all possible homogeneous groups with respect to sources of unwanted variation ####
     printColoredMessage(
         message = '-- Create all possible major groups with respect to sources of unwanted variation:',
@@ -193,6 +217,7 @@ supervisedFindNcgTWAnova <- function(
         save.se.obj = FALSE,
         remove.na = 'none',
         verbose = verbose)
+
     # perform Two_way ANOVA between ####
     printColoredMessage(
         message = '-- Perform two_way ANOVA:',
@@ -212,12 +237,12 @@ supervisedFindNcgTWAnova <- function(
     row.names(all.aov) <- row.names(se.obj)
     all.aov$bio.rank <- rank(all.aov$Biology)
     all.aov$uv.rank <- rank(-all.aov$UV)
-    ## selection of NCG ####
+    # selection of NCG ####
     printColoredMessage(
         message = '-- Selection of a set of genes as NCG:',
         color = 'magenta',
         verbose = verbose)
-    if(ncg.selection.method %in% c('Prod', 'Average', 'Sum')){
+    if (ncg.selection.method %in% c('Prod', 'Average', 'Sum')){
         if(ncg.selection.method == 'Prod'){
             printColoredMessage(
                 message = 'A set of NCG will be selected based on the product of ranks.',
@@ -243,7 +268,7 @@ supervisedFindNcgTWAnova <- function(
         all.aov <- all.aov[order(all.aov$all.rank, decreasing = FALSE), ]
         ncg.selected <- row.names(all.aov)[1:round(c(nb.ncg/100) * nrow(se.obj), digits = 0)]
         ncg.selected <- row.names(se.obj) %in% ncg.selected
-    } else if(ncg.selection.method == 'AbsNoneOverlap'){
+    } else if (ncg.selection.method == 'AbsNoneOverlap'){
         printColoredMessage(
             message = 'A set of NCG is selected based on the AbsNoneOverlap approach.',
             color = 'blue',
@@ -267,9 +292,9 @@ supervisedFindNcgTWAnova <- function(
         ncg.selected <- row.names(se.obj) %in% ncg.selected
         if(sum(ncg.selected) == 0){
             stop(paste0('The non-oevrlab genes between genes that are highly affected by batch and not biology is 0.',
-                        'Please lower either top.rank.bio.genes or top.rank.uv.genes values'))
+                        'Please increase either "top.rank.bio.genes" or "top.rank.uv.genes" values'))
         }
-    } else if(ncg.selection.method == 'noneOverlap'){
+    } else if (ncg.selection.method == 'noneOverlap'){
         printColoredMessage(
             message = 'A set of NCG is selected based on the noneOverlap approach.',
             color = 'blue',
@@ -287,23 +312,29 @@ supervisedFindNcgTWAnova <- function(
         top.rank.bio.genes.no <- round(c(top.rank.bio.genes/100) * nrow(se.obj), digits = 0)
         top.bio.genes <- all.aov$bio.rank > c(nrow(se.obj) - top.rank.bio.genes.no)
         top.bio.genes <- row.names(all.aov)[top.bio.genes]
-        poss.ncg <- row.names(se.obj)[!row.names(se.obj) %in% top.bio.genes]
-        if(length(poss.ncg) >= nb.ncg){
-            top.rank.uv.genes <- round(c(top.rank.uv.genes/100) * nrow(se.obj), digits = 0)
-            ncg.selected <- c()
-            lo <- nrow(se.obj) - top.rank.uv.genes
+
+        top.rank.uv.genes <- round(c(top.rank.uv.genes/100) * nrow(se.obj), digits = 0)
+        top.uv.genes <- all.aov$uv.rank <  top.rank.uv.genes
+        top.uv.genes <- row.names(all.aov)[top.uv.genes]
+        ncg.selected <- top.uv.genes[!top.uv.genes %in% top.bio.genes]
+        if(length(ncg.selected) >= nb.ncg){
+            lo <- top.rank.uv.genes
             grid.nb <- round(c(grid.nb/100) * nrow(se.obj), digits = 0)
             pro.bar <- progress_estimated(round(lo/grid.nb, digits = 0) + 1)
-            while(length(ncg.selected) < nb.ncg){
+            while(length(ncg.selected) > nb.ncg | top.rank.uv.genes == 0){
                 pro.bar$pause(0.1)$tick()$print()
                 top.uv.genes <- all.aov$uv.rank <  top.rank.uv.genes
                 top.uv.genes <- row.names(all.aov)[top.uv.genes]
-                top.rank.uv.genes <- top.rank.uv.genes + grid.nb
+                top.rank.uv.genes <- top.rank.uv.genes - grid.nb
                 ncg.selected <- top.uv.genes[!top.uv.genes %in% top.bio.genes]
             }
-            top.rank.uv.genes <- round(top.rank.uv.genes/nrow(se.obj) * 100, digits = 0)
-            if(top.rank.uv.genes >= 100){
-                top.rank.uv.genes = 100
+            if(top.rank.uv.genes == 0){
+                top.rank.uv.genes = 0
+            } else {
+                top.rank.uv.genes <- round(top.rank.uv.genes/nrow(se.obj) * 100, digits = 0)
+                if(top.rank.uv.genes >= 100){
+                    top.rank.uv.genes = 100
+                }
             }
             message(' ')
             printColoredMessage(
@@ -324,17 +355,13 @@ supervisedFindNcgTWAnova <- function(
                         ' genes are found based on the current parameters.'),
                     color = 'red',
                     verbose = verbose)
-            stop(paste0(
-                'The requested number of genes (',
-                nb.ncg,
-                ') as NCG cannot be found. Please lower either the values of top.rank.bio.genes or nb.ncg.'))
         }
     }
-    message(' ')
     printColoredMessage(
         message = paste0(sum(ncg.selected), ' genes are selected as negative control genes.'),
         color = 'blue',
         verbose = verbose)
+
     # assessment of selected set of NCG  ####
     if(is.null(variables.to.assess.ncg)){
         variables.to.assess.ncg <- c(bio.variables, uv.variables)
@@ -383,16 +410,16 @@ supervisedFindNcgTWAnova <- function(
         })
     names(all.corr) <- variables.to.assess.ncg
     pca.ncg <- as.data.frame(do.call(cbind, all.corr))
-    pcs <- groups <- NULL
+    pcs <- Groups <- NULL
     pca.ncg['pcs'] <- c(1:nb.pcs)
     pca.ncg <- tidyr::pivot_longer(
         data = pca.ncg,
         -pcs,
-        names_to = 'groups',
+        names_to = 'Groups',
         values_to = 'ls')
-    pca.ncg <- ggplot(pca.ncg, aes(x = pcs, y = ls, group = groups)) +
-        geom_line(aes(color = groups), linewidth = 1) +
-        geom_point(aes(color = groups), size = 2) +
+    pca.ncg <- ggplot(pca.ncg, aes(x = pcs, y = ls, group = Groups)) +
+        geom_line(aes(color = Groups), linewidth = 1) +
+        geom_point(aes(color = Groups), size = 2) +
         xlab('PCs') +
         ylab (expression("Correlations")) +
         scale_x_continuous(
@@ -401,7 +428,7 @@ supervisedFindNcgTWAnova <- function(
         scale_y_continuous(
             breaks = scales::pretty_breaks(n = nb.pcs),
             limits = c(0,1)) +
-        ggtitle('Assessment of the NCG') +
+        ggtitle('Assessment of the NCGs') +
         theme(
             panel.background = element_blank(),
             axis.line = element_line(colour = 'black', linewidth = 1),
@@ -411,7 +438,6 @@ supervisedFindNcgTWAnova <- function(
             axis.text.y = element_text(size = 12),
             legend.text = element_text(size = 10),
             legend.title = element_text(size = 14),
-            strip.text.x = element_text(size = 10),
             plot.title = element_text(size = 16)
         )
     if(verbose)  print(pca.ncg)
@@ -446,6 +472,10 @@ supervisedFindNcgTWAnova <- function(
             verbose = verbose)
         return(se.obj)
     } else{
+        printColoredMessage(
+            message = '-- The NCGs are outpputed a logical vectors.',
+            color = 'magenta',
+            verbose = verbose)
         printColoredMessage(
             message = '------------The supervisedFindNcgTWAnova function finished.',
             color = 'white',
