@@ -13,7 +13,7 @@ computePCA(
   scale = FALSE,
   apply.log = TRUE,
   pseudo.count = 1,
-  bsparam = bsparam(),
+  svd.bsparam = bsparam(),
   assess.se.obj = TRUE,
   remove.na = "assays",
   save.se.obj = TRUE,
@@ -46,7 +46,7 @@ default is 'TRUE'. The data must be in log scale before computing the SVD.}
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before applying log transformation.
 The default is 1. This argument cannot be NULL or negative.}
 
-\item{bsparam}{A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
+\item{svd.bsparam}{A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
 We refer to the 'runSVD' function from the BiocSingular R package.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object. The default is TRUE.

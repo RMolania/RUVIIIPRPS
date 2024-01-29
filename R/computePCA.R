@@ -29,7 +29,7 @@
 #' default is 'TRUE'. The data must be in log scale before computing the SVD.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before applying log transformation.
 #' The default is 1. This argument cannot be NULL or negative.
-#' @param bsparam A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
+#' @param svd.bsparam A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
 #' We refer to the 'runSVD' function from the BiocSingular R package.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object. The default is TRUE.
 #' We refer to the checkSeObj function for more details.
