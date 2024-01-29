@@ -1,18 +1,27 @@
 #' is used to run the RUVIII-PRPS method for a given assay and given k.
-#'
+
+#' @author Ramyar Molania
+
 #' @param se.obj A SummarizedExperiment object that will be used to computer fastRUV-III
 #' @param assay.name String for the selection of the name of the assay data of the SummarizedExperiment class object
-#' @param prps.names TTTTT
+#' @param prps.set.names TTTTT
 #' @param prps.group TTTTT
-#' @param ncg.names TTTT
+#' @param ncg.set.names TTTT
 #' @param ncg.group TTTT
-#' @param k TTTT
-#' @param apply.log TTTT
-#' @param pseudo.count TTTT
+#' @param k The number of unwanted factors to use. Can be 0, in which case no adjustment is made. Can also be NULL (the
+#' default value), in which case the maximum possible value of k is used; note that in this case no singular value
+#' decomposition is necessary and execution is faster.
+#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
+#' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+#' by default it is set to 1.
 #' @param alpha TTTT
-#' @param return.info TTTT
-#' @param eta TTTT
-#' @param include.intercept TTTT
+#' @param return.info If FALSE, only the adjusted data matrix is returned. If TRUE, additional information is returned
+#' (see below).
+#' @param eta Gene-wise (as opposed to sample-wise) covariates. These covariates are adjusted for by RUV-1 before any
+#' further analysis proceeds. Can be either (1) a matrix with n columns, (2) a matrix with n rows, (3) a dataframe with
+#' n rows, (4) a vector or factor of length n, or (5) simply 1, for an intercept term.
+#' @param include.intercept When eta is specified (not NULL) but does not already include an intercept term, this will
+#' automatically include one.
 #' @param assess.se.obj TTTT
 #' @param remove.na TTTT
 #' @param save.se.obj TTTT
@@ -20,8 +29,6 @@
 
 #' @return SummarizedExperiment A SummarizedExperiment object containing the normalised gene expression
 #' into a new assay (RUVIII_K).
-
-#' @author Ramyar Molania
 
 #' @importFrom DelayedArray t colMeans
 #' @importFrom BiocSingular bsparam
@@ -33,10 +40,10 @@
 RUVIII.PRPS <- function(
         se.obj,
         assay.name,
-        prps.names = NULL,
         prps.group = 'supervised',
-        ncg.names = NULL,
+        prps.set.names = NULL,
         ncg.group = 'supervised',
+        ncg.set.names = NULL,
         k = 1,
         apply.log = 'assay',
         pseudo.count = 1,
@@ -67,9 +74,9 @@ RUVIII.PRPS <- function(
             verbose = verbose)
     }
 
-    # prps data ####
+    # prps set data ####
     ## use all the prps sets in the SummarizedExperiment object ####
-    if (is.null(prps.names)) {
+    if (is.null(prps.set.names)) {
         if (is.null(prps.group) | length(prps.group) == 0) {
             stop('The "prps.group" should be specified ("supervised", "unSupervised" or "both").')
         } else if (!prps.group %in% c('supervised', 'unSupervised', 'both')) {
@@ -77,20 +84,28 @@ RUVIII.PRPS <- function(
         }
         if (prps.group == 'supervised') {
             prps.data <- se.obj@metadata$PRPS$supervised
+            printColoredMessage(
+                message = paste0(length(prps.data), 'supervised PRPS set(s) are found in the SummarizedExperiment object.'),
+                color = 'blue',
+                verbose = verbose)
+            prps.data <- do.call(cbind, prps.data)
         } else if (prps.group == 'unSupervised') {
             prps.data <- se.obj@metadata$PRPS$unSupervised
+            printColoredMessage(
+                message = paste0(length(prps.data), 'unSupervised PRPS set(s) are found in the SummarizedExperiment object.'),
+                color = 'blue',
+                verbose = verbose)
+            prps.data <- do.call(cbind, prps.data)
         } else if (prps.group == 'both') {
             all.prps <- intersect(names(se.obj@metadata$PRPS), c('supervised', 'unSupervised'))
             if (length(all.prps) != 2) {
-                stop( 'The "supervised" or "unSupervised" PRPSsets are not found in the SummarizedExperiment object.')
+                stop('The "supervised" or "unSupervised" PRPSsets are not found in the SummarizedExperiment object.')
             }
-            prps.data <- c(
-                se.obj@metadata$PRPS$supervised,
-                se.obj@metadata$PRPS$unSupervised)
+            prps.data <- c(se.obj@metadata$PRPS$supervised, se.obj@metadata$PRPS$unSupervised)
         }
     }
     ## use a specific set of prps in the SummarizedExperiment object ####
-    if (inherits(prps.names, what = 'character')) {
+    if (inherits(prps.set.names, what = 'character')) {
         if (is.null(prps.group)) {
             stop('The "prps.group" should be specified ("supervised" or "unSupervised").')
         } else if (!prps.group %in% c('supervised', 'unsupervised')) {
@@ -99,14 +114,14 @@ RUVIII.PRPS <- function(
         if (!intersect(names(se.obj@metadata$PRPS), prps.group) == prps.group) {
             stop('The "prps.group" is not found in the SummarizedExperiment object.')
         }
-        if (!prps.names %in% names(se.obj@metadata$PRPS[[prps.group]])) {
-            stop('The "prps.names" is not found in the SummarizedExperiment object.')
+        if (!prps.set.names %in% names(se.obj@metadata$PRPS[[prps.group]])) {
+            stop('The "prps.set.names" is not found in the SummarizedExperiment object.')
         }
-        prps.data <- list(prps = se.obj@metadata$PRPS[[prps.group]][[prps.names]])
-        names(prps.data) <- prps.names
+        prps.data <- list(prps = se.obj@metadata$PRPS[[prps.group]][[prps.set.names]])
+        names(prps.data) <- prps.set.names
     }
     ## use a list of PRPS sets in the SummarizedExperiment object ####
-    if (inherits(prps.names, what = 'list')) {
+    if (inherits(prps.set.names, what = 'list')) {
         if (is.null(prps.group)) {
             stop('The "prps.group" should be specified ("supervised" or "unSupervised").')
         } else if (!prps.group %in% c('supervised', 'unsupervised')) {
@@ -116,15 +131,15 @@ RUVIII.PRPS <- function(
             stop('The "prps.group" is not found in the SummarizedExperiment object.')
         }
         m.out <- lapply(
-            prps.names,
+            prps.set.names,
             function(x) {
                 if (!x %in% names(se.obj@metadata$PRPS[[prps.group]]))
                     stop(paste0('The prps ste', x, 'is not found in the SummarizedExperiment object.'))
                 })
         prps.data <- lapply(
-            prps.names,
+            prps.set.names,
             function(x) se.obj@metadata$PRPS[[prps.group]][[x]])
-        names(prps.data) <- prps.names
+        names(prps.data) <- prps.set.names
     }
 
     ## check prps data ####
@@ -145,18 +160,20 @@ RUVIII.PRPS <- function(
             } else if (length(rep.samples) != length(unique(colnames(prps.data[[x]])))) {
                 stop('Some names of the columns in the prps.data are all unique.')
             }
-            printColoredMessage(message = paste0('The ', names(prps.data)[x], ' contains ', length(rep.samples),' PRPS sets.'),
+            printColoredMessage(
+                message = paste0('The "', names(prps.data)[x], '" contains ', length(rep.samples),' PRPS sets.'),
                 color = 'blue',
                 verbose = verbose)
         })
     prps.data <- do.call(cbind, prps.data)
-    # NCG sets ####
+
+    # ncg sets ####
     ## use all NCG sets in the SummarizedExperiment object ####
-    if (is.null(ncg.names)) {
+    if (is.null(ncg.set.names)) {
         if (is.null(ncg.group) | length(ncg.group) == 0) {
-            stop('The "ncg.group" should be specified.')
+            stop('The "ncg.group" must be specified.')
         } else if (!ncg.group %in% c('supervised', 'unSupervised', 'both')) {
-            stop('The "ncg.group" should be one of the:"supervised", "unSupervised" or "both".')
+            stop('The "ncg.group" must be one of the:"supervised", "unSupervised" or "both".')
         }
         if (ncg.group == 'supervised') {
             ncg.list <- se.obj@metadata$NCG$supervised
@@ -171,7 +188,7 @@ RUVIII.PRPS <- function(
         }
     }
     ## use a specific set of NCG in the SummarizedExperiment object ####
-    if (inherits(ncg.names, what = 'character')) {
+    if (inherits(ncg.set.names, what = 'character')) {
         if (is.null(ncg.group)) {
             stop('The "ncg.group" should be specified ("supervised" or "unSupervised").')
         } else if (!ncg.group %in% c('supervised', 'unsupervised')) {
@@ -180,15 +197,15 @@ RUVIII.PRPS <- function(
         if (!intersect(names(se.obj@metadata$NCG), ncg.group) == ncg.group) {
             stop('The "ncg.group" is not found in the SummarizedExperiment object.')
         }
-        if (!ncg.names %in% names(se.obj@metadata$NCG[[ncg.group]])) {
-            stop('The "ncg.names" is not found in the SummarizedExperiment object.')
+        if (!ncg.set.names %in% names(se.obj@metadata$NCG[[ncg.group]])) {
+            stop('The "ncg.set.names" is not found in the SummarizedExperiment object.')
         }
-        ncg.list <- list(ncg = se.obj@metadata$NCG[[ncg.group]][[ncg.names]])
-        names(ncg.list) <- ncg.names
+        ncg.list <- list(ncg = se.obj@metadata$NCG[[ncg.group]][[ncg.set.names]])
+        names(ncg.list) <- ncg.set.names
     }
 
     ## use a list of PRPS sets in the SummarizedExperiment object ####
-    if (inherits(ncg.names, what = 'list')) {
+    if (inherits(ncg.set.names, what = 'list')) {
         if (is.null(ncg.group)) {
             stop('The "ncg.group" should be specified ("supervised" or "unSupervised").')
         } else if (!ncg.group %in% c('supervised', 'unsupervised')) {
@@ -198,15 +215,15 @@ RUVIII.PRPS <- function(
             stop('The "ncg.group" is not found in the SummarizedExperiment object.')
         }
         m.out <- lapply(
-            ncg.names,
+            ncg.set.names,
             function(x) {
                 if (!x %in% names(se.obj@metadata$NCG[[ncg.group]]))
                     stop(paste0('The ncg ste', x, 'is not found in the SummarizedExperiment object.'))
             })
         ncg.list <- lapply(
-            ncg.names,
+            ncg.set.names,
             function(x) se.obj@metadata$NCG[[ncg.group]][[x]])
-        names(ncg.list) <- ncg.names
+        names(ncg.list) <- ncg.set.names
     }
 
     # check K ####
@@ -226,51 +243,52 @@ RUVIII.PRPS <- function(
         1:nrow(all.ncg.prps),
         function(x)
             print( paste0(
-                    'The maximum k for the PRPS set:',
-                    all.ncg.prps$PRPS[x],
+                    'The maximum k for the curret PRPS data',
                     ' and the NCG set:',
                     all.ncg.prps$NCG[x],
                     ' is ',
-                    all.ncg.prps$max.k[x])
+                    all.ncg.prps$max.k[x], '.')
             ))
 
     # possible runs of RUV-III ####
-    printColoredMessage(message = '-- Possible runs of RUV-III :',
+    printColoredMessage(message = '-- Possible runs of the RUV-III-PRPS method:',
                         color = 'magenta',
                         verbose = verbose)
-    if (length(k) == 1 | is.null(k)) {
+    if(is.null(k)){
+        final.k <- lapply(
+            c(1:nrow(all.ncg.prps)),
+            function(x){
+                printColoredMessage(
+                    message = paste0(
+                        'The RUV-III-PRPS with k = ', all.ncg.prps$max.k[x],
+                        ' will be applied on the current PRPS data ', 'and the NCG: ', all.ncg.prps$NCG[x], '.'),
+                    color = 'blue',
+                    verbose = verbose)
+                all.ncg.prps$max.k[x]
+            })
+    } else if (length(k) == 1 ){
         final.k <- lapply(
             c(1:nrow(all.ncg.prps)),
             function(x) {
-                if (is.null(k) | k > all.ncg.prps$max.k[x]) {
+                if ( k > all.ncg.prps$max.k[x]) {
                     printColoredMessage(
-                        message = paste0(
-                            'The RUV-III-PRPS with k = ',
-                            all.ncg.prps$max.k[x],
-                            ' will be applied on the PRPS data: ',
-                            all.ncg.prps$PRPS[x],
-                            'and the NCG: ',
-                            all.ncg.prps$NCG[x],
-                            '.'),
+                        message = paste0('The RUV-III-PRPS with k = ',  all.ncg.prps$max.k[x],
+                            ' will be applied on the current PRPS data ',
+                            'and the NCG: ', all.ncg.prps$NCG[x], '.'),
                         color = 'blue',
                         verbose = verbose)
                     all.ncg.prps$max.k[x]
                 } else {
                     printColoredMessage(
-                        message = paste0(
-                            'The RUV-III-PRPS with k = ',
-                            k,
-                            ' will be applied on the PRPS data:',
-                            all.ncg.prps$PRPS[x],
-                            ' and the NCG set: ',
-                            all.ncg.prps$NCG[x],
-                            '.'),
+                        message = paste0('The RUV-III-PRPS with k = ', k,
+                            ' will be applied on the PRPS data:', all.ncg.prps$PRPS[x], ' and the NCG set: ',
+                            all.ncg.prps$NCG[x],'.'),
                         color = 'blue',
                         verbose = verbose)
                     k
                 }
             })
-    } else {
+    } else if (length(k) > 1){
         max.k <- max(k)
         final.k <- lapply(
             c(1:nrow(all.ncg.prps)),
@@ -279,47 +297,31 @@ RUVIII.PRPS <- function(
                     poss.k <- k[k %in% 1:all.ncg.prps$max.k[x]]
                     if (length(poss.k) == 1) {
                         printColoredMessage(
-                            message = paste0(
-                                'The RUV-III-PRPS with k = ',
-                                poss.k,
-                                ' will be applied on the PRPS data: ',
-                                all.ncg.prps$PRPS[x],
-                                ' and the NCG: ',
-                                all.ncg.prps$NCG[x],
-                                '.'),
+                            message = paste0( 'The RUV-III-PRPS with k = ', poss.k,
+                                ' will be applied on the current PRPS data ', ' and the NCG: ', all.ncg.prps$NCG[x], '.'),
                             color = 'blue',
                             verbose = verbose)
                         poss.k
                     } else if (length(poss.k) > 1) {
                         printColoredMessage(
-                            message = paste0(
-                                'The RUV-III-PRPS for individual k = ',
-                                paste0(poss.k, collapse = ','),
-                                ' will be applied on the PRPS data: ',
-                                all.ncg.prps$PRPS[x],
-                                ' and the NCG: ',
-                                all.ncg.prps$NCG[x],
-                                '.'),
+                            message = paste0('The RUV-III-PRPS for individual k = ', paste0(poss.k, collapse = ','),
+                                ' will be applied on the current PRPS data: ', ' and the NCG: ', all.ncg.prps$NCG[x], '.'),
                             color = 'blue',
                             verbose = verbose)
                         poss.k
                     }
                 } else{
                     printColoredMessage(
-                        message = paste0(
-                            'The RUV-III-PRPS for individual k = ',
-                            paste0(k, collapse = ','),
-                            ' will be applied on the PRPS data: ',
-                            all.ncg.prps$PRPS[x],
-                            ' and the NCG: ',
-                            all.ncg.prps$NCG[x],
-                            '.'),
+                        message = paste0('The RUV-III-PRPS for individual k = ', paste0(k, collapse = ','),
+                            ' will be applied on the current PRPS data: ', ' and the NCG set: ', all.ncg.prps$NCG[x], '.'),
                         color = 'blue',
                         verbose = verbose)
                     k
                 }
             })
+
     }
+
     all.ncg.prps$k <- final.k
     printColoredMessage(
         message = paste0('In totall ', sum(sapply(final.k, length)), ' runs of RUV-III-PRPS will applied.'),
@@ -336,18 +338,12 @@ RUVIII.PRPS <- function(
                         verbose = verbose)
     if (apply.log == 'both') {
         printColoredMessage(
-            message = paste(
-                'Apply log2 + ',
-                pseudo.count,
-                ' (pseudo.count) on both assay and prps data.'
-            ),
+            message = paste('Apply log2 + ', pseudo.count, ' (pseudo.count) on both assay and prps data.'),
             color = 'blue',
             verbose = verbose
         )
         Y <- log2(assay(se.obj, assay.name) + pseudo.count)
-        prps.data <- lapply(prps.data,
-                            function(x)
-                                log2(x + pseudo.count))
+        prps.data <- log2(prps.data + pseudo.count)
     } else if (apply.log == 'assay') {
         printColoredMessage(
             message = paste0('Apply log2 + ', pseudo.count, ' (pseudo.count) on only assay.'),
@@ -361,14 +357,12 @@ RUVIII.PRPS <- function(
             color = 'blue',
             verbose = verbose
         )
-        prps.data <- lapply(prps.data,
-                            function(x)
-                                log2(x + pseudo.count))
+        prps.data <- log2(prps.data + pseudo.count)
     } else if (apply.log == 'none') {
         printColoredMessage(message = 'It seems both assay and PRPS are already log transformed.',
                             color = 'blue',
                             verbose = verbose)
-        Y <- assay(se.obj, assay.name)
+        Y <- assay(x = se.obj, i = assay.name)
     }
 
     # RUVIII normalization ####
@@ -382,22 +376,23 @@ RUVIII.PRPS <- function(
                 message = paste0(
                     'Run RUV-III-PRPS for individual k: ',
                     all.ncg.prps$k[x],
-                    ' for the ',
-                    all.ncg.prps$PRPS[x],
-                    ' and the ',
+                    ' for the current PRPS data',
+                    ' and the NCG set: ',
                     all.ncg.prps$NCG[x],
                     '.'),
                 color = 'blue',
                 verbose = verbose
             )
-            printColoredMessage(message = 'The alpha will be calculated for the maximum value of k.',
-                                color = 'blue',
-                                verbose = verbose)
             if (length(all.ncg.prps$k[[x]]) > 1) {
+                printColoredMessage(message = 'The alpha will be calculated for the maximum value of k.',
+                                    color = 'blue',
+                                    verbose = verbose)
+                # ncg ####
                 ncg.set <- ncg.list[[all.ncg.prps$NCG[x]]]
                 ncg.logi <- rep(FALSE, nrow(se.obj))
                 ncg.logi[ncg.set] <- TRUE
                 ncg.set <- ncg.logi
+                # prps dara ####
                 prps.data <- prps.data
                 k.vals <- all.ncg.prps$k[[x]]
                 # apply RUV1 on Y ####
@@ -412,7 +407,7 @@ RUVIII.PRPS <- function(
                 printColoredMessage(message = '-Apply RUV1 on the both assay and prps data:',
                                     color = 'blue',
                                     verbose = verbose)
-                Y <- RUV1(
+                Y <- ruv::RUV1(
                     Y = Y,
                     eta = eta,
                     ctl = ncg.set,
@@ -422,8 +417,7 @@ RUVIII.PRPS <- function(
                 printColoredMessage(message = '-Standardize the data:',
                                     color = 'blue',
                                     verbose = verbose)
-                Y.stand <-
-                    scale(Y, center = TRUE, scale = FALSE)
+                Y.stand <- scale(Y, center = TRUE, scale = FALSE)
                 printColoredMessage(message = '-Create M martix:',
                                     color = 'blue',
                                     verbose = verbose)
@@ -588,8 +582,7 @@ RUVIII.PRPS <- function(
                     if (!'W' %in% names(se.obj@metadata[['RUVIII']][[new.assay.name]])) {
                         se.obj@metadata[['RUVIII']][[new.assay.name]][['W']]  <- list()
                     }
-                    se.obj@metadata[['RUVIII']][[new.assay.name]][['W']]  <-
-                        all.ruv[[x]][[y]]$W
+                    se.obj@metadata[['RUVIII']][[new.assay.name]][['W']]  <- all.ruv[[x]][[y]]$W
                 }
             }
         }

@@ -7,10 +7,10 @@
 RUVIII.PRPS(
   se.obj,
   assay.name,
-  prps.names = NULL,
   prps.group = "supervised",
-  ncg.names = NULL,
+  prps.set.names = NULL,
   ncg.group = "supervised",
+  ncg.set.names = NULL,
   k = 1,
   apply.log = "assay",
   pseudo.count = 1,
@@ -29,27 +29,34 @@ RUVIII.PRPS(
 
 \item{assay.name}{String for the selection of the name of the assay data of the SummarizedExperiment class object}
 
-\item{prps.names}{TTTTT}
-
 \item{prps.group}{TTTTT}
 
-\item{ncg.names}{TTTT}
+\item{prps.set.names}{TTTTT}
 
 \item{ncg.group}{TTTT}
 
-\item{k}{TTTT}
+\item{ncg.set.names}{TTTT}
 
-\item{apply.log}{TTTT}
+\item{k}{The number of unwanted factors to use. Can be 0, in which case no adjustment is made. Can also be NULL (the
+default value), in which case the maximum possible value of k is used; note that in this case no singular value
+decomposition is necessary and execution is faster.}
 
-\item{pseudo.count}{TTTT}
+\item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
+
+\item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements before log transformation,
+by default it is set to 1.}
 
 \item{alpha}{TTTT}
 
-\item{eta}{TTTT}
+\item{eta}{Gene-wise (as opposed to sample-wise) covariates. These covariates are adjusted for by RUV-1 before any
+further analysis proceeds. Can be either (1) a matrix with n columns, (2) a matrix with n rows, (3) a dataframe with
+n rows, (4) a vector or factor of length n, or (5) simply 1, for an intercept term.}
 
-\item{include.intercept}{TTTT}
+\item{include.intercept}{When eta is specified (not NULL) but does not already include an intercept term, this will
+automatically include one.}
 
-\item{return.info}{TTTT}
+\item{return.info}{If FALSE, only the adjusted data matrix is returned. If TRUE, additional information is returned
+(see below).}
 
 \item{assess.se.obj}{TTTT}
 
