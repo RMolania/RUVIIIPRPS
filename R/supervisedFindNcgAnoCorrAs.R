@@ -192,23 +192,38 @@ supervisedFindNcgAnoCorrAs <- function(
         se.obj <- se.obj$se.obj
     }
     # data transformation and normalization ####
+    # data transformation and normalization ####
     printColoredMessage(
-        message = '-- Data transformation, normalization and regression:',
+        message = '-- Data transformation and normalization:',
         color = 'magenta',
         verbose = verbose)
     ## apply log ####
-    if(apply.log){
+    if (isTRUE(apply.log) & !is.null(pseudo.count)){
         printColoredMessage(
-            message = paste0('Apply log2 transformation on the ', assay.name, ' data.'),
+            message = paste0(
+                'Applying log2 + ',
+                pseudo.count,
+                ' (pseudo.count) on the ',
+                assay.name,
+                ' data.'),
             color = 'blue',
             verbose = verbose)
-        expr.data <- log2(assay(se.obj, assay.name) + pseudo.count)
-    } else{
+        expr.data <- log2(assay(x = se.obj, i = assay.name) + pseudo.count)
+    } else if (isTRUE(apply.log) & is.null(pseudo.count)){
+        printColoredMessage(
+            message = paste0(
+                'Applying log2 on the ',
+                assay.name,
+                ' data.'),
+            color = 'blue',
+            verbose = verbose)
+        expr.data <- log2(assay(x = se.obj, i = assay.name))
+    } else if (isFALSE(apply.log)) {
         printColoredMessage(
             message = paste0('The ', assay.name, ' data will be used without any log transformation.'),
             color = 'blue',
             verbose = verbose)
-        expr.data <- assay(se.obj, assay.name)
+        expr.data <- assay(x = se.obj, i = assay.name)
     }
     ## normalizations ####
     if(!is.null(normalization)){
@@ -552,6 +567,7 @@ supervisedFindNcgAnoCorrAs <- function(
             })
         names(corr.genes.bio) <- continuous.bio
     } else corr.genes.bio <- NULL
+
     # final selection ####
     printColoredMessage(
         message = '-- Selection of a set of genes as NCG:',
@@ -748,6 +764,7 @@ supervisedFindNcgAnoCorrAs <- function(
         message = paste0('A set of ', sum(ncg.selected), ' genes are selected for NCG.'),
         color = 'blue',
         verbose = verbose)
+
     # assessment of the selected set of NCG ####
     ## pca on the NCG ####
     if(assess.ncg){
@@ -796,16 +813,16 @@ supervisedFindNcgAnoCorrAs <- function(
                 }
             })
         names(all.corr) <- variables.to.assess.ncg
-        pcs <- groups <- NULL
+        pcs <- Groups <- NULL
         pca.ncg <- as.data.frame(do.call(cbind, all.corr)) %>%
             dplyr::mutate(pcs = c(1:nb.pcs)) %>%
             tidyr::pivot_longer(
                 -pcs,
-                names_to = 'groups',
+                names_to = 'Groups',
                 values_to = 'ls')
-        pca.ncg <- ggplot(pca.ncg, aes(x = pcs, y = ls, group = groups)) +
-            geom_line(aes(color = groups), size = 1) +
-            geom_point(aes(color = groups), size = 2) +
+        pca.ncg <- ggplot(pca.ncg, aes(x = pcs, y = ls, group = Groups)) +
+            geom_line(aes(color = Groups), size = 1) +
+            geom_point(aes(color = Groups), size = 2) +
             xlab('PCs') +
             ylab (expression("Correlations")) +
             scale_x_continuous(
@@ -829,6 +846,10 @@ supervisedFindNcgAnoCorrAs <- function(
         if(verbose) print(pca.ncg)
     }
     # add results to the SummarizedExperiment object ####
+    printColoredMessage(
+        message = '-- Save the NCGs:',
+        color = 'magenta',
+        verbose = verbose)
     out.put.name <- paste0(
         sum(ncg.selected),
         '|',
@@ -842,7 +863,7 @@ supervisedFindNcgAnoCorrAs <- function(
     if(save.se.obj == TRUE){
         printColoredMessage(
             message = '-- Save the selected set of NCG to the metadata of the SummarizedExperiment object.',
-            color = 'magenta',
+            color = 'blue',
             verbose = verbose)
         ## Check if metadata NCG already exists
         if(length(se.obj@metadata$NCG) == 0 ) {
@@ -859,6 +880,10 @@ supervisedFindNcgAnoCorrAs <- function(
             verbose = verbose)
         return(se.obj)
     } else{
+        printColoredMessage(
+            message = '-- The NCGs are outpputed as a logical vector.',
+            color = 'blue',
+            verbose = verbose)
         printColoredMessage(
             message = '------------The supervisedFindNcgAnoCorrAs function finished.',
             color = 'white',
