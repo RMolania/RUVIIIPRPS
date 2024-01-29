@@ -293,7 +293,7 @@ prpsForCategoricalUV <- function(
                     selected.batches,
                     function(y) {
                         index.samples <- all.groups$bio.batch == row.names(samples.dis)[x] & all.groups$uv.group == y
-                        rowMeans(expre.data[, index.samples])
+                        rowMeans(expr.data[, index.samples])
                     })
                 colnames(ps.matrix) <- rep(
                     paste(row.names(samples.dis)[x], main.uv.variable, sep = '||'),
@@ -363,7 +363,7 @@ prpsForCategoricalUV <- function(
                     function(y) {
                         index.samples <- all.groups$bio.groups == row.names(samples.dis)[x] &
                             all.groups$uv.group == y
-                        rowMeans(expre.data[, index.samples])
+                        rowMeans(expr.data[, index.samples])
                     })
                 colnames(ps.matrix) <- rep(
                     paste(row.names(samples.dis)[x], main.uv.variable, sep = '||'),
