@@ -44,8 +44,8 @@ Imports:
     S4Vectors,
     patchwork,
     biomaRt
-URL: https://github.com/mtrussart/RUVIIIPRPS
-BugReports: https://github.com/mtrussart/RUVIIIPRPS/issues
+URL: https://github.com/RMolania/RUVIIIPRPS
+BugReports: https://github.com/RMolania/RUVIIIPRPS/issues
 Suggests: 
     rmarkdown,
     testthat (>= 3.0.0)
