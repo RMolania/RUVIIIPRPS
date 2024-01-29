@@ -72,8 +72,7 @@
 #' 'uv.variables' will be excluded. By default, it is set to both'.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object or
 #' to output the result. By default it is set to TRUE.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
-#' of the functions, by default it is set to TRUE.
+#' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
 #' @return Either the SummarizedExperiment object containing the a set of negative control genes in the metadata  or a
 #' logical vector of the selected negative control genes.
@@ -318,9 +317,8 @@ supervisedFindNcgTWAnova <- function(
         top.uv.genes <- row.names(all.aov)[top.uv.genes]
         ncg.selected <- top.uv.genes[!top.uv.genes %in% top.bio.genes]
         if(length(ncg.selected) >= nb.ncg){
-            lo <- top.rank.uv.genes
             grid.nb <- round(c(grid.nb/100) * nrow(se.obj), digits = 0)
-            pro.bar <- progress_estimated(round(lo/grid.nb, digits = 0) + 1)
+            pro.bar <- progress_estimated(round(top.rank.uv.genes/grid.nb, digits = 0) + 1)
             while(length(ncg.selected) > nb.ncg | top.rank.uv.genes == 0){
                 pro.bar$pause(0.1)$tick()$print()
                 top.uv.genes <- all.aov$uv.rank <  top.rank.uv.genes
@@ -422,13 +420,9 @@ supervisedFindNcgTWAnova <- function(
         geom_point(aes(color = Groups), size = 2) +
         xlab('PCs') +
         ylab (expression("Correlations")) +
-        scale_x_continuous(
-            breaks = (1:nb.pcs),
-            labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
-        scale_y_continuous(
-            breaks = scales::pretty_breaks(n = nb.pcs),
-            limits = c(0,1)) +
         ggtitle('Assessment of the NCGs') +
+        scale_x_continuous(breaks = (1:nb.pcs),labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
+        scale_y_continuous(breaks = scales::pretty_breaks(n = nb.pcs), limits = c(0,1)) +
         theme(
             panel.background = element_blank(),
             axis.line = element_line(colour = 'black', linewidth = 1),
