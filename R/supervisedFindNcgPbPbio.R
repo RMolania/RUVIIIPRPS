@@ -1,5 +1,7 @@
 #' is used to find a set of negative control genes using ANOVA and correlation analyses per homogeneous batches and per homogeneous biological groups.
-#'
+
+#' @author Ramyar Molania
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.name Symbol.Indicates a name of assay in the SummarizedExperiment object.
 #' @param nb.ncg Numeric. Indicates the percentage of the total genes to be selected a NCG set,
@@ -62,15 +64,15 @@
 #' to output the result. By default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the execution
 #' of the functions, by default it is set to TRUE.
-#'
+
 #' @return Either the SummarizedExperiment object containing the a set of negative control genes
 #' or a logical vector of the selected negative control genes.
 
+#' @importFrom SummarizedExperiment assay
 #' @importFrom BiocSingular runSVD bsparam
 #' @importFrom fastDummies dummy_cols
 #' @importFrom dplyr mutate progress_estimated
 #' @importFrom tidyr pivot_longer
-#' @importFrom SummarizedExperiment assay
 #' @importFrom knitr kable
 #' @import ggplot2
 #' @export
