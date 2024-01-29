@@ -221,8 +221,8 @@ applyOtherNormalizations <- function(
         )
     }
     # saving the data ####
+    new.assay.name <- paste0(assay.name, '.', method)
     if (save.se.obj) {
-        new.assay.name <- paste0(assay.name, '.', method)
         if (!new.assay.name %in% names(assays(se.obj))) {
             se.obj@assays@data[[new.assay.name]] <- norm.data
         }
