@@ -1,13 +1,14 @@
 #' is used to find a set of negative control genes (NCG) using ANOVA and correlation analyses across all samples.
-#'
-#'
+
+#' @author Ramyar Molania
+
 #' @description
 #' This function uses the correlation and ANOVA analyses across all samples to find a set of genes as negative control
 #' genes for RUV-III-PRPS normalization. The correlation and ANOVA are used to find genes that are highly affected by
 #' continuous and categorical sources of variation respectively. The function selects genes as NCG that show possible
 #' high correlation coefficients and F-statistics with the sources of unwanted variation and low correlation coefficients
 #' and F-statistics with the sources of biological variation. The function uses different approaches to perform the final selection.
-#'
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.name Symbol. Indicates a name of an assay in the SummarizedExperiment object. The selected assay should
 #' be the one that will be used for RUV-III-PRPS normalization.
@@ -86,14 +87,10 @@
 #' to output the result. The default is TRUE.
 #' @param verbose Logical. Indicates whether to display or not a detailed level of output or messages during the execution
 #' of the function. The default setting is TRUE.
-#'
+
 #' @return Either the SummarizedExperiment object containing the a set of negative control genes or a logical vector of
 #' the selected negative control genes
-#'
-#' @author Ramyar Molania
 
-#' @importFrom Matrix colSums
-#' @importFrom dplyr left_join
 #' @importFrom SummarizedExperiment assay SummarizedExperiment
 #' @importFrom matrixStats rowProds
 #' @export
@@ -851,7 +848,7 @@ supervisedFindNcgAnoCorrAs <- function(
         if(length(se.obj@metadata$NCG) == 0 ) {
             se.obj@metadata[['NCG']] <- list()
         }
-        se.obj@metadata[['NCG']][['supervised']][[out.put.name]] <- ncg.selected
+        se.obj@metadata[['NCG']][['Supervised']][[out.put.name]] <- ncg.selected
         printColoredMessage(
             message = 'The NCGs are saved to metadata of the SummarizedExperiment object.',
             color = 'blue',
