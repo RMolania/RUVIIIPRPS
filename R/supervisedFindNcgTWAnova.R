@@ -351,7 +351,7 @@ supervisedFindNcgTWAnova <- function(
             message(' ')
             printColoredMessage(
                     message = paste0(
-                        length(poss.ncg),
+                        length(ncg.selected),
                         ' genes are found based on the current parameters.'),
                     color = 'red',
                     verbose = verbose)
