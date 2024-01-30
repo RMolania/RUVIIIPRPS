@@ -26,7 +26,7 @@ createSeObj(
 )
 }
 \arguments{
-\item{data.sets}{List. A a list containing assay(s) or expression data. For individual datasets, genes should be arranged
+\item{data.sets}{List. A list containing assay(s) or expression data. For individual datasets, genes should be arranged
 in rows and samples in columns. If multiple datasets are provided, ensure that the row names of the assays are in the
 same order.}
 
@@ -79,7 +79,7 @@ be added to the gene annotation. These genes signatures, can be used to estimate
 
 \item{metaData}{Any metadata data. The metadata can be in any format and dimensions.}
 
-\item{verbose}{Logical. If TRUE shows the messages of different steps of the function.}
+\item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
 \value{
 A SummarizedExperiment object containing assay(s) and also samples annotation, gene annotation and metadata

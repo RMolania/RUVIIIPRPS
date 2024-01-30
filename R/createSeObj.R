@@ -26,7 +26,7 @@
 #' more details.
 
 
-#' @param data.sets List. A a list containing assay(s) or expression data. For individual datasets, genes should be arranged
+#' @param data.sets List. A list containing assay(s) or expression data. For individual datasets, genes should be arranged
 #' in rows and samples in columns. If multiple datasets are provided, ensure that the row names of the assays are in the
 #' same order.
 #' @param raw.count.assay.name Symbol. The name of raw counts RNA-seq data within the list of assay(s) or expression data.
@@ -62,7 +62,7 @@
 #' @param add.immunStroma.genes Logical. If 'TRUE', the immune and stromal genes signature from Kosuke Yoshihara et.al will
 #' be added to the gene annotation. These genes signatures, can be used to estimate tumor purity in cancer RNA-seq data.
 #' @param metaData Any metadata data. The metadata can be in any format and dimensions.
-#' @param verbose Logical. If TRUE shows the messages of different steps of the function.
+#' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
 #' @return A SummarizedExperiment object containing assay(s) and also samples annotation, gene annotation and metadata
 #' if there are specified.
