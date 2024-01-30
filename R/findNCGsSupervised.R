@@ -161,7 +161,7 @@ findNCGsSupervised <- function(
     }
 
     if(approach == 'PbPbio'){
-        ncg.set <- supervisedFindNcgPbPbio(
+        ncg.set <- findNCGsPerBiologyPerBatch(
             se.obj = se.obj,
             assay.name = assay.name,
             nb.ncg = nb.ncg,
@@ -196,7 +196,7 @@ findNCGsSupervised <- function(
             save.se.obj = save.se.obj,
             verbose = verbose)
     } else if(approach == 'AnoCorrAs'){
-        ncg.set <- supervisedFindNcgAnoCorrAs(
+        ncg.set <- findNCGsAcrossSamples(
             se.obj = se.obj,
             assay.name = assay.name,
             bio.variables = bio.variables,
@@ -230,7 +230,7 @@ findNCGsSupervised <- function(
             remove.na = remove.na,
             verbose = verbose)
     } else if(approach == 'TWAnova'){
-        ncg.set <- supervisedFindNcgTWAnova(
+        ncg.set <- findNCGsByTwoWayAnova(
             se.obj = se.obj,
             assay.name = assay.name,
             bio.variables = bio.variables,

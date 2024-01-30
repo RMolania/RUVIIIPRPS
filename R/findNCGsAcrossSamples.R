@@ -94,7 +94,7 @@
 #' @importFrom matrixStats rowProds
 #' @export
 
-supervisedFindNcgAnoCorrAs <- function(
+findNCGsAcrossSamples <- function(
         se.obj,
         assay.name,
         bio.variables,
