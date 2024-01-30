@@ -1,24 +1,24 @@
-#' is used to check the assay names, variables and missing/NA values in a SummarizedExperiment object.
+#' assess the assay names, variables, and missing values in a SummarizedExperiment object.
 
 #' @author Ramyar Molania
 
 #' @description
-#' This functions assesses the structure of a SummarizedExperiment object and removes any missing/NA values from both
-#' assay(s) and sample annotation. When multiple assays are provided, if there are missing/NA in only one of the assays,
+#' This function assesses the structure of a SummarizedExperiment object and removes any missing values from both
+#' assay(s) and sample annotation. When multiple assays are provided, if there are missing in only one of the assays,
 #' the corresponding rows in other assays will be remove as well. Please note that, the current RUV-III-PRPS method do
-#' not support missing/NA values in the assay(s).
+#' not support missing values in the assay(s).
 
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. Indicates the name(s) of the assay(s) in the SummarizedExperiment object. By default it is
-#' set to 'all', then all the assay(s) will be assessed.
-#' @param variables Symbol. Indicates the name(s) of the column(s) in the sample annotation of the SummarizedExperiment
-#' object. By default it is set to 'all', then all the columns will be checked. We recommend to specify those column(s)
-#' that are of interest to your analysis.
-#' @param remove.na Symbol. Indicates whether to remove missing/NA values from either the 'assays', 'sample.annotation',
-#' 'both' or 'none'. If 'assays' is selected, the genes that contains missing/NA values will be excluded. If 'sample.annotation'
-#' is selected, the samples that contains NA or missing values for each 'variables' will be excluded. By default, it is
-#' set to 'both'.
-#' @param verbose Logical. If TRUE shows the process messages.
+#' @param assay.names Symbol. A symbol or vector of symbols used to specify the name(s) of the assay(s) in the
+#' SummarizedExperiment object. The default is "all," indicating that all assays in the SummarizedExperiment object will
+#' be assessed.
+#' @param variables Symbol. A symbol or a vector of symbols specifying the name(s) of the column(s) in the sample
+#' annotation of the SummarizedExperiment object. By default, it is set to 'all', then all the columns will be examined.
+#' We recommend specifying those column(s) that are of interest to your analysis.
+#' @param remove.na Symbol. Specifies whether to eliminate missing values from either 'assays', 'sample.annotation',
+# 'both', or 'none'. When 'assays' is chosen, genes containing missing values will be omitted. If 'sample.annotation'
+# is selected, samples with NA or missing values for each 'variables' will be excluded. The default is 'both'.
+#' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
 #' @return A SummarizedExperiment object.
 
@@ -36,6 +36,17 @@ checkSeObj <- function(
     printColoredMessage(message = '------------The checkSeObj function starts:',
                         color = 'white',
                         verbose = verbose)
+
+    # check function inputs ####
+    if (remove.na =='both'){
+        if(is.null(assay.names) | is.null(variables))
+            stop('The "assay.names" or "variables" cannot be empty when the remove.na = "both".')
+    } else if (remove.na == 'assays'){
+        stop('The "assay.names" cannot be empty when the remove.na = "assays".')
+    } else if (remove.na == 'variables'){
+        stop('The "variables" cannot be empty when the remove.na = "variables".')
+    }
+
     # check the class and structure of the SummarizedExperiment object ####
     printColoredMessage(message = '-- Check the class, structure and dimention of the SummarizedExperiment object:',
                         color = 'magenta',
@@ -50,22 +61,21 @@ checkSeObj <- function(
             color = 'blue',
             verbose = verbose)
         printColoredMessage(
-            message = paste0(
-                'The object contains: ',
-                ncol(se.obj),
-                ' (samples) and ',
-                nrow(se.obj),
-                ' (genes or measurements).'),
+            message = paste0('The object contains: ', ncol(se.obj), ' (samples) and ', nrow(se.obj),' (genes or measurements).'),
             color = 'blue',
             verbose = verbose)
     }
 
     # assays ####
+    if(!is.vector(assay.names))
+        stop('The "assay.names" must be a vector of the assay names or assay.names = "all".')
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
     } else  assay.names <- factor(x = assay.names, levels = assay.names)
 
     # variables ####
+    if(!is.vector(variables))
+        stop('The "variables" must be a vector of the column names or variables = "all".')
     if (length(variables) == 1 && variables == 'all') {
         variables <- colnames(colData(se.obj))
     } else  variables <- factor(x = variables, levels = variables)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/checkSeObj.R
 \name{checkSeObj}
 \alias{checkSeObj}
-\title{is used to check the assay names, variables and missing/NA values in a SummarizedExperiment object.}
+\title{assess the assay names, variables, and missing values in a SummarizedExperiment object.}
 \usage{
 checkSeObj(
   se.obj,
@@ -15,28 +15,26 @@ checkSeObj(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. Indicates the name(s) of the assay(s) in the SummarizedExperiment object. By default it is
-set to 'all', then all the assay(s) will be assessed.}
+\item{assay.names}{Symbol. A symbol or vector of symbols used to specify the name(s) of the assay(s) in the
+SummarizedExperiment object. The default is "all," indicating that all assays in the SummarizedExperiment object will
+be assessed.}
 
-\item{variables}{Symbol. Indicates the name(s) of the column(s) in the sample annotation of the SummarizedExperiment
-object. By default it is set to 'all', then all the columns will be checked. We recommend to specify those column(s)
-that are of interest to your analysis.}
+\item{variables}{Symbol. A symbol or a vector of symbols specifying the name(s) of the column(s) in the sample
+annotation of the SummarizedExperiment object. By default, it is set to 'all', then all the columns will be examined.
+We recommend specifying those column(s) that are of interest to your analysis.}
 
-\item{remove.na}{Symbol. Indicates whether to remove missing/NA values from either the 'assays', 'sample.annotation',
-'both' or 'none'. If 'assays' is selected, the genes that contains missing/NA values will be excluded. If 'sample.annotation'
-is selected, the samples that contains NA or missing values for each 'variables' will be excluded. By default, it is
-set to 'both'.}
+\item{remove.na}{Symbol. Specifies whether to eliminate missing values from either 'assays', 'sample.annotation',}
 
-\item{verbose}{Logical. If TRUE shows the process messages.}
+\item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
 \value{
 A SummarizedExperiment object.
 }
 \description{
-This functions assesses the structure of a SummarizedExperiment object and removes any missing/NA values from both
-assay(s) and sample annotation. When multiple assays are provided, if there are missing/NA in only one of the assays,
+This function assesses the structure of a SummarizedExperiment object and removes any missing values from both
+assay(s) and sample annotation. When multiple assays are provided, if there are missing in only one of the assays,
 the corresponding rows in other assays will be remove as well. Please note that, the current RUV-III-PRPS method do
-not support missing/NA values in the assay(s).
+not support missing values in the assay(s).
 }
 \author{
 Ramyar Molania
