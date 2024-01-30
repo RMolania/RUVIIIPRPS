@@ -2,56 +2,75 @@
 % Please edit documentation in R/createHomogeneousUVGroups.R
 \name{createHomogeneousUVGroups}
 \alias{createHomogeneousUVGroups}
-\title{This is used to create all possible groups with respect to unwanted variables in the SummarizedExperiment objct.}
+\title{Create all possible homogeneous groups with respect to unwanted variables.}
 \usage{
 createHomogeneousUVGroups(
   se.obj,
   uv.variables,
-  nb.clusters,
   clustering.method = "kmeans",
-  assess.se.obj = TRUE,
+  nb.clusters = 3,
   assess.variables = TRUE,
   cat.cor.coef = c(0.9, 0.9),
   cont.cor.coef = c(0.9, 0.9),
+  assess.se.obj = TRUE,
   remove.na = "sample.annotation",
   save.se.obj = TRUE,
   verbose = TRUE
 )
 }
 \arguments{
-\item{se.obj}{A summarized experiment object.}
+\item{se.obj}{A SummarizedExperiment object.}
 
-\item{uv.variables}{Symbol. Indicate of the columns names of unwanted variation variables to specify major groups
-with respect to unwanted variation.}
+\item{uv.variables}{Symbol. A symbol or a vector of symbols specifying the column names of unwanted variables in
+the sample annotation of the SummarizedExperiment object. These 'uv.variables' can be either categorical or continuous
+variables.}
 
-\item{nb.clusters}{Numeric. A value to specify the number of groups for continuous sources of biological variation.
-The default is 2. This means each continuous sources will be divided inot 2 groups using the 'clustering.method'.}
+\item{clustering.method}{Symbol. A symbol specifying the clustering method to be applied for grouping each continuous
+source of unwanted variables. Options include 'kmeans', 'cut', and 'quantile'. The default is 'kmeans' clustering.}
 
-\item{clustering.method}{A clustering method to group each continuous sources of biological variation.}
+\item{nb.clusters}{Numeric. A value indicating the number of groups for continuous sources of unwanted variation.
+The default is 3. This implies that each continuous source will be split into 3 groups using the specified
+'clustering.method' method.}
 
-\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
+\item{assess.variables}{Logical. Indicates whether to assess correlations between the unwanted variables. If 'TRUE',
+the function 'assessVariablesCorrelation' will be applied. For more details refer to the 'assessVariablesCorrelation'
+function.The default is 'TRUE'.}
 
-\item{assess.variables}{Logical. Indicates whether to assess association between the unwanted variables. For more
-details refer to the 'variableCorrelation' function.}
+\item{cat.cor.coef}{Vector. A vector of two numerical values. Indicates the cut-off of the correlation coefficient
+between each pair of categorical variables. The first one is between each pair of 'uv.variables' and the second one
+is between each pair of 'bio.variables'. The correlation is computed by the function ContCoef from the DescTools
+package. If the correlation of a pair of variable is higher than the cut-off, then only the variable that has the
+highest number of factor will be kept and the other one will be excluded from the remaining analysis. By default they
+are both set to 0.9.}
 
-\item{cat.cor.coef}{Numeric. Correlation coefficients (Cramer's V, Pearson's contingency coefficient) cut off for
-assessing association between categorical sources of biological variation.}
+\item{cont.cor.coef}{Vector of two numerical values. Indicates the cut-off of the Spearman correlation coefficient
+between each pair of continuous variables. The first one is between each pair of 'uv.variables' and the second one is
+between each pair of 'bio.variables'. If the correlation of a pair of variable is higher than the cut-off, then only
+the variable that has the highest variance will be kept and the other one will be excluded from the remaining analysis.
+By default they are both set to 0.9.}
 
-\item{cont.cor.coef}{Spearman coefficients cut off for assessing association between continuous sources of biological
-variation.}
+\item{assess.se.obj}{Logical. Whether to assess the SummarizedExperiment object or not. If 'TRUE', the function
+'checkSeobj' will be applied. The default is 'TRUE'.}
 
-\item{remove.na}{To remove NA or missing values from either the assays or sample annotation or both.}
+\item{remove.na}{Symbol. Indicates whether to remove missing values from the 'uv.variables'. The options are
+'sample.annotation' or 'none'. The default is 'sample.annotation', indicating the missing values from the variables
+will be removed.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the results to SummarizedExperiment object or not.}
+\item{save.se.obj}{Logical. Indicates whether to save the results to the metadata of the SummarizedExperiment object
+or not. If 'TRUE', all the possible homogeneous groups will be saved into "metadata$HGgroups$UVgroups", otherwise
+the results will outputted as a vector. The default is 'TRUE'.}
 
-\item{verbose}{Logical. Whether to show the messages of the functions or not.}
+\item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
 \value{
-SummarizedExperiment A SummarizedExperiment object containing the a set of sutable negatve control genes
-seleced by the two-way ANOVA approach.
+A SummarizedExperiment object containing the all possible homogeneous groups in the "metadata$HGgroups$UVgroups"
+or a vector.
 }
 \description{
-A short description...
+This function generates all possible homogeneous sample groups based on the specified unwanted variables. If continuous
+variables are provided, the function splits them into a number of groups determined by 'nb.clusters', using the method
+specified in clustering.method'. In the end, the product of all groups is generated and treated as homogeneous sample
+groups with respect to unwanted variables.
 }
 \author{
 Ramyar Molania
