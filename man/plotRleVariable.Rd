@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotRleVariable.R
 \name{plotRleVariable}
 \alias{plotRleVariable}
-\title{is used to plot a variable against the medians and IQR of relative log expression (RLE)}
+\title{plot a variable against the medians and IQR of relative log expression (RLE) data}
 \usage{
 plotRleVariable(
   se.obj,
@@ -50,7 +50,7 @@ to output them as list. Default is set to TRUE.}
 \item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
-A SummarizedExperiment object or a list that contains all the plot(s).
+A SummarizedExperiment object that contains all the plot(s) in the metadata or a list that contains all the plot(s).
 }
 \description{
 This function plots a variable against the medians and IQR of a relative log expression (RLE) data. Because of the

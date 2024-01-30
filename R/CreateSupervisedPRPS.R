@@ -71,7 +71,7 @@
 #' @importFrom tidyr %>%
 #' @export
 
-supervisedPRPS <- function(
+createSupervisedPRPS <- function(
         se.obj,
         assay.name,
         bio.variables,
@@ -117,7 +117,7 @@ supervisedPRPS <- function(
                     if (apply.other.uv.variables) {
                         other.uv.variables <- uv.variables[!uv.variables %in% x]
                     } else other.uv.variables <- NULL
-                    prpsForCategoricalUV(
+                    createPRPSForCategoricalUV(
                         se.obj = se.obj,
                         assay.name = assay.name,
                         bio.variables = bio.variables,
@@ -144,7 +144,7 @@ supervisedPRPS <- function(
                 if (apply.other.uv.variables) {
                     other.uv.variables <- uv.variables[!uv.variables %in% x]
                 } else other.uv.variables <- NULL
-                se.obj <- prpsForCategoricalUV(
+                se.obj <- createPRPSForCategoricalUV(
                     se.obj = se.obj,
                     assay.name = assay.name,
                     bio.variables = bio.variables,
@@ -179,7 +179,7 @@ supervisedPRPS <- function(
                     if (apply.other.uv.variables) {
                         other.uv.variables <- uv.variables[!uv.variables %in% x]
                     } else other.uv.variables <- NULL
-                    prpsForContinuousUV(
+                    createPRPSForContinuousUV(
                         se.obj = se.obj,
                         assay.name = assay.name,
                         bio.variables = bio.variables,
@@ -207,7 +207,7 @@ supervisedPRPS <- function(
                 if (apply.other.uv.variables) {
                     other.uv.variables <- uv.variables[!uv.variables %in% x]
                 } else other.uv.variables <- NULL
-                se.obj <- prpsForContinuousUV(
+                se.obj <- createPRPSForContinuousUV(
                     se.obj = se.obj,
                     assay.name = assay.name,
                     bio.variables = bio.variables,

@@ -1,4 +1,4 @@
-#' is used to plot a variable against the medians and IQR of relative log expression (RLE)
+#' plot a variable against the medians and IQR of relative log expression (RLE) data
 
 #' @author Ramyar Molania
 
@@ -32,7 +32,7 @@
 #' to output them as list. Default is set to TRUE.
 #' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
-#' @return A SummarizedExperiment object or a list that contains all the plot(s).
+#' @return A SummarizedExperiment object that contains all the plot(s) in the metadata or a list that contains all the plot(s).
 
 #' @references
 #' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
@@ -297,7 +297,7 @@ plotRleVariable <- function(
         color = 'magenta',
         verbose = verbose)
     ## add plots to the SummarizedExperiment object ####
-    if (save.se.obj == TRUE) {
+    if (isTRUE(save.se.obj)) {
         printColoredMessage(
             message = '-- Save all the RLE plots to the metadata of the SummarizedExperiment object.',
             color = 'blue',
@@ -337,14 +337,11 @@ plotRleVariable <- function(
                 se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']][['RleIqr']] <- all.rle.iqr.var.plots[[x]]
             }
         }
-
         printColoredMessage(
             message = paste0(
                 'The RLE plots of individual assays are saved to metadata@metric'),
             color = 'blue',
-            verbose = verbose
-        )
-
+            verbose = verbose)
         ## add overall RLE plots of all assays ####
         if(length(assay.names) > 1){
             if (!'plot' %in%  names(se.obj@metadata)) {
@@ -386,12 +383,12 @@ plotRleVariable <- function(
                 verbose = verbose
             )
         }
-        printColoredMessage(
-            message = '------------The plotRleVariable function finished.',
+        printColoredMessage(message = '------------The plotRleVariable function finished.',
             color = 'white',
             verbose = verbose)
         return(se.obj = se.obj)
-    } else if (save.se.obj == FALSE) {
+        ## save the plots as list ####
+    } else if (isFALSE(save.se.obj)) {
         printColoredMessage(
             message = '-- All the plots are outputed as list.',
             color = 'blue',
@@ -400,11 +397,31 @@ plotRleVariable <- function(
                             color = 'white',
                             verbose = verbose)
         if(length(assay.names) == 1){
-            return(rle.plots = list(all.rle.plots = all.rle.plots))
-        } else{
-            return(rle.plots = list(
-                all.rle.plots = all.rle.plots,
-                overall.rle.plot = overall.rle.plot))
+            if(rle.data.type == 'both'){
+                rle.var.plots <- list(
+                    all.rle.med.var.plots = all.rle.med.var.plots,
+                    all.rle.iqr.var.plots = all.rle.iqr.var.plots)
+            } else if (rle.data.type == 'rle.medians'){
+                rle.var.plots <- list(all.rle.med.var.plots = all.rle.med.var.plots)
+            } else if (rle.data.type == 'rle.iqrs'){
+                rle.var.plots <- list(all.rle.iqr.var.plots = all.rle.iqr.var.plots)
+            }
+        } else if (length(assay.names) > 1){
+            if(rle.data.type == 'both'){
+                rle.var.plots <- list(
+                    all.rle.med.var.plots = all.rle.med.var.plots,
+                    all.rle.iqr.var.plots = all.rle.iqr.var.plots,
+                    overall.rle.med.var.plots = overall.rle.med.var.plots,
+                    overall.rle.iqr.var.plots = overall.rle.iqr.var.plots)
+            } else if (rle.data.type == 'rle.medians'){
+                rle.var.plots <- list(
+                    all.rle.med.var.plots = all.rle.med.var.plots,
+                    overall.rle.med.var.plots = overall.rle.med.var.plots)
+            } else if (rle.data.type == 'rle.iqrs'){
+                rle.var.plots <- list(
+                    all.rle.iqr.var.plots = all.rle.iqr.var.plots,
+                    overall.rle.iqr.var.plots = overall.rle.iqr.var.plots)
+            }
         }
     }
 }

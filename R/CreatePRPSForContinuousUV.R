@@ -74,7 +74,7 @@
 #' @import ggplot2
 #' @export
 
-CreatePRPSForContinuousUV <- function(
+createPRPSForContinuousUV <- function(
         se.obj,
         assay.name,
         bio.variables,
