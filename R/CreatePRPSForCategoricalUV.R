@@ -76,7 +76,7 @@
 #' @export
 
 
-prpsForCategoricalUV <- function(
+createPRPSForCategoricalUV <- function(
         se.obj,
         assay.name,
         bio.variables,
