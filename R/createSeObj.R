@@ -1,11 +1,13 @@
-#' is used to create a SummarizedExperiment object.
+#' create a SummarizedExperiment object.
 
 #' @author Ramyar Molania
 
 #' @description
 #' This function creates a SummarizedExperiment object from tabular expression data and sample annotation (if available).
 #' In addition, the function can remove lowly expressed genes if a raw count data is provided, add a range of annotations
-#' for genes e.g. bio type, chromosome names , and provide several sets of housekeeping genes and a immunStroma gene signature.
+#' for individual genes e.g. biotype, chromosome names, ... , and provide several sets of housekeeping genes and a immune
+#' and stromal gene signature. The housekeeping gene sets could be suitable negative control genes for the RUV methods.
+#' The immune and stromal gene signature could be used to estimate tumor purity variation in cancer RNA-seq data.
 
 #' @details
 #' The SummarizedExperiment object is a data structure used in the R for representing and manipulating high-dimensional
@@ -19,48 +21,55 @@
 #' information about the features, such as gene annotations or genomic coordinates. Column metadata may include sample
 #' information, experimental conditions, or other relevant details.
 #' Metadata
-#' The Metadata of the SummarizedExperiment allows for flexibility in terms of data types and
-#' structures. This makes it suitable for saving plots.
+#' The Metadata of the SummarizedExperiment allows for flexibility in terms of data types and structures. This makes it
+#' suitable for saving metrics and plots in the RUVIIIPRPS R package. We refer to the SummarizedExperiment R package for
+#' more details.
 
 
-#' @param assays A list of assay(s) or expression data. The genes should be in the rows and samples in the columns. The
-#' row names of the assays should be in the same order.
-#' @param raw.count.assay.name Symbol. The name of raw counts RNA-seq data in the list of assay(s). The raw counts data
-#' must be provided if "remove.lowly.expressed.genes" or "calculate.library.size" are "TRUE".
-#' @param remove.lowly.expressed.genes 	Logical. If TRUE the function finds and removes lowly expressed genes from the
-#' assay that is provided in the "raw.count.assay.name" argument. The default is FALSE.
-#' @param count.cutoff Numeric. Minimum count required for at least some sample groups. If the "biological.group" argument
-#' is equal to NULL, all samples will be considered as one group. Otherwise, the smallest subgroups of the "biological.group"
-#' will be considered.
-#' @param biological.group Symbol. Indicates a column name in the sample annotation that specifies the biological groups.
-#' The smallest population is considered for removing lowly expressed genes.
-#' @param minimum.proportion Numeric. In large sample situations, the minimum proportion of samples in a group that a
-#' gene needs to be expressed in.
-#' @param calculate.library.size Logical. If TRUE then library size is calculated using the raw.count.assay.name. The
-#' library size should be calculated after removing lowly expressed genes.
-#' @param sample.annotation A data frame, contains information for individual samples in the assay(s). The order of row
-#' names of the sample annotation should be the same as in the assay(s).
-#' @param create.sample.annotation Logical. If TRUE then a sample annotation the initially contains the column names of
-#' the assay(s) will be created.
-#' @param gene.annotation A data frame, that contains details e.g. chromosome names,GC content,... for individual genes.
-#' @param create.gene.annotation Logical. If TRUE then a gene annotation that initially contains row names of the assay(s)
-#' will be created.
-#' @param add.gene.details Logical. If TRUE then a pr-set or provided gene details in the gene.details argument will be
+#' @param data.sets List. A a list containing assay(s) or expression data. For individual datasets, genes should be arranged
+#' in rows and samples in columns. If multiple datasets are provided, ensure that the row names of the assays are in the
+#' same order.
+#' @param raw.count.assay.name Symbol. The name of raw counts RNA-seq data within the list of assay(s) or expression data.
+#' Raw counts data must be included if 'remove.lowly.expressed.genes' or "calculate.library.size" is set to 'TRUE'.
+#' @param remove.lowly.expressed.genes 	Logical. If 'TRUE', the function identifies and removes lowly expressed genes from
+#' the assay specified in the 'raw.count.assay.name' argument. The default is 'FALSE'.
+#' @param count.cutoff Numeric. Minimum count required for at least some sample groups. If the 'biological.group' argument
+#' is set to 'NULL', all samples will be considered as single group. Otherwise, the smallest subgroups of the
+#' 'biological.group' will be taken into account to remove lowly expressed genes. We refer to the filterByExpr function
+#' from the edgeR R package.
+#' @param biological.group Symbol. Indicates a column name in the sample annotation, specifying the biological groups.
+#' The smallest biological groups will be taken into account for removing lowly expressed genes. If is 'NULL', all samples
+#' will be considered as single group.
+#' @param minimum.proportion Numeric. In large sample situations, the minimum proportion of samples within a group in which
+#' a gene must be expressed. The default is 0.5.
+#' @param calculate.library.size Logical. If 'TRUE', then library size (total counts) is calculated using the data provided
+#' in 'raw.count.assay.name'. The library size will be calculated after removing lowly expressed genes.
+#' @param sample.annotation A data frame containing information for individual samples in the assay(s). The order of row
+#' names of the sample annotation should match with the columns names of the assay(s).
+#' @param create.sample.annotation Logical. If 'TRUE', a sample annotation will be generated, initially contains the
+#' column names of the assay(s). Additional variables such as library size will be included in the sample annotation.
+#' @param gene.annotation A data frame, containing details e.g. chromosome names,GC content,... for individual genes. The
+#' list of housekeeping genes, and immune and stromal genes will be included in the gene annotation.
+#' @param create.gene.annotation Logical. If 'TRUE', a gene annotation will be generated, initially contains row names of
+#' the assay(s). Additional gene lists and details will be included in the gene annotation.
+#' @param add.gene.details Logical. If 'TRUE', preset or provided gene details in the 'gene.details' argument will be
 #' added to the gene annotation.
-#' @param gene.group A name of a gene class in the row names of the assay(s). This must be one of the 'entrezgene_id',
+#' @param gene.group Symbol. The name of a gene class of the row names of the assay(s). This must be one of the 'entrezgene_id',
 #' 'hgnc_symbol', 'ensembl_gene_id'.
-#' @param gene.details A vector of gene details to be added to the gene annotation.
-#' @param add.housekeeping.genes Logical. if TRUE then several sets of publicly available "housekeeping" will be added to
+#' @param gene.details Symbol. A symbol or a vector symbols indicating the gene details to be included to the gene annotation.
+#' @param add.housekeeping.genes Logical. if 'TRUE', several sets of publicly available "housekeeping" will be included in
 #' the gene annotation. The housekeeping could be potentially used as negative control genes for the RUV normalization.
-#' @param add.immunStroma.genes Logical. If TRUE, the immune and stromal genes signature from Kosuke Yoshihara et.al will
-#' be added to the gene annotation. These gene signatures, can be used to estimate tumor purity.
+#' @param add.immunStroma.genes Logical. If 'TRUE', the immune and stromal genes signature from Kosuke Yoshihara et.al will
+#' be added to the gene annotation. These genes signatures, can be used to estimate tumor purity in cancer RNA-seq data.
 #' @param metaData Any metadata data. The metadata can be in any format and dimensions.
 #' @param verbose Logical. If TRUE shows the messages of different steps of the function.
 
-#' @return A summarizedExperiment object that contains assays, gene annotation, samples annotation and metadata.
+#' @return A SummarizedExperiment object containing assay(s) and also samples annotation, gene annotation and metadata
+#' if there are specified.
 
 #' @importFrom SummarizedExperiment SummarizedExperiment assay rowData
-#' @importFrom Matrix colSums
+#' @importFrom Matrix colSums rowSums
+#' @importFrom edgeR cpm
 #' @importFrom dplyr left_join
 #' @importFrom biomaRt getBM useMart useDataset
 #' @importFrom S4Vectors DataFrame
@@ -68,12 +77,12 @@
 #' @export
 
 createSeObj <- function(
-        assays ,
+        data.sets ,
         raw.count.assay.name = NULL,
         remove.lowly.expressed.genes = FALSE,
         count.cutoff = 10,
         biological.group = NULL,
-        minimum.proportion = .5,
+        minimum.proportion = 0.5,
         calculate.library.size = FALSE,
         sample.annotation = NULL,
         create.sample.annotation = FALSE,
@@ -91,119 +100,117 @@ createSeObj <- function(
                         color = 'white',
                         verbose = verbose)
     # check inputs ####
-    if(!inherits(assays, what = 'list')){
-        stop('The assays should be a list of expression datastes (genes in rows and samples in columns.).')
+    if(!inherits(data.sets, what = 'list')){
+        stop('The "data.sets" must be a list of expression datastes (genes in rows and samples in columns.).')
     }
     ## dimensions and orders of the assays ####
-    if(length(assays) > 1){
+    if(length(data.sets) > 1){
         dim.data <- unlist(lapply(
-            names(assays),
-            function(x) c(nrow(assays[[x]]), ncol(assays[[x]])))
+            names(data.sets),
+            function(x) c(nrow(data.sets[[x]]), ncol(data.sets[[x]])))
         )
         if(length(unique(dim.data)) !=2 ){
-            stop('The dimensions of the assays in the assays must be the same.')
+            stop('The "data.sets" must have matching dimensions.')
         }
-        all.assays <- combn(1:length(assays), 2)
+        all.assays <- combn(1:length(data.sets), 2)
         m.out <- lapply(
             1:ncol(all.assays),
             function(x){
-                if(!all.equal(row.names(assays[[all.assays[ 1, x]]]),row.names(assays[[all.assays[ 2, x]]]))){
-                    stop('The row names of the assays should be in the same order.')
-                }
+                if(!all.equal(row.names(data.sets[[all.assays[ 1, x]]]), row.names(data.sets[[all.assays[ 2, x]]])))
+                    stop('The row names of the "data.sets" must be in the same order.')
             })
         m.out <- lapply(
             1:ncol(all.assays),
             function(x){
-                if(!all.equal(colnames(assays[[all.assays[ 1, x]]]),colnames(assays[[all.assays[ 2, x]]]))){
-                    stop('The column names of the assays should be in the same order.')
-                }
+                if(!all.equal(colnames(data.sets[[all.assays[ 1, x]]]),colnames(data.sets[[all.assays[ 2, x]]])))
+                    stop('The column names of the "data.sets" must be in the same order.')
             })
     }
     ## check raw.count.assay.name ####
     if(!is.null(raw.count.assay.name)){
         if(length(raw.count.assay.name) > 1){
-            stop('The raw.count.assay.name should contain a single assay name.')
+            stop('The "raw.count.assay.name" must contain a single assay name.')
         }
-        if(!raw.count.assay.name %in% names(assays)){
-            stop('The raw.count.assay.name should be in the assay list.')
+        if(!raw.count.assay.name %in% names(data.sets)){
+            stop('The "raw.count.assay.name" must be in the assay list.')
         }
     }
     ## remove lowly expressed genes ####
-    if(remove.lowly.expressed.genes){
+    if(isTRUE(remove.lowly.expressed.genes)){
         if(is.null(raw.count.assay.name)){
-            stop('To remove lowly expressed genes, the raw.count.assay.name should be provided.')
+            stop('To find and remove lowly expressed genes, the "raw.count.assay.name" must be provided.')
         }
         if(!is.null(biological.group)){
             if(is.null(sample.annotation)){
-                stop('To find biological.group, please provide a sample.annotation that contains the biological.group variable.')
+                stop('To find "biological.group", please provide a sample annotation that contains the "biological.group" variable.')
             }
             if(!biological.group %in% colnames(sample.annotation)){
-                stop('The biological.group cannot be found in the sample.annotation.')
+                stop('The "biological.group" cannot be found in the sample annotation.')
             }
         }
         if(minimum.proportion > 1 | minimum.proportion < 0){
-            stop('The minimum.proportion should between 0 to 1.')
+            stop('The "minimum.proportion" must between 0 to 1.')
         }
         if(is.null(count.cutoff)){
             stop('The count.cutoff cannot be empty.')
         }
         if(count.cutoff < 0){
-            stop('The value of the count.cutoff cannot be negative.')
+            stop('The value of the "count.cutoff" cannot be negative.')
         }
     }
     ## library size calculation ####
-    if(is.null(raw.count.assay.name) & calculate.library.size){
-        stop('To calculate library size, a single raw count assay name should be provided.')
+    if(is.null(raw.count.assay.name) & isTRUE(calculate.library.size)){
+        stop('To calculate library size, raw count data must be provided.')
     }
     ## sample annotation ####
     if(!is.null(sample.annotation)){
-        if(nrow(sample.annotation) != ncol(assays[[1]])){
-            stop('The number of rows in sample.annotation and the number of columns in the assays should be the same.')
-        } else if (!all.equal(row.names(sample.annotation), colnames(assays[[1]])) ){
-            stop('The order and lables of the row names of sample.annotation and colummn names of the assays should be the same.')
+        if(nrow(sample.annotation) != ncol(data.sets[[1]])){
+            stop('The number of rows in "sample.annotation" and the number of columns in the "data.sets" must be the same.')
+        } else if (!all.equal(row.names(sample.annotation), colnames(data.sets[[1]])) ){
+            stop('The order and lables of the row names of "sample.annotation" and colummn names of the "data.sets" should be the same.')
         }
         if(create.sample.annotation){
-            stop('A sample.annotation has been provided, then create.sample.annotation must be FALSE.')
+            stop('A "sample.annotation" is provided, then "create.sample.annotation" must be set to "FALSE".')
         }
     }
     ## gene annotation ####
-    if(!is.null(gene.annotation) & create.gene.annotation){
-        stop('A gene annotattion is provided, then create.gene.annotation must be FALSE.')
+    if(!is.null(gene.annotation) & isTRUE(create.gene.annotation)){
+        stop('A gene annotation is provided, then "create.gene.annotation" must be "FALSE".')
     }
-    if(add.gene.details & is.null(gene.annotation) & !create.gene.annotation){
-        stop('To add add.gene.details , the create.gene.annotation should be TRUE.')
+    if(isTRUE(add.gene.details) & is.null(gene.annotation) & !create.gene.annotation){
+        stop('To add "add.gene.details" , the "create.gene.annotation" must be set to "TRUE".')
     }
-    if(add.housekeeping.genes & is.null(gene.annotation) & !create.gene.annotation){
-        stop('To add add.housekeeping.genes a gene annotattion should be provided or create.gene.annotation should be TRUE.')
+    if(isTRUE(add.housekeeping.genes) & is.null(gene.annotation) & !create.gene.annotation){
+        stop('To add "add.housekeeping.genes", gene annotation must be provided or "create.gene.annotation" must be set to "TRUE" .')
     }
-    if(add.immunStroma.genes & is.null(gene.annotation) & !create.gene.annotation){
-        stop('To add add.immunStroma.genes a gene annotattion should be provided or create.gene.annotation should be TRUE.')
+    if(isTRUE(add.immunStroma.genes) & is.null(gene.annotation) & !create.gene.annotation){
+        stop('To add "add.immunStroma.genes", gene annotation must be provided or "create.gene.annotation" must set to "TRUE".')
     }
-    if(add.gene.details & is.null(gene.group)){
-        stop('To add gene details, the gene.group should be specified (entrezgene_id, hgnc_symbol and ensembl_gene_id).')
+    if(isTRUE(add.gene.details) & is.null(gene.group)){
+        stop('To add gene details, the "gene.group" must be specified (entrezgene_id, hgnc_symbol and ensembl_gene_id).')
     }
-    if(add.gene.details &!is.null(gene.group)){
+    if(isTRUE(add.gene.details) &!is.null(gene.group)){
         if(!gene.group %in% c('entrezgene_id', 'hgnc_symbol', 'ensembl_gene_id')){
-            stop('The gene group should be: entrezgene_id, hgnc_symbol or ensembl_gene_id.')
+            stop('The "gene.group" must be one of the "entrezgene_id", "hgnc_symbol" or "ensembl_gene_id".')
         }
     }
     if (!is.null(gene.annotation)) {
-        if (nrow(gene.annotation) != nrow(assays[[1]])) {
-            stop('The number of rows in gene.annotation and the number of rows in the assays should be the same.')
-        } else if (!sum(row.names(gene.annotation) == row.names(assays[[1]])) == nrow(gene.annotation))  {
-            stop('The row names in gene.annotation and the row names datastes should be identical.')
+        if (nrow(gene.annotation) != nrow(data.sets[[1]])) {
+            stop('The number of rows in "gene.annotation" and the number of rows in the "data.sets" must be the same.')
+        } else if (!sum(row.names(gene.annotation) == row.names(data.sets[[1]])) == nrow(gene.annotation))  {
+            stop('The row names in "gene.annotation" and the row names datastes should be identical.')
         } else if (!gene.group %in% colnames(gene.annotation)) {
-            stop('The gene.group should be a column name in the gene.annotation.')
+            stop('The "gene.group" must be a column name in the "gene.annotation".')
         }
     }
-    if(add.housekeeping.genes & is.null(gene.group)){
-        stop('To add housekeeping genes, the gene.group should be specified.')
+    if(isTRUE(add.housekeeping.genes) & is.null(gene.group)){
+        stop('To add housekeeping genes, the "gene.group" must be specified.')
     }
-    if(add.housekeeping.genes & is.null(gene.annotation) & !create.gene.annotation){
-        stop('To add housekeeping genes, the create.gene.annotation should be TRUE.')
+    if(isTRUE(add.housekeeping.genes) & is.null(gene.annotation) & !create.gene.annotation){
+        stop('To add housekeeping genes, the "create.gene.annotation" must be "TRUE".')
     }
     # grammar
-    if(length(assays) == 1){
+    if(length(data.sets) == 1){
         assay.n <- 'assay'
     } else assay.n <- 'assays'
     # remove lowly expressed genes ####
@@ -211,8 +218,8 @@ createSeObj <- function(
         printColoredMessage(message = paste0('-- Remove lowly expressed genes from the ', raw.count.assay.name, ' assay.'),
                             color = 'magenta',
                             verbose = verbose)
-        library.size <- colSums(assays[[raw.count.assay.name]])
-        cpm.data <- cpm(y = assays[[raw.count.assay.name]], lib.size = NULL)
+        library.size <- Matrix::colSums(data.sets[[raw.count.assay.name]])
+        cpm.data <- edgeR::cpm(y = data.sets[[raw.count.assay.name]], lib.size = NULL)
         cpm.cutoff <- round(count.cutoff/median(library.size) * 1e6, digits = 2)
         if(!is.null(biological.group)){
             sample.size <- min(table(sample.annotation[[biological.group]]))
@@ -223,7 +230,7 @@ createSeObj <- function(
         if(is.null(minimum.proportion) & is.null(biological.group)){
             sample.size <- ncol(cpm.data)
         }
-        keep.genes <- rowSums(cpm.data >= cpm.cutoff) >= sample.size
+        keep.genes <- Matrix::rowSums(cpm.data >= cpm.cutoff) >= sample.size
         printColoredMessage(
             message = paste0(
                 sum(keep.genes),
@@ -237,11 +244,11 @@ createSeObj <- function(
             color = 'blue',
             verbose = verbose
         )
-        names.assays <-  names(assays)
-        assays <- lapply(
+        names.assays <-  names(data.setss)
+        data.sets <- lapply(
             names(assays),
-            function(x) assays[[x]][keep.genes ,])
-        names(assays) <- names.assays
+            function(x) data.sets[[x]][keep.genes ,])
+        names(data.sets) <- names.assays
         rm(cpm.data, library.size)
         if(!is.null(gene.annotation)){
             gene.annotation <- gene.annotation[keep.genes , ]
@@ -259,7 +266,7 @@ createSeObj <- function(
             color = 'red',
             verbose = verbose
         )
-        library.size <- colSums(assays[[raw.count.assay.name]])
+        library.size <- Matrix::colSums(data.sets[[raw.count.assay.name]])
         printColoredMessage(
             message = 'The library size is calculated, with summaries (in millions):',
             color = 'blue',
@@ -291,12 +298,10 @@ createSeObj <- function(
         )
         if(calculate.library.size){
             sample.annotation <- data.frame(
-                sample.ids = colnames(assays[[1]]),
+                sample.ids = colnames(data.sets[[1]]),
                 library.size = library.size
             )
-        } else{ sample.annotation <- data.frame(
-                sample.ids = colnames(assays[[1]]))
-        }
+        } else sample.annotation <- data.frame(sample.ids = colnames(data.sets[[1]]))
     }
     if (is.null(sample.annotation) & !create.sample.annotation){
         printColoredMessage(
@@ -316,13 +321,13 @@ createSeObj <- function(
             color = 'blue',
             verbose = verbose
         )
-    } else if(is.null(gene.annotation) & create.gene.annotation){
+    } else if(is.null(gene.annotation) & isTRUE(create.gene.annotation)){
         printColoredMessage(
             message = 'A gene.annotation (rowData) will be created and added to the SummarizedExperiment object.',
             color = 'blue',
             verbose = verbose
         )
-        gene.annotation <- data.frame(gene.ids = row.names(assays[[1]]))
+        gene.annotation <- data.frame(gene.ids = row.names(data.sets[[1]]))
         colnames(gene.annotation) <- gene.group
     } else if (is.null(gene.annotation)){
         printColoredMessage(
@@ -336,7 +341,7 @@ createSeObj <- function(
         color = 'magenta',
         verbose = verbose
     )
-    if(add.gene.details){
+    if(isTRUE(add.gene.details)){
         if(is.null(gene.details)){
             printColoredMessage(
                 message = 'The gene.details is not specified, some pre-set details will be added to the gene annotation.',
@@ -362,7 +367,7 @@ createSeObj <- function(
                 mart = ensembl
             )
             bioMart.geneAnnot <- bioMart.geneAnnot[!duplicated(bioMart.geneAnnot[[gene.group]]), ]
-            gene.annotation <- left_join(
+            gene.annotation <- dplyr::left_join(
                 x = gene.annotation,
                 y = bioMart.geneAnnot,
                 by = gene.group,
@@ -396,7 +401,7 @@ createSeObj <- function(
                 mart = ensembl
             )
             bioMart.geneAnnot <- bioMart.geneAnnot[!duplicated(bioMart.geneAnnot[[gene.group]]), ]
-            gene.annotation <- left_join(
+            gene.annotation <- dplyr::left_join(
                 x = gene.annotation,
                 y = bioMart.geneAnnot,
                 multiple = 'first',
@@ -417,10 +422,8 @@ createSeObj <- function(
             verbose = verbose
         )
         kh.im.genes <- hk_immunStroma
-        keep.cols <- c(
-            which(colnames(kh.im.genes) %in% gene.group),
-            4:9)
-        gene.annotation <- left_join(
+        keep.cols <- c(which(colnames(kh.im.genes) %in% gene.group), 4:9)
+        gene.annotation <- dplyr::left_join(
             x = gene.annotation,
             y = kh.im.genes[ , keep.cols],
             by = gene.group,
@@ -431,7 +434,9 @@ createSeObj <- function(
             color = 'blue',
             verbose = verbose
         )
-        nb.hk.genes <- lapply(colnames(kh.im.genes)[4:9], function(x) sum(gene.annotation[[x]] == 'yes'))
+        nb.hk.genes <- lapply(
+            colnames(kh.im.genes)[4:9],
+            function(x) sum(gene.annotation[[x]] == 'yes'))
         names(nb.hk.genes) <- colnames(kh.im.genes)[4:9]
         if(verbose) print(kable(unlist(nb.hk.genes),
                                 caption = 'Number of genes in each list of housekeeping genes:',
@@ -448,7 +453,7 @@ createSeObj <- function(
         keep.cols <- c(
             which(colnames(kh.im.genes) %in% gene.group),
             10:ncol(kh.im.genes))
-        gene.annotation <- as.data.frame(left_join(
+        gene.annotation <- as.data.frame(dplyr::left_join(
             x = gene.annotation,
             y = kh.im.genes[ , keep.cols],
             by = gene.group,
@@ -459,7 +464,9 @@ createSeObj <- function(
             color = 'blue',
             verbose = verbose
         )
-        nb.genes <- lapply(colnames(kh.im.genes)[10:11], function(x) sum(gene.annotation[[x]] == 'yes'))
+        nb.genes <- lapply(
+            colnames(kh.im.genes)[10:11],
+            function(x) sum(gene.annotation[[x]] == 'yes'))
         names(nb.genes) <- colnames(kh.im.genes)[10:11]
         if(verbose) print(
             kable(unlist(nb.genes),
@@ -473,42 +480,42 @@ createSeObj <- function(
         verbose = verbose
     )
     if (is.null(gene.annotation) & is.null(sample.annotation) & is.null(metaData)) {
-        se.obj <- SummarizedExperiment::SummarizedExperiment(assays = assays)
+        se.obj <- SummarizedExperiment::SummarizedExperiment(assays = data.sets)
     } else if (!is.null(gene.annotation) & is.null(sample.annotation) & is.null(metaData)) {
         se.obj <- SummarizedExperiment::SummarizedExperiment(
-            assays = assays,
+            assays = data.sets,
             rowData = gene.annotation)
     } else if (is.null(gene.annotation) & !is.null(sample.annotation) & is.null(metaData)) {
         se.obj <- SummarizedExperiment::SummarizedExperiment(
-            assays = assays,
+            assays = data.sets,
             colData = DataFrame(sample.annotation),
             metadata = metaData
         )
     } else if (is.null(gene.annotation) & is.null(sample.annotation) & !is.null(metaData)) {
         se.obj <- SummarizedExperiment::SummarizedExperiment(
-            assays = assays,
+            assays = data.sets,
             metadata = metaData)
     } else if (!is.null(gene.annotation) & !is.null(sample.annotation) & is.null(metaData)) {
         se.obj <- SummarizedExperiment::SummarizedExperiment(
-            assays = assays,
+            assays = data.sets,
             rowData = gene.annotation,
             colData = sample.annotation)
     } else if (is.null(gene.annotation) & !is.null(sample.annotation) & is.null(metaData)) {
         se.obj <- SummarizedExperiment::SummarizedExperiment(
-            assays = assays,
+            assays = data.sets,
             rowData = gene.annotation,
             colData = DataFrame(sample.annotation)
         )
     } else if (!is.null(gene.annotation) & !is.null(sample.annotation) & !is.null(metaData)) {
         se.obj <- SummarizedExperiment::SummarizedExperiment(
-            assays = assays,
+            assays = data.sets,
             rowData = gene.annotation,
             colData = sample.annotation,
             metadata = metaData
         )
     }
     printColoredMessage(
-        message = paste0('A summarizedExperiment object is created with:'),
+        message = paste0('A SummarizedExperiment object is created with:'),
         color = 'blue',
         verbose = verbose
     )

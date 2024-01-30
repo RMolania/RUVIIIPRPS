@@ -2,10 +2,10 @@
 % Please edit documentation in R/createSeObj.R
 \name{createSeObj}
 \alias{createSeObj}
-\title{is used to create a SummarizedExperiment object.}
+\title{create a SummarizedExperiment object.}
 \usage{
 createSeObj(
-  assays,
+  data.sets,
   raw.count.assay.name = NULL,
   remove.lowly.expressed.genes = FALSE,
   count.cutoff = 10,
@@ -26,64 +26,71 @@ createSeObj(
 )
 }
 \arguments{
-\item{assays}{A list of assay(s) or expression data. The genes should be in the rows and samples in the columns. The
-row names of the assays should be in the same order.}
+\item{data.sets}{List. A a list containing assay(s) or expression data. For individual datasets, genes should be arranged
+in rows and samples in columns. If multiple datasets are provided, ensure that the row names of the assays are in the
+same order.}
 
-\item{raw.count.assay.name}{Symbol. The name of raw counts RNA-seq data in the list of assay(s). The raw counts data
-must be provided if "remove.lowly.expressed.genes" or "calculate.library.size" are "TRUE".}
+\item{raw.count.assay.name}{Symbol. The name of raw counts RNA-seq data within the list of assay(s) or expression data.
+Raw counts data must be included if 'remove.lowly.expressed.genes' or "calculate.library.size" is set to 'TRUE'.}
 
-\item{remove.lowly.expressed.genes}{Logical. If TRUE the function finds and removes lowly expressed genes from the
-assay that is provided in the "raw.count.assay.name" argument. The default is FALSE.}
+\item{remove.lowly.expressed.genes}{Logical. If 'TRUE', the function identifies and removes lowly expressed genes from
+the assay specified in the 'raw.count.assay.name' argument. The default is 'FALSE'.}
 
-\item{count.cutoff}{Numeric. Minimum count required for at least some sample groups. If the "biological.group" argument
-is equal to NULL, all samples will be considered as one group. Otherwise, the smallest subgroups of the "biological.group"
-will be considered.}
+\item{count.cutoff}{Numeric. Minimum count required for at least some sample groups. If the 'biological.group' argument
+is set to 'NULL', all samples will be considered as single group. Otherwise, the smallest subgroups of the
+'biological.group' will be taken into account to remove lowly expressed genes. We refer to the filterByExpr function
+from the edgeR R package.}
 
-\item{biological.group}{Symbol. Indicates a column name in the sample annotation that specifies the biological groups.
-The smallest population is considered for removing lowly expressed genes.}
+\item{biological.group}{Symbol. Indicates a column name in the sample annotation, specifying the biological groups.
+The smallest biological groups will be taken into account for removing lowly expressed genes. If is 'NULL', all samples
+will be considered as single group.}
 
-\item{minimum.proportion}{Numeric. In large sample situations, the minimum proportion of samples in a group that a
-gene needs to be expressed in.}
+\item{minimum.proportion}{Numeric. In large sample situations, the minimum proportion of samples within a group in which
+a gene must be expressed. The default is 0.5.}
 
-\item{calculate.library.size}{Logical. If TRUE then library size is calculated using the raw.count.assay.name. The
-library size should be calculated after removing lowly expressed genes.}
+\item{calculate.library.size}{Logical. If 'TRUE', then library size (total counts) is calculated using the data provided
+in 'raw.count.assay.name'. The library size will be calculated after removing lowly expressed genes.}
 
-\item{sample.annotation}{A data frame, contains information for individual samples in the assay(s). The order of row
-names of the sample annotation should be the same as in the assay(s).}
+\item{sample.annotation}{A data frame containing information for individual samples in the assay(s). The order of row
+names of the sample annotation should match with the columns names of the assay(s).}
 
-\item{create.sample.annotation}{Logical. If TRUE then a sample annotation the initially contains the column names of
-the assay(s) will be created.}
+\item{create.sample.annotation}{Logical. If 'TRUE', a sample annotation will be generated, initially contains the
+column names of the assay(s). Additional variables such as library size will be included in the sample annotation.}
 
-\item{gene.annotation}{A data frame, that contains details e.g. chromosome names,GC content,... for individual genes.}
+\item{gene.annotation}{A data frame, containing details e.g. chromosome names,GC content,... for individual genes. The
+list of housekeeping genes, and immune and stromal genes will be included in the gene annotation.}
 
-\item{create.gene.annotation}{Logical. If TRUE then a gene annotation that initially contains row names of the assay(s)
-will be created.}
+\item{create.gene.annotation}{Logical. If 'TRUE', a gene annotation will be generated, initially contains row names of
+the assay(s). Additional gene lists and details will be included in the gene annotation.}
 
-\item{add.gene.details}{Logical. If TRUE then a pr-set or provided gene details in the gene.details argument will be
+\item{add.gene.details}{Logical. If 'TRUE', preset or provided gene details in the 'gene.details' argument will be
 added to the gene annotation.}
 
-\item{gene.group}{A name of a gene class in the row names of the assay(s). This must be one of the 'entrezgene_id',
+\item{gene.group}{Symbol. The name of a gene class of the row names of the assay(s). This must be one of the 'entrezgene_id',
 'hgnc_symbol', 'ensembl_gene_id'.}
 
-\item{gene.details}{A vector of gene details to be added to the gene annotation.}
+\item{gene.details}{Symbol. A symbol or a vector symbols indicating the gene details to be included to the gene annotation.}
 
-\item{add.housekeeping.genes}{Logical. if TRUE then several sets of publicly available "housekeeping" will be added to
+\item{add.housekeeping.genes}{Logical. if 'TRUE', several sets of publicly available "housekeeping" will be included in
 the gene annotation. The housekeeping could be potentially used as negative control genes for the RUV normalization.}
 
-\item{add.immunStroma.genes}{Logical. If TRUE, the immune and stromal genes signature from Kosuke Yoshihara et.al will
-be added to the gene annotation. These gene signatures, can be used to estimate tumor purity.}
+\item{add.immunStroma.genes}{Logical. If 'TRUE', the immune and stromal genes signature from Kosuke Yoshihara et.al will
+be added to the gene annotation. These genes signatures, can be used to estimate tumor purity in cancer RNA-seq data.}
 
 \item{metaData}{Any metadata data. The metadata can be in any format and dimensions.}
 
 \item{verbose}{Logical. If TRUE shows the messages of different steps of the function.}
 }
 \value{
-A summarizedExperiment object that contains assays, gene annotation, samples annotation and metadata.
+A SummarizedExperiment object containing assay(s) and also samples annotation, gene annotation and metadata
+if there are specified.
 }
 \description{
 This function creates a SummarizedExperiment object from tabular expression data and sample annotation (if available).
 In addition, the function can remove lowly expressed genes if a raw count data is provided, add a range of annotations
-for genes e.g. bio type, chromosome names , and provide several sets of housekeeping genes and a immunStroma gene signature.
+for individual genes e.g. biotype, chromosome names, ... , and provide several sets of housekeeping genes and a immune
+and stromal gene signature. The housekeeping gene sets could be suitable negative control genes for the RUV methods.
+The immune and stromal gene signature could be used to estimate tumor purity variation in cancer RNA-seq data.
 }
 \details{
 The SummarizedExperiment object is a data structure used in the R for representing and manipulating high-dimensional
@@ -97,8 +104,9 @@ The SummarizedExperiment object includes metadata associated with both rows and 
 information about the features, such as gene annotations or genomic coordinates. Column metadata may include sample
 information, experimental conditions, or other relevant details.
 Metadata
-The Metadata of the SummarizedExperiment allows for flexibility in terms of data types and
-structures. This makes it suitable for saving plots.
+The Metadata of the SummarizedExperiment allows for flexibility in terms of data types and structures. This makes it
+suitable for saving metrics and plots in the RUVIIIPRPS R package. We refer to the SummarizedExperiment R package for
+more details.
 }
 \author{
 Ramyar Molania
