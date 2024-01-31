@@ -42,8 +42,10 @@ checkSeObj <- function(
         if(is.null(assay.names) | is.null(variables))
             stop('The "assay.names" or "variables" cannot be empty when the remove.na = "both".')
     } else if (remove.na == 'assays'){
-        stop('The "assay.names" cannot be empty when the remove.na = "assays".')
+        if(is.null(assay.names))
+            stop('The "assay.names" cannot be empty when the remove.na = "assays".')
     } else if (remove.na == 'variables'){
+        if(is.null(variables))
         stop('The "variables" cannot be empty when the remove.na = "variables".')
     }
 
