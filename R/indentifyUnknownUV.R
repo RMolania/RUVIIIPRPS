@@ -82,6 +82,7 @@
 #' and 'uv.variables' will be excluded. By default, it is set to both'.
 #' @param save.se.obj Logical. Indicates whether to save the results in the metadata of the SummarizedExperiment class.
 #' Th default is 'TRUE', the results will be save to the 'metadata$UV$Unknown'.
+#' @param plot.out TTTT
 #' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
 #' @importFrom SummarizedExperiment assay colData
@@ -117,8 +118,9 @@ indentifyUnknownUV <- function(
         scale = FALSE,
         svd.bsparam = bsparam(),
         assess.se.obj = TRUE,
-        remove.na = 'assays',
+        remove.na = 'both',
         save.se.obj = TRUE,
+        plot.out = TRUE,
         verbose = TRUE
         ){
     printColoredMessage(message = '------------The indentifyUnknownUV function starts:',
@@ -209,6 +211,11 @@ indentifyUnknownUV <- function(
     }
     if(approach == 'pca' & nb.pcs > 1 & clustering.methods %in% c('cut', 'quantile')){
         stop(paste0('The nb.pcs should be 1 to use the ', clustering.methods, ' method for clustering.'))
+    }
+    if(is.null(regress.out.bio.variables) & remove.na == 'both'){
+        stop('The "remove.na" cannot be set to "both" when the "regress.out.bio.variables = NULL".')
+    } else if (is.null(regress.out.bio.variables) & remove.na == 'sample.annotation'){
+        stop('The "remove.na" cannot be set to "sample.annotation" when the "regress.out.bio.variables = NULL".')
     }
 
     # check the SummarizedExperiment object ####
@@ -462,7 +469,8 @@ indentifyUnknownUV <- function(
             }
     } else if(clustering.methods == 'quantile'){
         printColoredMessage(
-            message = paste0('- Apply the quantile method with probs = ', seq(0, 1, 1 / nb.clusters), ' on the data'),
+            message = paste0('- Apply the quantile method with probs = ',
+                             paste0(round(seq(0, 1, 1/nb.clusters), digits = 2)), ' on the data'),
             color = 'blue',
             verbose = verbose)
         ## quantile ####
@@ -621,6 +629,10 @@ indentifyUnknownUV <- function(
             verbose = verbose)
         return(se.obj)
     } else {
+        printColoredMessage(
+            message = 'The results are outputed as list.',
+            color = 'blue',
+            verbose = verbose)
         printColoredMessage(
             message = '------------The indentifyUnknownUV function finished.',
             color = 'white',
