@@ -44,9 +44,9 @@ checkSeObj <- function(
     } else if (remove.na == 'assays'){
         if(is.null(assay.names))
             stop('The "assay.names" cannot be empty when the remove.na = "assays".')
-    } else if (remove.na == 'variables'){
+    } else if (remove.na == 'sample.annotation'){
         if(is.null(variables))
-        stop('The "variables" cannot be empty when the remove.na = "variables".')
+        stop('The "sample.annotation" cannot be empty when the remove.na = "sample.annotation".')
     }
 
     # check the class and structure of the SummarizedExperiment object ####
@@ -69,14 +69,14 @@ checkSeObj <- function(
     }
 
     # assays ####
-    if(!is.vector(assay.names))
+    if(is.list(assay.names))
         stop('The "assay.names" must be a vector of the assay names or assay.names = "all".')
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
     } else  assay.names <- factor(x = assay.names, levels = assay.names)
 
     # variables ####
-    if(!is.vector(variables))
+    if(is.list(variables))
         stop('The "variables" must be a vector of the column names or variables = "all".')
     if (length(variables) == 1 && variables == 'all') {
         variables <- colnames(colData(se.obj))
@@ -147,13 +147,13 @@ checkSeObj <- function(
     }
 
     # find missing/NA values ####
-    printColoredMessage(message = '-- Check missing/NA values:',
+    printColoredMessage(message = '-- Check missing values:',
                         color = 'magenta',
                         verbose = verbose)
     if(!is.null(variables)){
         ## checking na in the variables ####
         printColoredMessage(
-            message = '-Find the variable(s) with missing/NA values:',
+            message = '- Find the variable(s) with missing values:',
             color = 'blue',
             verbose = verbose)
         variables.with.na <- sapply(
@@ -161,13 +161,13 @@ checkSeObj <- function(
             function(x) sum(is.na(colData(se.obj)[[x]])))
         if (sum(variables.with.na > 0) > 0) {
             printColoredMessage(
-                message = 'The variable(s) with missing/NA values status.',
+                message = 'The variable(s) with missing values status.',
                 color = 'blue',
                 verbose = verbose)
             if(isTRUE(verbose))
                 print(knitr::kable(x = variables.with.na, col.names = 'number of NA'))
             } else printColoredMessage(
-                message = 'Any missing/NA are found in the variable(s)',
+                message = 'Any missing are found in the variable(s)',
                 color = 'blue',
                 verbose = verbose
             )
@@ -179,7 +179,7 @@ checkSeObj <- function(
     if (!is.null(assay.names)) {
         ## checking na in the assays ####
         printColoredMessage(
-            message = '-Find the genes (measurements) with missing/NA value:',
+            message = '- Find the genes (measurements) with missing value:',
             color = 'blue',
             verbose = verbose)
         measurements.with.na <- sapply(
@@ -188,7 +188,7 @@ checkSeObj <- function(
         colnames(measurements.with.na) <- assay.names
         if (sum(measurements.with.na) > 0) {
             printColoredMessage(
-                message = 'The assay(s) with missing/NA values status.',
+                message = 'The assay(s) with missing values status.',
                 color = 'blue',
                 verbose = verbose)
             if(isTRUE(verbose))
@@ -200,7 +200,7 @@ checkSeObj <- function(
                 color = 'red',
                 verbose = verbose)
         } else printColoredMessage(
-            message = 'Any missing/NA are found in the assay(s).',
+            message = 'Any missing are found in the assay(s).',
             color = 'blue',
             verbose = verbose)
 
@@ -210,7 +210,7 @@ checkSeObj <- function(
         verbose = verbose)
 
     # remove missing/NA values ####
-    printColoredMessage(message = '-- Remove missing/NA values:',
+    printColoredMessage(message = '-- Remove missing/ values:',
                         color = 'magenta',
                         verbose = verbose)
     if(remove.na == 'both'){
@@ -244,7 +244,7 @@ checkSeObj <- function(
                 verbose = verbose)
             se.obj <- se.obj[rowSums(measurements.with.na) == 0, ]
         }
-    } else if (remove.na == 'variables'){
+    } else if (remove.na == 'sample.annotation'){
         if(sum(keep.samples) < ncol(se.obj)){
             printColoredMessage(
                 message = paste0(sum(!keep.samples), ' sample(s) are removed.'),
@@ -254,11 +254,10 @@ checkSeObj <- function(
         }
     } else if (remove.na == 'none'){
         printColoredMessage(
-            message = 'Any missing/NA values from both assays and variable will not be removed.',
+            message = 'Any missing values from both assays and variable will not be removed.',
             color = 'red',
             verbose = verbose)
     }
-
     printColoredMessage(message = '------------The checkSeObj function finished.',
                         color = 'white',
                         verbose = verbose)
