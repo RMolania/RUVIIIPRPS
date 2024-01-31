@@ -30,8 +30,9 @@ indentifyUnknownUV(
   scale = FALSE,
   svd.bsparam = bsparam(),
   assess.se.obj = TRUE,
-  remove.na = "assays",
+  remove.na = "both",
   save.se.obj = TRUE,
+  plot.out = TRUE,
   verbose = TRUE
 )
 }
@@ -125,6 +126,8 @@ and 'uv.variables' will be excluded. By default, it is set to both'.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the results in the metadata of the SummarizedExperiment class.
 Th default is 'TRUE', the results will be save to the 'metadata$UV$Unknown'.}
+
+\item{plot.out}{TTTT}
 
 \item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
