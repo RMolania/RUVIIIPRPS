@@ -147,6 +147,8 @@ plotRLE <- function(
         levels(assay.names),
         function(x) {
             rle.data <- all.rle.data[[x]]
+            rle.med.var <- stats::mad(matrixStats::colMedians(rle.data))
+            rle.iqr.var <- stats::mad(matrixStats::colIQRs(rle.data))
             samples.quantiles <- matrixStats::colQuantiles(
                 x = rle.data,
                 probs = seq(from = 0, to = 1, by = 0.25))
@@ -171,16 +173,17 @@ plotRLE <- function(
                     scale_color_manual(name = 'Groups:', values = rle.plot.colors) +
                     ylab('RLE') +
                     xlab('Samples') +
-                    ggtitle(x) +
+                    ggtitle(paste0('Data:', x, ',VarRleMed:', rle.med.var, 'VarRleIqr:', rle.iqr.var)) +
                     coord_cartesian(ylim = ylim.rle.plot) +
                     geom_hline(yintercept = 0, colour = geom.hline.color) +
                     theme(
                         panel.background = element_blank(),
+                        plot.title = element_text(size = 12),
                         axis.line = element_line(colour = 'black', linewidth = 1),
-                        axis.title.x = element_text(size = 14),
-                        axis.title.y = element_text(size = 14),
+                        axis.title.x = element_text(size = 12),
+                        axis.title.y = element_text(size = 12),
                         axis.text.x = element_blank(),
-                        axis.text.y = element_text(size = 10),
+                        axis.text.y = element_text(size = 9),
                         axis.ticks.x = element_blank(),
                         legend.position = 'bottom')
             } else if (is.null(variable)){
@@ -199,16 +202,17 @@ plotRLE <- function(
                                colour = median.points.color) +
                     ylab('RLE') +
                     xlab('Samples') +
-                    ggtitle(x) +
+                    ggtitle(paste0('Data:', x, ',VarRleMed:', rle.med.var, 'VarRleIqr:', rle.iqr.var)) +
                     coord_cartesian(ylim = ylim.rle.plot) +
                     geom_hline(yintercept = 0, colour = geom.hline.color) +
                     theme(
                         panel.background = element_blank(),
+                        plot.title = element_text(size = 12),
                         axis.line = element_line(colour = 'black', linewidth = 1),
-                        axis.title.x = element_text(size = 14),
-                        axis.title.y = element_text(size = 14),
+                        axis.title.x = element_text(size = 12),
+                        axis.title.y = element_text(size = 12),
                         axis.text.x = element_blank(),
-                        axis.text.y = element_text(size = 10),
+                        axis.text.y = element_text(size = 9),
                         axis.ticks.x = element_blank())
             }
             if (plot.output) print(p.rle)
