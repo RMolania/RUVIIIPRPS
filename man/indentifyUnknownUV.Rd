@@ -7,7 +7,7 @@
 indentifyUnknownUV(
   se.obj,
   assay.name,
-  approach = "RLE",
+  approach = "rle",
   rle.comp = "median",
   regress.out.bio.variables = NULL,
   regress.out.bio.gene.sets = NULL,
@@ -127,9 +127,6 @@ and 'uv.variables' will be excluded. By default, it is set to both'.}
 Th default is 'TRUE', the results will be save to the 'metadata$UV$Unknown'.}
 
 \item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
-}
-\value{
-description
 }
 \description{
 This function uses three different approaches: 'rle', 'pca' and 'sample.scoring' to find potential unknown sources of

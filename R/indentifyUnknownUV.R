@@ -84,8 +84,6 @@
 #' Th default is 'TRUE', the results will be save to the 'metadata$UV$Unknown'.
 #' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
-#' @return description
-
 #' @importFrom SummarizedExperiment assay colData
 #' @importFrom singscore rankGenes simpleScore
 #' @importFrom BiocSingular bsparam runSVD
@@ -93,11 +91,10 @@
 #' @importFrom stats as.formula
 #' @export
 
-
 indentifyUnknownUV <- function(
         se.obj,
         assay.name,
-        approach = 'RLE',
+        approach = 'rle',
         rle.comp = 'median',
         regress.out.bio.variables = NULL,
         regress.out.bio.gene.sets = NULL,
@@ -169,15 +166,15 @@ indentifyUnknownUV <- function(
     }
     if(clustering.methods == 'nbClust'){
         if(is.null(nbClust.min.nc)){
-            stop('The nbClust.min.nc must be specified, when the clustering.methods is nbClust.')
+            stop('The "nbClust.min.nc" must be specified, when the clustering.methods is nbClust.')
         } else if (nbClust.min.nc < 0 | nbClust.min.nc == 1){
-            stop('The nbClust.min.nc must be equal or more than 2, when the clustering.methods is nbClust.')
+            stop('The "nbClust.min.nc" must be equal or more than 2, when the clustering.methods is nbClust.')
         } else if(is.null(nbClust.max.nc)){
-            stop('The nbClust.max.nc must be specified, when the clustering.methods is nbClust.')
-        } else if (nbClust.max.nc < 0 | nbClust.max.nc > 1){
-            stop('The nbClust.max.nc must be equal or more than 2, when the clustering.methods is nbClust.')
-        } else if(!nbClust.method %in% c("ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid", "kmeans.")){
-            stop('The nbClust.method must be one of: "ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid", "kmeans."')
+            stop('The "nbClust.max.nc" must be specified, when the clustering.methods is nbClust.')
+        } else if (nbClust.max.nc < 0 | nbClust.max.nc < 2){
+            stop('The "nbClust.max.nc" must be equal or more than 2, when the clustering.methods is nbClust.')
+        } else if(!nbClust.method %in% c("ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid", "kmeans")){
+            stop('The "nbClust.method" must be one of: "ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid", "kmeans."')
         } else if (!nbClust.index %in% c("kl", "ch", "hartigan", "ccc", "scott", "marriot", "trcovw", "tracew", "friedman", "rubin", "cindex", "db",
                                          "silhouette", "duda", "pseudot2", "beale", "ratkowsky", "ball", "ptbiserial", "gap", "frey", "mcclain",
                                          "gamma", "gplus", "tau", "dunn", "hubert", "sdindex", "dindex", "sdbw",
@@ -210,7 +207,7 @@ indentifyUnknownUV <- function(
         if (pseudo.count < 0)
             stop('The valuse of pseudo.count cannot be negative.')
     }
-    if(approach == 'PCA' & nb.pcs > 1 & clustering.methods %in% c('cut', 'quantile')){
+    if(approach == 'pca' & nb.pcs > 1 & clustering.methods %in% c('cut', 'quantile')){
         stop(paste0('The nb.pcs should be 1 to use the ', clustering.methods, ' method for clustering.'))
     }
 
@@ -229,19 +226,19 @@ indentifyUnknownUV <- function(
         verbose = verbose)
     if (isTRUE(apply.log) & !is.null(pseudo.count)) {
         printColoredMessage(
-            message = paste0('Apply log2 + ', pseudo.count,  ' (pseudo.count) on the ', assa.name, ' data.'),
+            message = paste0('Apply log2 + ', pseudo.count,  ' (pseudo.count) on the ', assay.name, ' data.'),
             color = 'blue',
             verbose = verbose)
         temp.data <- log2(assay(x = se.obj, i = assay.name) + pseudo.count)
     } else if (isTRUE(apply.log) & is.null(pseudo.count)){
         printColoredMessage(
-            message = paste0('Apply log2 on the ', assa.name, ' data.'),
+            message = paste0('Apply log2 on the ', assay.name, ' data.'),
             color = 'blue',
             verbose = verbose)
         temp.data <- log2(assay(x = se.obj, i = assay.name))
     } else {
         printColoredMessage(
-            message = paste0('The ', assa.name, ' data will be used without log transformation.'),
+            message = paste0('The ', assay.name, ' data will be used without log transformation.'),
             color = 'blue',
             verbose = verbose)
         printColoredMessage(
@@ -334,7 +331,7 @@ indentifyUnknownUV <- function(
     printColoredMessage( message = '-- Select input data for clustering:',
         color = 'magenta',
         verbose = verbose)
-    if(approach == 'PCA' & is.null(ncg)){
+    if(approach == 'pca' & is.null(ncg)){
         printColoredMessage(
             message = paste0(
                 '- Apply PCA on the data and use the first ',
@@ -352,7 +349,7 @@ indentifyUnknownUV <- function(
         if(clustering.methods == 'nbClust'){
             input.data.name <- paste0(approach, 'onAllGenes_', nbClust.method, 'Clustering')
         } else input.data.name <- paste0(approach, 'onAllGenes_', clustering.methods, 'Clustering')
-    } else if (approach == 'PCA' & !is.null(ncg)){
+    } else if (approach == 'pca' & !is.null(ncg)){
         printColoredMessage(
             message = paste0(
                 '- Apply PCA on the data using the "ncg" gene only, and use the first ',
@@ -370,7 +367,7 @@ indentifyUnknownUV <- function(
         if(clustering.methods == 'nbClust'){
             input.data.name <- paste0(approach, 'onNCG_', nbClust.method, 'Clustering')
         } else input.data.name <- paste0(approach, 'onNCG_', clustering.methods, 'Clustering')
-    } else if (approach == 'RLE'){
+    } else if (approach == 'rle'){
         if(is.null(ncg)){
             printColoredMessage(
                 message = paste0('-Apply RLE on the data.'),
@@ -378,8 +375,8 @@ indentifyUnknownUV <- function(
                 verbose = verbose)
             rle.data <- temp.data - rowMedians(temp.data)
             if(clustering.methods == 'nbClust'){
-                input.data.name <- paste0(approach, 'onAllGenes_', nbClust.method, 'Clustering')
-            } else input.data.name <- paste0(approach, 'onAllGenes_', clustering.methods, 'Clustering')
+                input.data.name <- paste0(approach, rle.comp, 'onAllGenes_', nbClust.method, 'Clustering')
+            } else input.data.name <- paste0(approach, rle.comp,'onAllGenes_', clustering.methods, 'Clustering')
         } else if (!is.null(ncg)){
             printColoredMessage(
                 message = paste0('-Apply RLE on the data using only "ncg" genes.'),
@@ -423,10 +420,14 @@ indentifyUnknownUV <- function(
         } else input.data.name <- paste0(approach, '_', clustering.methods, 'Clustering')
     }
     # clustering ####
-    printColoredMessage(message = '- Clustering the data',
+    printColoredMessage(message = '- Cluster the data',
         color = 'magenta',
         verbose = verbose)
     if(clustering.methods == 'kmeans'){
+        printColoredMessage(
+            message = paste0('- Apply kmeans with centers = ', nb.clusters, ' on the data'),
+            color = 'blue',
+            verbose = verbose)
         ## kmeans ####
         set.seed(3344)
         if(is.list(input.data)){
@@ -442,6 +443,10 @@ indentifyUnknownUV <- function(
             uv.sources <- paste0(input.data.name, '_batch' , groups)
             }
     } else if (clustering.methods == 'cut'){
+        printColoredMessage(
+            message = paste0('- Apply the cut method with breaks = ', nb.clusters, ' on the data'),
+            color = 'blue',
+            verbose = verbose)
         ## cut ####
         if(is.list(input.data)){
             uv.sources <- lapply(
@@ -456,6 +461,10 @@ indentifyUnknownUV <- function(
             uv.sources <- paste0(input.data.name, '_batch' , groups)
             }
     } else if(clustering.methods == 'quantile'){
+        printColoredMessage(
+            message = paste0('- Apply the quantile method with probs = ', seq(0, 1, 1 / nb.clusters), ' on the data'),
+            color = 'blue',
+            verbose = verbose)
         ## quantile ####
         if(is.list(input.data)){
             uv.sources <- lapply(
@@ -472,6 +481,10 @@ indentifyUnknownUV <- function(
             uv.sources <- paste0(input.data.name, '_batch' , groups)
         }
     } else if(clustering.methods == 'nbClust'){
+        printColoredMessage(
+            message = '- Apply the nbClust method on the data.',
+            color = 'blue',
+            verbose = verbose)
         ## nbClust ####
         if(!is.list(input.data)){
             initial.clusters <- NbClust(
@@ -580,9 +593,24 @@ indentifyUnknownUV <- function(
         color = 'blue',
         verbose = verbose)
     # saving the data results ####
+    printColoredMessage(message = '- Save the the results:',
+                        color = 'magenta',
+                        verbose = verbose)
     if(save.se.obj == TRUE){
-        se.obj@metadata[['UV']][[assay.name]][['Unknown']][[input.data.name]][['batches']] <- uv.sources
-        se.obj@metadata[['UV']][[assay.name]][['Unknown']][[input.data.name]][['input.data']] <- input.data
+        if (!'SourcesOfUV' %in%  names(se.obj@metadata)) {
+            se.obj@metadata[['SourcesOfUV']] <- list()
+        }
+        if (!assay.name %in%  names(se.obj@metadata[['SourcesOfUV']])){
+            se.obj@metadata[['SourcesOfUV']][['assay.name']] <- list()
+        }
+        if (!'Unknown' %in%  names(se.obj@metadata[['SourcesOfUV']][[assay.name]])){
+            se.obj@metadata[['SourcesOfUV']][['assay.name']][['Unknown']] <- list()
+        }
+        if (!input.data.name %in%  names(se.obj@metadata[['SourcesOfUV']][[assay.name]][['Unknown']])){
+            se.obj@metadata[['SourcesOfUV']][[assay.name]][['Unknown']][[input.data.name]] <- list()
+        }
+        se.obj@metadata[['SourcesOfUV']][[assay.name]][['Unknown']][[input.data.name]][['batches']] <- uv.sources
+        se.obj@metadata[['SourcesOfUV']][[assay.name]][['Unknown']][[input.data.name]][['input.data']] <- input.data
         printColoredMessage(
             message = 'The potentail unknow sources of variation are saved to the metadata of the SummarizedExperiment object',
             color = 'blue',
