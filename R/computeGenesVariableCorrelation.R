@@ -73,7 +73,7 @@ computeGenesVariableCorrelation <- function(
     # check the inputs ####
     if (is.null(assay.names)) {
         stop('The "assay.names" cannot be empty.')
-    } else if (!is.vector(assay.names)){
+    } else if (is.list(assay.names)){
         stop('The "assay.names" must be a vector of the assay names(s) or "assay.names = all".')
     } else if (is.null(variable)) {
         stop('The "variable" cannot be empty.')

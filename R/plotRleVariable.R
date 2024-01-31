@@ -63,7 +63,7 @@ plotRleVariable <- function(
     if (is.null(assay.names)) {
         stop('The "assay.names" cannot be empty.')
     }
-    if(!is.vector(assay.names)){
+    if(is.list(assay.names)){
         stop('The "assay.names" must be a vector of assay names(s) or "assay.names = all".')
     }
     if (is.null(variable)) {
