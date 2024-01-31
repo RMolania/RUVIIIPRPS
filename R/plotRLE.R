@@ -30,7 +30,8 @@
 #' @return A SummarizedExperiment object or a list that contains all the RLE plot(s).
 
 #' @importFrom SummarizedExperiment assays
-#' @importFrom matrixStats colQuantiles
+#' @importFrom matrixStats colQuantiles colMedians colIQRs
+#' @importFrom stats mad
 #' @importFrom tidyr pivot_longer
 #' @importFrom ggpubr ggarrange
 #' @import ggplot2
@@ -147,8 +148,8 @@ plotRLE <- function(
         levels(assay.names),
         function(x) {
             rle.data <- all.rle.data[[x]]
-            rle.med.var <- stats::mad(matrixStats::colMedians(rle.data))
-            rle.iqr.var <- stats::mad(matrixStats::colIQRs(rle.data))
+            rle.med.var <- round(x = stats::mad(matrixStats::colMedians(rle.data)) , digits = 2)
+            rle.iqr.var <- round(x = stats::mad(matrixStats::colIQRs(rle.data)), digits = 2)
             samples.quantiles <- matrixStats::colQuantiles(
                 x = rle.data,
                 probs = seq(from = 0, to = 1, by = 0.25))
@@ -173,7 +174,7 @@ plotRLE <- function(
                     scale_color_manual(name = 'Groups:', values = rle.plot.colors) +
                     ylab('RLE') +
                     xlab('Samples') +
-                    ggtitle(paste0('Data:', x, ',VarRleMed:', rle.med.var, 'VarRleIqr:', rle.iqr.var)) +
+                    ggtitle(paste0('Data:', x, ',MadRleMed:', rle.med.var, 'MadRleIqr:', rle.iqr.var)) +
                     coord_cartesian(ylim = ylim.rle.plot) +
                     geom_hline(yintercept = 0, colour = geom.hline.color) +
                     theme(
@@ -202,7 +203,7 @@ plotRLE <- function(
                                colour = median.points.color) +
                     ylab('RLE') +
                     xlab('Samples') +
-                    ggtitle(paste0('Data:', x, ',VarRleMed:', rle.med.var, 'VarRleIqr:', rle.iqr.var)) +
+                    ggtitle(paste0('Data:', x, ',MadRleMed:', rle.med.var, 'MadRleIqr:', rle.iqr.var)) +
                     coord_cartesian(ylim = ylim.rle.plot) +
                     geom_hline(yintercept = 0, colour = geom.hline.color) +
                     theme(

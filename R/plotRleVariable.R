@@ -169,6 +169,7 @@ plotRleVariable <- function(
                     ggtitle(x) +
                     xlab(variable) +
                     ylab('RLE medians') +
+                    geom_smooth(formula = y ~ x, method = 'lm') +
                     coord_cartesian(ylim = ylim.rle.med.plot) +
                     theme(panel.background = element_blank(),
                            axis.line = element_line(colour = 'black', linewidth = 1),

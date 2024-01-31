@@ -322,7 +322,7 @@ plotPCA <- function(
                     xlab(variable) +
                     ylab('PC') +
                     ggtitle(x) +
-                    geom_smooth(method = 'lm') +
+                    geom_smooth(formula = y ~ x, method = 'lm') +
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', size = 1),
