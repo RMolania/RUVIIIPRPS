@@ -1,10 +1,10 @@
-#' is used to find potential unknown sources of unwanted variation RNA-seq data.
+#' find potential unknown sources of unwanted variation in RNA-seq data.
 
 #' @author Ramyar Molania
 
 #' @description
-#' This function uses three different approaches: rle, pca and sample.scoring to find potential unknown sources of
-#' unwanted variation in an assay in a SummarizedExperiment object. In the rle approach, a clustering method will be
+#' This function uses three different approaches: 'rle', 'pca' and 'sample.scoring' to find potential unknown sources of
+#' unwanted variation in RNA-seq data. In the rle approach, a clustering method will be
 #' applied on either medians or IQR or both of the rle data.In the absent on unwanted variation, we should not find any
 #' clustering. In the pca approach, first, a principal component analysis on either a set of negative control genes or
 #' all genes will be applied and then a clustering method will be used to clusters the first principal components to
@@ -12,27 +12,34 @@
 #' scored against a set of signature genes related to unwanted variation, then  clustering method will be applied
 #' on the scoring to find potential unknown sources of unwanted variation.
 
+#' @references
+#' Gandolfo L. C. & Speed, T. P., RLE plots: visualizing unwanted variation in high dimensional data. PLoS ONE, 2018.\
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
+
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.name Symbol. A symbol indicates an assay name in the SummarizedExperiment object.
-#' @param approach Symbol. A symbol indicates which approach should be used to identify unknown sources of unwanted variation.
-#' This must be one of the 'rle', 'pca' or 'sample.scoring'.In the rle approach, a clustering method will be applied on
-#' either medians or IQR or both of the rle data.In the absent
-#' on unwanted variation, we should not find any clustering. In the pca approach, first, a principal component analysis
-#' on either a set of negative control genes or all genes will be applied and then a clustering method will be used to
-#' clusters the first principal components to find potential unknown sources of unwanted variation.
-#' In the sample.scoring approach, first,  all samples will be scored against a set of signature genes related to
-#' unwanted variation, then clustering method will be applied on the scoring to find potential unknown sources of unwanted variation.
-#' @param regress.out.bio.variables Symbol. One or more symbols indicate the names of the columns that contain known
-#' biological variation in the sample annotation (colData) that will be regress out from the data before finding sources
-#' of unwanted variation. The default is NULL.
-#' @param regress.out.bio.gene.sets List. A list of biological gene signatures. Individual gene set will be used to
-#' score samples and then each scores will be regressed out from the data before finding sources of unwanted variation.
-#' @param uv.gene.sets List. A list of unwanted variation gene signatures. Individual gene set will be used to score
-#' samples and then each scores will be clustered to find possible unknown batches. The default is NULL.
-#' @param ncg Vector. Indicates a set of negative control genes to find sources of unwanted variation.
-#' The default is NULL. If is not NULL, the RLE or PCA and sample scoring will be based on only negative control genes.
-#' @param clustering.methods Symbol. Indicates the clustering method to be used to find
-#' possible unknown batches. This must be one of the: 'kmeans', 'cut', 'quantile', 'nbClust'. The default is nbClust.
+#' @param assay.name Symbol. A symbol for the selection of the name of the assay in the SummarizedExperiment object to
+#' indentify possible unknown sources of unwanted variation.
+#' @param approach Symbol. A symbol indicating the approach to be employed for identifying unknown sources of unwanted
+#' variation. This should be one of 'rle', 'pca', or 'sample.scoring'.In the rle approach, a clustering method is applied
+#' to either medians or IQR or both of the rle data. In the absence of unwanted variation, no distinguishable clustering
+#' should occur. In the pca approach, a principal component analysis is initially performed on either a set of negative
+#' control genes specified in 'ncg' or all genes. Subsequently, a clustering method is employed to cluster the first
+#' principal components and identify potential unknown sources of unwanted variation. In the 'sample.scoring' approach, all
+#' samples are initially scored against a set of signature genes related to unwanted variation specified in 'uv.gene.sets'.
+#' Then, a clustering method is applied to the scores to identify potential unknown sources of unwanted variation.
+#' @param regress.out.bio.variables Symbol. A symbol or a vector of symbols specifying the column names of biological
+#' variables in the sample annotation of the SummarizedExperiment object. These variables can be either categorical or
+#' continuous variables. The default is 'NULL'.
+#' @param regress.out.bio.gene.sets List. A list of biological gene signatures. Individual gene sets will be used to
+#' score samples and then each scores will be regressed out from the data before identifying sources of unwanted variation.
+#' The default is 'NULL'.
+#' @param uv.gene.sets List. A list of gene signatures related any possible unwanted variables. Individual gene sets will
+# 'be used to score samples and then each scores will be clustered to identify possible unknown batches. The default is NULL.
+#' @param ncg Vector. Specifies a set of negative control genes to identify sources of unwanted variation. The default
+#' is 'NULL'. If not 'NULL', the RLE or PCA and sample scoring will be conducted solely based on the negative control genes.
+#' @param clustering.methods Symbol. Specifies the clustering method to be utilized for identifying potential unknown batches.
+#' This should be one of the following: 'kmeans', 'cut', 'quantile', 'nbClust'. The default is 'nbClust'.
 #' @param nbClust.diss dissimilarity matrix to be used. By default, diss=NULL, but if it is replaced by a dissimilarity
 #' matrix, distance should be "NULL".
 #' @param nbClust.distance the distance measure to be used to compute the dissimilarity matrix. This must be one of:
@@ -52,30 +59,35 @@
 #' and Tau included).
 #' @param nbClust.alphaBeale significance value for Beale's index.
 #' @param max.samples.per.batch Numeric. Indicates the maximum number of samples per cluster when the clustering.methods
-#' is nbClust. The default is .1 (10%) of total samples in the SummarizedExperiment object.
-#' @param nb.clusters Numeric. Indicates how many clusters should be found when clustering.methods kmeans, cut and quantile.
-#' @param rle.comp A symbol. Indicates which properties: 'median' or 'iqr' or 'both' of the RLE data should be used for
-#' clustering when the approach is RLE. The default is median.
-#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.
+#' is nbClust. The default is 0.1 (10%) of total samples in the SummarizedExperiment object.
+#' @param nb.clusters Numeric. Specifies the number of clusters to be identified when "clustering.methods" is set to 'kmeans',
+# 'cut', and 'quantile'. The default is 3.
+#' @param rle.comp A symbol. Specifies which properties, either 'median' or 'iqr' or 'both', of the RLE data should be used for
+#' clustering when the approach is set to 'RLE'. The default is 'median'.
+#' @param apply.log Logical. Indicates whether to apply a log-transformation to the data, by default it is set to 'TRUE'.
+#' The data must be in log transformation before comouting RLE or PCA.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements before log transformation,
 #' by default it is set to 1.
-#' @param nb.pcs Numeric. A value to select the first principal components for clustering when the approach is set to 'PCA'.
-#' @param center Logical. Indicates whether to center the data or not before performing PCA. The default is TRUE.
-#' @param scale Logical. Indicates whether to scale the data or not before performing PCA. The default is FASLE.
-#' @param BSPARAM symbol. Classes for specifying the type of singular value decomposition (SVD) algorithm and associated
-#' parameters. See the BiocSingular R package for more details.
+#' @param nb.pcs Numeric. A value determining the number of first principal components to be selected for clustering
+#' when the approach is set to 'PCA'. The default is 2.
+#' @param center Logical. Indicates whether to center the data or not before performing PCA. The default is 'TRUE'.
+#' @param scale Logical. Indicates whether to scale the data or not before performing PCA. The default is 'FASLE'.
+#' @param svd.bsparam A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
+#' We refer to the 'runSVD' function from the BiocSingular R package for more details.
+#' @param assess.se.obj Logical. Whether to assess the SummarizedExperiment object or not. If 'TRUE', the function
+#' 'checkSeobj' will be applied. The default is 'TRUE'.
 #' @param remove.na A symbol. Indicates whether to remove NA or missing values from either the 'assays',
 #' 'sample.annotation', 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be
 #' excluded. If 'sample.annotation' is selected, the samples that contains NA or missing values for any 'bio.variables'
 #' and 'uv.variables' will be excluded. By default, it is set to both'.
-#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
-#' By default it is set to TRUE.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-#' execution of the functions, by default it is set to TRUE.
+#' @param save.se.obj Logical. Indicates whether to save the results in the metadata of the SummarizedExperiment class.
+#' Th default is 'TRUE', the results will be save to the 'metadata$UV$Unknown'.
+#' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
-#' @importFrom singscore rankGenes simpleScore
+#' @return description
+
 #' @importFrom SummarizedExperiment assay colData
+#' @importFrom singscore rankGenes simpleScore
 #' @importFrom BiocSingular bsparam runSVD
 #' @importFrom NbClust NbClust
 #' @importFrom stats as.formula
@@ -106,9 +118,9 @@ indentifyUnknownUV <- function(
         nb.pcs = 2,
         center = TRUE,
         scale = FALSE,
-        BSPARAM = bsparam(),
-        remove.na = 'assays',
+        svd.bsparam = bsparam(),
         assess.se.obj = TRUE,
+        remove.na = 'assays',
         save.se.obj = TRUE,
         verbose = TRUE
         ){
@@ -116,22 +128,28 @@ indentifyUnknownUV <- function(
                         color = 'white',
                         verbose = verbose)
     # check inputs ####
-    if (length(assay.name) > 1) {
-        stop('Please provide only one assay name.')
+    if (is.null(assay.name)){
+        stop('The "assay.name" cannot be empty.')
+    } else if (length(assay.name) > 1) {
+        stop('The "assay.name" must be a single assay name.')
     }
-    if (!approach %in% c('rle', 'pca', 'sample.scoring') ) {
-        stop('The approach should be one of the rle,pca or sample.scoring.')
+    if(is.null(approach)){
+        stop('The "approach" cannot be empty.')
+    } else if (length(approach) > 1){
+        stop('The approach must be one of the "rle", "pca" or "sample.scoring".')
+    } else if (!approach %in% c('rle', 'pca', 'sample.scoring') ) {
+        stop('The approach must be one of the "rle", "pca" or "sample.scoring".')
     }
     if (!is.null(regress.out.bio.variables)) {
         if (!regress.out.bio.variables %in% colnames(colData(se.obj)))
-            stop('The regress out bio variables are not found in the SummarizedExperiment object.')
+            stop('The "regress.out.bio.variables" are not found in the SummarizedExperiment object.')
     }
     if(!is.null(regress.out.bio.gene.sets)){
         lapply(
             regress.out.bio.gene.sets,
             function(x){
                 if(sum(regress.out.bio.gene.sets %in% row.names(se.obj)) == 0)
-                    stop('The regress.out.bio.gene.sets are not found in the SummarizedExperiment object.')
+                    stop('The "regress.out.bio.gene.sets" are not found in the SummarizedExperiment object.')
             })
     }
     if(!is.null(uv.gene.sets)){
@@ -139,12 +157,12 @@ indentifyUnknownUV <- function(
             names(uv.gene.sets),
             function(x){
                 if(sum(uv.gene.sets[[x]] %in% row.names(se.obj)) < 2)
-                    stop('The uv.gene.sets are not found in the SummarizedExperiment object.')
+                    stop('The "uv.gene.sets" are not found in the SummarizedExperiment object.')
             })
     }
     if (!is.null(ncg)) {
         if (sum(ncg %in% row.names(se.obj)) == 0)
-            stop('The ncg genes are found in the SummarizedExperiment object.')
+            stop('The "ncg" genes are found in the SummarizedExperiment object.')
     }
     if (length(clustering.methods) > 1) {
         stop('A single method should be provided for the clustering.methods.')
@@ -206,107 +224,120 @@ indentifyUnknownUV <- function(
             verbose = verbose)
     }
     # data transformation ####
-    printColoredMessage(
-        message = '### Data transformation:',
+    printColoredMessage(message = '-- Data transformation:',
         color = 'magenta',
         verbose = verbose)
-    if (apply.log) {
+    if (isTRUE(apply.log) & !is.null(pseudo.count)) {
         printColoredMessage(
-            message = paste0('Applying log2 transformation of the ', assay.name, ' + ', pseudo.count, '.'),
+            message = paste0('Apply log2 + ', pseudo.count,  ' (pseudo.count) on the ', x, ' data.'),
             color = 'blue',
             verbose = verbose)
         temp.data <- log2(assay(x = se.obj, i = assay.name) + pseudo.count)
+    } else if (isTRUE(apply.log) & is.null(pseudo.count)){
+        printColoredMessage(
+            message = paste0('Apply log2 on the ', x, ' data.'),
+            color = 'blue',
+            verbose = verbose)
+        temp.data <- log2(assay(x = se.obj, i = assay.name))
     } else {
         printColoredMessage(
-            message = paste0('It seems the ', assay.name, ' data is already log transformed.'),
+            message = paste0('The ', x, ' data will be used without log transformation.'),
             color = 'blue',
+            verbose = verbose)
+        printColoredMessage(
+            message = 'Please note, the assay should be in log scale before computing RLE or PCA.',
+            color = 'red',
             verbose = verbose)
         temp.data <- assay(x = se.obj, i = assay.name)
     }
-    # sample scoring for regress.out.bio.gene.sets ####
-    if(!is.null(regress.out.bio.gene.sets)){
-        printColoredMessage(
-            message = 'Calculate sample scores for individual gene sets of the regress.out.bio.gene.sets',
-            color = 'blue',
-            verbose = verbose)
-        ranked.data <- rankGenes(temp.data)
-        regress.out.bio.gene.sets <- sapply(
-            regress.out.bio.gene.sets,
-            function(x) singscore::simpleScore(rankData = ranked.data, upSet = x)$TotalScore)
-        rm(ranked.data)
-        gc()
-    }
+
     # regress out bio variables and bio gene sets ####
-    printColoredMessage(
-        message = '### Regress out variables and gene sets from the data:',
-        color = 'magenta',
-        verbose = verbose)
-    printColoredMessage(
-        message = paste0(
-            'We do not recommend regressing out any biological variation',
-            'if they may be largely associated with the unwanted variation.'),
-        color = 'red',
-        verbose = verbose)
-    if(!is.null(regress.out.bio.variables) & is.null(regress.out.bio.gene.sets)){
-        ## regress out regress.out.bio.variables ####
+    if(!is.null(regress.out.bio.variables) | !is.null(regress.out.bio.gene.sets)){
+        printColoredMessage(
+            message = '-- Regress out "regress.out.bio.variables" and "regress.out.bio.gene.sets" from the data:',
+            color = 'magenta',
+            verbose = verbose)
         printColoredMessage(
             message = paste0(
-                'The ',
-                paste0(regress.out.bio.variables, collapse = ' & '),
-                ' variables will be regressed out from the data,',
-                ' please make sure your data is log transformed.'),
-            color = 'blue',
+                'We do not recommend regressing out any biological variation',
+                'if they may be largely associated with the unwanted variation.'),
+            color = 'red',
             verbose = verbose)
-        temp.data <- t(temp.data)
-        lm.formula <- paste('se.obj', regress.out.bio.variables, sep = '$')
-        adjusted.data <- lm(as.formula(paste('temp.data', paste0(lm.formula, collapse = '+') , sep = '~')))
-        temp.data <- t(adjusted.data$residuals)
-        colnames(temp.data) <- colnames(se.obj)
-        row.names(temp.data) <- row.names(se.obj)
-    } else if(is.null(regress.out.bio.variables) & !is.null(regress.out.bio.gene.sets)){
-        ## regress out regress.out.bio.gene.sets ####
-        printColoredMessage(
-            message = paste0(
-                'The sample scores of individual gene list of ',
-                'regress.out.bio.gene.sets',
-                ' will be regressed out from the data,',
-                ' please make sure your data is log transformed.'),
-            color = 'blue',
-            verbose = verbose)
-        temp.data <- t(temp.data)
-        adjusted.data <- lm(temp.data~ regress.out.bio.gene.sets)
-        temp.data <- t(adjusted.data$residuals)
-        colnames(temp.data) <- colnames(se.obj)
-        row.names(temp.data) <- row.names(se.obj)
-    } else if (!is.null(regress.out.bio.variables) & !is.null(regress.out.bio.gene.sets)){
-        printColoredMessage(
-            message = paste0(
-                'The sample scores of individual gene list of ',
-                'regress.out.bio.gene.sets and the ',
-                paste0(regress.out.bio.variables, collapse = ' & '),
-                ' variables will be regressed out from the data,',
-                ' please make sure your data is log transformed.'),
-            color = 'blue',
-            verbose = verbose)
-        all.variables <- as.data.frame(cbind(
-            regress.out.bio.gene.sets,
-            as.data.frame(colData(se.obj)[, regress.out.bio.variables, drop = FALSE])))
-        lm.formula <- paste('all.variables', colnames(all.variables), sep = '$')
-        temp.data <- t(temp.data)
-        adjusted.data <- lm(as.formula(paste('temp.data', paste0(lm.formula, collapse = '+') , sep = '~')))
-        temp.data <- t(adjusted.data$residuals)
-        colnames(temp.data) <- colnames(se.obj)
-        row.names(temp.data) <- row.names(se.obj)
+
+        # sample scoring for regress.out.bio.gene.sets ####
+        if(!is.null(regress.out.bio.gene.sets)){
+            printColoredMessage(
+                message = '-Calculate sample scores for individual gene sets of the "regress.out.bio.gene.sets".',
+                color = 'blue',
+                verbose = verbose)
+            ranked.data <- rankGenes(temp.data)
+            regress.out.bio.gene.sets <- sapply(
+                regress.out.bio.gene.sets,
+                function(x) singscore::simpleScore(
+                    rankData = ranked.data,
+                    upSet = x)$TotalScore)
+            rm(ranked.data)
+        }
+        if(!is.null(regress.out.bio.variables) & is.null(regress.out.bio.gene.sets)){
+            ## regress out regress.out.bio.variables ####
+            printColoredMessage(
+                message = paste0(
+                    'The ',
+                    paste0(regress.out.bio.variables, collapse = ' & '),
+                    ' variables will be regressed out from the data,',
+                    ' please make sure your data is log transformed.'),
+                color = 'blue',
+                verbose = verbose)
+            temp.data <- t(temp.data)
+            lm.formula <- paste('se.obj', regress.out.bio.variables, sep = '$')
+            adjusted.data <- lm(as.formula(paste('temp.data', paste0(lm.formula, collapse = '+') , sep = '~')))
+            temp.data <- t(adjusted.data$residuals)
+            colnames(temp.data) <- colnames(se.obj)
+            row.names(temp.data) <- row.names(se.obj)
+        } else if(is.null(regress.out.bio.variables) & !is.null(regress.out.bio.gene.sets)){
+            ## regress out regress.out.bio.gene.sets ####
+            printColoredMessage(
+                message = paste0(
+                    'The sample scores of individual gene list of ',
+                    'regress.out.bio.gene.sets',
+                    ' will be regressed out from the data,',
+                    ' please make sure your data is log transformed.'),
+                color = 'blue',
+                verbose = verbose)
+            temp.data <- t(temp.data)
+            adjusted.data <- lm(temp.data~ regress.out.bio.gene.sets)
+            temp.data <- t(adjusted.data$residuals)
+            colnames(temp.data) <- colnames(se.obj)
+            row.names(temp.data) <- row.names(se.obj)
+        } else if (!is.null(regress.out.bio.variables) & !is.null(regress.out.bio.gene.sets)){
+            printColoredMessage(
+                message = paste0(
+                    'The sample scores of individual gene list of ',
+                    'regress.out.bio.gene.sets and the ',
+                    paste0(regress.out.bio.variables, collapse = ' & '),
+                    ' variables will be regressed out from the data,',
+                    ' please make sure your data is log transformed.'),
+                color = 'blue',
+                verbose = verbose)
+            all.variables <- as.data.frame(cbind(
+                regress.out.bio.gene.sets,
+                as.data.frame(colData(se.obj)[, regress.out.bio.variables, drop = FALSE])))
+            lm.formula <- paste('all.variables', colnames(all.variables), sep = '$')
+            temp.data <- t(temp.data)
+            adjusted.data <- lm(as.formula(paste('temp.data', paste0(lm.formula, collapse = '+') , sep = '~')))
+            temp.data <- t(adjusted.data$residuals)
+            colnames(temp.data) <- colnames(se.obj)
+            row.names(temp.data) <- row.names(se.obj)
+        }
     }
     # select data input for clustering ####
-    printColoredMessage(
-        message = '### Selecting input data for clustering:',
+    printColoredMessage( message = '-- Select input data for clustering:',
         color = 'magenta',
         verbose = verbose)
     if(approach == 'PCA' & is.null(ncg)){
         printColoredMessage(
             message = paste0(
-                'Applying PCA on the transformed data and use the first ',
+                '- Apply PCA on the data and use the first ',
                 nb.pcs,
                 ' PCs as an input for clustering.'),
             color = 'blue',
@@ -314,7 +345,7 @@ indentifyUnknownUV <- function(
         sv.dec <- runSVD(
             x = t(temp.data),
             k = nb.pcs,
-            BSPARAM = BSPARAM,
+            BSPARAM = svd.basparam,
             center = center,
             scale = scale)
         input.data = sv.dec$u
@@ -324,7 +355,7 @@ indentifyUnknownUV <- function(
     } else if (approach == 'PCA' & !is.null(ncg)){
         printColoredMessage(
             message = paste0(
-                'Applying PCA on the transformed data using the ncg only, and use the first ',
+                '- Apply PCA on the data using the "ncg" gene only, and use the first ',
                 nb.pcs,
                 ' PCs as an input for clustering.'),
             color = 'blue',
@@ -332,7 +363,7 @@ indentifyUnknownUV <- function(
         sv.dec <- runSVD(
             x = t(temp.data[ncg , ]),
             k = nb.pcs,
-            BSPARAM = BSPARAM,
+            BSPARAM = svd.basparam,
             center = center,
             scale = scale)
         input.data = sv.dec$u
@@ -342,7 +373,7 @@ indentifyUnknownUV <- function(
     } else if (approach == 'RLE'){
         if(is.null(ncg)){
             printColoredMessage(
-                message = paste0('Applying RLE on the transformed data.'),
+                message = paste0('-Apply RLE on the data.'),
                 color = 'blue',
                 verbose = verbose)
             rle.data <- temp.data - rowMedians(temp.data)
@@ -351,7 +382,7 @@ indentifyUnknownUV <- function(
             } else input.data.name <- paste0(approach, 'onAllGenes_', clustering.methods, 'Clustering')
         } else if (!is.null(ncg)){
             printColoredMessage(
-                message = paste0('Applying RLE on the transformed data using only ncg.'),
+                message = paste0('-Apply RLE on the data using only "ncg" genes.'),
                 color = 'blue',
                 verbose = verbose)
             rle.data <- temp.data[ncg , ] - rowMedians(temp.data[ncg , ])
@@ -392,8 +423,7 @@ indentifyUnknownUV <- function(
         } else input.data.name <- paste0(approach, '_', clustering.methods, 'Clustering')
     }
     # clustering ####
-    printColoredMessage(
-        message = '### Clustering the data',
+    printColoredMessage(message = '- Clustering the data',
         color = 'magenta',
         verbose = verbose)
     if(clustering.methods == 'kmeans'){
