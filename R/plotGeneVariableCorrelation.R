@@ -1,4 +1,4 @@
-#' is used to Spearman or Pearson correlations coefficients.
+#' perform Spearman or Pearson correlations coefficients.
 
 #' @author Ramyar Molania
 

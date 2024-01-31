@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotARI.R
 \name{plotARI}
 \alias{plotARI}
-\title{is used to plot the adjusted rand index (ARI).}
+\title{plot the adjusted rand index (ARI).}
 \usage{
 plotARI(
   se.obj,

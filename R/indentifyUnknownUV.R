@@ -229,19 +229,19 @@ indentifyUnknownUV <- function(
         verbose = verbose)
     if (isTRUE(apply.log) & !is.null(pseudo.count)) {
         printColoredMessage(
-            message = paste0('Apply log2 + ', pseudo.count,  ' (pseudo.count) on the ', x, ' data.'),
+            message = paste0('Apply log2 + ', pseudo.count,  ' (pseudo.count) on the ', assa.name, ' data.'),
             color = 'blue',
             verbose = verbose)
         temp.data <- log2(assay(x = se.obj, i = assay.name) + pseudo.count)
     } else if (isTRUE(apply.log) & is.null(pseudo.count)){
         printColoredMessage(
-            message = paste0('Apply log2 on the ', x, ' data.'),
+            message = paste0('Apply log2 on the ', assa.name, ' data.'),
             color = 'blue',
             verbose = verbose)
         temp.data <- log2(assay(x = se.obj, i = assay.name))
     } else {
         printColoredMessage(
-            message = paste0('The ', x, ' data will be used without log transformation.'),
+            message = paste0('The ', assa.name, ' data will be used without log transformation.'),
             color = 'blue',
             verbose = verbose)
         printColoredMessage(
@@ -345,7 +345,7 @@ indentifyUnknownUV <- function(
         sv.dec <- runSVD(
             x = t(temp.data),
             k = nb.pcs,
-            BSPARAM = svd.basparam,
+            BSPARAM = svd.bsparam,
             center = center,
             scale = scale)
         input.data = sv.dec$u
@@ -363,7 +363,7 @@ indentifyUnknownUV <- function(
         sv.dec <- runSVD(
             x = t(temp.data[ncg , ]),
             k = nb.pcs,
-            BSPARAM = svd.basparam,
+            BSPARAM = svd.bsparam,
             center = center,
             scale = scale)
         input.data = sv.dec$u

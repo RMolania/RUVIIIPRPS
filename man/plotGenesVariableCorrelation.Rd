@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotGeneVariableCorrelation.R
 \name{plotGenesVariableCorrelation}
 \alias{plotGenesVariableCorrelation}
-\title{is used to Spearman or Pearson correlations coefficients.}
+\title{perform Spearman or Pearson correlations coefficients.}
 \usage{
 plotGenesVariableCorrelation(
   se.obj,

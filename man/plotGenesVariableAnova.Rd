@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotGeneVariableAnova.R
 \name{plotGenesVariableAnova}
 \alias{plotGenesVariableAnova}
-\title{is used to plot F-stattistics of ANOVA.}
+\title{plot F-statistics obtained from ANOVA.}
 \usage{
 plotGenesVariableAnova(
   se.obj,

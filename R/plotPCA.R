@@ -1,4 +1,4 @@
-#' is used to plot principal components.
+#' plot principal components.
 
 #' @description
 #' is used to plot the first principal components of the assays of a SummarizedExperiment object. The function can generate

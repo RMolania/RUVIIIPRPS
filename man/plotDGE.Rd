@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotDGE.R
 \name{plotDGE}
 \alias{plotDGE}
-\title{is used to compute the adjusted rand index (ARI).}
+\title{plot p-values histograms of DEG analysis.}
 \usage{
 plotDGE(
   se.obj,
@@ -17,7 +17,7 @@ plotDGE(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
+\item{assay.names}{Symbol. A symbol or vector of symbols for the selection of the name(s) of the assay(s) in the
 SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.}
 
 \item{variable}{Symbol. Indicates the column name in the SummarizedExperiment object that contains a categorical
@@ -37,13 +37,13 @@ execution of the functions, by default it is set to TRUE.}
 A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
 }
 \description{
-This functions computes the adjusted rand index for given a categorical variable using the first PCs of the assay(s)
-in a SummarizedExperiment object.
+This function plots the p-values histograms of the DEG analysis.
 }
 \details{
-The ARI64 is the corrected-for-chance version of the Rand index. The ARI measures the percentage of matches between
-two label lists. We used the ARI to assess the performance of normalization methods in terms of sample subtype
-separation and batch mixing. We first calculated PCs and used the first three PCs to perform ARI.
+DE analyses is performed using the Wilcoxon signed-rank test with log-transformed data e.g. raw counts, normalized data, ....
+To evaluate the effects of the different sources of unwanted variation on the data, DE analyses is performed across
+batches. In the absence of any batch effects, the histogram of the resulting unadjusted P values should be uniformly
+distributed
 }
 \author{
 Ramyar Molania

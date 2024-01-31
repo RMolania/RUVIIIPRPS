@@ -2,7 +2,7 @@
 % Please edit documentation in R/computePCA.R
 \name{computePCA}
 \alias{computePCA}
-\title{is used to perform principal component analysis (PCA) using singular value decomposition (SVD).}
+\title{perform principal component analysis (PCA) using singular value decomposition (SVD).}
 \usage{
 computePCA(
   se.obj,

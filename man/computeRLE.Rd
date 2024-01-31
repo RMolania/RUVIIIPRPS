@@ -2,7 +2,7 @@
 % Please edit documentation in R/computeRLE.R
 \name{computeRLE}
 \alias{computeRLE}
-\title{is used to calculate relative log expression (RLE) of RNA-seq data.}
+\title{calculate relative log expression (RLE) of RNA-seq data.}
 \usage{
 computeRLE(
   se.obj,

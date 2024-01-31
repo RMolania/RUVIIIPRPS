@@ -1,4 +1,4 @@
-#' is used to compute the correlation between individual gene expression and a continuous variable.
+#' compute the correlation between individual gene expression and a continuous variable.
 
 #' @author Ramyar Molania
 

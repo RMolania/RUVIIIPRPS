@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotSilhouette.R
 \name{plotSilhouette}
 \alias{plotSilhouette}
-\title{is used to compute the average Silhouette coefficients.}
+\title{compute the average Silhouette coefficients.}
 \usage{
 plotSilhouette(
   se.obj,

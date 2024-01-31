@@ -2,7 +2,7 @@
 % Please edit documentation in R/computeARI.R
 \name{computeARI}
 \alias{computeARI}
-\title{is used to compute the adjusted rand index (ARI).}
+\title{compute the adjusted rand index (ARI).}
 \usage{
 computeARI(
   se.obj,

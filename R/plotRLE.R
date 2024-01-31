@@ -1,4 +1,4 @@
-#' is used to generate boxplot of the relative log expression (RLE) distributions of RNA-seq data.
+#' generate boxplot of the relative log expression (RLE) distributions of RNA-seq data.
 
 #' @author Ramyar Molania
 

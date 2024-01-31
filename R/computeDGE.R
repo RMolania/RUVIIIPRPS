@@ -1,4 +1,4 @@
-#' is used to perform differential gene expression analysis using the Wilcoxon test.
+#' perform differential gene expression analysis using the Wilcoxon test.
 
 #' @author Ramyar Molania
 

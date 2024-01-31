@@ -1,4 +1,4 @@
-#' is used to perform principal component analysis (PCA) using singular value decomposition (SVD).
+#' perform principal component analysis (PCA) using singular value decomposition (SVD).
 
 #' @author Ramyar Molania
 

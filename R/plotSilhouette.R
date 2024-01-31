@@ -1,4 +1,4 @@
-#' is used to compute the average Silhouette coefficients.
+#' compute the average Silhouette coefficients.
 
 #' @author Ramyar Molania
 

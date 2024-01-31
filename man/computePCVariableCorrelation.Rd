@@ -2,7 +2,7 @@
 % Please edit documentation in R/computePCVariableCorrelation.R
 \name{computePCVariableCorrelation}
 \alias{computePCVariableCorrelation}
-\title{is used to compute the vector correlation.}
+\title{compute the vector correlation.}
 \usage{
 computePCVariableCorrelation(
   se.obj,

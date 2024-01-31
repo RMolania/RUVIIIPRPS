@@ -1,4 +1,4 @@
-#' is used to plot F-stattistics of ANOVA.
+#' plot F-statistics obtained from ANOVA.
 
 #' @author Ramyar Molania
 

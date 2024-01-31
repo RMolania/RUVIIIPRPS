@@ -2,7 +2,7 @@
 % Please edit documentation in R/computeDGE.R
 \name{computeDGE}
 \alias{computeDGE}
-\title{is used to perform differential gene expression analysis using the Wilcoxon test.}
+\title{perform differential gene expression analysis using the Wilcoxon test.}
 \usage{
 computeDGE(
   se.obj,

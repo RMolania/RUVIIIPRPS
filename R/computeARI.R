@@ -1,4 +1,4 @@
-#' is used to compute the adjusted rand index (ARI).
+#' compute the adjusted rand index (ARI).
 
 #' @author Ramyar Molania
 

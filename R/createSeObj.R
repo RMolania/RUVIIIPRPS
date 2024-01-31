@@ -244,7 +244,7 @@ createSeObj <- function(
             color = 'blue',
             verbose = verbose
         )
-        names.assays <-  names(data.setss)
+        names.assays <-  names(data.sets)
         data.sets <- lapply(
             names(assays),
             function(x) data.sets[[x]][keep.genes ,])

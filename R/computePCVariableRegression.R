@@ -1,4 +1,4 @@
-#' is used to compute the linear regression.
+#' compute the linear regression.
 
 #' @author Ramyar Molania
 

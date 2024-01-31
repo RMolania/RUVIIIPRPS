@@ -1,4 +1,4 @@
-#' is used to calculate relative log expression (RLE) of RNA-seq data.
+#' calculate relative log expression (RLE) of RNA-seq data.
 
 #' @author Ramyar Molania
 

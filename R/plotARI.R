@@ -1,4 +1,4 @@
-#' is used to plot the adjusted rand index (ARI).
+#' plot the adjusted rand index (ARI).
 
 #' @author Ramyar Molania
 

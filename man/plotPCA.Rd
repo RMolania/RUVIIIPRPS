@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotPCA.R
 \name{plotPCA}
 \alias{plotPCA}
-\title{is used to plot principal components.}
+\title{plot principal components.}
 \usage{
 plotPCA(
   se.obj,

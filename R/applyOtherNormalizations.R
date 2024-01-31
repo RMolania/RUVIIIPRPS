@@ -1,4 +1,4 @@
-#' is used to perform several normalization methods for RNA-seq data.
+#' perform several normalization methods for RNA-seq data.
 
 #' @author Ramyar Molania
 

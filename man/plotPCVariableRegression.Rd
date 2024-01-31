@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotPCVariableRegression.R
 \name{plotPCVariableRegression}
 \alias{plotPCVariableRegression}
-\title{is used to plot the regression analysis.}
+\title{plot the regression analysis.}
 \usage{
 plotPCVariableRegression(
   se.obj,

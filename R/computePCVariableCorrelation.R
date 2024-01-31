@@ -1,4 +1,4 @@
-#' is used to compute the vector correlation.
+#' compute the vector correlation.
 
 #' @author Ramyar Molania
 

@@ -1,4 +1,4 @@
-#' is used to plot the regression analysis.
+#' plot the regression analysis.
 
 #' @author Ramyar Molania
 

@@ -1,4 +1,4 @@
-#' is used to plot the vector correlation.
+#' plot the vector correlation.
 
 #' @author Ramyar Molania
 

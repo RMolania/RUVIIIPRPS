@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotPCVariableCorrelation.R
 \name{plotPCVariableCorrelation}
 \alias{plotPCVariableCorrelation}
-\title{is used to plot the vector correlation.}
+\title{plot the vector correlation.}
 \usage{
 plotPCVariableCorrelation(
   se.obj,

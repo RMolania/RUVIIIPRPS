@@ -2,7 +2,7 @@
 % Please edit documentation in R/computeGenesVariableAnova.R
 \name{computeGenesVariableAnova}
 \alias{computeGenesVariableAnova}
-\title{is used to compute ANOVA between individual gene expression and a categorical variable.}
+\title{compute ANOVA between individual gene expression and a categorical variable.}
 \usage{
 computeGenesVariableAnova(
   se.obj,

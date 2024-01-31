@@ -2,7 +2,7 @@
 % Please edit documentation in R/computePCVariableRegression.R
 \name{computePCVariableRegression}
 \alias{computePCVariableRegression}
-\title{is used to compute the linear regression.}
+\title{compute the linear regression.}
 \usage{
 computePCVariableRegression(
   se.obj,

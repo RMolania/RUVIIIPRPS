@@ -2,7 +2,7 @@
 % Please edit documentation in R/computeSilhouette.R
 \name{computeSilhouette}
 \alias{computeSilhouette}
-\title{is used to compute the average Silhouette coefficient.}
+\title{compute the average Silhouette coefficient.}
 \usage{
 computeSilhouette(
   se.obj,

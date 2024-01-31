@@ -1,4 +1,4 @@
-#' is used to compute ANOVA between individual gene expression and a categorical variable.
+#' compute ANOVA between individual gene expression and a categorical variable.
 
 #' @author Ramyar Molania
 
