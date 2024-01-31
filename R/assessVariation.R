@@ -643,8 +643,6 @@ assessVariation <- function(
     plot.new()
     text(.5, .5, "Assess variation", font = 2, cex = 1.5)
     grid.table(metrics.table, theme = mytheme)
-    dev.off()
-
 
     if('General' %in% metrics.table$Variables  & 'RLEplot' %in% metrics.table$PlotTypes){
         print(se.obj@metadata$plot$RLE$GeneralRLE)
@@ -707,7 +705,6 @@ assessVariation <- function(
                 print(se.obj@metadata$plot$DEG[[i]])
             }
     }
-
     dev.off()
     printColoredMessage(message = '------------The normAssessment function finished.',
                         color = 'white',
