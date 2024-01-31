@@ -10,7 +10,7 @@
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param bio.variables Symbol. A symbol or a vector of symbols specifying the column names of biological variables in
-#' the sample annotation of the SummarizedExperiment object. These 'uv.variables' can be either categorical or continuous
+#' the sample annotation of the SummarizedExperiment object. These 'bio.variables' can be either categorical or continuous
 #' variables.
 #' @param clustering.method Symbol. A symbol specifying the clustering method to be applied for grouping each continuous
 #' source of biological variables. Options include 'kmeans', 'cut', and 'quantile'. The default is 'kmeans' clustering.
