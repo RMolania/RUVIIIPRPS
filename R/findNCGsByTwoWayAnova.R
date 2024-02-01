@@ -86,7 +86,7 @@
 #' @import ggplot2
 #' @export
 
-supervisedFindNcgTWAnova <- function(
+findNCGsByTwoWayAnova <- function(
         se.obj,
         assay.name,
         bio.variables,
