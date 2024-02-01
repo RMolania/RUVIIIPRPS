@@ -1126,7 +1126,7 @@ findNCGsPerBiologyPerBatch <- function(
         if (length(se.obj@metadata$NCG) == 0) {
             se.obj@metadata[['NCG']] <- list()
         }
-        se.obj@metadata[['NCG']][['Supervised']][[out.put.name]] <- ncg.selected
+        se.obj@metadata[['NCG']][['supervised']][[out.put.name]] <- ncg.selected
         printColoredMessage(message = 'The NCGs are saved to metadata of the SummarizedExperiment object.',
                             color = 'blue',
                             verbose = verbose)

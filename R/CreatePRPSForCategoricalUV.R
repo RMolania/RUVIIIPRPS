@@ -451,10 +451,10 @@ createPRPSForCategoricalUV <- function(
         }
         ## check if metadata PRPS already exist for supervised
         if (!'Supervised' %in% names(se.obj@metadata[['PRPS']])) {
-            se.obj@metadata[['PRPS']][['Supervised']] <- list()
+            se.obj@metadata[['PRPS']][['supervised']] <- list()
         }
         ## Check if metadata PRPS already exist for supervised
-        se.obj@metadata[['PRPS']][['Supervised']][[out.put.name]] <- prps.sets
+        se.obj@metadata[['PRPS']][['supervised']][[out.put.name]] <- prps.sets
         printColoredMessage(
             message = paste0(
                 'The PRPS are saved to metadata@PRPS$Supervised: ',
