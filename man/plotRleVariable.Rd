@@ -12,7 +12,8 @@ plotRleVariable(
   ylim.rle.med.plot = NULL,
   ylim.rle.iqr.plot = NULL,
   points.size = 1,
-  plot.ncol = 1,
+  plot.ncol = 3,
+  plot.nrow = 3,
   plot.output = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE
@@ -41,6 +42,8 @@ is NULL, the function will automatically find an suitable ylim for the plots. Th
 \item{points.size}{Numeric. Indicates the size of the points of the scatter plots. The default is 1.}
 
 \item{plot.ncol}{Numeric. Indicates number of columns in the plot grid.}
+
+\item{plot.nrow}{Numeric. Indicates number of rows in the plot grid.}
 
 \item{plot.output}{Logical. If TRUE, individual RLE plot(s) will be printed while the function is running.}
 
