@@ -111,7 +111,7 @@ assessVariation <- function(
         output.file = NULL,
         verbose = TRUE
 ){
-    printColoredMessage(message = '------------The normAssessment function starts:',
+    printColoredMessage(message = '------------The assessVariation function starts:',
                         color = 'white',
                         verbose = verbose)
     # check the inputs of PCA ####
@@ -120,7 +120,7 @@ assessVariation <- function(
             stop('The assay name cannot be found in the SummarizedExperiment object.')
     }
     if (length(assay.names) > 1) {
-        if (!assay.names %in% names(assays(se.obj)))
+        if (length(setdiff(assay.names, names(assays(se.obj)))) > 0)
             stop('The assay names cannot be found in the SummarizedExperiment object.')
     }
     if (fast.pca & is.null(compute.nb.pcs)) {
@@ -251,7 +251,7 @@ assessVariation <- function(
                 ylim.rle.med.plot = NULL,
                 ylim.rle.iqr.plot = NULL,
                 points.size = 1,
-                plot.ncol = 1,
+                plot.ncol = 2,
                 plot.output = FALSE,
                 save.se.obj = TRUE,
                 verbose = verbose)
@@ -271,7 +271,7 @@ assessVariation <- function(
                 ylim.rle.med.plot = NULL,
                 ylim.rle.iqr.plot = NULL,
                 points.size = 1,
-                plot.ncol = 1,
+                plot.ncol = 2,
                 plot.output = FALSE,
                 save.se.obj = TRUE,
                 verbose = verbose)
@@ -314,7 +314,7 @@ assessVariation <- function(
                 stroke.size = 0.2,
                 points.alpha = 0.5,
                 densities.alpha = 0.5,
-                plot.ncol = 4,
+                plot.ncol = 1,
                 save.se.obj = TRUE,
                 verbose = TRUE)
         }
