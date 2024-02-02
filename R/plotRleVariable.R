@@ -172,6 +172,7 @@ plotRleVariable <- function(
                     xlab(variable) +
                     ylab('RLE medians') +
                     geom_smooth(formula = y ~ x, method = 'lm') +
+                    ggpubr::stat_cor(aes(label = ..r.label..), color = 'red', label.y = max(ylim.rle.med)) +
                     coord_cartesian(ylim = ylim.rle.med.plot) +
                     theme(panel.background = element_blank(),
                            axis.line = element_line(colour = 'black', linewidth = 1),
@@ -249,7 +250,7 @@ plotRleVariable <- function(
                     xlab(variable) +
                     ylab('RLE IQRs') +
                     geom_smooth(formula = y ~ x, method = 'lm') +
-                    ggpubr::stat_cor(aes(label = ..r.label..), color = 'red') +
+                    ggpubr::stat_cor(aes(label = ..r.label..), color = 'red', label.y = max(ylim.rle.iqr)) +
                     coord_cartesian(ylim = ylim.rle.iqr.plot) +
                     theme(panel.background = element_blank(),
                           axis.line = element_line(colour = 'black', linewidth = 1),
