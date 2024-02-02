@@ -201,17 +201,17 @@ plotRLE <- function(
                                aes(group = range),
                                size = median.points.size ,
                                colour = median.points.color) +
-                    ylab('RLE') +
+                    ggtitle(paste0('Data: ', x, ',MAD RleMed: ', rle.med.var, ', MAD RleIqr:', rle.iqr.var)) +
                     xlab('Samples') +
-                    ggtitle(paste0('Data:', x, ',MadRleMed:', rle.med.var, 'MadRleIqr:', rle.iqr.var)) +
+                    ylab('RLE') +
                     coord_cartesian(ylim = ylim.rle.plot) +
                     geom_hline(yintercept = 0, colour = geom.hline.color) +
                     theme(
                         panel.background = element_blank(),
-                        plot.title = element_text(size = 12),
+                        plot.title = element_text(size = 10),
                         axis.line = element_line(colour = 'black', linewidth = 1),
-                        axis.title.x = element_text(size = 12),
-                        axis.title.y = element_text(size = 12),
+                        axis.title.x = element_text(size = 10),
+                        axis.title.y = element_text(size = 10),
                         axis.text.x = element_blank(),
                         axis.text.y = element_text(size = 9),
                         axis.ticks.x = element_blank())
