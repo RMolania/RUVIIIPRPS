@@ -175,7 +175,7 @@ plotPCVariableCorrelation <- function(
             verbose = verbose
         )
         datasets <- pcs <- vec.corr <- NULL
-        all.pcs.vect.corr <- as.data.frame(all.pcs.vect.corr)
+        all.pcs.vect.corr <- as.data.frame(do.call(cbind, all.pcs.vect.corr))
         all.pcs.vect.corr <- all.pcs.vect.corr %>%
             mutate(pcs = c(1:nb.pcs)) %>%
             tidyr::pivot_longer(

@@ -149,7 +149,7 @@ plotPCVariableRegression <- function(
             color = 'magenta',
             verbose = verbose)
         datasets <- pcs <- vec.corr <- NULL
-        all.reg.rseq <- as.data.frame(all.reg.rseq)
+        all.reg.rseq <- as.data.frame(do.call(cbind, all.reg.rseq))
         all.reg.rseq <- all.reg.rseq %>%
             mutate(pcs = c(1:nb.pcs)) %>%
             tidyr::pivot_longer(
@@ -161,8 +161,8 @@ plotPCVariableRegression <- function(
             geom_line(aes(color = datasets), size = 1) +
             geom_point(aes(color = datasets), size = 3) +
             xlab('Cumulative PCs') +
-            ylab(expression('R'[2])) +
-            ggtitle(paste0('Linear regression, ', variable)) +
+            ylab(expression(R^2)) +
+            ggtitle(paste0('PCs variable regression, ', variable)) +
             scale_color_manual(values = c(data.sets.colors), name = 'Datasets') +
             scale_x_continuous(breaks = seq_len(nb.pcs), labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
             scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0,1)) +
