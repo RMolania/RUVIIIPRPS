@@ -166,10 +166,10 @@ plotPCA <- function(
                                     legend.text = element_text(size = 12),
                                     legend.title = element_text(size = 14),
                                     legend.key = element_blank(),
-                                    axis.text.x = element_text(size = 10),
-                                    axis.text.y = element_text(size = 10),
-                                    axis.title.x = element_text(size = 12),
-                                    axis.title.y = element_text(size = 12),
+                                    axis.text.x = element_text(size = 8),
+                                    axis.text.y = element_text(size = 8),
+                                    axis.title.x = element_text(size = 10),
+                                    axis.title.y = element_text(size = 10),
                                     legend.position = "none") +
                                 scale_fill_discrete(name = variable) +
                                 guides(fill = guide_legend(override.aes = list(size = 3, shape = 21)))
@@ -273,8 +273,8 @@ plotPCA <- function(
                             axis.title.x = element_text(size = 10),
                             axis.title.y = element_text(size = 10),
                             plot.title = element_text(size = 12),
-                            axis.text.x = element_text(size = 8, angle = 25, vjust = 1, hjust = 1),
-                            axis.text.y = element_text(size = 8),
+                            axis.text.x = element_text(size = 10, angle = 25, vjust = 1, hjust = 1),
+                            axis.text.y = element_text(size = 10),
                             strip.text.x = element_text(size = 12),
                             legend.position = 'none')
                     plot.p
@@ -328,10 +328,10 @@ plotPCA <- function(
                         axis.line = element_line(colour = 'black', size = 1),
                         axis.title.x = element_text(size = 10),
                         axis.title.y = element_text(size = 10),
-                        plot.title = element_text(size = 12),
+                        plot.title = element_text(size = 10),
                         axis.text.x = element_text(size = 8),
                         axis.text.y = element_text(size = 8),
-                        strip.text.x = element_text(size = 12),
+                        strip.text.x = element_text(size = 10),
                         legend.position = 'none')
                 plot.p
             })
