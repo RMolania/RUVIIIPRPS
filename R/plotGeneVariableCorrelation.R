@@ -143,10 +143,10 @@ plotGenesVariableCorrelation <- function(
                 values_to = 'corr.coff')
         overall.corr.coeff.plot <- ggplot(all.corr.coeff, aes(x = datasets, y = corr.coff)) +
             geom_boxplot() +
-            ylab('Spearman correlation coefficient') +
+            ylab('Spearman correlation coefficients') +
             xlab('Datasets') +
             geom_hline(yintercept = 0) +
-            ggtitle('Spearman correlation analysis') +
+            ggtitle(paste0('Spearman correlation analysis, ', variable)) +
             theme(
                 panel.background = element_blank(),
                 axis.line = element_line(colour = 'black', linewidth = 1),

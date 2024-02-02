@@ -87,7 +87,7 @@ plotGenesVariableAnova <- function(
             aov.fvals <- all.aov.fvals[[x]]
             p.corr.coeff <- ggplot() +
                 geom_boxplot(aes(y = aov.fvals, x = 1)) +
-                ggtitle('ANOVA') +
+                ggtitle(paste0('ANOVA, ', variable)) +
                 xlab(x) +
                 ylab(expression(Log[2]~'F-statistic')) +
                 geom_hline(yintercept = 0) +
