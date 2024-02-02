@@ -27,6 +27,7 @@
 #' is NULL, the function will automatically find an suitable ylim for the plots. The default is NULL.
 #' @param points.size Numeric. Indicates the size of the points of the scatter plots. The default is 1.
 #' @param plot.ncol Numeric. Indicates number of columns in the plot grid.
+#' @param plot.nrow Numeric. Indicates number of rows in the plot grid.
 #' @param plot.output Logical. If TRUE, individual RLE plot(s) will be printed while the function is running.
 #' @param save.se.obj Logical. Indicates whether to save the plots in the metadata of the SummarizedExperiment object or
 #' to output them as list. Default is set to TRUE.
@@ -39,7 +40,7 @@
 #' Nature Biotechnology, 2023
 
 #' @importFrom SummarizedExperiment assays
-#' @importFrom ggpubr ggarrange
+#' @importFrom ggpubr ggarrange stat_cor
 #' @import ggplot2
 #' @export
 
@@ -51,7 +52,8 @@ plotRleVariable <- function(
         ylim.rle.med.plot = NULL,
         ylim.rle.iqr.plot = NULL,
         points.size = 1,
-        plot.ncol = 1,
+        plot.ncol = 3,
+        plot.nrow = 3,
         plot.output = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
@@ -215,6 +217,7 @@ plotRleVariable <- function(
         overall.rle.med.var.plots <- ggpubr::ggarrange(
             plotlist = all.rle.med.var.plots,
             ncol = plot.ncol,
+            nrow = plot.nrow,
             common.legend = TRUE)
         if (plot.output) print(overall.rle.med.var.plots)
     }
@@ -245,6 +248,8 @@ plotRleVariable <- function(
                     ggtitle(x) +
                     xlab(variable) +
                     ylab('RLE IQRs') +
+                    geom_smooth(formula = y ~ x, method = 'lm') +
+                    ggpubr::stat_cor(aes(label = ..r.label..), color = 'red') +
                     coord_cartesian(ylim = ylim.rle.iqr.plot) +
                     theme(panel.background = element_blank(),
                           axis.line = element_line(colour = 'black', linewidth = 1),
@@ -282,6 +287,7 @@ plotRleVariable <- function(
 
     # generate the overall RLE plots ####
     if(length(assay.names) > 1){
+        ## nrow and ncol of plot grid ####
         printColoredMessage(
             message = '-- Put together all the plots of the RLE medians and the variable:',
             color = 'magenta',
@@ -289,6 +295,7 @@ plotRleVariable <- function(
         overall.rle.iqr.var.plots <- ggpubr::ggarrange(
             plotlist = all.rle.iqr.var.plots,
             ncol = plot.ncol,
+            nrow = plot.nrow,
             common.legend = TRUE)
         if (plot.output) print(overall.rle.iqr.var.plots)
     }
