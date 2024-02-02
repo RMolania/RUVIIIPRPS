@@ -232,7 +232,7 @@ plotPCA <- function(
                     plotlist = p,
                     common.legend = TRUE,
                     legend = "bottom",
-                    nrow = length(levels(assay.names)),
+                    nrow = 2,
                     ncol = ncol(combn(nb.pcs, 2)))
             }
         } else{
