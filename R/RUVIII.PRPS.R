@@ -85,17 +85,15 @@ RUVIII.PRPS <- function(
         if (prps.group == 'supervised') {
             prps.data <- se.obj@metadata$PRPS$supervised
             printColoredMessage(
-                message = paste0(length(prps.data), 'supervised PRPS set(s) are found in the SummarizedExperiment object.'),
+                message = paste0(length(prps.data), ' supervised PRPS set(s) are found in the SummarizedExperiment object.'),
                 color = 'blue',
                 verbose = verbose)
-            prps.data <- do.call(cbind, prps.data)
         } else if (prps.group == 'unSupervised') {
             prps.data <- se.obj@metadata$PRPS$unSupervised
             printColoredMessage(
-                message = paste0(length(prps.data), 'unSupervised PRPS set(s) are found in the SummarizedExperiment object.'),
+                message = paste0(length(prps.data), ' unSupervised PRPS set(s) are found in the SummarizedExperiment object.'),
                 color = 'blue',
                 verbose = verbose)
-            prps.data <- do.call(cbind, prps.data)
         } else if (prps.group == 'both') {
             all.prps <- intersect(names(se.obj@metadata$PRPS), c('supervised', 'unSupervised'))
             if (length(all.prps) != 2) {
@@ -469,12 +467,7 @@ RUVIII.PRPS <- function(
                         return(list(newY = newY, W = W[1:ncol(se.obj) , , drop = FALSE]))
                     })
                 ruv.other.k[[length(k.vals)]] <- newY.max
-                names(ruv.other.k) <- paste0('RUV_',
-                                             all.ncg.prps$PRPS[x],
-                                             '_',
-                                             all.ncg.prps$NCG[x],
-                                             '_K:',
-                                             k.vals)
+                names(ruv.other.k) <- paste0('RUVIIIRPPS_K:', k.vals)
                 ruv.other.k
             } else {
                 ncg.set <- ncg.list[[all.ncg.prps$NCG[x]]]
