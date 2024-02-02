@@ -270,11 +270,11 @@ plotPCA <- function(
                         theme(
                             panel.background = element_blank(),
                             axis.line = element_line(colour = 'black', size = 1),
-                            axis.title.x = element_text(size = 12),
-                            axis.title.y = element_text(size = 12),
-                            plot.title = element_text(size = 18),
-                            axis.text.x = element_text(size = 10, angle = 25, vjust = 1, hjust = 1),
-                            axis.text.y = element_text(size = 10),
+                            axis.title.x = element_text(size = 10),
+                            axis.title.y = element_text(size = 10),
+                            plot.title = element_text(size = 12),
+                            axis.text.x = element_text(size = 8, angle = 25, vjust = 1, hjust = 1),
+                            axis.text.y = element_text(size = 8),
                             strip.text.x = element_text(size = 12),
                             legend.position = 'none')
                     plot.p
@@ -326,11 +326,11 @@ plotPCA <- function(
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', size = 1),
-                        axis.title.x = element_text(size = 12),
-                        axis.title.y = element_text(size = 12),
-                        plot.title = element_text(size = 18),
-                        axis.text.x = element_text(size = 10),
-                        axis.text.y = element_text(size = 10),
+                        axis.title.x = element_text(size = 10),
+                        axis.title.y = element_text(size = 10),
+                        plot.title = element_text(size = 12),
+                        axis.text.x = element_text(size = 8),
+                        axis.text.y = element_text(size = 8),
                         strip.text.x = element_text(size = 12),
                         legend.position = 'none')
                 plot.p

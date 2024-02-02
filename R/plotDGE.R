@@ -127,9 +127,9 @@ plotDGE <- function(
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', linewidth = 1),
-                        axis.title.x = element_text(size = 18),
-                        axis.title.y = element_text(size = 18),
-                        plot.title = element_text(size = 15),
+                        axis.title.x = element_text(size = 10),
+                        axis.title.y = element_text(size = 10),
+                        plot.title = element_text(size = 12),
                         axis.text.x = element_text(size = 8),
                         axis.text.y = element_text(size = 8))
             }
