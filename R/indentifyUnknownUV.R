@@ -92,7 +92,7 @@
 #' @importFrom stats as.formula
 #' @export
 
-indentifyUnknownUV <- function(
+identifyUnknownUV <- function(
         se.obj,
         assay.name,
         approach = 'rle',
