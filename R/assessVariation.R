@@ -649,9 +649,9 @@ assessVariation <- function(
     }
     for(i in continuous.vars){
         plot.new()
-        text(.5, .5, paste0(i , " Assess variation"), font = 2, cex = 1.5)
-
+        text(.5, .9, paste0("Assess variation in the variable", i ), font = 2, cex = 1.5)
         metrics.table.var <- metrics.table[metrics.table$Variables == i, ]
+        grid.table(metrics.table, theme = mytheme)
         for(j in 1:nrow(metrics.table.var)){
             if(metrics.table.var$Factors[j] == 'rleMedians'){
                 print(se.obj@metadata$plot$RLE[[i]]$RleVarPlot$RleMedians)
