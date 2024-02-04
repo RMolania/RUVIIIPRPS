@@ -17,7 +17,8 @@ plotPCA(
   stroke.size = 0.2,
   points.alpha = 0.5,
   densities.alpha = 0.5,
-  plot.ncol = 4,
+  plot.ncol = 1,
+  plot.nrow = 3,
   save.se.obj = TRUE,
   verbose = TRUE
 )
@@ -52,6 +53,8 @@ the process, by default is set to 'TRUE'.}
 \item{densities.alpha}{geom_point aesthetics}
 
 \item{plot.ncol}{is the argument of gtable for the layout specifying ncol, by default it is set to 4.}
+
+\item{plot.nrow}{is the argument of gtable for the layout specifying ncol, by default it is set to 4.}
 
 \item{save.se.obj}{Logical. If TRUE, displaying process messages is enabled.}
 

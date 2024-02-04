@@ -23,6 +23,7 @@
 #' @param points.alpha geom_point aesthetics
 #' @param densities.alpha geom_point aesthetics
 #' @param plot.ncol is the argument of gtable for the layout specifying ncol, by default it is set to 4.
+#' @param plot.nrow is the argument of gtable for the layout specifying ncol, by default it is set to 4.
 #' @param verbose Logical. If TRUE, displaying process messages is enabled.
 #' @param save.se.obj Logical. If TRUE, displaying process messages is enabled.
 
@@ -48,7 +49,8 @@ plotPCA <- function(
         stroke.size = .2,
         points.alpha = .5,
         densities.alpha = .5,
-        plot.ncol = 4,
+        plot.ncol = 1,
+        plot.nrow = 3,
         save.se.obj = TRUE,
         verbose = TRUE
 ) {
@@ -339,7 +341,7 @@ plotPCA <- function(
         if(length(assay.names) > 1){
             overall.scat.var.pca.plot <- ggarrange(
                 plotlist = all.scat.var.pca.plots,
-                nrow = length(levels(assay.names)),
+                nrow = plot.nrwo,
                 ncol = plot.ncol)
         }
     }

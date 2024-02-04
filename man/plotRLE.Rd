@@ -14,6 +14,7 @@ plotRLE(
   median.points.color = "black",
   geom.hline.color = "cyan",
   plot.ncol = 1,
+  plot.nrow = 3,
   plot.output = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE
@@ -44,6 +45,9 @@ This line helps to see the deviation of the RLE medians of the RLE boxplot(s).}
 
 \item{plot.ncol}{Numeric. Indicates number of columns in the plot grid. When the number of selected assay is more than
 1, the function puts all the RLE boxplots in one grid.}
+
+\item{plot.nrow}{Numeric. Indicates number of rows in the plot grid. When the number of selected assay is more than
+3, the function puts all the RLE boxplots in one grid.}
 
 \item{plot.output}{Logical. If TRUE, the individual RLE plot(s) will be printed while functions is running.}
 

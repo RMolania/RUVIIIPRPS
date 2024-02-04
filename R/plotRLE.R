@@ -22,6 +22,8 @@
 #' This line helps to see the deviation of the RLE medians of the RLE boxplot(s).
 #' @param plot.ncol Numeric. Indicates number of columns in the plot grid. When the number of selected assay is more than
 #' 1, the function puts all the RLE boxplots in one grid.
+#' @param plot.nrow Numeric. Indicates number of rows in the plot grid. When the number of selected assay is more than
+#' 3, the function puts all the RLE boxplots in one grid.
 #' @param plot.output Logical. If TRUE, the individual RLE plot(s) will be printed while functions is running.
 #' @param save.se.obj Logical. Indicates whether to save the RLE plots in the metadata of the SummarizedExperiment object
 #'  or to output the result as list. By default it is set to TRUE.
@@ -47,6 +49,7 @@ plotRLE <- function(
         median.points.color = 'black',
         geom.hline.color = 'cyan',
         plot.ncol = 1,
+        plot.nrow = 3,
         plot.output = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
@@ -226,6 +229,7 @@ plotRLE <- function(
         overall.rle.plot <- ggpubr::ggarrange(
             plotlist = all.rle.plots,
             ncol = plot.ncol,
+            nrow = plot.nrow,
             legend = "bottom",
             common.legend = TRUE)
         if (plot.output) print(overall.rle.plot)
