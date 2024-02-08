@@ -70,7 +70,7 @@
 #' mean square otherwise. The default is FALSE.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object or not.
 #' @param assess.variables Logical. Indicates whether to assess the association between the biological and unwanted
-#' variation variables separately. Refer to the variablesCorrelation function for more details. Th default is FALSE.
+#' variation variables separately. Refer to the 'assessVariablesCorrelation' function for more details. Th default is FALSE.
 #' @param remove.na Symbol. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
 #' 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
 #' samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to both'.
@@ -177,7 +177,7 @@ findNCGsAcrossSamples <- function(
     }
     # check the variables correlations ####
     if (assess.variables) {
-        se.obj <- variablesCorrelation(
+        se.obj <- assessVariablesCorrelation(
             se.obj = se.obj,
             bio.variables = bio.variables,
             uv.variables = uv.variables,
