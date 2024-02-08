@@ -94,10 +94,8 @@ createHomogeneousBioGroups <- function(
     class.bio.var <- unlist(lapply(
         bio.variables,
         function(x) class(se.obj[[x]])))
-    categorical.bio.var <-
-        bio.variables[class.bio.var %in% c('factor', 'character')]
-    continuous.bio.var <-
-        bio.variables[class.bio.var %in% c('numeric', 'integer')]
+    categorical.bio.var <- bio.variables[class.bio.var %in% c('factor', 'character')]
+    continuous.bio.var <- bio.variables[class.bio.var %in% c('numeric', 'integer')]
     # cluster continuous variables ####
     if (length(continuous.bio.var) > 0) {
         # grammar
