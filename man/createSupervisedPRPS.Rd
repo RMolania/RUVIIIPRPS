@@ -2,7 +2,7 @@
 % Please edit documentation in R/createSupervisedPRPS.R
 \name{createSupervisedPRPS}
 \alias{createSupervisedPRPS}
-\title{is used to create pseudo-replicates of pseudo samples (PRPS) in supervised.}
+\title{create supervised pseudo-replicates of pseudo samples (PRPS).}
 \usage{
 createSupervisedPRPS(
   se.obj,
