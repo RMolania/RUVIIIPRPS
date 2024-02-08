@@ -70,7 +70,10 @@ computeRLE <- function(
                         color = 'white',
                         verbose = verbose)
     # check inputs ####
-    if (apply.log){
+    if(is.list(assay.names)){
+        stop('The "assay.names" must be a vector of the assay names(s) or assay.names = "all".')
+    }
+    if (isTRUE(apply.log)){
         if (pseudo.count < 0)
             stop('The value of "pseudo.count" cannot be negative.')
     }
@@ -84,7 +87,7 @@ computeRLE <- function(
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else  assay.names <- as.factor(unlist(assay.names))
+    } else  assay.names <- factor(x = assay.names , levels = assay.names)
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
@@ -145,18 +148,18 @@ computeRLE <- function(
                 message = paste0('- Compute the RLE on the ', x, ' data.'),
                 color = 'blue',
                 verbose = verbose)
+            rle.data <- all.assays[[x]] - matrixStats::rowMedians(all.assays[[x]])
             if(outputs.to.return == 'all'){
                 printColoredMessage(
                     message = 'obtain the RLE data.',
                     color = 'blue',
                     verbose = verbose)
-                rle.data <- all.assays[[x]] - rowMedians(all.assays[[x]])
                 printColoredMessage(
                     message = 'obtain the RLE medians and interquartile ranges.',
                     color = 'blue',
                     verbose = verbose)
-                rle.med <- colMedians(rle.data)
-                rle.iqr <- colIQRs(rle.data)
+                rle.med <- matrixStats::colMedians(rle.data)
+                rle.iqr <- matrixStats::colIQRs(rle.data)
                 rle <- list(
                     rle.data = rle.data,
                     rle.med = rle.med,
@@ -166,44 +169,40 @@ computeRLE <- function(
                     message = '-obtain the RLE data.',
                     color = 'blue',
                     verbose = verbose)
-                rle.data <- all.assays[[x]] - rowMedians(all.assays[[x]])
                 rle <- list(rle.data = rle.data)
             } else if (outputs.to.return == 'rle.med'){
                 printColoredMessage(
                     message = 'obtain the RLE data.',
                     color = 'blue',
                     verbose = verbose)
-                rle.data <- all.assays[[x]] - rowMedians(all.assays[[x]])
                 printColoredMessage(
                     message = '-Obtain the RLE medians.',
                     color = 'blue',
                     verbose = verbose)
-                rle.med <- colMedians(rle.data)
-                rle <- list( rle.data = rle.data, rle.med = rle.med)
+                rle.med <- matrixStats::colMedians(rle.data)
+                rle <- list(rle.data = rle.data, rle.med = rle.med)
             } else if (outputs.to.return == 'rle.iqr'){
                 printColoredMessage(
                     message = 'obtain the RLE data.',
                     color = 'blue',
                     verbose = verbose)
-                rle.data <- all.assays[[x]] - rowMedians(all.assays[[x]])
                 printColoredMessage(
                     message = 'obtain the interquartile ranges.',
                     color = 'blue',
                     verbose = verbose)
-                rle.iqr <- colIQRs(rle.data)
+                rle.iqr <- matrixStats::colIQRs(rle.data)
                 rle <- list(rle.data = rle.data, rle.iqr = rle.iqr)
             } else if (outputs.to.return == 'rle.med.iqr'){
                 printColoredMessage(
                     message = 'obtain the RLE data.',
                     color = 'blue',
                     verbose = verbose)
-                rle.data <- all.assays[[x]] - rowMedians(all.assays[[x]])
                 printColoredMessage(
                     message = 'obtain the RLE medians and interquartile ranges.',
                     color = 'blue',
                     verbose = verbose)
-                rle.med <- colMedians(rle.data)
-                rle.iqr <- colIQRs(rle.data)
+                rle.med <- matrixStats::colMedians(rle.data)
+                rle.iqr <- matrixStats::colIQRs(rle.data)
                 rle <- list(rle.med = rle.med, rle.iqr = rle.iqr)
             }
             return(rle)
