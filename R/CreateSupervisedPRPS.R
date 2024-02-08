@@ -1,4 +1,4 @@
-#' is used to create pseudo-replicates of pseudo samples (PRPS) in supervised.
+#' create supervised pseudo-replicates of pseudo samples (PRPS).
 
 #' @author Ramyar Molania
 
