@@ -341,7 +341,7 @@ plotPCA <- function(
         if(length(assay.names) > 1){
             overall.scat.var.pca.plot <- ggarrange(
                 plotlist = all.scat.var.pca.plots,
-                nrow = plot.nrwo,
+                nrow = plot.nrow,
                 ncol = plot.ncol)
         }
     }
