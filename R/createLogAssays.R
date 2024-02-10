@@ -1,11 +1,11 @@
-#' apply log-transformation to the assay(s) of a SummarizedExperiment object.
+#' Apply log-transformation to the assay(s) of a SummarizedExperiment object.
 
 #' @author Marie Trussart
 
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. A symbol or a list of symbols used to specify the name(s) of the assay(s) in the
-#' SummarizedExperiment object to apply a log-transformation. The default is "all," indicating that all assays in the
-#' SummarizedExperiment object will be selected.
+#' @param assay.names Symbol. A symbol or vector of symbols used to specify the name(s) of the assay(s) in the
+#' SummarizedExperiment object. The default is "all," indicating that all assays in the SummarizedExperiment object will
+#' be assessed.
 #' @param pseudo.count Numeric. A value serving as a pseudo count to be added to all measurements in the assay(s) before
 #' applying log-transformation. This helps prevent -Inf values for measurements equal to 0. The default is 1.
 #' @param apply.round If 'TRUE', the measurements of individual assays will be rounded to two decimal points. The default
@@ -13,7 +13,6 @@
 #' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
 #' @importFrom SummarizedExperiment assays assay colData
-#' @export
 
 createLogAssays <- function(
         se.obj,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/computePCVariableCorrelation.R
 \name{computePCVariableCorrelation}
 \alias{computePCVariableCorrelation}
-\title{compute the vector correlation.}
+\title{Compute the vector correlation.}
 \usage{
 computePCVariableCorrelation(
   se.obj,
@@ -17,9 +17,9 @@ computePCVariableCorrelation(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indicates all
-the assays of the SummarizedExperiment object will be selected.}
+\item{assay.names}{Symbol. A symbol or a vector of symbols for the selection of the name(s) of the assay(s) in the
+SummarizedExperiment object to calculate the vector correlation. The default is "all, which indicates all the assays
+of the SummarizedExperiment object will be selected.}
 
 \item{variable}{Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
 The variable must be a categorical variable.}
@@ -27,17 +27,17 @@ The variable must be a categorical variable.}
 \item{fast.pca}{Logical. Indicates whether to use the fast PCA or PCA results computed by the computePCA function. The
 default is 'TRUE'.}
 
-\item{nb.pcs}{Numeric. The number of first PCs to use to calculate the vector correlation. The default is 10. This
-number cannot be bigger that number of PCs calculated by the computePCA function.}
+\item{nb.pcs}{Numeric. The number of the first PCs to be used to calculate the vector correlation. The default is 10.
+This number cannot be bigger that number of PCs calculated by the 'computePCA' function.}
 
-\item{save.se.obj}{Logical. Indicates whether to save the vector correlation plots in the metadata of the SummarizedExperiment
-object or to output the results as list. By default it is set to 'TRUE'.}
+\item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment
+object  or to output the result as list. By default it is set to TRUE.}
 
-\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
+\item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
 \value{
 A SummarizedExperiment object or a list that contains the vector correlation plots of individual assay(s) for
-the categorical variable.
+a categorical variable.
 }
 \description{
 This function calculates the the vector correlation between the first cumulative PCs of the gene expression (assay)

@@ -1,4 +1,4 @@
-#' plot the vector correlation.
+#' Plot the vector correlation.
 
 #' @author Ramyar Molania
 
@@ -7,8 +7,12 @@
 #' from the vector correlation analysis. An ideal normalization should results a low correlation with unwanted variation
 #' variables and high correlation with known biology.
 
+#' @references
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
+
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
+#' @param assay.names Symbol. A symbol or vector of symbols for the selection of the name(s) of the assay(s) in the
 #' SummarizedExperiment object to generate a vector correlation. The default is "all, which indicates all
 #' the assays of the SummarizedExperiment object will be selected.
 #' @param variable Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
@@ -23,10 +27,6 @@
 
 #' @return A SummarizedExperiment object or a list that contains all the vector correlation plots for the individual
 #' assay(s).
-
-#' @references
-#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
-#' Nature Biotechnology, 2023
 
 #' @importFrom tidyr pivot_longer
 #' @importFrom dplyr mutate

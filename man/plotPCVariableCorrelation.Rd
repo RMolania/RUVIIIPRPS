@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotPCVariableCorrelation.R
 \name{plotPCVariableCorrelation}
 \alias{plotPCVariableCorrelation}
-\title{plot the vector correlation.}
+\title{Plot the vector correlation.}
 \usage{
 plotPCVariableCorrelation(
   se.obj,
@@ -18,7 +18,7 @@ plotPCVariableCorrelation(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
+\item{assay.names}{Symbol. A symbol or vector of symbols for the selection of the name(s) of the assay(s) in the
 SummarizedExperiment object to generate a vector correlation. The default is "all, which indicates all
 the assays of the SummarizedExperiment object will be selected.}
 

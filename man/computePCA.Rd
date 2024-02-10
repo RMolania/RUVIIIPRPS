@@ -2,7 +2,7 @@
 % Please edit documentation in R/computePCA.R
 \name{computePCA}
 \alias{computePCA}
-\title{perform principal component analysis (PCA) using singular value decomposition (SVD).}
+\title{Perform principal component analysis (PCA) using singular value decomposition (SVD).}
 \usage{
 computePCA(
   se.obj,
@@ -23,9 +23,9 @@ computePCA(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indicates
-all the assays of the SummarizedExperiment object will be selected.}
+\item{assay.names}{Symbol. A symbol or a vector of symbols for the selection of the name(s) of the assay(s) in the
+SummarizedExperiment object to compute PCA. The default is "all, which indicates all the assays of the
+SummarizedExperiment object will be selected.}
 
 \item{fast.pca}{Logical. Indicates whether to calculate a specific number of left singular vectors instead of the
 full possible vectors to speed up the process. The default is 'TRUE'.}
@@ -33,8 +33,8 @@ full possible vectors to speed up the process. The default is 'TRUE'.}
 \item{nb.pcs}{Numeric. The number of first left singular vectors to be calculated for the fast PCA process. The
 default is 10.}
 
-\item{center}{Logical. Indicates whether to scale the data or not. If center is TRUE, then centering is done by
-subtracting the column means of the assay from their corresponding columns. The default is TRUE.}
+\item{center}{Logical. Indicates whether to scale the data or not. If center is 'TRUE', then centering is done by
+subtracting the column means of the assay from their corresponding columns. The default is 'TRUE'.}
 
 \item{scale}{Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
 is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
@@ -47,7 +47,7 @@ default is 'TRUE'. The data must be in log scale before computing the SVD.}
 The default is 1. This argument cannot be NULL or negative.}
 
 \item{svd.bsparam}{A BiocParallelParam object specifying how parallelization should be performed. The default is bsparam().
-We refer to the 'runSVD' function from the BiocSingular R package.}
+We refer to the 'runSVD' function from the BiocSingular R package for more details.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object. The default is TRUE.
 We refer to the checkSeObj function for more details.}
@@ -57,7 +57,7 @@ We refer to the checkSeObj function for more details.}
 \item{save.se.obj}{Logical. Indicates whether to save the SVD results in the metadata of the SummarizedExperiment object
 or to output the results as list. By default it is set to 'TRUE'.}
 
-\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
+\item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
 \value{
 A SummarizedExperiment object or a list that containing the singular value decomposition results and the

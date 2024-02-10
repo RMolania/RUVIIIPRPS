@@ -28,7 +28,7 @@
 #' if a continuous variable is provided. Options include 'kmeans', 'cut', and 'quantile'. The default is set to 'kmeans'.
 #' @param nb.clusters Numeric. A numeric value indicating how many clusters should be found if the 'uv.variable' is a
 #' continuous variable. The default is 3.
-#' @param k Numeric.The maximum number of nearest neighbors to compute. The default is set 3.
+#' @param k.nn Numeric.The maximum number of nearest neighbors to compute. The default is set 3.
 #' @param hvg Vector. A vector of the names of the highly variable genes. These genes will be used to find the anchors
 #' samples across the batches. The default is NULL.
 #' @param normalization Symbol. Indicates which normalization methods should be applied before finding the knn. The default
@@ -67,7 +67,7 @@ findKnn <- function(
         svd.bsparam = bsparam(),
         clustering.method = 'kmeans',
         nb.clusters = 3,
-        k = 2,
+        k.nn = 2,
         hvg = NULL,
         normalization = 'CPM',
         regress.out.bio.variables = NULL,
@@ -94,8 +94,8 @@ findKnn <- function(
         stop('The "data.input" must be one of the "expr" or "pcs".')
     } else if (data.input == 'pcs' & is.null(nb.pcs)) {
         stop('The valuse of "nb.pcs" must be sepcified when the data.input = pcs.')
-    } else if (k == 0) {
-        stop('The k cannot be 0.')
+    } else if (k.nn == 0) {
+        stop('The k.nn cannot be 0.')
     } else if (!uv.variable %in% colnames(colData(se.obj))) {
         stop('The "uv.variable" variable cannot be found in the SummarizedExperiment object.')
     }
@@ -155,8 +155,8 @@ findKnn <- function(
     } else if(is.factor(se.obj[[uv.variable]])){
         se.obj[[uv.variable]] <- factor(x = se.obj[[uv.variable]])
     }
-    if (length(findRepeatingPatterns(vec = se.obj[[uv.variable]], n.repeat = k)) != length(unique(se.obj[[uv.variable]])))
-        stop(paste0('Some sub-groups of the variable ', uv.variable, ' have less than ', k, ' samples. '))
+    if (length(findRepeatingPatterns(vec = se.obj[[uv.variable]], n.repeat = k.nn)) != length(unique(se.obj[[uv.variable]])))
+        stop(paste0('Some sub-groups of the variable ', uv.variable, ' have less than ', k.nn, ' samples. '))
 
 
     # data normalization and transformation and regression ####

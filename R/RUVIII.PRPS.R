@@ -351,7 +351,7 @@ RUVIII.PRPS <- function(
         Y <- log2(assay(se.obj, assay.name) + pseudo.count)
     } else if (apply.log == 'prps') {
         printColoredMessage(
-            message = paste('Apply log2 + ', prps, ' (pseudo.count) on only assay.'),
+            message = paste('Apply log2 + ', pseudo.count, ' (pseudo.count) on only assay.'),
             color = 'blue',
             verbose = verbose
         )

@@ -1,4 +1,4 @@
-#' plot p-values histograms of DEG analysis.
+#' Plot p-values histograms of DEG analysis.
 
 #' @author Ramyar Molania
 
@@ -13,15 +13,16 @@
 
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or vector of symbols for the selection of the name(s) of the assay(s) in the
-#' SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.
-#' @param variable Symbol. Indicates the column name in the SummarizedExperiment object that contains a categorical
-#' variable such as sample types or batches.
+#' SummarizedExperiment object to compute DGE. The default is set to 'all' indicating all the the assays of the
+#' SummarizedExperiment object will be selected.
+#' @param variable Symbol. Specifies the column name in the SummarizedExperiment object containing a categorical variable
+#' , such as sample types or batches
 #' @param plot.ncol Numeric. Indicates number of columns in the plot grid.
-#' @param plot.output Logical. Indicates whether to plot the ARI, by default it is set to FALSE.
+#' @param plot.output Logical. Indicates whether to plot the p-values histograms when the functions is running, by default
+#' it is set to 'FALSE'.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' object 'se.obj' or to output the result. By default it is set to TRUE.
-#' @param verbose Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-#' execution of the functions, by default it is set to TRUE.
+#' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
 #' @return A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
 
@@ -46,7 +47,6 @@ plotDGE <- function(
     } else if (is.null(variable)) {
         stop('The "variable" cannot be empty.')
     }
-
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))

@@ -1,4 +1,4 @@
-#' is used to find repeating factors ro characters in a vector.
+#' find repeating factors ro characters in a vector.
 #'
 #' @param vec A vector of factors or characters.
 #' @param n.repeat Numeric. Indicates the minimum repeat of individual factors ro characters in the vector.

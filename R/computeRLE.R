@@ -25,19 +25,18 @@
 #' Nature Biotechnology, 2023
 
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-#' SummarizedExperiment object to calculate RLE data, medians and interquartile ranges. The default is "all, which indicates all
-#' the assays of the SummarizedExperiment object will be selected.
+#' @param assay.names Symbol. A symbol or a vector of symbols for the selection of the name(s) of the assay(s) in the
+#' SummarizedExperiment object to calculate RLE data, medians and interquartile ranges. The default is set to "all, which
+#' indicates all the assays of the SummarizedExperiment object will be selected.
 #' @param apply.log Logical. Indicates whether to apply a log-transformation to the data or not. The default is TRUE.
 #' Please, note, any RNA-seq data (assays) must be in log scale before computing RLE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements of the assay(s) before applying
 #' log transformation to avoid -Inf for measurements that are equal to 0. The default is 1.
-#' @param outputs.to.return Symbol. Indicates what kind of RLE computations should be performed and data should be
-#' returned. The options are "all", "rle", "rle.med", "rle.iqr" and "rle.med.iqr". If "all" is selected, the function returns the RLE data,
-#' medians and interquartile ranges. If "rle" is selected, the function returns only the RLE data for each assay. If "rle.med"
-#' is selected, the function returns the only the medians of the RLE data. If "rle.iqr" is selected, the function returns
-#' the only the interquartile ranges. of the RLE data.  If "rle.med.iqr" is selected, the function returns
-#' both the RLE medians and interquartile ranges of the RLE data.The default is 'all'.
+#' @param outputs.to.return Symbol. Specifies the type of RLE computations to be performed and the data to be returned.
+#' Options include "all", "rle", "rle.med", "rle.iqr", and "rle.med.iqr". Selecting "all" returns RLE data along with
+#' medians and interquartile ranges. Choosing "rle" returns only the RLE data for each assay. Opting for "rle.med" returns
+#' only the RLE data medians. Selecting "rle.iqr" returns only the interquartile ranges of the RLE data. If "rle.med.iqr"
+#' is chosen, both RLE medians and interquartile ranges are returned. The default is 'all'.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment object or not. See the checkSeObj
 #' function for more details.
 #' @param remove.na Symbol. To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.

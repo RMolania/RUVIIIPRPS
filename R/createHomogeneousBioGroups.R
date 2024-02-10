@@ -4,8 +4,8 @@
 
 #' @description
 #' This function generates all possible homogeneous sample groups based on the specified biological variables. If continuous
-#' variables are provided, the function splits them into a number of groups determined by 'nb.clusters', using the method
-#' specified in clustering.method'. In the end, the product of all groups is generated and treated as homogeneous sample
+#' variables are provided, the function splits them into a number of groups determined by 'nb.clusters', using the ckustering
+#' method specified in 'clustering.method'. In the end, the product of all groups is generated and treated as homogeneous sample
 #' groups with respect to biological variables.
 
 #' @param se.obj A SummarizedExperiment object.
@@ -42,7 +42,7 @@
 #' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
 #' @return A SummarizedExperiment object containing the all possible homogeneous groups in the "metadata$HGgroups$UVgroups"
-#' or a vector.
+#' or a vector of all possible homogeneous groups.
 
 #' @importFrom SummarizedExperiment assay
 #' @importFrom DescTools ContCoef

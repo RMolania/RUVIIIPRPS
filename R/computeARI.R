@@ -11,6 +11,10 @@
 #' two label lists. We use the ARI to assess the performance of normalization methods in terms of sample subtype
 #' separation and batch mixing. We first calculate PCs and use the first PCs to perform ARI.
 
+#' @references
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or a vector of symbols for the selection of the name(s) of the assay(s) in the
 #' SummarizedExperiment object to compute ARI. By default all the assays of the SummarizedExperiment object will be selected.
@@ -31,9 +35,6 @@
 
 #' @return A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.
 
-#' @references
-#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
-#' Nature Biotechnology, 2023
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom mclust mclustBIC Mclust adjustedRandIndex

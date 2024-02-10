@@ -2,7 +2,7 @@
 % Please edit documentation in R/createLogAssays.R
 \name{createLogAssays}
 \alias{createLogAssays}
-\title{apply log-transformation to the assay(s) of a SummarizedExperiment object.}
+\title{Apply log-transformation to the assay(s) of a SummarizedExperiment object.}
 \usage{
 createLogAssays(
   se.obj,
@@ -15,9 +15,9 @@ createLogAssays(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. A symbol or a list of symbols used to specify the name(s) of the assay(s) in the
-SummarizedExperiment object to apply a log-transformation. The default is "all," indicating that all assays in the
-SummarizedExperiment object will be selected.}
+\item{assay.names}{Symbol. A symbol or vector of symbols used to specify the name(s) of the assay(s) in the
+SummarizedExperiment object. The default is "all," indicating that all assays in the SummarizedExperiment object will
+be assessed.}
 
 \item{pseudo.count}{Numeric. A value serving as a pseudo count to be added to all measurements in the assay(s) before
 applying log-transformation. This helps prevent -Inf values for measurements equal to 0. The default is 1.}
@@ -28,7 +28,7 @@ is 'TRUE'.}
 \item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
 \description{
-apply log-transformation to the assay(s) of a SummarizedExperiment object.
+Apply log-transformation to the assay(s) of a SummarizedExperiment object.
 }
 \author{
 Marie Trussart

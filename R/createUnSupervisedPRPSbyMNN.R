@@ -30,7 +30,7 @@
 #' if a continuous variable is provided. Options include 'kmeans', 'cut', and 'quantile'. The default is set to 'kmeans'.
 #' @param nb.clusters Numeric. A numeric value indicating how many clusters should be found if the 'uv.variable' is a
 #' continuous variable. The default is 3.
-#' @param k Numeric.The maximum number of nearest neighbors to compute. The default is set 3.
+#' @param k.nn Numeric.The maximum number of nearest neighbors to compute. The default is set 3.
 #' @param hvg Vector. A vector of the names of the highly variable genes. These genes will be used to find the anchors
 #' samples across the batches. The default is NULL.
 #' @param normalization Symbol. Indicates which normalization methods should be applied before finding the knn. The default
@@ -70,7 +70,7 @@ createUnSupervisedPRPSbyMNN <- function(
         svd.bsparam = bsparam(),
         clustering.method = 'kmeans',
         nb.clusters = 3,
-        k = 2,
+        k.nn = 2,
         hvg = NULL,
         normalization = 'CPM',
         regress.out.bio.variables = NULL,
@@ -113,7 +113,7 @@ createUnSupervisedPRPSbyMNN <- function(
         svd.bsparam = svd.bsparam,
         clustering.method = clustering.method,
         nb.clusters = nb.clusters,
-        k = k,
+        k.nn = k.nn,
         hvg = hvg,
         normalization = normalization,
         regress.out.bio.variables = regress.out.bio.variables,
@@ -150,7 +150,7 @@ createUnSupervisedPRPSbyMNN <- function(
         1:nrow(all.mnn),
         function(x){
             # ps set 1
-            ps.set.1 <- all.knn[ , c(1:c(k+1)) ] == all.mnn$sample.no.1[x]
+            ps.set.1 <- all.knn[ , c(1:c(k.nn+1)) ] == all.mnn$sample.no.1[x]
             ps.set.1 <- all.knn[rowSums(ps.set.1) > 0 , ]
             ps.set.1$mnn.sets <- paste0(
                 sort(c(all.mnn[x , 3], all.mnn[x , 4])),
@@ -163,7 +163,7 @@ createUnSupervisedPRPSbyMNN <- function(
                 ps.set.1
             }
             # ps set 2
-            ps.set.2 <- all.knn[ , c(1:c(k+1)) ] == all.mnn$sample.no.2[x]
+            ps.set.2 <- all.knn[ , c(1:c(k.nn+1)) ] == all.mnn$sample.no.2[x]
             ps.set.2 <- all.knn[rowSums(ps.set.2) > 0 , ]
             ps.set.2$mnn.sets <- paste0(
                 sort(c(all.mnn[x , 3], all.mnn[x , 4])),

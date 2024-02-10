@@ -1,4 +1,4 @@
-#' compute the vector correlation.
+#' Compute the vector correlation.
 
 #' @author Ramyar Molania
 
@@ -15,28 +15,26 @@
 #' biological variables. Not only does this quantity summarize the full set of canonical correlations, but it also reduces
 #' to the familiar R2 from multiple regression when one of the variable sets contains just one element.
 
+#' @references
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
+
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-#' SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indicates all
-#' the assays of the SummarizedExperiment object will be selected.
+#' @param assay.names Symbol. A symbol or a vector of symbols for the selection of the name(s) of the assay(s) in the
+#' SummarizedExperiment object to calculate the vector correlation. The default is "all, which indicates all the assays
+#' of the SummarizedExperiment object will be selected.
 #' @param variable Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
 #' The variable must be a categorical variable.
 #' @param fast.pca Logical. Indicates whether to use the fast PCA or PCA results computed by the computePCA function. The
 #' default is 'TRUE'.
-#' @param nb.pcs Numeric. The number of first PCs to use to calculate the vector correlation. The default is 10. This
-#' number cannot be bigger that number of PCs calculated by the computePCA function.
-#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
-#' object 'se.obj' or to output the result. By default it is set to TRUE.
-#' @param save.se.obj Logical. Indicates whether to save the vector correlation plots in the metadata of the SummarizedExperiment
-#' object or to output the results as list. By default it is set to 'TRUE'.
-#' @param verbose Logical. If TRUE, displaying process messages is enabled.
+#' @param nb.pcs Numeric. The number of the first PCs to be used to calculate the vector correlation. The default is 10.
+#' This number cannot be bigger that number of PCs calculated by the 'computePCA' function.
+#' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment
+#' object  or to output the result as list. By default it is set to TRUE.
+#' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
 #' @return A SummarizedExperiment object or a list that contains the vector correlation plots of individual assay(s) for
-#' the categorical variable.
-
-#' @references
-#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
-#' Nature Biotechnology, 2023
+#' a categorical variable.
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom fastDummies dummy_cols

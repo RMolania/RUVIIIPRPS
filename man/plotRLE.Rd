@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotRLE.R
 \name{plotRLE}
 \alias{plotRLE}
-\title{generate boxplot of the relative log expression (RLE) distributions of RNA-seq data.}
+\title{Generate boxplot of the relative log expression (RLE) distributions of RNA-seq data.}
 \usage{
 plotRLE(
   se.obj,
@@ -23,25 +23,27 @@ plotRLE(
 \arguments{
 \item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
-SummarizedExperiment object to calculate RLE data, medians and interquartiles. The default is "all, which indicates all
-the assays of the SummarizedExperiment object will be selected.}
+\item{assay.names}{Symbol. A symbol or vector of symbols for the selection of the name(s) of the assay(s) in the
+SummarizedExperiment object to plot the RLE data. The default is "all, which indicates all the assays of the
+SummarizedExperiment object will be selected.}
 
 \item{variable}{Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
 The interquartile ranges of the RLE boxplot will be colored based on the variable. The variable must be a categorical
 variable. The default is NULL.}
 
-\item{ylim.rle.plot}{Numeric. A vector of two values to specify the ylim of the RLE plot(s). If is NULL, the function
-uses the minimum and maximum interquartile ranges of all the RLE data as ylim. The default is NULL.}
+\item{ylim.rle.plot}{Numeric. A vector of two values to specify the ylim of the RLE plot(s). If is 'NULL', the function
+uses the minimum and maximum interquartile ranges of all the RLE data to specify the ylim. The default is 'NULL'. The
+ylim of the RLE plots should be the same to able to compare them against each other.}
 
 \item{iqr.width}{Numeric. Indicates the width size of RLE interquartile ranges in the plot. The default is 1.}
 
-\item{median.points.size}{Numeric. Indicates the size of the points of the RLE medians in the boxplot(s). The default is 1.}
+\item{median.points.size}{Numeric. Indicates the size of the points of the RLE medians in the boxplot(s). The default
+is 1.}
 
-\item{median.points.color}{Symbol. Indicates the color of the points of the RLE medians in the boxplot(s).}
+\item{median.points.color}{Symbol. Specifies the color of the points representing RLE medians in the boxplot(s).}
 
-\item{geom.hline.color}{Symbol. Indicates the color of the horizontal line (geom.hline) across 0 in the RLE boxplot(s).
-This line helps to see the deviation of the RLE medians of the RLE boxplot(s).}
+\item{geom.hline.color}{Symbol. Indicates the color of the horizontal line (geom.hline) crossing 0 in the RLE boxplot(s).
+This line aids in visualizing the deviation of the RLE medians within the RLE boxplot(s).}
 
 \item{plot.ncol}{Numeric. Indicates number of columns in the plot grid. When the number of selected assay is more than
 1, the function puts all the RLE boxplots in one grid.}
@@ -54,14 +56,28 @@ This line helps to see the deviation of the RLE medians of the RLE boxplot(s).}
 \item{save.se.obj}{Logical. Indicates whether to save the RLE plots in the metadata of the SummarizedExperiment object
 or to output the result as list. By default it is set to TRUE.}
 
-\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
+\item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
 \value{
-A SummarizedExperiment object or a list that contains all the RLE plot(s).
+A SummarizedExperiment object that contains all the RLE plot(s) in the metadata or a list that contains all
+the RLE plot(s).
 }
 \description{
-This function generates a boxplot of individual RLE data. The RLE data can be obtained using the computeRLE function.
-We refer to the computeRLE function for more detail about RLE.
+This function generates a boxplot for individual RLE data. The function does not plot the outliers in the boxplot in
+order to enhance the visibility of the variation in the RLE medians and interquartile ranges. The RLE data can be
+obtained using the 'computeRLE' function. We refer to the 'computeRLE' function for more detail about RLE.
+}
+\details{
+An ideal RLE plot should have its medians centered around zero, and its box widths and their interquartile ranges
+(IQRs) should be similar in magnitude. We refer to Gandolfo L. C. & Speed, T. P., PLoS ONE, 2018 for more details and
+assumption about the RLE plots.
+}
+\references{
+Gandolfo L. C. & Speed, T. P., RLE plots: visualizing unwanted variation in high dimensional data. PLoS ONE, 2018.
+Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
+2019.
+Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+Nature Biotechnology, 2023
 }
 \author{
 Ramyar Molania

@@ -2,18 +2,23 @@
 % Please edit documentation in R/getAssessmentMetrics.R
 \name{getAssessmentMetrics}
 \alias{getAssessmentMetrics}
-\title{find repeating factors ro characters in a vector.}
+\title{Create all possible assessment metrics for the variables.}
 \usage{
 getAssessmentMetrics(se.obj, variables)
 }
 \arguments{
-\item{se.obj}{A vector of factors or characters.}
+\item{se.obj}{A summarized experiment object.}
 
-\item{variables}{Numeric. Indicates the minimum repeat of individual factors ro characters in the vector.}
+\item{variables}{Symbols. A symbol and a vector of symbols indicating the columns names of variables in the samples
+annotation in the SummarizedExperiment object. The 'variables' can be categorical and continuous.}
 }
 \value{
-A vec of factors ro characters that are repeated at least "n.repeat" times.
+A list of all possible assessment metrics for the variables.
 }
 \description{
-find repeating factors ro characters in a vector.
+This functions provides the names of all possible assessment metrics for the given variable(s). The list will be used
+in the 'assessVariation' and 'assessNormalization' functions.
+}
+\author{
+Ramyar Molania
 }

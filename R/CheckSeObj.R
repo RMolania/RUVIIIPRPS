@@ -1,11 +1,11 @@
-#' assess the assay names, variables, and missing values in a SummarizedExperiment object.
+#' Assess the assay names, variables, and missing values in a SummarizedExperiment object.
 
 #' @author Ramyar Molania
 
 #' @description
 #' This function assesses the structure of a SummarizedExperiment object and removes any missing values from both
-#' assay(s) and sample annotation. When multiple assays are provided, if there are missing in only one of the assays,
-#' the corresponding rows in other assays will be remove as well. Please note that, the current RUV-III-PRPS method do
+#' assay(s) and sample annotation. When multiple assays are provided, if they are missing in only one of the assays,
+#' the corresponding rows in other assays will be remove as well. Please note that, the current RUV-III-PRPS method does
 #' not support missing values in the assay(s).
 
 #' @param se.obj A SummarizedExperiment object.

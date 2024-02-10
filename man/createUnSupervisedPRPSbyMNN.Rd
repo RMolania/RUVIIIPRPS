@@ -15,7 +15,7 @@ createUnSupervisedPRPSbyMNN(
   svd.bsparam = bsparam(),
   clustering.method = "kmeans",
   nb.clusters = 3,
-  k = 2,
+  k.nn = 2,
   hvg = NULL,
   normalization = "CPM",
   regress.out.bio.variables = NULL,
@@ -61,7 +61,7 @@ if a continuous variable is provided. Options include 'kmeans', 'cut', and 'quan
 \item{nb.clusters}{Numeric. A numeric value indicating how many clusters should be found if the 'uv.variable' is a
 continuous variable. The default is 3.}
 
-\item{k}{Numeric.The maximum number of nearest neighbors to compute. The default is set 3.}
+\item{k.nn}{Numeric.The maximum number of nearest neighbors to compute. The default is set 3.}
 
 \item{hvg}{Vector. A vector of the names of the highly variable genes. These genes will be used to find the anchors
 samples across the batches. The default is NULL.}

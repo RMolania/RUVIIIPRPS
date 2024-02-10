@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotDGE.R
 \name{plotDGE}
 \alias{plotDGE}
-\title{plot p-values histograms of DEG analysis.}
+\title{Plot p-values histograms of DEG analysis.}
 \usage{
 plotDGE(
   se.obj,
@@ -18,20 +18,21 @@ plotDGE(
 \item{se.obj}{A SummarizedExperiment object.}
 
 \item{assay.names}{Symbol. A symbol or vector of symbols for the selection of the name(s) of the assay(s) in the
-SummarizedExperiment object to compute PCA. By default all the assays of the SummarizedExperiment object will be selected.}
+SummarizedExperiment object to compute DGE. The default is set to 'all' indicating all the the assays of the
+SummarizedExperiment object will be selected.}
 
-\item{variable}{Symbol. Indicates the column name in the SummarizedExperiment object that contains a categorical
-variable such as sample types or batches.}
+\item{variable}{Symbol. Specifies the column name in the SummarizedExperiment object containing a categorical variable
+, such as sample types or batches}
 
 \item{plot.ncol}{Numeric. Indicates number of columns in the plot grid.}
 
-\item{plot.output}{Logical. Indicates whether to plot the ARI, by default it is set to FALSE.}
+\item{plot.output}{Logical. Indicates whether to plot the p-values histograms when the functions is running, by default
+it is set to 'FALSE'.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 object 'se.obj' or to output the result. By default it is set to TRUE.}
 
-\item{verbose}{Logical. Indicates whether to show or reduce the level of output or messages displayed during the
-execution of the functions, by default it is set to TRUE.}
+\item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
 \value{
 A SummarizedExperiment object or a list that containing the computed ARI on the categorical variable.

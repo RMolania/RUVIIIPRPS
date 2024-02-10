@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotGeneVariableCorrelation.R
 \name{plotGenesVariableCorrelation}
 \alias{plotGenesVariableCorrelation}
-\title{perform Spearman or Pearson correlations coefficients.}
+\title{Plot Spearman or Pearson correlations coefficients.}
 \usage{
 plotGenesVariableCorrelation(
   se.obj,
@@ -21,8 +21,8 @@ plotGenesVariableCorrelation(
 SummarizedExperiment object to compute the correlation. By default all the assays of the SummarizedExperiment class
 object will be selected.}
 
-\item{variable}{Symbol. Indicates the column name in the SummarizedExperiment object that contains a continuous variable
-such as library size, tumor purity, ... .}
+\item{variable}{Symbol. Indicates a name in the columns of the sample annotation in the SummarizedExperiment object
+that contains a continuous variable such as library size, tumor purity, ... .}
 
 \item{correlation.method}{Symbol. Indicates which computed correlation coefficient should be used for plotting. The
 default is 'gene.spearman.corr'. We refer to the 'computeGenesVariableCorrelation' function for more details.}

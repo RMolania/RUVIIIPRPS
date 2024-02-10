@@ -6,6 +6,10 @@
 #' This functions generates barplots of adjusted rand index for individual assays. If two variables are provided, the
 #' function create scatter plots of the adjusted rand index of each variable for individual assays.
 
+#' @references
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
+
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or list of symbols for the selection of the name(s) of the assay(s) in the
 #' SummarizedExperiment object to generate barplot or scatter plots of the computed adjusted rand index. By default all
@@ -26,10 +30,6 @@
 
 #' @return A SummarizedExperiment object or a list that containing all the plots of the computed ARI on the categorical
 #' variable.
-
-#' @references
-#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
-#' Nature Biotechnology, 2023
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom ggrepel geom_text_repel

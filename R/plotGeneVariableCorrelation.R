@@ -1,4 +1,4 @@
-#' perform Spearman or Pearson correlations coefficients.
+#' Plot Spearman or Pearson correlations coefficients.
 
 #' @author Ramyar Molania
 
@@ -6,13 +6,12 @@
 #' This function generates boxplots of computed Spearman or Pearson correlations coefficients of indivdial assays in a
 #' SummarizedExperiment object
 
-
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.names Symbol. A symbol or vector of symbols for the selection of the name(s) of the assay(s) of the
 #' SummarizedExperiment object to compute the correlation. By default all the assays of the SummarizedExperiment class
 #' object will be selected.
-#' @param variable Symbol. Indicates the column name in the SummarizedExperiment object that contains a continuous variable
-#' such as library size, tumor purity, ... .
+#' @param variable Symbol. Indicates a name in the columns of the sample annotation in the SummarizedExperiment object
+#' that contains a continuous variable such as library size, tumor purity, ... .
 #' @param correlation.method Symbol. Indicates which computed correlation coefficient should be used for plotting. The
 #' default is 'gene.spearman.corr'. We refer to the 'computeGenesVariableCorrelation' function for more details.
 #' @param plot.output Logical. Indicates whether to plot the ARI, by default it is set to FALSE.

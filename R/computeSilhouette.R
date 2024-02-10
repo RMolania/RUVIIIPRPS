@@ -12,6 +12,10 @@
 #' in each cluster and the separation between patients in different clusters. A better normalization method will lead to
 #' higher and lower silhouette coefficients for biological and batch labels, respectively.
 
+#' @references
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
+
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Optional string or list of strings for the selection of the name(s)
 #' of the assay(s) of the SummarizedExperiment class object to compute the Silhouette coefficients. By default
@@ -32,9 +36,6 @@
 #' @return SummarizedExperiment A SummarizedExperiment object containing the computed silhouette
 #' on the categorical variable.
 
-#' @references
-#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
-#' Nature Biotechnology, 2023
 
 #' @importFrom SummarizedExperiment assays assay
 #' @importFrom stats dist

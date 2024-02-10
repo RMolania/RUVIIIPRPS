@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotPCA.R
 \name{plotPCA}
 \alias{plotPCA}
-\title{plot principal components.}
+\title{Generates scatter and boxplot plot of principal components.}
 \usage{
 plotPCA(
   se.obj,
@@ -11,7 +11,6 @@ plotPCA(
   fast.pca = TRUE,
   nb.pcs = 3,
   plot.type = "scatter",
-  points.color = NULL,
   points.size = 1,
   stroke.color = "gray30",
   stroke.size = 0.2,
@@ -24,48 +23,56 @@ plotPCA(
 )
 }
 \arguments{
-\item{se.obj}{A SummarizedExperiment object that will be used to compute the PCA.}
+\item{se.obj}{A SummarizedExperiment object.}
 
-\item{assay.names}{Optional string or list of strings for the selection of the name(s) of the assay(s) of the
-SummarizedExperiment class object to plot the PCA. By default all the assays of the SummarizedExperiment class object
-will be selected.}
+\item{assay.names}{Symbol. A symbol or a vector of symbols for the selection of the name(s) of the assay(s) in the
+SummarizedExperiment object to PC. The default is "all, which indicates all the assays of the SummarizedExperiment
+object will be selected.}
 
-\item{variable}{String of the label of a categorical variable such as
-sample types or batches from colData(se.obj).}
+\item{variable}{Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
+The variable can be either a categorical or continuous. If a continuous variable is provided, the function creates
+a scatter plot of each PC against the variable. If a categorical variable is given, the function can generate pairwise
+scatter plots of the first principal components colored by a categorical variable or creates boxplots of each PC across
+the variable.}
 
-\item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range to speed up
-the process, by default is set to 'TRUE'.}
+\item{fast.pca}{Logical. Indicates whether to use the computed fast PC ro not. The default is 'TRUE'. We refe to the
+computePCA function for more details.}
 
-\item{nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
+\item{nb.pcs}{Numeric. The number of first PCs to be used for plotting. The default is set to 3.It's important to note
+that the variation of PCs for a portion of all selected PCs will be based solely on those selected PCs.}
 
-\item{plot.type}{Symbol.}
+\item{plot.type}{Symbol. Indicates which plot type should be used. Options are: 'scatter' and 'boxplot'. The default is
+set to 'scatter'. Please note, the 'plot.type' cannot be set to 'scatter' of a categorical variable is provided.}
 
-\item{points.color}{The color of the variable that will be used on the PCA plot}
+\item{points.size}{Numeric. Indicates the size of points in the scatter PCA plots.}
 
-\item{points.size}{geom_point aesthetics}
+\item{stroke.color}{Symbol. Indicates the color of the stroke of the points in the scatter PCA plots.}
 
-\item{stroke.color}{geom_point aesthetics}
+\item{stroke.size}{Numeric. Indicates the size of the stroke of the points in the scatter PCA plots.}
 
-\item{stroke.size}{geom_point aesthetics}
+\item{points.alpha}{Numeric. Indicates the transparency of the points in the scatter PCA plots.}
 
-\item{points.alpha}{geom_point aesthetics}
+\item{densities.alpha}{Numeric. Indicates the transparency of the densities in the scatter PCA plots.}
 
-\item{densities.alpha}{geom_point aesthetics}
+\item{plot.ncol}{Numeric. Indicates number of columns in the plot grid. When the number of selected assay is more than
+1, the function puts all the PCA plots in one grid.}
 
-\item{plot.ncol}{is the argument of gtable for the layout specifying ncol, by default it is set to 4.}
+\item{plot.nrow}{Numeric. Indicates number of rows in the plot grid. When the number of selected assay is more than
+3, the function puts all the PCA plots in one grid.}
 
-\item{plot.nrow}{is the argument of gtable for the layout specifying ncol, by default it is set to 4.}
+\item{save.se.obj}{Logical. Indicates whether to save the plots in the metadata of the SummarizedExperiment object
+or to output the results as list. By default it is set to 'TRUE'.}
 
-\item{save.se.obj}{Logical. If TRUE, displaying process messages is enabled.}
-
-\item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
+\item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
 \value{
-plot PCA plot of the data colored by one variable
+A SummarizedExperiment object that contains all the PCA plot(s) in the metadata or a list that contains all
+the PCA plot(s).
 }
 \description{
-is used to plot the first principal components of the assays of a SummarizedExperiment object. The function can generate
-pairwise scatter plots of the first principal components colored by a categrocal variable or creates boxplots of each
-PC across a categrocal variable. The boxplot of PCs is usefull when the levels of a categrocal variablen is too many to
-viisualze using colored scatter plots
+This functions generates scatter and boxplot the first principal components of the assay(s) of a SummarizedExperiment
+object. The function can generate pairwise scatter plots of the first principal components colored by a categorical
+variable or creates boxplots of each PC across the variable. Boxplots of principal components become beneficial when
+the levels of a categorical variable are numerous, making visualization through colored scatter plots challenging. If
+a continuous variable is provided, the function creates a scatter plot of each PC against the variable.
 }
