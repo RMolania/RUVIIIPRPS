@@ -2,7 +2,7 @@
 % Please edit documentation in R/createPRPSForContinuousUV.R
 \name{createPRPSForContinuousUV}
 \alias{createPRPSForContinuousUV}
-\title{is used to create PRPS for a continuous source of unwanted variation.}
+\title{Create PRPS for a continuous source of unwanted variation.}
 \usage{
 createPRPSForContinuousUV(
   se.obj,
@@ -94,12 +94,15 @@ messages displayed during the execution of the functions, by default it is set t
 SummarizedExperiment A SummarizedExperiment object containing the PRPS data or just PRPS data.
 }
 \description{
+Create PRPS for a continuous source of unwanted variation.
+}
+\author{
+Ramyar Molania
 We will create distinct group of pseudo-replicates for each source of unwanted variation defined in the 'uv.variables'
 argument. For example to correct for library size if defined in the 'uv.variables' argument, several group of pseudo-samples
 will be created by averaging the top and bottom-ranked samples by library size of the same biological subtype in each batch.
 Then those pseudo-samples will be defined as pseudo-replicates which constitutes a PRPS set.
-}
-\details{
+
 Distinct group of PRPS are created for each source of unwanted variation defined in the 'main.uv.variable' argument
 within an homogeneous group of samples. The grouping of samples are created based on each biological subtype defined
 using the 'bio.variables' using the 'bio.clustering.method' selected and it might be also be combined with
@@ -112,7 +115,4 @@ samples. For example to correct for library size if defined in the 'main.uv.vari
 will be created for each homogeneous group of samples, each pair by averaging the top and the bottom-ranked samples by
 library size.Each pair of pseudo-samples belonging to the same group will be defined as pseudo-replicates which
 constitutes a PRPS set.
-}
-\author{
-Ramyar Molania
 }

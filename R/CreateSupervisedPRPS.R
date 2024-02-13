@@ -1,9 +1,12 @@
-#' create supervised pseudo-replicates of pseudo samples (PRPS).
+#' Create supervised pseudo-replicates of pseudo samples (PRPS).
 
 #' @author Ramyar Molania
 
 #' @description
-#' This function creates different PRPS sets when all sources of unwanted and biological variation are known. We will create
+#' This function creates different PRPS sets when all sources of unwanted and biological variation are known.
+
+#' @details
+#' We will create
 #' distinct group of pseudo-replicates for each source of unwanted variation defined in the 'uv.variables' argument. For
 #' example to correct for batch effect if defined in the 'uv.variables' argument, several group of pseudo-samples will be
 #' created by averaging the samples of the same biological subtype defined in 'bio.variables' in each batch. Then those
@@ -15,8 +18,14 @@
 #' by purity of the same biological subtype in each batch. Then those pseudo-samples will be defined as pseudo-replicates
 #' which constitutes a PRPS set.
 
+#' @references
+#' Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
+#' 2019.
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
+
 #' @param se.obj A SummarizedExperiment object.
-#' @param assay.name String for the selection of the name of the assay of the SummarizedExperiment class object.
+#' @param assay.name Symbol.  for the selection of the name of the assay of the SummarizedExperiment class object.
 #' @param uv.variables String of the label of a categorical variable
 #' such as samples types or batch from colData(se) that will be used to define PRPS.
 #' @param bio.variables String of the label of (a) categorical or continuous variable(s) used to define homogeneous

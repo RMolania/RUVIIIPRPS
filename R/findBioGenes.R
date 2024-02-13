@@ -211,9 +211,10 @@ findBioGenes <- function(
             hvg <- unique(unlist(hvg))
         }
     } else if (method == 'mad'){
+        temp.data <- log2(assay(se.obj, i = 'HTseq_counts') + 1) + 1
         nb.bio.genes <- round(x = nb.bio.genes/100 * nrow(se.obj), digits = 0)
         if(is.null(uv.variables)){
-            hvg <- matrixStats::rowMads(x = temp.data)
+            hvg <- matrixStats::rowMads(x = temp.data + 1)
             names(hvg) <- row.names(se.obj)
             hvg <- names(sort(hvg, decreasing = TRUE)[1:nb.bio.genes])
         } else{

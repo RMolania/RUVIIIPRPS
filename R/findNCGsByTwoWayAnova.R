@@ -1,4 +1,4 @@
-#' is used to find a set of negative control genes (NCG) using two-way ANOVA.
+#' Find a set of negative control genes (NCG) using two-way ANOVA.
 
 #' @author Ramyar Molania
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RUVIII.PRPS.R
 \name{RUVIII.PRPS}
 \alias{RUVIII.PRPS}
-\title{is used to run the RUVIII-PRPS method for a given assay and given k.}
+\title{RUVIII-PRPS normalization.}
 \usage{
 RUVIII.PRPS(
   se.obj,
@@ -58,20 +58,33 @@ automatically include one.}
 \item{return.info}{If FALSE, only the adjusted data matrix is returned. If TRUE, additional information is returned
 (see below).}
 
-\item{assess.se.obj}{TTTT}
+\item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment object or not. See the checkSeObj
+function for more details.}
 
-\item{remove.na}{TTTT}
+\item{remove.na}{Symbol. To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
+The default is "assays", so all the NA or missing values from the assay(s) will be removed before computing RLE. See
+the checkSeObj function for more details.}
 
-\item{save.se.obj}{TTTT}
+\item{save.se.obj}{Logical. Indicates whether to save the RUV-III-PRPS normalized data as assay(s) in the
+SummarizedExperiment object or to output the result as list. By default it is set to 'TRUE'.}
 
-\item{verbose}{TTTT}
+\item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
 \value{
 SummarizedExperiment A SummarizedExperiment object containing the normalised gene expression
 into a new assay (RUVIII_K).
 }
 \description{
-is used to run the RUVIII-PRPS method for a given assay and given k.
+This function applies the RUV-III-PRPS on RNA-seq data.
+}
+\details{
+Additional details...
+}
+\references{
+Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
+2019.
+Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+Nature Biotechnology, 2023
 }
 \author{
 Ramyar Molania

@@ -1,4 +1,5 @@
-#' is used to find a set of negative control genes using ANOVA and correlation analyses per homogeneous batches and per homogeneous biological groups.
+#' Find a set of negative control genes using ANOVA and correlation  per homogeneous batches and per homogeneous biological
+#' groups.
 
 #' @author Ramyar Molania
 

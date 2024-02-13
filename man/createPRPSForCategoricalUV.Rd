@@ -2,7 +2,7 @@
 % Please edit documentation in R/createPRPSForCategoricalUV.R
 \name{createPRPSForCategoricalUV}
 \alias{createPRPSForCategoricalUV}
-\title{is used to create PRPS for a categorical source of unwanted variation.}
+\title{Create PRPS for a categorical source of unwanted variation.}
 \usage{
 createPRPSForCategoricalUV(
   se.obj,

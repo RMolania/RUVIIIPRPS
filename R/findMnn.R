@@ -1,4 +1,4 @@
-#' find k-nearest neighbors in RNA-seq data.
+#' Find mutual nearest neighbors in RNA-seq data.
 
 #' @author Ramyar Molania
 

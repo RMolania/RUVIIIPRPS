@@ -1,4 +1,4 @@
-#' find a set of negative control genes (NCG) using ANOVA and correlation analyses across all samples.
+#' Find a set of negative control genes (NCG).
 
 #' @author Ramyar Molania
 

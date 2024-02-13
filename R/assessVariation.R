@@ -1,5 +1,12 @@
-#' is used to assess the performance of the normalisation of a SummarizedExperiment class object.
-#'
+#' Assess the variation of biological and unwanted variables.
+
+#' @author Ramyar Molania
+
+#' @description
+#' This function applies a range of global and gene level metrics to assess the variation in biological and unwanted
+#' variables.
+
+#' @details
 #' Several assessment will be performed:
 #' For each categorical variable:
 #' - PCA plot of the categorical variable.
@@ -18,7 +25,14 @@
 #' - Linear regression between the first cumulative PC and continuous variable.
 #' - Boxplot of the correlation between gene expression and continuous variable.
 #' - It will also output the RLE plot distribution.
-#'
+
+#' @references
+#' Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
+#' 2019.
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
+
+
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Symbol. A symbol or a vector of symbols for the selection of the name(s) of the assay(s) of the
 #' SummarizedExperiment class object. By default all the assays of the SummarizedExperiment class object will be selected.
@@ -55,11 +69,11 @@
 #' @param ari.hclust.method Symbol. Indicate the agglomeration method to be used for the 'hclust' method. This should be
 #' one of 'ward.D', 'ward.D2', 'single', 'complete', 'average' (= UPGMA), 'mcquitty' (= WPGMA), 'median' (= WPGMC) or
 #' 'centroid' (= UPGMC). See the hclust function for more details.
-#' @param ari.hclust.dist.measure Symbol. Indicates the distance measure to be used in the dist function. This must be one of
-#' 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'. See the dist function for more details.
+#' @param ari.hclust.dist.measure Symbol. Indicates the distance measure to be used in the dist function. This must be
+#' one of euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'. See the dist function for more details.
 #' @param ari.nb.pcs Numeric. Indicates the number of PCs that should be used to compute the ARI.
-#' @param corr.method Symbol. Indicates which correlation methods should be used.
-#' @param anove.method Symbol. Indicates which ANOVA methods should be used.
+#' @param corr.method Symbol. Indicates which correlation methods should be used. Options are The default is 'spearman'.
+#' @param anove.method Symbol. Indicates which ANOVA methods should be used. Options are ... . The default is 'aov'.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' @param remove.na Symbol. To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
 #' The default is "assays", so all the NA or missing values from the assay(s) will be removed before computing RLE. See
@@ -67,15 +81,14 @@
 #' @param output.file Path and name of the output file to save the assessments plots in a pdf format.
 #' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
-#' @return  SummarizedExperiment A SummarizedExperiment object containing all the assessments plots and metrics.
-#' If specified it will generate a pdf containing the assessments plots and metrics used for the assessment.
+#' @return A SummarizedExperiment object containing all the assessments plots and metrics. If specified it will generate
+#' a pdf containing the assessments plots and metrics used for the assessment.
 
-
+#' @importFrom SummarizedExperiment assays colData
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom kunstomverse geom_boxplot2
 #' @importFrom grDevices colorRampPalette dev.off pdf
 #' @importFrom gridExtra grid.arrange grid.table
-#' @importFrom SummarizedExperiment assays colData
 #' @importFrom graphics plot.new text
 #' @export
 
@@ -117,7 +130,7 @@ assessVariation <- function(
     # check the inputs of PCA ####
     if (length(assay.names) == 1 && assay.names != 'all') {
         if (!assay.names %in% names(assays(se.obj)))
-            stop('The assay name cannot be found in the SummarizedExperiment object.')
+            stop('The "assay.name" cannot be found in the SummarizedExperiment object.')
     }
     if (length(assay.names) > 1) {
         if (length(setdiff(assay.names, names(assays(se.obj)))) > 0)

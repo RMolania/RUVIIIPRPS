@@ -2,7 +2,7 @@
 % Please edit documentation in R/createUnSupervisedPRPSbyMNN.R
 \name{createUnSupervisedPRPSbyMNN}
 \alias{createUnSupervisedPRPSbyMNN}
-\title{create PRPS sets using k and mutual nearest neighbors in RNA-seq data.}
+\title{Create PRPS sets using k and mutual nearest neighbors in RNA-seq data.}
 \usage{
 createUnSupervisedPRPSbyMNN(
   se.obj,

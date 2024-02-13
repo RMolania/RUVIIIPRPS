@@ -2,7 +2,7 @@
 % Please edit documentation in R/findSupervisedNCGs.R
 \name{findNCGsSupervised}
 \alias{findNCGsSupervised}
-\title{is used to find a set of negative control genes  (NCG) of an assay in a SummarizedExperiment object.}
+\title{Find a set of negative control genes.}
 \usage{
 findNCGsSupervised(
   se.obj,
@@ -181,12 +181,15 @@ will be excluded. By default, it is set to both'.}
 a list of negative control genes.
 }
 \description{
-This function uses the two-way ANOVA approach to find a set of genes as negative control genes (NCG) for RUV-III-PRPS
-normalization. Sources of known biological and unwanted variation should be specified. First, the function creates all
-possible sample groups with respect to biological and unwanted variation separately. Then, the function uses the groups
-as factors in two-way ANOVA to find genes that are highly affected by biological and unwanted variation separately.
-Finally, the function selects genes that have possible high F-statistics for the unwanted variation and low F-statistics
-for the biological variation. The function uses different approaches to perform the final selection.
+This function uses three different approaches to find a set of genes as negative control genes (NCG) for RUV-III-PRPS
+normalization.
+}
+\details{
+First, the function creates all possible sample groups with respect to biological and unwanted variation separately.
+Then, the function uses the groups as factors in two-way ANOVA to find genes that are highly affected by biological
+and unwanted variation separately. Finally, the function selects genes that have possible high F-statistics for the
+unwanted variation and low F-statistics for the biological variation. The function uses different approaches to perform
+the final selection.
 }
 \author{
 Ramyar Molania

@@ -1,13 +1,17 @@
-#' is used to assess the connectedness of PRPS sets.
-#'
+#' Assess the connectedness across PRPS sets.
+
+#' @author Ramyar Molania
+
 #' @description
 #' A short description...
-#'
+
+
+
 #' @param data.input TTTTT
 #' @param min.samples TTTTTT
 #' @param batch.name TTTTTT
 #' @param verbose TTTTTT
-#'
+
 #' @importFrom Matrix colSums rowSums
 
 

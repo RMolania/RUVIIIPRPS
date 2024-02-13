@@ -1,6 +1,8 @@
-#' is used to create PRPS for a continuous source of unwanted variation.
-#'
-#'
+#' Create PRPS for a continuous source of unwanted variation.
+
+#' @author Ramyar Molania
+
+
 #' We will create distinct group of pseudo-replicates for each source of unwanted variation defined in the 'uv.variables'
 #' argument. For example to correct for library size if defined in the 'uv.variables' argument, several group of pseudo-samples
 #' will be created by averaging the top and bottom-ranked samples by library size of the same biological subtype in each batch.
@@ -65,8 +67,6 @@
 #' messages displayed during the execution of the functions, by default it is set to TRUE.
 
 #' @return SummarizedExperiment A SummarizedExperiment object containing the PRPS data or just PRPS data.
-
-#' @author Ramyar Molania
 
 #' @importFrom SummarizedExperiment assay
 #' @importFrom dplyr group_by arrange slice desc add_count filter mutate

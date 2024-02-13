@@ -1,4 +1,4 @@
-#' is used to create PRPS for a categorical source of unwanted variation.
+#' Create PRPS for a categorical source of unwanted variation.
 
 #' @author Ramyar Molania
 

@@ -84,7 +84,7 @@ createHomogeneousUVGroups <- function(
         color = 'magenta',
         verbose = verbose)
     if (assess.variables) {
-        se.obj <- assessVariablesCorrelation(
+        se.obj <- assessVariablesAssociation(
             se.obj = se.obj,
             bio.variables = NULL,
             uv.variables = uv.variables,

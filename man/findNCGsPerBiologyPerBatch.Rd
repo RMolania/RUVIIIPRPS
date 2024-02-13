@@ -2,7 +2,8 @@
 % Please edit documentation in R/findNCGsPerBiologyPerBatch.R
 \name{findNCGsPerBiologyPerBatch}
 \alias{findNCGsPerBiologyPerBatch}
-\title{is used to find a set of negative control genes using ANOVA and correlation analyses per homogeneous batches and per homogeneous biological groups.}
+\title{Find a set of negative control genes using ANOVA and correlation  per homogeneous batches and per homogeneous biological
+groups.}
 \usage{
 findNCGsPerBiologyPerBatch(
   se.obj,
@@ -163,7 +164,8 @@ Either the SummarizedExperiment object containing the a set of negative control 
 or a logical vector of the selected negative control genes.
 }
 \description{
-is used to find a set of negative control genes using ANOVA and correlation analyses per homogeneous batches and per homogeneous biological groups.
+Find a set of negative control genes using ANOVA and correlation  per homogeneous batches and per homogeneous biological
+groups.
 }
 \author{
 Ramyar Molania

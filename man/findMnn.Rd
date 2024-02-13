@@ -2,7 +2,7 @@
 % Please edit documentation in R/findMnn.R
 \name{findMnn}
 \alias{findMnn}
-\title{find k-nearest neighbors in RNA-seq data.}
+\title{Find mutual nearest neighbors in RNA-seq data.}
 \usage{
 findMnn(
   se.obj,

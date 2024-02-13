@@ -2,7 +2,7 @@
 % Please edit documentation in R/assessVariation.R
 \name{assessVariation}
 \alias{assessVariation}
-\title{is used to assess the performance of the normalisation of a SummarizedExperiment class object.}
+\title{Assess the variation of biological and unwanted variables.}
 \usage{
 assessVariation(
   se.obj,
@@ -96,14 +96,14 @@ The function provides the 'mclust' or 'hclust' methods. The default is 'hclust'.
 one of 'ward.D', 'ward.D2', 'single', 'complete', 'average' (= UPGMA), 'mcquitty' (= WPGMA), 'median' (= WPGMC) or
 'centroid' (= UPGMC). See the hclust function for more details.}
 
-\item{ari.hclust.dist.measure}{Symbol. Indicates the distance measure to be used in the dist function. This must be one of
-'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'. See the dist function for more details.}
+\item{ari.hclust.dist.measure}{Symbol. Indicates the distance measure to be used in the dist function. This must be
+one of euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'. See the dist function for more details.}
 
 \item{ari.nb.pcs}{Numeric. Indicates the number of PCs that should be used to compute the ARI.}
 
-\item{corr.method}{Symbol. Indicates which correlation methods should be used.}
+\item{corr.method}{Symbol. Indicates which correlation methods should be used. Options are The default is 'spearman'.}
 
-\item{anove.method}{Symbol. Indicates which ANOVA methods should be used.}
+\item{anove.method}{Symbol. Indicates which ANOVA methods should be used. Options are ... . The default is 'aov'.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
@@ -116,10 +116,14 @@ the checkSeObj function for more details.}
 \item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
 \value{
-SummarizedExperiment A SummarizedExperiment object containing all the assessments plots and metrics.
-If specified it will generate a pdf containing the assessments plots and metrics used for the assessment.
+A SummarizedExperiment object containing all the assessments plots and metrics. If specified it will generate
+a pdf containing the assessments plots and metrics used for the assessment.
 }
 \description{
+This function applies a range of global and gene level metrics to assess the variation in biological and unwanted
+variables.
+}
+\details{
 Several assessment will be performed:
 For each categorical variable:
 \itemize{
@@ -131,8 +135,7 @@ For each continous variable:
 \item Linear regression between the first cumulative PC and continuous variable.
 \item Correlation between gene expression and continuous variable.
 }
-}
-\details{
+
 It will output the following plots:
 \itemize{
 \item PCA plot of each categorical variable.
@@ -143,4 +146,13 @@ It will output the following plots:
 \item Boxplot of the correlation between gene expression and continuous variable.
 \item It will also output the RLE plot distribution.
 }
+}
+\references{
+Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
+2019.
+Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+Nature Biotechnology, 2023
+}
+\author{
+Ramyar Molania
 }

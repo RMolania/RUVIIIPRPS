@@ -2,7 +2,7 @@
 % Please edit documentation in R/findNCGsAcrossSamples.R
 \name{findNCGsAcrossSamples}
 \alias{findNCGsAcrossSamples}
-\title{is used to find a set of negative control genes (NCG) using ANOVA and correlation analyses across all samples.}
+\title{Find a set of negative control genes (NCG) using ANOVA and correlation across all samples.}
 \usage{
 findNCGsAcrossSamples(
   se.obj,

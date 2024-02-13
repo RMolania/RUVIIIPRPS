@@ -6,7 +6,6 @@
 #' This functions employs the FindIntegrationAnchors function from the Seurat R package to create PRPS sets for the
 #' RUV-III normalization of RNA-seq data. This function can be used in situations in which biological variation are unknown.
 
-
 #' @param se.obj A SummarizedExperiment object.
 #' @param assay.name Symbol. A symbol indicating the assay name within the SummarizedExperiment object for the creation
 #' of PRPS data. The assay must be the one that will be used as data input for the RUV-III-PRPS normalization.

@@ -1,4 +1,4 @@
-#' create PRPS sets using k and mutual nearest neighbors in RNA-seq data.
+#' Create PRPS sets using k and mutual nearest neighbors in RNA-seq data.
 
 #' @author Ramyar Molania
 

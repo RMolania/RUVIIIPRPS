@@ -2,7 +2,7 @@
 % Please edit documentation in R/findUnSupervisedNCGs.R
 \name{findUnSupervisedNCGsAcrossSamples}
 \alias{findUnSupervisedNCGsAcrossSamples}
-\title{find a set of negative control genes (NCG) using ANOVA and correlation analyses across all samples.}
+\title{Find a set of negative control genes (NCG).}
 \usage{
 findUnSupervisedNCGsAcrossSamples(
   se.obj,

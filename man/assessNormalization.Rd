@@ -2,7 +2,7 @@
 % Please edit documentation in R/assessNormalization.R
 \name{assessNormalization}
 \alias{assessNormalization}
-\title{is used to assess the performance of the normalisation of a SummarizedExperiment class object.}
+\title{Assess the performance of the RNA-seq normalisations.}
 \usage{
 assessNormalization(
   se.obj,
@@ -61,10 +61,11 @@ such as samples types, batch or library size from colData(se).}
 \item{fast.pca}{Logical. Indicates whether to calculate a specific number of PCs instead of the full range
 to speed up the process, by default is set to 'TRUE'.}
 
-\item{compute.nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.}
+\item{compute.nb.pcs}{Numeric. The number of first PCs to be calculated for the fast pca process, by default is set
+to 10.}
 
-\item{center.pca}{Logical. Indicates whether to scale the data or not before applying SVD. If center is TRUE, then centering is done by
-subtracting the column means of the assay from their corresponding columns. The default is TRUE.}
+\item{center.pca}{Logical. Indicates whether to scale the data or not before applying SVD. If center is TRUE, then
+centering is done by subtracting the column means of the assay from their corresponding columns. The default is TRUE.}
 
 \item{scale.pca}{Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
 is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
@@ -120,6 +121,9 @@ SummarizedExperiment A SummarizedExperiment object containing all the assessment
 If specified it will generate a pdf containing the assessments plots and metrics used for the assessment.
 }
 \description{
+This function applies a range of global and gene level metrics to assess the performance of RNA-seq normalisations.
+}
+\details{
 Several assessment will be performed:
 For each categorical variable:
 \itemize{
@@ -131,8 +135,7 @@ For each continous variable:
 \item Linear regression between the first cumulative PC and continuous variable.
 \item Correlation between gene expression and continuous variable.
 }
-}
-\details{
+
 It will output the following plots:
 \itemize{
 \item PCA plot of each categorical variable.
@@ -143,4 +146,13 @@ It will output the following plots:
 \item Boxplot of the correlation between gene expression and continuous variable.
 \item It will also output the RLE plot distribution.
 }
+}
+\references{
+Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
+2019.
+Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+Nature Biotechnology, 2023
+}
+\author{
+Ramyar Molania
 }

@@ -1,6 +1,20 @@
-#' is used to run the RUVIII-PRPS method for a given assay and given k.
+#' RUVIII-PRPS normalization.
 
 #' @author Ramyar Molania
+
+#' @description
+#' This function applies the RUV-III-PRPS on RNA-seq data.
+
+#' @details
+#' Additional details...
+#'
+
+#' @references
+#' Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
+#' 2019.
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
+
 
 #' @param se.obj A SummarizedExperiment object that will be used to computer fastRUV-III
 #' @param assay.name String for the selection of the name of the assay data of the SummarizedExperiment class object
@@ -22,10 +36,14 @@
 #' n rows, (4) a vector or factor of length n, or (5) simply 1, for an intercept term.
 #' @param include.intercept When eta is specified (not NULL) but does not already include an intercept term, this will
 #' automatically include one.
-#' @param assess.se.obj TTTT
-#' @param remove.na TTTT
-#' @param save.se.obj TTTT
-#' @param verbose TTTT
+#' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment object or not. See the checkSeObj
+#' function for more details.
+#' @param remove.na Symbol. To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
+#' The default is "assays", so all the NA or missing values from the assay(s) will be removed before computing RLE. See
+#' the checkSeObj function for more details.
+#' @param save.se.obj Logical. Indicates whether to save the RUV-III-PRPS normalized data as assay(s) in the
+#' SummarizedExperiment object or to output the result as list. By default it is set to 'TRUE'.
+#' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
 #' @return SummarizedExperiment A SummarizedExperiment object containing the normalised gene expression
 #' into a new assay (RUVIII_K).

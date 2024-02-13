@@ -1,5 +1,11 @@
-#' is used to assess the performance of the normalisation of a SummarizedExperiment class object.
-#'
+#' Assess the performance of the RNA-seq normalisations.
+
+#' @author Ramyar Molania
+
+#' @description
+#' This function applies a range of global and gene level metrics to assess the performance of RNA-seq normalisations.
+
+#' @details
 #' Several assessment will be performed:
 #' For each categorical variable:
 #' - PCA plot of the categorical variable.
@@ -18,7 +24,13 @@
 #' - Linear regression between the first cumulative PC and continuous variable.
 #' - Boxplot of the correlation between gene expression and continuous variable.
 #' - It will also output the RLE plot distribution.
-#'
+
+#' @references
+#' Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
+#' 2019.
+#' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
+#' Nature Biotechnology, 2023
+
 #' @param se.obj A SummarizedExperiment object that will be used to compute the PCA.
 #' @param assay.names Symbol. A symbol or a vector of symbols for the selection of the name(s) of the assay(s) of the
 #' SummarizedExperiment class object. By default all the assays of the SummarizedExperiment class object will be selected.
@@ -32,9 +44,10 @@
 #' @param rle.geom.hline.color Symbol. Indicates a color of the horizontal line in the RLE plot.
 #' @param fast.pca Logical. Indicates whether to calculate a specific number of PCs instead of the full range
 #' to speed up the process, by default is set to 'TRUE'.
-#' @param compute.nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set to 10.
-#' @param center.pca Logical. Indicates whether to scale the data or not before applying SVD. If center is TRUE, then centering is done by
-#' subtracting the column means of the assay from their corresponding columns. The default is TRUE.
+#' @param compute.nb.pcs Numeric. The number of first PCs to be calculated for the fast pca process, by default is set
+#' to 10.
+#' @param center.pca Logical. Indicates whether to scale the data or not before applying SVD. If center is TRUE, then
+#' centering is done by subtracting the column means of the assay from their corresponding columns. The default is TRUE.
 #' @param scale.pca Logical. Indicates whether to scale the data or not before applying SVD.  If scale is TRUE, then scaling
 #' is done by dividing the (centered) columns of the assays by their standard deviations if center is TRUE, and the root
 #' mean square otherwise. The default is FALSE.
@@ -70,8 +83,12 @@
 #' @return  SummarizedExperiment A SummarizedExperiment object containing all the assessments plots and metrics.
 #' If specified it will generate a pdf containing the assessments plots and metrics used for the assessment.
 
-#' @importFrom gridExtra grid.arrange
 #' @importFrom SummarizedExperiment assays colData
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom kunstomverse geom_boxplot2
+#' @importFrom grDevices colorRampPalette dev.off pdf
+#' @importFrom gridExtra grid.arrange grid.table
+#' @importFrom graphics plot.new text
 #' @export
 
 assessNormalization <- function(

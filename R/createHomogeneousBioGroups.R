@@ -78,7 +78,7 @@ createHomogeneousBioGroups <- function(
     }
     # assess correlation between the variables ####
     if (assess.variables) {
-        se.obj <- assessVariablesCorrelation(
+        se.obj <- assessVariablesAssociation(
             se.obj = se.obj,
             bio.variables = bio.variables,
             uv.variables = NULL,

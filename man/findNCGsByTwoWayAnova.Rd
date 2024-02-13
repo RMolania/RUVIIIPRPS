@@ -2,7 +2,7 @@
 % Please edit documentation in R/findNCGsByTwoWayAnova.R
 \name{findNCGsByTwoWayAnova}
 \alias{findNCGsByTwoWayAnova}
-\title{is used to find a set of negative control genes (NCG) using two-way ANOVA.}
+\title{Find a set of negative control genes (NCG) using two-way ANOVA.}
 \usage{
 findNCGsByTwoWayAnova(
   se.obj,
