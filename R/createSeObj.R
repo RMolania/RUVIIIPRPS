@@ -114,6 +114,34 @@ createSeObj <- function(
     if(!inherits(data.sets, what = 'list')){
         stop('The "data.sets" must be a list of expression dataste(s) (genes in rows and samples in columns.).')
     }
+    if(isTRUE(calculate.library.size)){
+        if(is.null(sample.annotation) & isFALSE(create.sample.annotation)){
+            stop('To add the calculated library size, either a "sample.annotation" should be provided or set the create.sample.annotation=TRUE.')
+        }
+    }
+    if(!is.null(estimate.tumor.purity)){
+        if(is.null(sample.annotation) & isFALSE(create.sample.annotation)){
+            stop('To add the calculated tumour purity, either a "sample.annotation" should be provided or set the create.sample.annotation=TRUE.')
+        } else if(is.null(assay.name.to.estimate.purity)){
+            stop('To estimate the tumour purity, the "assay.name.to.estimate.purity" must be provided.')
+        }
+    }
+    if(isTRUE(add.gene.details)){
+        if(is.null(gene.annotation) & isFALSE(create.gene.annotation)){
+            stop('To add gene details, either a "gene.annotation" should be provided or set the "create.gene.annotation=TRUE".')
+        }
+    }
+    if(isTRUE(add.housekeeping.genes)){
+        if(is.null(gene.annotation) & isFALSE(create.gene.annotation)){
+            stop('To add housekeeping genes, either a "gene.annotation" should be provided or set the "create.gene.annotation=TRUE".')
+        }
+    }
+    if(isTRUE(add.immun.stroma.genes)){
+        if(is.null(gene.annotation) & isFALSE(create.gene.annotation)){
+            stop('To add immun stroma genes, either a "gene.annotation" should be provided or set the "create.gene.annotation=TRUE".')
+        }
+    }
+
     ## dimensions and orders of the assays ####
     if(length(data.sets) > 1){
         dim.data <- unlist(lapply(
@@ -257,7 +285,7 @@ createSeObj <- function(
         )
         names.assays <-  names(data.sets)
         data.sets <- lapply(
-            names(assays),
+            names.assays,
             function(x) data.sets[[x]][keep.genes ,])
         names(data.sets) <- names.assays
         rm(cpm.data, library.size)
@@ -293,7 +321,7 @@ createSeObj <- function(
     )
     if(!is.null(sample.annotation)){
         printColoredMessage(
-            message = 'The sample.annotation will be added to the SummarizedExperiment object.',
+            message = 'The "sample.annotation" will be added to the SummarizedExperiment object.',
             color = 'blue',
             verbose = verbose
         )
@@ -330,14 +358,12 @@ createSeObj <- function(
         printColoredMessage(
             message = 'The gene.annotation will be added to the SummarizedExperiment object.',
             color = 'blue',
-            verbose = verbose
-        )
+            verbose = verbose)
     } else if(is.null(gene.annotation) & isTRUE(create.gene.annotation)){
         printColoredMessage(
             message = 'A gene.annotation (rowData) will be created and added to the SummarizedExperiment object.',
             color = 'blue',
-            verbose = verbose
-        )
+            verbose = verbose)
         gene.annotation <- data.frame(gene.ids = row.names(data.sets[[1]]))
         colnames(gene.annotation) <- gene.group
     } else if (is.null(gene.annotation)){
@@ -432,11 +458,11 @@ createSeObj <- function(
             color = 'magenta',
             verbose = verbose
         )
-        kh.im.genes <- hk_immunStroma
-        keep.cols <- c(which(colnames(kh.im.genes) %in% gene.group), 4:9)
+        hk.im.genes <- hk_immunStroma
+        keep.cols <- c(which(colnames(hk.im.genes) %in% gene.group), 4:9)
         gene.annotation <- dplyr::left_join(
             x = gene.annotation,
-            y = kh.im.genes[ , keep.cols],
+            y = hk.im.genes[ , keep.cols],
             by = gene.group,
             multiple = 'first'
             )
@@ -446,9 +472,9 @@ createSeObj <- function(
             verbose = verbose
         )
         nb.hk.genes <- lapply(
-            colnames(kh.im.genes)[4:9],
-            function(x) sum(gene.annotation[[x]] == 'yes'))
-        names(nb.hk.genes) <- colnames(kh.im.genes)[4:9]
+            colnames(hk.im.genes)[4:9],
+            function(x) sum(gene.annotation[[x]]))
+        names(nb.hk.genes) <- colnames(hk.im.genes)[4:9]
         if(verbose) print(kable(unlist(nb.hk.genes),
                                 caption = 'Number of genes in each list of housekeeping genes:',
                                 col.names = 'nb.genes'))
@@ -460,13 +486,13 @@ createSeObj <- function(
             color = 'magenta',
             verbose = verbose
         )
-        kh.im.genes <- hk_immunStroma
+        hk.im.genes <- hk_immunStroma
         keep.cols <- c(
-            which(colnames(kh.im.genes) %in% gene.group),
-            10:ncol(kh.im.genes))
+            which(colnames(hk.im.genes) %in% gene.group),
+            10:ncol(hk.im.genes))
         gene.annotation <- as.data.frame(dplyr::left_join(
             x = gene.annotation,
-            y = kh.im.genes[ , keep.cols],
+            y = hk.im.genes[ , keep.cols],
             by = gene.group,
             multiple = 'first'
             ))
@@ -476,48 +502,68 @@ createSeObj <- function(
             verbose = verbose
         )
         nb.genes <- lapply(
-            colnames(kh.im.genes)[10:11],
-            function(x) sum(gene.annotation[[x]] == 'yes'))
-        names(nb.genes) <- colnames(kh.im.genes)[10:11]
+            colnames(hk.im.genes)[10:11],
+            function(x) sum(gene.annotation[x]))
+        names(nb.genes) <- colnames(hk.im.genes)[10:11]
         if(verbose) print(
             kable(unlist(nb.genes),
                   caption = 'Number of genes in the immune and stromal gene signatures:',
                   col.names = 'nb.genes'))
     }
     # estimate tumor purity ####
-    if(estimate.tumor.purity == 'estimate'){
-        tumour.purity <- tidyestimate::filter_common_genes(
-            log2(ov+1), id = "hgnc_symbol",
-            tidy = FALSE,
-            tell_missing = verbose,
-            find_alias = TRUE)
-        tumour.purity <- tidyestimate::estimate_score(
-            df = tumour.purity,
-            is_affymetrix = TRUE)
-        tumour.purity <- tumour.purity$purity
-    } else if (estimate.tumor.purity == 'singscore'){
-        tumour.purity <- singscore::rankGenes(temp.data)
-        tumour.purity <- singscore::simpleScore(
+    if(!is.null(estimate.tumor.purity)){
+        if(estimate.tumor.purity == 'estimate'){
+            tumour.purity <- tidyestimate::filter_common_genes(
+                df = data.sets[[assay.name.to.estimate.purity]],
+                id = "hgnc_symbol",
+                tidy = FALSE,
+                tell_missing = verbose,
+                find_alias = TRUE)
+            tumour.purity <- tidyestimate::estimate_score(
+                df = tumour.purity,
+                is_affymetrix = TRUE)
+            tumour.purity <- tumour.purity$purity
+        } else if (estimate.tumor.purity == 'singscore'){
+            im.str.gene.sig <- hk_immunStroma$immune.gene.signature == 'TRUE' |
+                hk_immunStroma$stromal.gene.signature == 'TRUE'
+            if(gene.group == "entrezgene_id"){
+                im.str.gene.sig <- hk_immunStroma$entrezgene_id[im.str.gene.sig]
+            } else if(gene.group == 'hgnc_symbol'){
+                im.str.gene.sig <- hk_immunStroma$hgnc_symbol[im.str.gene.sig]
+            } else if(gene.group == 'ensembl_gene_id')
+                im.str.gene.sig <- hk_immunStroma$ensembl_gene_id[im.str.gene.sig]
+            tumour.purity <- singscore::rankGenes(data.sets[[assay.name.to.estimate.purity]])
+            tumour.purity <- singscore::simpleScore(
                 rankData = ranked.data,
-                upSet = x)
-        tumour.purity <- tumour.purity$TotalScore
-    } else if (estimate.tumor.purity == 'both'){
-        tumour.purity <- tidyestimate::filter_common_genes(
-            log2(ov+1), id = "hgnc_symbol",
-            tidy = FALSE,
-            tell_missing = verbose,
-            find_alias = TRUE)
-        tumour.purity <- tidyestimate::estimate_score(
-            df = tumour.purity,
-            is_affymetrix = TRUE)
-        tumour.purity <- tumour.purity$purity
-        tumour.purity <- singscore::rankGenes(temp.data)
-        tumour.purity <- singscore::simpleScore(
-            rankData = ranked.data,
-            upSet = x)
-        tumour.purity <- tumour.purity$TotalScore
+                upSet = im.str.gene.sig)
+            tumour.purity <- tumour.purity$TotalScore
+        } else if (estimate.tumor.purity == 'both'){
+            tumour.purity <- tidyestimate::filter_common_genes(
+                df = data.sets[[assay.name.to.estimate.purity]],
+                id = "hgnc_symbol",
+                tidy = FALSE,
+                tell_missing = verbose,
+                find_alias = TRUE)
+            tumour.purity <- tidyestimate::estimate_score(
+                df = tumour.purity,
+                is_affymetrix = TRUE)
+            tumour.purity <- tumour.purity$purity
+            im.str.gene.sig <- hk_immunStroma$immune.gene.signature == 'TRUE' |
+                hk_immunStroma$stromal.gene.signature == 'TRUE'
+            if(gene.group == "entrezgene_id"){
+                im.str.gene.sig <- hk_immunStroma$entrezgene_id[im.str.gene.sig]
+            } else if(gene.group == 'hgnc_symbol'){
+                im.str.gene.sig <- hk_immunStroma$hgnc_symbol[im.str.gene.sig]
+            } else if(gene.group == 'ensembl_gene_id')
+                im.str.gene.sig <- hk_immunStroma$ensembl_gene_id[im.str.gene.sig]
+            tumour.purity <- singscore::rankGenes(data.sets[[assay.name.to.estimate.purity]])
+            tumour.purity <- singscore::simpleScore(
+                rankData = ranked.data,
+                upSet = im.str.gene.sig)
+            tumour.purity <- tumour.purity$TotalScore
+        }
+        sample.annotation[['tumour.purity']] <- tumour.purity
     }
-
     # outputs ####
     printColoredMessage(
         message = '-- Create a SummarizedExperiment object:',
@@ -601,3 +647,5 @@ createSeObj <- function(
                         verbose = verbose)
     return(se.obj)
 }
+
+

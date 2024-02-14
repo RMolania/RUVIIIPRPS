@@ -2,7 +2,7 @@
 % Please edit documentation in R/createSeObj.R
 \name{createSeObj}
 \alias{createSeObj}
-\title{create a SummarizedExperiment object.}
+\title{Create a SummarizedExperiment object.}
 \usage{
 createSeObj(
   data.sets,
@@ -12,6 +12,8 @@ createSeObj(
   biological.group = NULL,
   minimum.proportion = 0.5,
   calculate.library.size = FALSE,
+  estimate.tumor.purity = NULL,
+  assay.name.to.estimate.purity = NULL,
   sample.annotation = NULL,
   create.sample.annotation = FALSE,
   gene.annotation = NULL,
@@ -20,7 +22,7 @@ createSeObj(
   gene.group = NULL,
   gene.details = NULL,
   add.housekeeping.genes = FALSE,
-  add.immunStroma.genes = FALSE,
+  add.immun.stroma.genes = FALSE,
   metaData = NULL,
   verbose = TRUE
 )
@@ -51,6 +53,13 @@ a gene must be expressed. The default is 0.5.}
 \item{calculate.library.size}{Logical. If 'TRUE', then library size (total counts) is calculated using the data provided
 in 'raw.count.assay.name'. The library size will be calculated after removing lowly expressed genes.}
 
+\item{estimate.tumor.purity}{Symbol. A symbol indicating which methods to be used to estimt the tumour purity. Opoptiona
+include:'estimate', 'singscore', 'both' and 'NULL'. If 'estimate' is selected, the function will applied the ESTIMATE method to
+estimate tumor purity. If 'singscore', the function will utilize the 'singscore' method and if 'both', the two methods
+will be applied. The default is 'NULL'.}
+
+\item{assay.name.to.estimate.purity}{Symbol.The name of an assay data within the list of assay(s) or expression data to}
+
 \item{sample.annotation}{A data frame containing information for individual samples in the assay(s). The order of row
 names of the sample annotation should match with the columns names of the assay(s).}
 
@@ -74,23 +83,26 @@ added to the gene annotation.}
 \item{add.housekeeping.genes}{Logical. if 'TRUE', several sets of publicly available "housekeeping" will be included in
 the gene annotation. The housekeeping could be potentially used as negative control genes for the RUV normalization.}
 
-\item{add.immunStroma.genes}{Logical. If 'TRUE', the immune and stromal genes signature from Kosuke Yoshihara et.al will
+\item{add.immun.stroma.genes}{Logical. If 'TRUE', the immune and stromal genes signature from Kosuke Yoshihara et.al will
 be added to the gene annotation. These genes signatures, can be used to estimate tumor purity in cancer RNA-seq data.}
 
 \item{metaData}{Any metadata data. The metadata can be in any format and dimensions.}
 
 \item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
+
+\item{be}{used to estimate tumor purity.}
 }
 \value{
 A SummarizedExperiment object containing assay(s) and also samples annotation, gene annotation and metadata
 if there are specified.
 }
 \description{
-This function creates a SummarizedExperiment object from tabular expression data and sample annotation (if available).
-In addition, the function can remove lowly expressed genes if a raw count data is provided, add a range of annotations
-for individual genes e.g. biotype, chromosome names, ... , and provide several sets of housekeeping genes and a immune
-and stromal gene signature. The housekeeping gene sets could be suitable negative control genes for the RUV methods.
-The immune and stromal gene signature could be used to estimate tumor purity variation in cancer RNA-seq data.
+This function creates a SummarizedExperiment object from tabular expression data set(s) and sample annotation (if
+available). The function can identify and remove lowly expressed genes if a raw count data is provided, add a range
+of annotations for individual genes e.g. biotype, chromosome names, ... . , estimate tumor purity, and provide several
+sets of housekeeping genes and a immune and stromal gene signature. The housekeeping gene sets could be suitable
+negative control genes for the RUV methods. The immune and stromal gene signature could be used to estimate tumor purity
+variation in cancer RNA-seq data.
 }
 \details{
 The SummarizedExperiment object is a data structure used in the R for representing and manipulating high-dimensional
