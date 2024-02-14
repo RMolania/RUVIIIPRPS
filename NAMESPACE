@@ -3,7 +3,7 @@
 export(RUVIII.PRPS)
 export(applyOtherNormalizations)
 export(assessNormalization)
-export(assessVariablesCorrelation)
+export(assessVariablesAssociation)
 export(assessVariation)
 export(checkSeObj)
 export(computeARI)
