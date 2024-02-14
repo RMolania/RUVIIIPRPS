@@ -177,7 +177,7 @@ findNCGsAcrossSamples <- function(
     }
     # check the variables correlations ####
     if (assess.variables) {
-        se.obj <- assessVariablesCorrelation(
+        se.obj <- assessVariablesAssociation(
             se.obj = se.obj,
             bio.variables = bio.variables,
             uv.variables = uv.variables,

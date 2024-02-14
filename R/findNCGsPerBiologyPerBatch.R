@@ -167,7 +167,7 @@ findNCGsPerBiologyPerBatch <- function(
     }
     # check the correlations between bio variables and uv variable separately ####
     if (assess.variables) {
-        se.obj <- assessVariablesCorrelation(
+        se.obj <- assessVariablesAssociation(
             se.obj = se.obj,
             bio.variables = unique(c(bio.variables, bio.groups)),
             uv.variables = unique(c(uv.variables, uv.groups)),

@@ -83,7 +83,7 @@ createHomogeneousUVGroups <- function(
         message = '-- Assessing the correlation between unwanted variation variables:',
         color = 'magenta',
         verbose = verbose)
-    if (assess.variables) {
+    if (isTRUE(assess.variables)) {
         se.obj <- assessVariablesAssociation(
             se.obj = se.obj,
             bio.variables = NULL,

@@ -77,7 +77,7 @@ createHomogeneousBioGroups <- function(
         stop('The remove.na should be either "sample.annotation" or "none".')
     }
     # assess correlation between the variables ####
-    if (assess.variables) {
+    if (isTRUE(assess.variables)) {
         se.obj <- assessVariablesAssociation(
             se.obj = se.obj,
             bio.variables = bio.variables,

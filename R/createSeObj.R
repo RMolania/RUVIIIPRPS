@@ -1,13 +1,14 @@
-#' create a SummarizedExperiment object.
+#' Create a SummarizedExperiment object.
 
 #' @author Ramyar Molania
 
 #' @description
-#' This function creates a SummarizedExperiment object from tabular expression data and sample annotation (if available).
-#' In addition, the function can remove lowly expressed genes if a raw count data is provided, add a range of annotations
-#' for individual genes e.g. biotype, chromosome names, ... , and provide several sets of housekeeping genes and a immune
-#' and stromal gene signature. The housekeeping gene sets could be suitable negative control genes for the RUV methods.
-#' The immune and stromal gene signature could be used to estimate tumor purity variation in cancer RNA-seq data.
+#' This function creates a SummarizedExperiment object from tabular expression data set(s) and sample annotation (if
+#' available). The function can identify and remove lowly expressed genes if a raw count data is provided, add a range
+#' of annotations for individual genes e.g. biotype, chromosome names, ... . , estimate tumor purity, and provide several
+#' sets of housekeeping genes and a immune and stromal gene signature. The housekeeping gene sets could be suitable
+#' negative control genes for the RUV methods. The immune and stromal gene signature could be used to estimate tumor purity
+#' variation in cancer RNA-seq data.
 
 #' @details
 #' The SummarizedExperiment object is a data structure used in the R for representing and manipulating high-dimensional
@@ -44,6 +45,12 @@
 #' a gene must be expressed. The default is 0.5.
 #' @param calculate.library.size Logical. If 'TRUE', then library size (total counts) is calculated using the data provided
 #' in 'raw.count.assay.name'. The library size will be calculated after removing lowly expressed genes.
+#' @param estimate.tumor.purity Symbol. A symbol indicating which methods to be used to estimt the tumour purity. Opoptiona
+#' include:'estimate', 'singscore', 'both' and 'NULL'. If 'estimate' is selected, the function will applied the ESTIMATE method to
+#' estimate tumor purity. If 'singscore', the function will utilize the 'singscore' method and if 'both', the two methods
+#' will be applied. The default is 'NULL'.
+#' @param assay.name.to.estimate.purity Symbol.The name of an assay data within the list of assay(s) or expression data to
+#' @param be used to estimate tumor purity.
 #' @param sample.annotation A data frame containing information for individual samples in the assay(s). The order of row
 #' names of the sample annotation should match with the columns names of the assay(s).
 #' @param create.sample.annotation Logical. If 'TRUE', a sample annotation will be generated, initially contains the
@@ -59,7 +66,7 @@
 #' @param gene.details Symbol. A symbol or a vector symbols indicating the gene details to be included to the gene annotation.
 #' @param add.housekeeping.genes Logical. if 'TRUE', several sets of publicly available "housekeeping" will be included in
 #' the gene annotation. The housekeeping could be potentially used as negative control genes for the RUV normalization.
-#' @param add.immunStroma.genes Logical. If 'TRUE', the immune and stromal genes signature from Kosuke Yoshihara et.al will
+#' @param add.immun.stroma.genes Logical. If 'TRUE', the immune and stromal genes signature from Kosuke Yoshihara et.al will
 #' be added to the gene annotation. These genes signatures, can be used to estimate tumor purity in cancer RNA-seq data.
 #' @param metaData Any metadata data. The metadata can be in any format and dimensions.
 #' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
@@ -69,6 +76,8 @@
 
 #' @importFrom SummarizedExperiment SummarizedExperiment assay rowData
 #' @importFrom Matrix colSums rowSums
+#' @importFrom tidyestimate filter_common_genes estimate_score
+#' @importFrom singscore rankGenes simpleScore
 #' @importFrom edgeR cpm
 #' @importFrom dplyr left_join
 #' @importFrom biomaRt getBM useMart useDataset
@@ -84,6 +93,8 @@ createSeObj <- function(
         biological.group = NULL,
         minimum.proportion = 0.5,
         calculate.library.size = FALSE,
+        estimate.tumor.purity = NULL,
+        assay.name.to.estimate.purity = NULL,
         sample.annotation = NULL,
         create.sample.annotation = FALSE,
         gene.annotation = NULL,
@@ -92,7 +103,7 @@ createSeObj <- function(
         gene.group = NULL,
         gene.details = NULL,
         add.housekeeping.genes = FALSE,
-        add.immunStroma.genes = FALSE,
+        add.immun.stroma.genes = FALSE,
         metaData = NULL,
         verbose = TRUE)
 {
@@ -101,7 +112,7 @@ createSeObj <- function(
                         verbose = verbose)
     # check inputs ####
     if(!inherits(data.sets, what = 'list')){
-        stop('The "data.sets" must be a list of expression datastes (genes in rows and samples in columns.).')
+        stop('The "data.sets" must be a list of expression dataste(s) (genes in rows and samples in columns.).')
     }
     ## dimensions and orders of the assays ####
     if(length(data.sets) > 1){
@@ -183,8 +194,8 @@ createSeObj <- function(
     if(isTRUE(add.housekeeping.genes) & is.null(gene.annotation) & !create.gene.annotation){
         stop('To add "add.housekeeping.genes", gene annotation must be provided or "create.gene.annotation" must be set to "TRUE" .')
     }
-    if(isTRUE(add.immunStroma.genes) & is.null(gene.annotation) & !create.gene.annotation){
-        stop('To add "add.immunStroma.genes", gene annotation must be provided or "create.gene.annotation" must set to "TRUE".')
+    if(isTRUE(add.immun.stroma.genes) & is.null(gene.annotation) & !create.gene.annotation){
+        stop('To add "add.immun.stroma.genes", gene annotation must be provided or "create.gene.annotation" must set to "TRUE".')
     }
     if(isTRUE(add.gene.details) & is.null(gene.group)){
         stop('To add gene details, the "gene.group" must be specified (entrezgene_id, hgnc_symbol and ensembl_gene_id).')
@@ -442,8 +453,8 @@ createSeObj <- function(
                                 caption = 'Number of genes in each list of housekeeping genes:',
                                 col.names = 'nb.genes'))
     }
-    # add immune and stromal genes signatures ####
-    if(add.immunStroma.genes){
+    # add immune and stroma genes signatures ####
+    if(add.immun.stroma.genes){
         printColoredMessage(
             message = '-- Add immune and stromal genes signature to the gene annotation:',
             color = 'magenta',
@@ -473,6 +484,40 @@ createSeObj <- function(
                   caption = 'Number of genes in the immune and stromal gene signatures:',
                   col.names = 'nb.genes'))
     }
+    # estimate tumor purity ####
+    if(estimate.tumor.purity == 'estimate'){
+        tumour.purity <- tidyestimate::filter_common_genes(
+            log2(ov+1), id = "hgnc_symbol",
+            tidy = FALSE,
+            tell_missing = verbose,
+            find_alias = TRUE)
+        tumour.purity <- tidyestimate::estimate_score(
+            df = tumour.purity,
+            is_affymetrix = TRUE)
+        tumour.purity <- tumour.purity$purity
+    } else if (estimate.tumor.purity == 'singscore'){
+        tumour.purity <- singscore::rankGenes(temp.data)
+        tumour.purity <- singscore::simpleScore(
+                rankData = ranked.data,
+                upSet = x)
+        tumour.purity <- tumour.purity$TotalScore
+    } else if (estimate.tumor.purity == 'both'){
+        tumour.purity <- tidyestimate::filter_common_genes(
+            log2(ov+1), id = "hgnc_symbol",
+            tidy = FALSE,
+            tell_missing = verbose,
+            find_alias = TRUE)
+        tumour.purity <- tidyestimate::estimate_score(
+            df = tumour.purity,
+            is_affymetrix = TRUE)
+        tumour.purity <- tumour.purity$purity
+        tumour.purity <- singscore::rankGenes(temp.data)
+        tumour.purity <- singscore::simpleScore(
+            rankData = ranked.data,
+            upSet = x)
+        tumour.purity <- tumour.purity$TotalScore
+    }
+
     # outputs ####
     printColoredMessage(
         message = '-- Create a SummarizedExperiment object:',
