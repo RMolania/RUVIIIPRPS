@@ -55,7 +55,7 @@
 #' @importFrom utils combn
 #' @export
 
-assessVariablesCorrelation <- function(
+assessVariablesAssociation <- function(
         se.obj,
         bio.variables,
         uv.variables,
