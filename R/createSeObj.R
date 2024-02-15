@@ -50,7 +50,7 @@
 #' estimate tumor purity. If 'singscore', the function will utilize the 'singscore' method and if 'both', the two methods
 #' will be applied. The default is 'NULL'.
 #' @param assay.name.to.estimate.purity Symbol.The name of an assay data within the list of assay(s) or expression data to
-#' @param be used to estimate tumor purity.
+#' be used to estimate tumor purity.
 #' @param sample.annotation A data frame containing information for individual samples in the assay(s). The order of row
 #' names of the sample annotation should match with the columns names of the assay(s).
 #' @param create.sample.annotation Logical. If 'TRUE', a sample annotation will be generated, initially contains the
@@ -75,14 +75,14 @@
 #' if there are specified.
 
 #' @importFrom SummarizedExperiment SummarizedExperiment assay rowData
-#' @importFrom Matrix colSums rowSums
 #' @importFrom tidyestimate filter_common_genes estimate_score
-#' @importFrom singscore rankGenes simpleScore
-#' @importFrom edgeR cpm
-#' @importFrom dplyr left_join
 #' @importFrom biomaRt getBM useMart useDataset
+#' @importFrom singscore rankGenes simpleScore
+#' @importFrom Matrix colSums rowSums
 #' @importFrom S4Vectors DataFrame
+#' @importFrom dplyr left_join
 #' @importFrom knitr kable
+#' @importFrom edgeR cpm
 #' @export
 
 createSeObj <- function(
@@ -512,7 +512,14 @@ createSeObj <- function(
     }
     # estimate tumor purity ####
     if(!is.null(estimate.tumor.purity)){
+        printColoredMessage(message = '-- Estimate tumour purity:',
+            color = 'magenta',
+            verbose = verbose)
         if(estimate.tumor.purity == 'estimate'){
+            printColoredMessage(
+                message = '-- Estimate tumour purity using the ESTIMATE method:',
+                color = 'blue',
+                verbose = verbose)
             tumour.purity <- tidyestimate::filter_common_genes(
                 df = data.sets[[assay.name.to.estimate.purity]],
                 id = "hgnc_symbol",
@@ -523,7 +530,12 @@ createSeObj <- function(
                 df = tumour.purity,
                 is_affymetrix = TRUE)
             tumour.purity <- tumour.purity$purity
+            sample.annotation[['tumour.purity']] <- tumour.purity
         } else if (estimate.tumor.purity == 'singscore'){
+            printColoredMessage(
+                message = '-- Estimate tumour purity using the singscore method:',
+                color = 'blue',
+                verbose = verbose)
             im.str.gene.sig <- hk_immunStroma$immune.gene.signature == 'TRUE' |
                 hk_immunStroma$stromal.gene.signature == 'TRUE'
             if(gene.group == "entrezgene_id"){
@@ -534,10 +546,15 @@ createSeObj <- function(
                 im.str.gene.sig <- hk_immunStroma$ensembl_gene_id[im.str.gene.sig]
             tumour.purity <- singscore::rankGenes(data.sets[[assay.name.to.estimate.purity]])
             tumour.purity <- singscore::simpleScore(
-                rankData = ranked.data,
+                rankData = tumour.purity,
                 upSet = im.str.gene.sig)
             tumour.purity <- tumour.purity$TotalScore
+            sample.annotation[['tumour.purity']] <- tumour.purity
         } else if (estimate.tumor.purity == 'both'){
+            printColoredMessage(
+                message = '-- Estimate tumour purity using both ESTIMATE and singscore methods:',
+                color = 'blue',
+                verbose = verbose)
             tumour.purity <- tidyestimate::filter_common_genes(
                 df = data.sets[[assay.name.to.estimate.purity]],
                 id = "hgnc_symbol",
@@ -547,7 +564,7 @@ createSeObj <- function(
             tumour.purity <- tidyestimate::estimate_score(
                 df = tumour.purity,
                 is_affymetrix = TRUE)
-            tumour.purity <- tumour.purity$purity
+            tumour.purity.estimate <- tumour.purity$purity
             im.str.gene.sig <- hk_immunStroma$immune.gene.signature == 'TRUE' |
                 hk_immunStroma$stromal.gene.signature == 'TRUE'
             if(gene.group == "entrezgene_id"){
@@ -558,11 +575,12 @@ createSeObj <- function(
                 im.str.gene.sig <- hk_immunStroma$ensembl_gene_id[im.str.gene.sig]
             tumour.purity <- singscore::rankGenes(data.sets[[assay.name.to.estimate.purity]])
             tumour.purity <- singscore::simpleScore(
-                rankData = ranked.data,
+                rankData = tumour.purity,
                 upSet = im.str.gene.sig)
-            tumour.purity <- tumour.purity$TotalScore
+            tumour.purity.singscore <- tumour.purity$TotalScore
+            sample.annotation[['tumour.purity.estimate']] <- tumour.purity.estimate
+            sample.annotation[['tumour.purity.singscore']] <- tumour.purity.singscore
         }
-        sample.annotation[['tumour.purity']] <- tumour.purity
     }
     # outputs ####
     printColoredMessage(
