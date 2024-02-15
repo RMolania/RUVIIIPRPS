@@ -89,7 +89,7 @@
 #' @importFrom matrixStats rowProds
 #' @export
 
-findUnSupervisedNCGsAcrossSamples <- function(
+findUnSupervisedNCGs <- function(
         se.obj,
         assay.name,
         uv.variables,
@@ -157,7 +157,7 @@ findUnSupervisedNCGsAcrossSamples <- function(
     }
     # check the variables correlations ####
     if (assess.variables) {
-        se.obj <- assessVariablesCorrelation(
+        se.obj <- assessVariablesAssociation(
             se.obj = se.obj,
             bio.variables = NULL,
             uv.variables = uv.variables,

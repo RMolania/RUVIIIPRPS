@@ -246,7 +246,7 @@ findKnn <- function(
                         verbose = verbose)
     printColoredMessage(
         message = paste0('For individual samples within each subgroup variable "', uv.variable,
-            '", k = ', k, ' nearest neighbours will be found. This may take few minutes.'),
+            '", k = ', k.nn, ' nearest neighbours will be found. This may take few minutes.'),
         color = 'blue',
         verbose = verbose
     )
@@ -310,26 +310,26 @@ findKnn <- function(
                 norm.data <- sv.dec$u
             }
             # find knn #####
-            knn.samples <-RANN::nn2(data = norm.data, k = c(k + 1))
+            knn.samples <- RANN::nn2(data = norm.data, k = c(k.nn + 1))
             # index
             knn.index <- as.data.frame(knn.samples$nn.idx)
-            colnames(knn.index) <- paste0('dataset.index', 1:c(k + 1))
+            colnames(knn.index) <- paste0('dataset.index', 1:c(k.nn + 1))
             selected.samples <- se.obj[[uv.variable]] == groups[x]
             ovral.cell.no <- as.data.frame(
                 apply(
                     knn.index,
                     2,
                     function(z) all.samples.index[selected.samples][z]))
-            colnames(ovral.cell.no) <- paste0('overal.index', 1:c(k + 1))
+            colnames(ovral.cell.no) <- paste0('overal.index', 1:c(k.nn + 1))
             knn.index <- as.data.frame(cbind(ovral.cell.no , knn.index))
             # distance
             knn.dis <- round(as.data.frame(knn.samples$nn.dists), digits = 3)
             knn.dis <- knn.dis[, -1, drop = FALSE]
-            colnames(knn.dis) <- paste0('distance1_', 2:c(k + 1))
+            colnames(knn.dis) <- paste0('distance1_', 2:c(k.nn + 1))
             knn.index.dist <- cbind(knn.index, knn.dis)
-            if (k > 1) {
-                all.comb <- combn(x = paste0('dataset.index', 2:c(k + 1)), m = 2)
-                all.comb.names <- combn(x = 2:c(k + 1), m = 2)
+            if (k.nn > 1) {
+                all.comb <- combn(x = paste0('dataset.index', 2:c(k.nn + 1)), m = 2)
+                all.comb.names <- combn(x = 2:c(k.nn + 1), m = 2)
                 for (z in 1:ncol(all.comb)) {
                     pair.dist <- unlist(lapply(
                         1:nrow(knn.index.dist),

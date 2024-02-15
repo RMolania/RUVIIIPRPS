@@ -97,7 +97,7 @@ createUnSupervisedPRPSbyMNN <- function(
     printColoredMessage(message = paste(
             'Applying the find_knn function.',
             'For individual samples per each group variable, ',
-            k,
+            k.nn,
             ' knn will be found.'),
             color = 'magenta',
             verbose = verbose)
