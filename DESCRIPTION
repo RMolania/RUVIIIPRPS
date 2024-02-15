@@ -43,6 +43,7 @@ Imports:
     DelayedArray,
     DescTools,
     knitr,
+    tidyestimate,
     edgeR,
     EDASeq,
     DESeq2,
