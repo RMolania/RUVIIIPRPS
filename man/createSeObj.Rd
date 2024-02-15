@@ -58,7 +58,8 @@ include:'estimate', 'singscore', 'both' and 'NULL'. If 'estimate' is selected, t
 estimate tumor purity. If 'singscore', the function will utilize the 'singscore' method and if 'both', the two methods
 will be applied. The default is 'NULL'.}
 
-\item{assay.name.to.estimate.purity}{Symbol.The name of an assay data within the list of assay(s) or expression data to}
+\item{assay.name.to.estimate.purity}{Symbol.The name of an assay data within the list of assay(s) or expression data to
+be used to estimate tumor purity.}
 
 \item{sample.annotation}{A data frame containing information for individual samples in the assay(s). The order of row
 names of the sample annotation should match with the columns names of the assay(s).}
@@ -89,8 +90,6 @@ be added to the gene annotation. These genes signatures, can be used to estimate
 \item{metaData}{Any metadata data. The metadata can be in any format and dimensions.}
 
 \item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
-
-\item{be}{used to estimate tumor purity.}
 }
 \value{
 A SummarizedExperiment object containing assay(s) and also samples annotation, gene annotation and metadata
