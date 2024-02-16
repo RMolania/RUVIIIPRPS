@@ -18,6 +18,7 @@ createLogAssays <- function(
         se.obj,
         assay.names = 'all',
         pseudo.count = 1,
+        replace.assays = FALSE,
         apply.round = TRUE,
         verbose = TRUE
 ){
@@ -34,9 +35,8 @@ createLogAssays <- function(
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
     } else assay.names <- factor(x = assay.names, levels = assay.names)
-    if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
+    if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names))
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
-    }
 
     # apply log transformation and add to the SummarizedExperiment object ####
     for (x in  levels(assay.names)) {
@@ -46,7 +46,7 @@ createLogAssays <- function(
         ## log transformation ####
         if(!is.null(pseudo.count)){
             printColoredMessage(
-                message = paste0('Apply log2 + ', pseudo.count,' (pseudo.count) on the', x,' data.'),
+                message = paste0('Apply log2 + ', pseudo.count,' (pseudo.count) on the ', x,' data.'),
                 color = 'blue',
                 verbose = verbose)
             temp.data <- log2(assay(x = se.obj, i = x) +  pseudo.count)
@@ -63,7 +63,10 @@ createLogAssays <- function(
         ## save the data ####
         new.assay.name <- paste0('Log_', x)
         if (!new.assay.name %in% (names(se.obj@assays@data))) {
-            se.obj@assays@data[[new.assay.name]] <- temp.data
+            if(isTRUE(replace.assays)){
+                se.obj@assays@data[x] <- NULL
+                se.obj@assays@data[[new.assay.name]] <- temp.data
+            } else se.obj@assays@data[[new.assay.name]] <- temp.data
         }
     }
     printColoredMessage(message = '------------The createLogAssays function finished.',
