@@ -36,7 +36,6 @@
 #' @param apply.round Logical. Indicates whether to round the ARI results, by default it is set to TRUE.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
 #' 'se.obj' or to output the result. By default it is set to TRUE.
-#' @param plot.output Logical. Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.
 #' @param verbose Logical. If TRUE, displaying process messages is enabled.
 
 #' @return SummarizedExperiment A SummarizedExperiment object containing the log2 F-statistics of ANOVA on the continuous
@@ -64,7 +63,6 @@ computeGenesVariableAnova <- function(
         assess.se.obj = TRUE,
         remove.na = 'both',
         save.se.obj = TRUE,
-        plot.output = TRUE,
         verbose = TRUE
 ) {
     printColoredMessage(message = '------------The genesVariableAnova function starts:',
@@ -93,7 +91,7 @@ computeGenesVariableAnova <- function(
         stop('The method should be one of the "aov" or "welch.correction".')
     }
     if (apply.log){
-        if(pseudo.count <0 )
+        if(pseudo.count < 0 )
             stop('The value of pseudo.count cannot be negative.')
     }
 
