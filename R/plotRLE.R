@@ -193,7 +193,7 @@ plotRLE <- function(
                     scale_color_manual(name = 'Groups:', values = rle.plot.colors) +
                     ylab('RLE') +
                     xlab('Samples') +
-                    ggtitle(paste0('Data:', x, ',MadRleMed:', rle.med.var, 'MadRleIqr:', rle.iqr.var)) +
+                    ggtitle(paste0('Data: ', x, ', MAD RLEmed: ', rle.med.var, ', MAD RLEiqr: ', rle.iqr.var)) +
                     coord_cartesian(ylim = ylim.rle.plot) +
                     geom_hline(yintercept = 0, colour = geom.hline.color) +
                     theme(
@@ -220,7 +220,7 @@ plotRLE <- function(
                                aes(group = range),
                                size = median.points.size ,
                                colour = median.points.color) +
-                    ggtitle(paste0('Data: ', x, ',MAD RleMed: ', rle.med.var, ', MAD RleIqr:', rle.iqr.var)) +
+                    ggtitle(paste0('Data: ', x, ', MAD RLEmed: ', rle.med.var, ', MAD RLEiqr: ', rle.iqr.var)) +
                     xlab('Samples') +
                     ylab('RLE') +
                     coord_cartesian(ylim = ylim.rle.plot) +
@@ -235,7 +235,9 @@ plotRLE <- function(
                         axis.text.y = element_text(size = 9),
                         axis.ticks.x = element_blank())
             }
-            if (plot.output) print(p.rle)
+            if (isTRUE(plot.output) & length(assay.names) == 1) {
+                print(p.rle)
+            }
             p.rle
         })
     names(all.rle.plots) <- levels(assay.names)

@@ -207,7 +207,9 @@ plotRleVariable <- function(
                           axis.text.y = element_text(size = 10),
                           legend.position = 'bottom')
             }
-            if (plot.output) print(p.rle)
+            if (isTRUE(plot.output) & length(assay.names) == 1){
+                print(p.rle)
+            }
             p.rle
         })
     names(all.rle.med.var.plots) <- levels(assay.names)
@@ -237,7 +239,7 @@ plotRleVariable <- function(
     all.rle.iqr.var.plots <- lapply(
         levels(assay.names),
         function(x) {
-            rle.med.data <- data.frame(
+            rle.iqr.data <- data.frame(
                 rle.iqr = all.rle.data[[x]]$rle.iqrs,
                 var = colData(se.obj)[[variable]])
             if(class(colData(se.obj)[[variable]]) %in% c('numeric', 'integr')){
@@ -249,7 +251,7 @@ plotRleVariable <- function(
                     color = 'blue',
                     verbose = verbose)
                 ..r.label.. <- NULL
-                p.rle <- ggplot(rle.med.data, aes(x = var, y = rle.iqr)) +
+                p.rle <- ggplot(rle.iqr.data, aes(x = var, y = rle.iqr)) +
                     geom_point(size = points.size) +
                     ggtitle(x) +
                     xlab(variable) +
@@ -272,7 +274,7 @@ plotRleVariable <- function(
                         ' data and the variable:'),
                     color = 'blue',
                     verbose = verbose)
-                p.rle <- ggplot(rle.med.data, aes(x = var, y = rle.iqr)) +
+                p.rle <- ggplot(rle.iqr.data, aes(x = var, y = rle.iqr)) +
                     geom_boxplot() +
                     ggtitle(x) +
                     xlab(variable) +
@@ -378,7 +380,7 @@ plotRleVariable <- function(
                 if(!'RleIqr' %in% se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']]){
                     se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleIqr']] <- list()
                 }
-                se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleMedians']] <- overall.rle.iqr.var.plots
+                se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleIqr']] <- overall.rle.iqr.var.plots
             } else if (rle.data.type == 'rle.medians'){
                 if(!'RleMedians' %in% se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']]){
                     se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleMedians']] <- list()

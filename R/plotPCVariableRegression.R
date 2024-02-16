@@ -138,6 +138,7 @@ plotPCVariableRegression <- function(
                     axis.title.y = element_text(size = 14),
                     axis.text.x = element_text(size = 12, angle = 35, vjust = 1, hjust = 1),
                     axis.text.y = element_text(size = 12))
+            if(isTRUE(plot.output) & length(assay.names) == 1) print(reg.plot)
             return(reg.plot)
         })
     names(all.reg.plots) <- levels(assay.names)
@@ -176,7 +177,7 @@ plotPCVariableRegression <- function(
                 axis.text.y = element_text(size = 12),
                 legend.text = element_text(size = 10),
                 legend.title = element_text(size = 14))
-        if(plot.output)
+        if(isTRUE(plot.output))
             print(overall.reg.plot)
     }
 

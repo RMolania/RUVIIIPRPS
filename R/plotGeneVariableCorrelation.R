@@ -123,7 +123,7 @@ plotGenesVariableCorrelation <- function(
                     axis.ticks.x = element_blank(),
                     axis.text.x = element_text(size = 0),
                     axis.text.y = element_text(size = 12))
-
+            if(isTRUE(plot.output) & length(assay.names) == 1) print(p.corr.coeff)
         })
     names(all.corr.coeff.plots) <- levels(assay.names)
 
@@ -154,6 +154,7 @@ plotGenesVariableCorrelation <- function(
                 plot.title = element_text(size = 15),
                 axis.text.x = element_text(size = 12, angle = 25, hjust = 1),
                 axis.text.y = element_text(size = 12))
+        if(isTRUE(plot.output)) print(overall.corr.coeff.plot)
     }
     # save the results ####
     printColoredMessage(
