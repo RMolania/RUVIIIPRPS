@@ -584,7 +584,6 @@ assessVariation <- function(
                 assay.names = assay.names,
                 variable = i,
                 method = anove.method,
-                plot.output = FALSE,
                 plot.top.genes = FALSE,
                 nb.top.genes = NULL,
                 apply.log = apply.log,

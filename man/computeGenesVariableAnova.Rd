@@ -17,7 +17,6 @@ computeGenesVariableAnova(
   assess.se.obj = TRUE,
   remove.na = "both",
   save.se.obj = TRUE,
-  plot.output = TRUE,
   verbose = TRUE
 )
 }
@@ -54,8 +53,6 @@ by default is set to 3.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment object
 'se.obj' or to output the result. By default it is set to TRUE.}
-
-\item{plot.output}{Logical. Indicates whether to plot the boxplot of the F-test statistics, by default it is set to TRUE.}
 
 \item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }

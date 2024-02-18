@@ -61,7 +61,8 @@ By default it is to 'kmeans'.}
 \item{nb.other.uv.clusters}{Numeric. A value to specify the number of groups for continuous sources of biological
 variation. The default is 2. This means each continuous sources will be divided into 2 groups using the 'clustering.method'.}
 
-\item{check.prps.connectedness}{TTTTT}
+\item{check.prps.connectedness}{Logical. Indicates to assess the connectedness between the PRPS sets or not. The default
+is set to 'TRUE'. We refer to the reference number X for more detail.}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
 
@@ -71,7 +72,8 @@ by default it is set to 1.}
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.
 By default it is set to TRUE.}
 
-\item{assess.variables}{TTTTTT}
+\item{assess.variables}{Logical. Indicates whether to assess the association between the variable. The default is set
+to 'FALSE'. We refer to the 'assessVariableAssociation' for more details.}
 
 \item{cat.cor.coef}{Vector of two numerical values. Indicates the cut-off of the correlation coefficient between each
 pair of categorical variables. The first one is between each pair of 'uv.variables' and the second one is between each
@@ -86,14 +88,14 @@ that has the highest variance will be kept and the other one will be excluded fr
 they are both set to 0.7.}
 
 \item{remove.na}{String. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
-'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
-samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
-'both'.}
+'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If
+'sample.annotation' is selected, the samples that contains NA or missing values for any 'bio.variables' and
+'uv.variables' will be excluded. By default, it is set to both'.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 object 'se.obj' or to output the result, by default it is set to TRUE.}
 
-\item{plot.output}{TTTTTTT}
+\item{plot.output}{Logical. Indicates the PRPS map for individual sources of unwanted variation. The default is 'TRUE'.}
 
 \item{verbose}{Logical. Indicates whether to show or reduce the level of output or
 messages displayed during the execution of the functions, by default it is set to TRUE.}

@@ -42,7 +42,8 @@
 #' Please, note, any RNA-seq data (assays) must be in log scale before computing RLE.
 #' @param pseudo.count Numeric. A value as a pseudo count to be added to all measurements of the assay(s) before applying
 #' log transformation to avoid -Inf for measurements that are equal to 0. The default is 1.
-#' @param mnn.bpparam TTTT
+#' @param mnn.bpparam Symbol. A BiocParallelParam object specifying how parallelization should be performed. The default
+#' is SerialParam(). We refer to the 'findMutualNN' function from the BiocNeighbors R package for more details.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment object or not. See the checkSeObj
 #' function for more details.
 #' @param remove.na Symbol. To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
@@ -139,6 +140,7 @@ createUnSupervisedPRPSbyMNN <- function(
         apply.log = apply.log,
         pseudo.count = pseudo.count,
         assess.se.obj = assess.se.obj,
+        mnn.bpparam = SerialParam(),
         remove.na = remove.na,
         save.se.obj = save.se.obj,
         verbose = verbose)

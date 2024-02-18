@@ -63,7 +63,8 @@ By default it is to 'kmeans'.}
 \item{nb.other.uv.clusters}{Numeric. A value to specify the number of groups for continuous sources of biological
 variation. The default is 2. This means each continuous sources will be divided into 2 groups using the 'clustering.method'.}
 
-\item{check.prps.connectedness}{TTTTT}
+\item{check.prps.connectedness}{Logical. Indicates to assess the connectedness between the PRPS sets or not. The default
+is set to 'TRUE'. We refer to the reference number X for more detail.}
 
 \item{apply.log}{Logical. Indicates whether to apply a log-transformation to the data, by default it is set to TRUE.}
 
@@ -78,7 +79,8 @@ By default it is set to TRUE.}
 'sample.annotation' is selected, the samples that contains NA or missing values for any 'bio.variables' and
 'uv.variables' will be excluded. By default, it is set to both'.}
 
-\item{assess.variables}{TTTTT}
+\item{assess.variables}{Logical. Indicates whether ot assess the association between the variable. The default is set
+to 'FALSE'. We refer to the 'assessVariableAssociation' for more details.}
 
 \item{cat.cor.coef}{Vector of two numerical values. Indicates the cut-off of the correlation coefficient between each
 pair of categorical variables. The first one is between each pair of 'uv.variables' and the second one is between
@@ -92,7 +94,7 @@ between each pair of 'bio.variables'. If the correlation of a pair of variable i
 the variable that has the highest variance will be kept and the other one will be excluded from the remaining analysis.
 By default they are both set to 0.7.}
 
-\item{plot.prps.map}{TTTTTTT}
+\item{plot.prps.map}{Logical. Whether to plot the PRPS map or not. The default is set to 'TRUE'.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 object 'se.obj' or to output the result, by default it is set to TRUE.}

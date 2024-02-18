@@ -79,7 +79,8 @@ Please, note, any RNA-seq data (assays) must be in log scale before computing RL
 \item{pseudo.count}{Numeric. A value as a pseudo count to be added to all measurements of the assay(s) before applying
 log transformation to avoid -Inf for measurements that are equal to 0. The default is 1.}
 
-\item{mnn.bpparam}{TTTT}
+\item{mnn.bpparam}{Symbol. A BiocParallelParam object specifying how parallelization should be performed. The default
+is SerialParam(). We refer to the 'findMutualNN' function from the BiocNeighbors R package for more details.}
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment object or not. See the checkSeObj
 function for more details.}

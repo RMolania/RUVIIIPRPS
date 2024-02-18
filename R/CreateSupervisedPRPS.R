@@ -61,13 +61,15 @@
 #' by default it is set to 1.
 #' @param assess.se.obj Logical. Indicates whether to assess the SummarizedExperiment class object.
 #' By default it is set to TRUE.
-#' @param check.prps.connectedness TTTTT
+#' @param check.prps.connectedness Logical. Indicates to assess the connectedness between the PRPS sets or not. The default
+#' is set to 'TRUE'. We refer to the reference number X for more detail.
 #' @param remove.na String. Indicates whether to remove NA or missing values from either the 'assays', the 'sample.annotation',
-#' 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If 'sample.annotation' is selected, the
-#' samples that contains NA or missing values for any 'bio.variables' and 'uv.variables' will be excluded. By default, it is set to
-#' 'both'.
-#' @param assess.variables TTTTTT
-#' @param plot.output TTTTTTT
+#' 'both' or 'none'. If 'assays' is selected, the genes that contains NA or missing values will be excluded. If
+#' 'sample.annotation' is selected, the samples that contains NA or missing values for any 'bio.variables' and
+#' 'uv.variables' will be excluded. By default, it is set to both'.
+#' @param assess.variables Logical. Indicates whether to assess the association between the variable. The default is set
+#' to 'FALSE'. We refer to the 'assessVariableAssociation' for more details.
+#' @param plot.output Logical. Indicates the PRPS map for individual sources of unwanted variation. The default is 'TRUE'.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
 #' object 'se.obj' or to output the result, by default it is set to TRUE.
 #' @param verbose Logical. Indicates whether to show or reduce the level of output or

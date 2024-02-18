@@ -44,7 +44,8 @@ findUnSupervisedNCGs(
 \item{assay.name}{Symbol. Indicates a name of an assay in the SummarizedExperiment object. The selected assay should
 be the one that will be used for RUV-III-PRPS normalization.}
 
-\item{uv.variables}{Symbols. Indicates the columns names that contains UV variables in the SummarizedExperiment object.}
+\item{uv.variables}{Symbol. A symbol or symbols indicating  name(s) of the columns in the sample annotation that contains
+UV variables in the SummarizedExperiment object.}
 
 \item{nb.ncg}{Numeric. Indicates how many genes should be selected as NCG. The value is the percentage of the total
 genes in the SummarizedExperiment object. The default is 10 percent.}
@@ -89,11 +90,15 @@ default is 'spearman'.}
 
 \item{rho}{The value of the hypothesised correlation to be used in the hypothesis testing, by default it is set to 0.}
 
-\item{anova.method}{Symbols. Indicates which ANOVA methods to use. The default in 'aov'. Refer to the function "genesVariableAnova" for more details.}
+\item{anova.method}{Symbols. Indicates which ANOVA methods to use. The default in 'aov'. Refer to the function
+"genesVariableAnova" for more details.}
 
-\item{clustering.method}{TTTTT}
+\item{clustering.method}{Symbol. A symbol specifying the clustering method to be applied for grouping each continuous
+source of unwanted variables. Options include 'kmeans', 'cut', and 'quantile'. The default is 'kmeans' clustering.}
 
-\item{nb.clusters}{TTTT}
+\item{nb.clusters}{Numeric. A value indicating the number of groups for continuous sources of unwanted variation.
+The default is 3. This implies that each continuous source will be split into 3 groups using the specified
+'clustering.method' method.}
 
 \item{assess.ncg}{Logical. Indicates whether to assess the performance of selected NCG or not.
 This analysis involves principal component analysis on the selected NCG and
