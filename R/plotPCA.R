@@ -31,6 +31,7 @@
 #' 1, the function puts all the PCA plots in one grid.
 #' @param plot.nrow Numeric. Indicates number of rows in the plot grid. When the number of selected assay is more than
 #' 3, the function puts all the PCA plots in one grid.
+#' @param plot.output Logical. If TRUE, the individual PCA plot(s) will be printed while functions is running.
 #' @param save.se.obj Logical. Indicates whether to save the plots in the metadata of the SummarizedExperiment object
 #' or to output the results as list. By default it is set to 'TRUE'.
 #' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
@@ -59,6 +60,7 @@ plotPCA <- function(
         densities.alpha = .5,
         plot.ncol = NULL,
         plot.nrow = 3,
+        plot.output = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
 ) {
