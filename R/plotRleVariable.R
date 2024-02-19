@@ -155,7 +155,7 @@ plotRleVariable <- function(
         color = 'magenta',
         verbose = verbose
     )
-    samples <- rle <- everything <- sample <- rle.medians <- NULL
+    samples <- rle <- everything <- sample <- rle.medians <- r.label <- NULL
     all.rle.med.var.plots <- lapply(
         levels(assay.names),
         function(x) {
@@ -236,7 +236,7 @@ plotRleVariable <- function(
         color = 'magenta',
         verbose = verbose
         )
-    samples <- rle <- everything <- sample <- rle.iqr <- NULL
+    samples <- rle <- everything <- sample <- rle.iqr <- r.label <- NULL
     all.rle.iqr.var.plots <- lapply(
         levels(assay.names),
         function(x) {
