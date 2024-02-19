@@ -77,7 +77,6 @@
 #' @import ggplot2
 #' @export
 
-
 createPRPSForCategoricalUV <- function(
         se.obj,
         assay.name,

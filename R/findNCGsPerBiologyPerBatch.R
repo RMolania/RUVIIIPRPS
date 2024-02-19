@@ -27,8 +27,8 @@
 #' @param top.rank.uv.genes Numeric.Indicates the percentage of top ranked genes that are highly affected by the unwanted
 #' variation variables. This is required to be specified when the 'ncg.selection.method' is either 'noneOverlap' or 'AbsNoneOverlap'.
 #' @param bio.groups Symbols. a symbol or a vector of symbols indicating the columns names that contains biological variables
-#'  in the SummarizedExperiment object. If is not NULL, the 'bio.groups' will be used for grouping samples into different
-#'  homogeneous biological groups.
+#' in the SummarizedExperiment object. If is not NULL, the 'bio.groups' will be used for grouping samples into different
+#' homogeneous biological groups.
 #' @param bio.clustering.method Symbols. Indicates which clustering methods should be used to group continuous sources of
 #' biological variation if any is provided. The default is kmeans clustering.
 #' @param nb.bio.clusters Numeric. Indicates the number of clusters for each continuous sources of biological variation.
@@ -131,7 +131,7 @@ findNCGsPerBiologyPerBatch <- function(
         remove.na = 'both',
         save.se.obj = TRUE,
         verbose = TRUE
-) {
+        ){
     printColoredMessage(message = '------------The supervisedFindNcgPbPbio function starts:',
                         color = 'white',
                         verbose = verbose)

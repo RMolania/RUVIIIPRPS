@@ -5,8 +5,6 @@
 #' @description
 #' A short description...
 
-
-
 #' @param data.input TTTTT
 #' @param min.samples TTTTTT
 #' @param batch.name TTTTTT
