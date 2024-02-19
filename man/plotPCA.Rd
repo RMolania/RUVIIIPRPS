@@ -18,6 +18,7 @@ plotPCA(
   densities.alpha = 0.5,
   plot.ncol = NULL,
   plot.nrow = 3,
+  plot.output = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE
 )
@@ -59,6 +60,8 @@ set to 'scatter'. Please note, the 'plot.type' cannot be set to 'scatter' of a c
 
 \item{plot.nrow}{Numeric. Indicates number of rows in the plot grid. When the number of selected assay is more than
 3, the function puts all the PCA plots in one grid.}
+
+\item{plot.output}{Logical. If TRUE, the individual PCA plot(s) will be printed while functions is running.}
 
 \item{save.se.obj}{Logical. Indicates whether to save the plots in the metadata of the SummarizedExperiment object
 or to output the results as list. By default it is set to 'TRUE'.}
