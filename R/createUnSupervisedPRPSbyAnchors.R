@@ -134,6 +134,7 @@ createUnSupervisedPRPSbyAnchors <- function(
             verbose = verbose)
     }
     ini.variable <- se.obj[[uv.variable]]
+
     # check the main uv variable ####
     if (class(se.obj[[uv.variable]]) %in% c('integer', 'numeric')) {
         printColoredMessage(
@@ -184,16 +185,17 @@ createUnSupervisedPRPSbyAnchors <- function(
                 counts = assay(x = se.obj[, samples.index], i = assay.name),
                 project = x)
             if (!is.null(hvg))
-                Seurat::VariableFeatures(seu.obj) <-hvg
+                Seurat::VariableFeatures(seu.obj) <- hvg
             return(seu.obj)
         })
     names(all.seurat.objects) <- groups
     all.samples.index <- c(1:ncol(se.obj))
 
     ## find anchors  ####
-    printColoredMessage(message = '- Apply the "FindIntegrationAnchors" function.',
-                        color = 'blue',
-                        verbose = verbose)
+    printColoredMessage(
+        message = '- Apply the "FindIntegrationAnchors" function.',
+        color = 'blue',
+        verbose = verbose)
     all.anchors <- Seurat::FindIntegrationAnchors(
         object.list = all.seurat.objects,
         anchor.features = anchor.features,
@@ -236,17 +238,17 @@ createUnSupervisedPRPSbyAnchors <- function(
                 stop('There are someting wrong with the order of anchros.')
             }
             max.index <- max(all.anchors$sample2[all.anchors$dataset2 == x])
-            sample.size <-
-                sum(se.obj[[uv.variable]] == groups[x])
+            sample.size <- sum(se.obj[[uv.variable]] == groups[x])
             if (max.index > sample.size) {
                 stop('There are someting wrong with the order of anchros.')
             }
         })
 
     ## add overall sample index  ####
-    printColoredMessage(message = '- Add overall sample number to the anchors.',
-                        color = 'blue',
-                        verbose = verbose)
+    printColoredMessage(
+        message = '- Add overall sample number to the anchors.',
+        color = 'blue',
+        verbose = verbose)
     for (x in 1:length(groups)) {
         index.a <- all.anchors$sample1[all.anchors$dataset1 == x]
         all.anchors$sample.index1[all.anchors$dataset1 == x] <- all.samples.index[se.obj[[uv.variable]] == groups[x]][index.a]
@@ -307,10 +309,11 @@ createUnSupervisedPRPSbyAnchors <- function(
         verbose = verbose)
 
     ## check initial coverage ####
-    printColoredMessage(message = '- Check the distribution of the PRPS sets across the batches.',
-                        color = 'blue',
-                        verbose = verbose)
-    prps.coverage <-matrix(0, nrow = length(all.prps.sets), ncol = length(groups))
+    printColoredMessage(
+        message = '- Check the distribution of the PRPS sets across the batches.',
+        color = 'blue',
+        verbose = verbose)
+    prps.coverage <- matrix(0, nrow = length(all.prps.sets), ncol = length(groups))
     colnames(prps.coverage) <- groups
     prps.coverage <- lapply(seq_along(all.prps.sets), function(i) {
         index <- match(names(prps.coverage[i, ]), names(all.prps.sets[[i]]$anchor.sets))
@@ -352,22 +355,22 @@ createUnSupervisedPRPSbyAnchors <- function(
             message = 'There is no any acnhor or PRPS sets that cover all batches. We assess the connection between differet sets:',
             color = 'blue',
             verbose = verbose)
-        prps.connection <- lapply(
-            1:nrow(prps.coverage),
-            function(y) {
-                batch.names.a <- names(which(prps.coverage[y, ] > 0))
-                con.prps <- lapply(c(1:nrow(prps.coverage))[-y],
-                           function(z) {
-                               batch.names.b <- names(which(prps.coverage[z, ] > 0))
-                               inter.samples <- intersect(batch.names.a, batch.names.b)
-                               if (length(inter.samples) > 0) {
-                                   sort(unique(c( batch.names.a, batch.names.b)), decreasing = FALSE)
-                               } else sort(batch.names.a, decreasing = FALSE)
-                           })
-                all <- sort(unique(unlist(Filter(Negate(is.null), con.prps))), decreasing = FALSE)
-                if (all.equal(all, groups))
-                    break
-            })
+        prps.connection <- list()
+        for(y in 1:nrow(prps.coverage)){
+            batch.names.a <- names(which(prps.coverage[y, ] > 0))
+            con.prps <- lapply(c(1:nrow(prps.coverage))[-y],
+                               function(z) {
+                                   batch.names.b <- names(which(prps.coverage[z, ] > 0))
+                                   inter.samples <- intersect(batch.names.a, batch.names.b)
+                                   if (length(inter.samples) > 0) {
+                                       sort(unique(c( batch.names.a, batch.names.b)), decreasing = FALSE)
+                                   } else sort(batch.names.a, decreasing = FALSE)
+                               })
+            all <- sort(unique(unlist(Filter(Negate(is.null), con.prps))), decreasing = FALSE)
+            prps.connection[[y]] <- all
+            if (all.equal(all, groups))
+                break
+        }
         all.covered.batches <- Filter(Negate(is.null), prps.connection)
         all.covered.batches <- unique(all.covered.batches)
         all.not.covered.batches <- unique(unlist(all.covered.batches))[unique(unlist(all.covered.batches)) %in% groups]
@@ -564,32 +567,26 @@ createUnSupervisedPRPSbyAnchors <- function(
         printColoredMessage(message = 'There is no any acnhor or PRPS sets that cover all batches. We assess the connection between differet sets:',
                             color = 'blue',
                             verbose = verbose)
-        prps.connection <- lapply(1:nrow(prps.coverage),
-                                  function(y) {
-                                      batch.names.a <- names(which(prps.coverage[y,] > 0))
-                                      con.prps <-
-                                          lapply(c(1:nrow(prps.coverage))[-y],
-                                                 function(z) {
-                                                     batch.names.b <- names(which(prps.coverage[z,] > 0))
-                                                     inter.samples <-
-                                                         intersect(batch.names.a, batch.names.b)
-                                                     if (length(inter.samples) > 0) {
-                                                         sort(unique(c(
-                                                             batch.names.a, batch.names.b
-                                                         )), decreasing = FALSE)
-                                                     } else {
-                                                         sort(batch.names.a, decreasing = FALSE)
-                                                     }
-                                                 })
-                                      all <-
-                                          sort(unique(unlist(Filter(
-                                              Negate(is.null), con.prps
-                                          ))), decreasing = FALSE)
-                                      if (all.equal(all, groups))
-                                          break
-                                  })
-        all.covered.batches <-
-            Filter(Negate(is.null), prps.connection)
+        prps.connection <- list()
+        for(y in 1:nrow(prps.coverage)){
+            batch.names.a <- names(which(prps.coverage[y, ] > 0))
+            con.prps <- lapply(c(1:nrow(prps.coverage))[-y],
+                               function(z) {
+                                   batch.names.b <- names(which(prps.coverage[z, ] > 0))
+                                   inter.samples <-
+                                       intersect(batch.names.a, batch.names.b)
+                                   if (length(inter.samples) > 0) {
+                                       sort(unique(c(batch.names.a, batch.names.b)), decreasing = FALSE)
+                                   } else {
+                                       sort(batch.names.a, decreasing = FALSE)
+                                   }
+                               })
+            all <- sort(unique(unlist(Filter(Negate(is.null), con.prps))), decreasing = FALSE)
+            prps.connection[[y]] <- all
+            if (all.equal(all, groups))
+                break
+        }
+        all.covered.batches <- Filter(Negate(is.null), prps.connection)
         all.covered.batches <- unique(all.covered.batches)
         all.not.covered.batches <-
             unique(unlist(all.covered.batches))[unique(unlist(all.covered.batches)) %in% groups]
