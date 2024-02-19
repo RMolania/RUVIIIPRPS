@@ -104,7 +104,7 @@ plotDGE <- function(
                 include.lowest = TRUE)
             frequency <- table(binned)[1]
         })
-    ylim.pvalue <- ceiling(x = max(ylim.pvalue), digits = 0)
+    ylim.pvalue <- ceiling(x = max(ylim.pvalue))
 
     # plots ####
     all.pval.plots <- lapply(
