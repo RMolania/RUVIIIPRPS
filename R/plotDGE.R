@@ -18,6 +18,7 @@
 #' @param variable Symbol. Specifies the column name in the SummarizedExperiment object containing a categorical variable
 #' , such as sample types or batches
 #' @param plot.ncol Numeric. Indicates number of columns in the plot grid.
+#' @param plot.nrow Numeric. Indicates number of rows in the plot grid.
 #' @param plot.output Logical. Indicates whether to plot the p-values histograms when the functions is running, by default
 #' it is set to 'FALSE'.
 #' @param save.se.obj Logical. Indicates whether to save the result in the metadata of the SummarizedExperiment class
@@ -37,16 +38,18 @@ plotDGE <- function(
         assay.names = 'all',
         variable,
         plot.ncol = 1,
+        plot.nrow = 2,
         plot.output = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
-){
+        ){
     # check the inputs ####
     if (is.null(assay.names)) {
         stop('The "assay.names" cannot be empty.')
     } else if (is.null(variable)) {
         stop('The "variable" cannot be empty.')
     }
+
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
@@ -60,11 +63,12 @@ plotDGE <- function(
         levels(assay.names),
         function(x) {
             if (!x %in% names(se.obj@metadata[['metric']]))
-                stop(paste0('Any DEA analysis has not been computed yet on the  ', x, ' assay'))
+                stop(paste0('Any DGE analysis has not been computed yet on the  ', x, ' data.'))
         })
+
     # obtain tests ####
     printColoredMessage(
-        message = '-- Obtained computed p-values of the DGE analysis from the SummarizedExperiment object:',
+        message = '-- Obtain p-values of the DGE analysis',
         color = 'magenta',
         verbose = verbose
     )
@@ -72,7 +76,7 @@ plotDGE <- function(
         levels(assay.names),
         function(x) {
             printColoredMessage(
-                message = paste0('-Obtain computed p-values of the DGE analysis for the', x, 'data.'),
+                message = paste0('- Collect computed p-values of the DGE analysis for the ', x, ' data.'),
                 color = 'blue',
                 verbose = verbose
             )
@@ -88,11 +92,26 @@ plotDGE <- function(
         })
     names(all.de.tests) <- levels(assay.names)
     p.vals <- everything <- NULL
+
+    # specified ylim ####
+    breaks <- seq(from = 0, to = 1, by = .1)
+    ylim.pvalue <- sapply(
+        assay.names,
+        function(x) {
+            binned <- cut(
+                x = all.de.tests[[x]][, 1],
+                breaks = breaks,
+                include.lowest = TRUE)
+            frequency <- table(binned)[1]
+        })
+    ylim.pvalue <- ceiling(x = max(ylim.pvalue), digits = 0)
+
+    # plots ####
     all.pval.plots <- lapply(
         levels(assay.names),
         function(x){
             printColoredMessage(
-                message = paste0('-Generate p-values p-values histograms for the', x, 'data.'),
+                message = paste0('- Generate p-values histograms for the ', x, ' data.'),
                 color = 'blue',
                 verbose = verbose
             )
@@ -101,15 +120,16 @@ plotDGE <- function(
                 colnames(pval.data) <- 'p.vals'
                 pval.plot <- ggplot(pval.data, aes(x = p.vals)) +
                     geom_histogram(binwidth = 0.1) +
-                    ylab('Frequency') +
+                    scale_y_continuous(labels = function(x) format(x / 1000, scientific = F), limits = c(0,ylim.pvalue)) +
+                    ggtitle(x) +
                     xlab('p-values') +
-                    ggtitle(paste0('p-value histograms, ', x)) +
+                    ylab('Frequency') +
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', linewidth = 1),
-                        axis.title.x = element_text(size = 18),
-                        axis.title.y = element_text(size = 18),
-                        plot.title = element_text(size = 15),
+                        axis.title.x = element_text(size = 12),
+                        axis.title.y = element_text(size = 12),
+                        plot.title = element_text(size = 14),
                         axis.text.x = element_text(size = 8),
                         axis.text.y = element_text(size = 8))
             } else {
@@ -120,10 +140,11 @@ plotDGE <- function(
                         values_to = 'p.vals')
                 pval.plot <- ggplot(pval.data, aes(x = p.vals)) +
                     geom_histogram(binwidth = 0.1) +
-                    ylab('Frequency') +
+                    scale_y_continuous(labels = function(x) format(x / 1000, scientific = F), limits = c(0,ylim.pvalue)) +
+                    ggtitle(x) +
                     xlab('p-values') +
+                    ylab('Frequency') +
                     facet_wrap(~contrasts) +
-                    ggtitle(paste0('p-value histograms, ', x)) +
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', linewidth = 1),
@@ -133,18 +154,23 @@ plotDGE <- function(
                         axis.text.x = element_text(size = 8),
                         axis.text.y = element_text(size = 8))
             }
+            if(isTRUE(plot.output) & length(assay.names) == 1) print(pval.plot)
             return(pval.plot)
         })
-    names(all.pval.plots) <-  levels(assay.names)
+    names(all.pval.plots) <- levels(assay.names)
 
     # overall plots
     printColoredMessage(
-        message = '-Generate p-values histograms for all the assays.' ,
+        message = '-Generate p-values histograms for all the datasets.' ,
         color = 'blue',
         verbose = verbose)
-    overall.pvals.plots <- ggarrange(plotlist = all.pval.plots, ncol = plot.ncol)
-    if(plot.output)
-        print(overall.pvals.plots)
+    overall.pvals.plots <- ggpubr::ggarrange(
+        plotlist = all.pval.plots,
+        ncol = plot.ncol,
+        nrow = plot.nrow)
+    if(isTRUE(plot.output))
+        suppressMessages(print(overall.pvals.plots))
+
     ## add results to the SummarizedExperiment object ####
     if (save.se.obj == TRUE) {
         for (x in levels(assay.names)) {
@@ -155,7 +181,6 @@ plotDGE <- function(
             message = 'The Wilcoxon results for indiviaul assay are saved to metadata@metric',
             color = 'blue',
             verbose = verbose)
-
 
         printColoredMessage(message = '------------The genesDEA function finished.',
                             color = 'white',
@@ -189,8 +214,10 @@ plotDGE <- function(
                             verbose = verbose)
         if(length(assay.names) == 1){
             return(all.pval.plots = all.pval.plots)
-        } else{
-            return(all.pval.plots = all.pval.plots, overall.pvals.plots = overall.pvals.plots)
+        } else {
+            return(
+                all.pval.plots = all.pval.plots,
+                overall.pvals.plots = overall.pvals.plots)
         }
     }
 }

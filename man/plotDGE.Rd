@@ -9,6 +9,7 @@ plotDGE(
   assay.names = "all",
   variable,
   plot.ncol = 1,
+  plot.nrow = 2,
   plot.output = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE
@@ -25,6 +26,8 @@ SummarizedExperiment object will be selected.}
 , such as sample types or batches}
 
 \item{plot.ncol}{Numeric. Indicates number of columns in the plot grid.}
+
+\item{plot.nrow}{Numeric. Indicates number of rows in the plot grid.}
 
 \item{plot.output}{Logical. Indicates whether to plot the p-values histograms when the functions is running, by default
 it is set to 'FALSE'.}

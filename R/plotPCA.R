@@ -57,7 +57,7 @@ plotPCA <- function(
         stroke.size = .2,
         points.alpha = .5,
         densities.alpha = .5,
-        plot.ncol = 1,
+        plot.ncol = NULL,
         plot.nrow = 3,
         save.se.obj = TRUE,
         verbose = TRUE
@@ -238,12 +238,15 @@ plotPCA <- function(
                     for (n in 2:length(assay.names))
                         p <- c(p, all.scat.pca.plots[[levels(assay.names)[n]]])
                 }
+                if(is.null(plot.ncol)) plot.ncol <- ncol(combn(length(seq_len(nb.pcs)), 2))
                 overall.scat.pca.plot <- ggarrange(
                     plotlist = p,
                     common.legend = TRUE,
                     legend = "bottom",
-                    nrow = 2,
-                    ncol = ncol(combn(nb.pcs, 2)))
+                    nrow = plot.nrow,
+                    ncol = plot.ncol
+                    )
+                if(isTRUE(plot.output)) print(overall.scat.pca.plot)
             }
         } else{
             printColoredMessage(
@@ -347,10 +350,13 @@ plotPCA <- function(
             })
         names(all.scat.var.pca.plots) <- levels(assay.names)
         if(length(assay.names) > 1){
+            if(is.null(plot.ncol)) plot.ncol <- ncol(combn(length(seq_len(nb.pcs)), 2))
             overall.scat.var.pca.plot <- ggarrange(
                 plotlist = all.scat.var.pca.plots,
                 nrow = plot.nrow,
                 ncol = plot.ncol)
+            if(isTRUE(plot.output))
+                suppressMessages(print(overall.scat.var.pca.plot))
         }
     }
 

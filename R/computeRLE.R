@@ -19,8 +19,10 @@
 
 #' @references
 #' Gandolfo L. C. & Speed, T. P., RLE plots: visualizing unwanted variation in high dimensional data. PLoS ONE, 2018.
+#'
 #' Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
 #' 2019.
+#'
 #' Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
 #' Nature Biotechnology, 2023
 
@@ -70,7 +72,7 @@ computeRLE <- function(
                         verbose = verbose)
     # check inputs ####
     if(is.list(assay.names)){
-        stop('The "assay.names" must be a vector of the assay names(s) or assay.names = "all".')
+        stop('The "assay.names" must be a vector of assay names(s) or assay.names = "all".')
     }
     if (isTRUE(apply.log)){
         if (pseudo.count < 0)
@@ -98,11 +100,10 @@ computeRLE <- function(
             assay.names = assay.names,
             variables = NULL,
             remove.na = remove.na,
-            verbose = verbose)}
-
+            verbose = verbose)
+        }
     # data transformation ####
-    printColoredMessage(
-        message = paste0('-- Data transformation:'),
+    printColoredMessage( message = paste0('-- Data transformation:'),
         color = 'magenta',
         verbose = verbose)
     all.assays <- lapply(
@@ -165,7 +166,7 @@ computeRLE <- function(
                     rle.iqr = rle.iqr)
             } else if (outputs.to.return == 'rle.data'){
                 printColoredMessage(
-                    message = '-obtain the RLE data.',
+                    message = '- obtain the RLE data.',
                     color = 'blue',
                     verbose = verbose)
                 rle <- list(rle.data = rle.data)
@@ -175,7 +176,7 @@ computeRLE <- function(
                     color = 'blue',
                     verbose = verbose)
                 printColoredMessage(
-                    message = '-Obtain the RLE medians.',
+                    message = '- Obtain the RLE medians.',
                     color = 'blue',
                     verbose = verbose)
                 rle.med <- matrixStats::colMedians(rle.data)

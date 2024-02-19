@@ -165,9 +165,7 @@ plotRleVariable <- function(
             if(class(colData(se.obj)[[variable]]) %in% c('numeric', 'integr')){
                 # scatter plot ####
                 printColoredMessage(
-                    message = paste0('-Generate a scatter plot between the RLE medians of the ',
-                                     x,
-                                     ' data and the variable:'),
+                    message = paste0('-Generate a scatter plot between the RLE medians of the ', x,' data and the variable:'),
                     color = 'blue',
                     verbose = verbose)
                 p.rle <- ggplot(rle.med.data, aes(x = var, y = rle.medians)) +
@@ -176,13 +174,16 @@ plotRleVariable <- function(
                     xlab(variable) +
                     ylab('RLE medians') +
                     geom_smooth(formula = y ~ x, method = 'lm') +
-                    ggpubr::stat_cor(aes(label = ..r.label..), color = 'red', label.y = max(ylim.rle.med)) +
+                    ggpubr::stat_cor(
+                        aes(label = r.label),
+                        color = 'red',
+                        label.y = max(ylim.rle.med)) +
                     coord_cartesian(ylim = ylim.rle.med.plot) +
                     theme(panel.background = element_blank(),
                            axis.line = element_line(colour = 'black', linewidth = 1),
-                           axis.title.x = element_text(size = 14),
-                           axis.title.y = element_text(size = 14),
-                           axis.text.x = element_text(size = 14),
+                           axis.title.x = element_text(size = 12),
+                           axis.title.y = element_text(size = 12),
+                           axis.text.x = element_text(size = 19),
                            axis.text.y = element_text(size = 10),
                            legend.position = 'bottom')
             } else{
@@ -257,7 +258,7 @@ plotRleVariable <- function(
                     xlab(variable) +
                     ylab('RLE IQRs') +
                     geom_smooth(formula = y ~ x, method = 'lm') +
-                    ggpubr::stat_cor(aes(label = ..r.label..), color = 'red', label.y = max(ylim.rle.iqr)) +
+                    ggpubr::stat_cor(aes(label = r.label), color = 'red', label.y = max(ylim.rle.iqr)) +
                     coord_cartesian(ylim = ylim.rle.iqr.plot) +
                     theme(panel.background = element_blank(),
                           axis.line = element_line(colour = 'black', linewidth = 1),
