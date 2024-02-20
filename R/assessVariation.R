@@ -155,10 +155,9 @@ assessVariation <- function(
         se.obj <- checkSeObj(
             se.obj = se.obj,
             assay.names = assay.names,
-            variables = NULL,
-            remove.na = 'measurements',
-            verbose = verbose
-        )
+            variables = variables,
+            remove.na = remove.na,
+            verbose = verbose)
     }
 
     # find categorical and continuous variables ####
@@ -192,12 +191,12 @@ assessVariation <- function(
     ## RLE #####
     ### compute rle #####
     if('RLE' %in% metrics.table$Metrics){
-        if('General' %in% metrics.table$Factors &
+        if('RLEplot' %in% metrics.table$PlotTypes &
            'rleMedians' %in% metrics.table$Factors &
            'rleIqr' %in% metrics.table$Factors ){
             rle.outputs.to.return <- 'all'
         }
-        if(!'General' %in% metrics.table$Factors &
+        if(!'RLEplot' %in% metrics.table$PlotTypes &
            'rleMedians' %in% metrics.table$Factors &
            'rleIqr' %in% metrics.table$Factors ){
             rle.outputs.to.return <- 'rle.med.iqr'
@@ -212,7 +211,19 @@ assessVariation <- function(
             remove.na = 'none',
             save.se.obj = TRUE,
             verbose = verbose)
-        }
+
+        ### benchmark rle #####
+        rle.med.scores <- sapply(
+            assay.names,
+            function(x){
+                med <- abs(se.obj@metadata$metric[[x]]$RLE$rle.data$rle.med)
+                med.qun <- quantile(x = med, probs = seq(.25, 1, .25))
+                1 - c(med.qun[[2]]/c(med.qun[[3]] - med.qun[[1]]) )
+            })
+        names(rle.med.scores) <- assay.names
+    }
+
+
 
     ### plot general rle #####
     if('RLEplot' %in% metrics.table$PlotTypes){
@@ -255,6 +266,8 @@ assessVariation <- function(
     if('rleMedians' %in% metrics.table$Factors){
         index <- metrics.table$Factors == 'rleMedians'
         rleMedplot.vars <- metrics.table$Variables[index]
+        rle.var.corr.aov <- list()
+        rle.var.corr.scores <- list()
         for(i in rleMedplot.vars){
             se.obj <- plotRleVariable(
                 se.obj = se.obj,
@@ -268,6 +281,14 @@ assessVariation <- function(
                 plot.output = FALSE,
                 save.se.obj = TRUE,
                 verbose = verbose)
+            if(class(colData(se.obj)[[i]]) %in% c('factor', 'character')){
+                rle.var.corr.aov[i] <- summary(aov(
+                    formula = se.obj@metadata$metric$HTseq_counts$RLE$rle.data$rle.med ~ colData(se.obj)[[i]]))
+            } else{
+                rle.var.corr.scores[i] <- suppressWarnings(cor.test(
+                    x = se.obj@metadata$metric$HTseq_counts$RLE$rle.data$rle.med,
+                    y = colData(se.obj)[[i]], method = 'spearman')[[4]])
+            }
         }
     }
 
@@ -359,6 +380,7 @@ assessVariation <- function(
     if('PcaVecCorr' %in% metrics.table$Metrics){
         index <- metrics.table$Metrics == 'PcaVecCorr'
         pc.vec.corr.vars <- metrics.table$Variables[index]
+        pc.vec.corr.scores <- list()
         for(i in pc.vec.corr.vars){
             se.obj <- computePCVariableCorrelation(
                 se.obj = se.obj,
@@ -368,7 +390,12 @@ assessVariation <- function(
                 nb.pcs = compute.nb.pcs,
                 save.se.obj = TRUE,
                 verbose = verbose)
+            for(j in assay.names){
+                pc.vec.corr.scores[[i]] <- se.obj@metadata$metric[[j]]$pcs.vect.corr[[i]]$corrs
+            }
+
         }
+
     }
     ### plot vector correlation ####
     if('PcaVecCorr' %in% metrics.table$Metrics){
@@ -392,6 +419,7 @@ assessVariation <- function(
     if('PcaReg' %in% metrics.table$Metrics){
         index <- metrics.table$Metrics == 'PcaReg'
         pc.reg.vars <- metrics.table$Variables[index]
+        pc.reg.scores <- list()
         for(i in pc.reg.vars){
             se.obj <- computePCVariableRegression(
                 se.obj = se.obj,
@@ -401,6 +429,9 @@ assessVariation <- function(
                 nb.pcs = compute.nb.pcs,
                 save.se.obj = TRUE,
                 verbose = verbose)
+            for(j in assay.names){
+                pc.reg.scores[[i]] <- se.obj@metadata$metric[[j]]$pcs.lm[[i]]$rseq
+            }
         }
     }
     ### plot linear regression ####
@@ -431,6 +462,7 @@ assessVariation <- function(
         sil.combined.vars <- metrics.table$Variables[index.combined]
         sil.combined.vars <- unlist(strsplit(x = sil.combined.vars, split = '&'))
         all.sil.vars <- unique(c(sil.single.vars, sil.combined.vars))
+        sil.scores <- list()
         for(i in all.sil.vars){
             se.obj <- computeSilhouette(
                 se.obj = se.obj,
@@ -441,6 +473,9 @@ assessVariation <- function(
                 nb.pcs = sil.nb.pcs,
                 save.se.obj = TRUE,
                 verbose = verbose)
+            for(j in assay.names){
+                sil.scores[[i]] <- se.obj@metadata$metric[[j]]$silhouette$sil.euclidian[[i]]$silhouette
+            }
         }
     }
     ### barplot silhouette coefficients  ####
@@ -487,6 +522,7 @@ assessVariation <- function(
         ari.combined.vars <- metrics.table$Variables[index.combined]
         ari.combined.vars <- unlist(strsplit(x = ari.combined.vars, split = '&'))
         all.ari.vars <- unique(c(ari.single.vars, ari.combined.vars))
+        ari.scores <- list()
         for(i in all.ari.vars){
             se.obj <- computeARI(
                 se.obj = se.obj,
@@ -499,6 +535,9 @@ assessVariation <- function(
                 nb.pcs = ari.nb.pcs,
                 save.se.obj = TRUE,
                 verbose = verbose)
+            for(j in assay.names){
+                sil.scores[[i]] <- se.obj@metadata$metric[[j]]$ari$hclust.complete.euclidian[[i]]$ari
+            }
         }
     }
     ### barplot adjusted rand index  ####
