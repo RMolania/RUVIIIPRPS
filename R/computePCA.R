@@ -119,7 +119,7 @@ computePCA <- function(
             temp.data <- as.matrix(assay(x = se.obj, i = x))
             if (isTRUE(apply.log) & !is.null(pseudo.count)) {
                 printColoredMessage(
-                    message = paste0('Apply log2 + ', pseudo.count,  ' (pseudo.count) on the' , x, ' data.'),
+                    message = paste0('Apply log2 + ', pseudo.count,  ' (pseudo.count) on the ' , x, ' data.'),
                     color = 'blue',
                     verbose = verbose)
                 temp.data <- log2(temp.data + pseudo.count)

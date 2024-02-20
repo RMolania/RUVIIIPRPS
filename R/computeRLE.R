@@ -4,7 +4,7 @@
 
 #' @description
 #' This function calculates relative log expression (RLE) of the assay(s) in a SummarizedExperiment object. In addition,
-#' the function returns the RLE medians and interquartile ranges (IQRs) of each sample for individual assays.
+#' the function returns the RLE medians and interquartile ranges (IQRs) of each sample for individual assay(s).
 
 #' @details
 #' RLE plots are used to reveal trends, temporal clustering and other non-random patterns resulting from unwanted variation
@@ -103,7 +103,7 @@ computeRLE <- function(
             verbose = verbose)
         }
     # data transformation ####
-    printColoredMessage( message = paste0('-- Data transformation:'),
+    printColoredMessage( message ='-- Data transformation:',
         color = 'magenta',
         verbose = verbose)
     all.assays <- lapply(
@@ -256,7 +256,7 @@ computeRLE <- function(
     } else if (save.se.obj == FALSE) {
         ### return a list ####
         printColoredMessage(
-            message = 'The RLE data of individual assays are outputed as a list.',
+            message = 'The RLE data of individual assay(s) are outputed as a list.',
             color = 'blue',
             verbose = verbose)
         printColoredMessage(message = '------------The computeRLE function finished.',
