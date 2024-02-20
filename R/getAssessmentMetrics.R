@@ -185,7 +185,89 @@ getAssessmentMetrics <- function(
             final.metrics.table$Variables[final.metrics.table$Variables == names(all.var.char[i])] <- cur.name
         }
     }
+    final.metrics.table.toplot <- final.metrics.table
     final.metrics.table <- rbind(final.metrics.table , general.plot)
+
+    # plot ####
+    plot.metrics <- lapply(
+        variables,
+        function(x){
+            sub.final.metrics.table.toplot <- final.metrics.table.toplot[final.metrics.table.toplot$Variables == x, ]
+            metrics.tree <- tibble::tibble(
+                from = sub.final.metrics.table.toplot$Variables,
+                to = paste(
+                    paste0('T: ', sub.final.metrics.table.toplot$Metrics),
+                    paste0('V: ', sub.final.metrics.table.toplot$Factors),
+                    paste0('P: ', sub.final.metrics.table.toplot$PlotTypes),
+                    sep = '\n'))
+            g <- igraph::graph_from_data_frame(metrics.tree, directed = TRUE)
+            coords <- igraph::layout_as_tree(g)
+            colnames(coords) <- c("x", "y")
+            output.df <- tibble::as_tibble(coords) %>%
+                mutate(
+                    step = igraph::vertex_attr(g, "name"),
+                    label = gsub("\\d+$", "", step),
+                    x = x * -1,
+                    type = factor(1))
+            plot.nodes = output.df %>%
+                mutate(
+                    xmin = x - 0.45,
+                    xmax = x + 0.45,
+                    ymin = y - 0.1,
+                    ymax = y + 0.1)
+            plot.edges <- metrics.tree %>%
+                dplyr::mutate(id = dplyr::row_number()) %>%
+                pivot_longer(
+                    cols = c("from", "to"),
+                    names_to = "s_e",
+                    values_to = "step") %>%
+                dplyr::left_join(plot.nodes, by = "step") %>%
+                dplyr::select(-c(label, type, y, xmin, xmax)) %>%
+                dplyr::mutate(y = ifelse(s_e == "from", ymin, ymax)) %>%
+                dplyr::select(-c(ymin, ymax))
+            plot.nodes$xmin[1] <- 0
+            plot.nodes$ymin[1] <- 0
+            plot.nodes$xmax[1] <- 0
+            plot.nodes$ymax[1] <- 0
+            p <- ggplot() + geom_rect(
+                data = plot.nodes,
+                mapping = aes(
+                    xmin = xmin,
+                    ymin = ymin,
+                    xmax = xmax,
+                    ymax = ymax,
+                    fill = type,
+                    colour = type),
+                alpha = 0.5,
+                color = 'grey',
+                fill = 'white')
+            p <- p + geom_text(
+                data = plot.nodes[1,],
+                mapping = aes(x = x, y = y, label = label),
+                color = "black", size = 10
+            )
+            p <- p + geom_text(
+                data = plot.nodes[-1,],
+                mapping = aes(x = x, y = y, label = label),
+                color = "black",angle = 30
+            )
+            p <- p + geom_path(
+                data = plot.edges,
+                mapping = aes(x = x, y = y, group = id),
+                colour = "#585c45",
+                arrow = arrow(length = unit(0.3, "cm"), type = "closed")
+            )
+            p <- p +  theme(
+                panel.background = element_blank(),
+                axis.text = element_blank(),
+                axis.title = element_blank(),
+                axis.ticks.x = element_blank(),
+                axis.ticks.y = element_blank(),
+                legend.position = 'none')
+        })
+    pdf('ppp.pdf', width = 24, height = 14)
+    ggarrange(plotlist = plot.metrics)
+    dev.off()
     return(all.metrics = list(
         final.metrics.list = unlist(final.metrics.list),
         final.metrics.table = final.metrics.table))
