@@ -141,14 +141,14 @@ computeARI <- function(
                 color = 'blue',
                 verbose = verbose)
             if (fast.pca) {
-                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]])) {
+                if (!'fast.pca' %in% names(se.obj@metadata[['metric']][[x]][['PCA']])) {
                     stop('To compute the ARI the fast PCA must be computed first on the assay ', x, ' .')
                 }
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']][['pca.data']]$svd$u
             } else {
-                if(!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                if(!'pca' %in% names(se.obj@metadata[['metric']][[x]][['PCA']]))
                     stop('To compute the ARI the PCA must be computed first on the assay ', x, ' .')
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']][['pca']][['pca.data']]$svd$u
             }
             if(ncol(pca.data) < nb.pcs){
                 printColoredMessage(
@@ -219,13 +219,13 @@ computeARI <- function(
                 se.obj@metadata[['metric']][[x]] <- list()
             }
             ## check if metadata metric already exist for this assay and this metric
-            if (!'ari' %in% names(se.obj@metadata[['metric']][[x]])) {
-                se.obj@metadata[['metric']][[x]][['ari']] <- list()
+            if (!'ARI' %in% names(se.obj@metadata[['metric']][[x]])) {
+                se.obj@metadata[['metric']][[x]][['ARI']] <- list()
             }
             if(clustering.method == 'mclust'){
                 out.put.name <- 'mclust'
             } else out.put.name <- paste0('hclust.', hclust.method, '.', hclust.dist.measure)
-            se.obj@metadata[['metric']][[x]][['ari']][[out.put.name]][[variable]][['ari']] <- all.ari[[x]]
+            se.obj@metadata[['metric']][[x]][['ARI']][[out.put.name]][[variable]][['ari']] <- all.ari[[x]]
         }
         printColoredMessage('The ARI results of induvial assays are saved to metadata@metric.',
                             color = 'blue',

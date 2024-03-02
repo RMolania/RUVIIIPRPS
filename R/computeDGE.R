@@ -97,7 +97,7 @@ computeDGE <- function(
                 printColoredMessage(message = paste0(
                     'Perform log2 + ',
                     pseudo.count,
-                    '(pseudo.count) on the ',
+                    ' (pseudo.count) on the ',
                     x,
                     ' data.'),
                     color = 'blue',
@@ -170,7 +170,7 @@ computeDGE <- function(
                 se.obj@metadata[['metric']][[x]][['DGE']] <- list()
             }
             ## check if metadata metric already exist for this assay, this metric and this variable
-            se.obj@metadata[['metric']][[x]][['DGE']][[variable]][['p.vals']] <- all.wilcoxon.tests[[x]]
+            se.obj@metadata[['metric']][[x]][['DGE']][[variable]][['p.values']] <- all.wilcoxon.tests[[x]]
         }
         printColoredMessage(
             message = 'The Wilcoxon results for indiviaul assay are saved to metadata@metric.',

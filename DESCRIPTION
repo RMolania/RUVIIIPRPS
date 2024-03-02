@@ -17,6 +17,8 @@ Imports:
     SummarizedExperiment,
     BiocSingular,
     ggpubr,
+    tibble,
+    igraph,
     BiocNeighbors,
     RANN,
     Seurat,

@@ -111,13 +111,13 @@ computePCVariableCorrelation <- function(
                 color = 'blue',
                 verbose = verbose)
             if (fast.pca) {
-                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                if (!'fast.pca' %in% names(se.obj@metadata[['metric']][[x]][['PCA']]))
                     stop('To compute the regression, the fast PCA must be computed first on the assay ', x, ' .' )
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']][['pca.data']]$svd$u
             } else {
-                if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                if (!'pca' %in% names(se.obj@metadata[['metric']][[x]][['PCA']][['pca']]))
                     stop('To compute the regression, the PCA must be computed first on the assay ', x,' .')
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']][['pca']][['pca.data']]$svd$u
             }
             if(ncol(pca.data) < nb.pcs){
                 printColoredMessage(
@@ -165,16 +165,16 @@ computePCVariableCorrelation <- function(
                 se.obj@metadata[['metric']][[x]] <- list()
             }
             ## check if metadata metric already exist for this assay and this metric
-            if (!'pcs.vect.corr' %in% names(se.obj@metadata[['metric']][[x]])) {
-                se.obj@metadata[['metric']][[x]][['pcs.vect.corr']] <- list()
+            if (!'VCA' %in% names(se.obj@metadata[['metric']][[x]])) {
+                se.obj@metadata[['metric']][[x]][['VCA']] <- list()
             }
             ## check if metadata metric already exist for this assay and this metric
-            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.vect.corr']])) {
-                se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]] <- list()
+            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['VCA']])) {
+                se.obj@metadata[['metric']][[x]][['VCA']][[variable]] <- list()
             }
-            se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]][['corrs']] <- list()
+            se.obj@metadata[['metric']][[x]][['VCA']][[variable]][['vec.cor']] <- list()
             ## check if metadata metric already exist for this assay, this metric and this variable
-            se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]][['corrs']] <- all.vec.corr[[x]]
+            se.obj@metadata[['metric']][[x]][['VCA']][[variable]][['vec.cor']] <- all.vec.corr[[x]]
         }
         printColoredMessage(
             message = 'The vector correlation for the individal assays are saved to metadata@metric',

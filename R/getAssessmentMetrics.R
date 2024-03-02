@@ -9,14 +9,22 @@
 #' @param se.obj A summarized experiment object.
 #' @param variables Symbols. A symbol and a vector of symbols indicating the columns names of variables in the samples
 #' annotation in the SummarizedExperiment object. The 'variables' can be categorical and continuous.
-
+#' @param output.file Symbol. A name for the output file.
+#' @param plot.output Logical. Whether to print the plot or not.
+#'
 #' @return A list of all possible assessment metrics for the variables.
 
 #' @importFrom SummarizedExperiment colData
+#' @importFrom tibble tibble
+#' @importFrom igraph vertex_attr layout_as_tree graph_from_data_frame
+#' @importFrom ggpubr ggarrange
+
 
 getAssessmentMetrics <- function(
         se.obj,
-        variables) {
+        variables,
+        output.file,
+        plot.output = TRUE) {
     categorical.var <- continuous.var <- NULL
     if (!is.null(variables)) {
         var.class <- sapply(
@@ -257,7 +265,7 @@ getAssessmentMetrics <- function(
                 colour = "#585c45",
                 arrow = arrow(length = unit(0.3, "cm"), type = "closed")
             )
-            p <- p +  theme(
+            p <- p + theme(
                 panel.background = element_blank(),
                 axis.text = element_blank(),
                 axis.title = element_blank(),
@@ -265,9 +273,18 @@ getAssessmentMetrics <- function(
                 axis.ticks.y = element_blank(),
                 legend.position = 'none')
         })
-    pdf('ppp.pdf', width = 24, height = 14)
-    ggarrange(plotlist = plot.metrics)
+
+    pdf(paste0(output.file, '.pdf'), width = 8*length(variables), height = 14)
+    plot.caption <- expression(atop(
+        scriptstyle("T: test | V: variable | P: plot type"))
+        )
+    all.plots <- ggarrange(plotlist = plot.metrics, common.legend = TRUE)
+    all.plots <- ggpubr::annotate_figure(
+        p = all.plots,
+        bottom = ggpubr::text_grob(label = plot.caption, size = 20))
+    print(all.plots)
     dev.off()
+    if(isTRUE(plot.output)) print(all.plots)
     return(all.metrics = list(
         final.metrics.list = unlist(final.metrics.list),
         final.metrics.table = final.metrics.table))

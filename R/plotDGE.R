@@ -86,7 +86,7 @@ plotDGE <- function(
             if (!variable %in% names(se.obj@metadata[['metric']][[x]][['DGE']]) ) {
                 stop(paste0('The DGE has not been computed yet for the ', variable, ' variable and the ', x, ' assay.'))
             }
-            de.results <- do.call(cbind, se.obj@metadata[['metric']][[x]][['DGE']][[variable]][['p.vals']])
+            de.results <- do.call(cbind, se.obj@metadata[['metric']][[x]][['DGE']][[variable]][['p.values']])
             de.results <- as.data.frame(de.results[ , seq(3, ncol(de.results), 3), drop = FALSE])
             de.results
         })
@@ -172,10 +172,12 @@ plotDGE <- function(
         suppressMessages(print(overall.pvals.plots))
 
     ## add results to the SummarizedExperiment object ####
-    if (save.se.obj == TRUE) {
+    if (isTRUE(save.se.obj)) {
         for (x in levels(assay.names)) {
             ## check if metadata metric already exist for this assay, this metric and this variable
-            se.obj@metadata[['metric']][[x]][['DGE']][[variable]][['p.vals.plot']] <- all.pval.plots[[x]]
+            if(!'p.values.plot' %in% se.obj@metadata[['metric']][[x]][['DGE']][[variable]])
+                se.obj@metadata[['metric']][[x]][['DGE']][[variable]][['p.values.plot']] <- list()
+            se.obj@metadata[['metric']][[x]][['DGE']][[variable]][['p.values.plot']] <- all.pval.plots[[x]]
         }
         printColoredMessage(
             message = 'The Wilcoxon results for indiviaul assay are saved to metadata@metric',
@@ -197,7 +199,7 @@ plotDGE <- function(
             }
             se.obj@metadata[['plot']][['DEG']][[variable]] <- overall.pvals.plots
             printColoredMessage(
-                message = paste0('The RLE plots of all assays are saved to metadata@plot'),
+                message = paste0('The p-value histograms of all assays are saved to metadata@plot'),
                 color = 'blue',
                 verbose = verbose
             )

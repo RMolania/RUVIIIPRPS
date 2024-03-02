@@ -272,18 +272,18 @@ plotRLE <- function(
                 se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']] <- list()
             }
             if(!is.null(variable)){
-                if (!variable %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']]) ){
-                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]] <- list()
+                if (!'colored.rle.plot' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']])){
+                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['colored.rle.plot']] <- list()
                 }
-                if (!'ColoredRLE' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]])){
-                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['ColoredRLE']] <- list()
+                if (!variable %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['colored.rle.plot']]) ){
+                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['colored.rle.plot']][[variable]] <- list()
                 }
-                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['ColoredRLE']] <- all.rle.plots[[x]]
+                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['colored.rle.plot']][[variable]] <- all.rle.plots[[x]]
             } else if (is.null(variable)){
-                if (!'GeneralRLE' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']])){
-                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['GeneralRLE']] <- list()
+                if (!'rle.plot' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']])){
+                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.plot']] <- list()
                 }
-                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['GeneralRLE']] <- all.rle.plots[[x]]
+                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.plot']] <- all.rle.plots[[x]]
             }
         }
         printColoredMessage(
@@ -302,18 +302,18 @@ plotRLE <- function(
                 se.obj@metadata[['plot']][['RLE']] <- list()
             }
             if(!is.null(variable)){
+                if(!'colored.rle.plot' %in% names(se.obj@metadata[['plot']][['RLE']])){
+                    se.obj@metadata[['plot']][['RLE']][['colored.rle.plot']] <- list()
+                }
                 if(variable %in% names(se.obj@metadata[['plot']][['RLE']])){
-                    se.obj@metadata[['plot']][['RLE']][[variable]] <- list()
+                    se.obj@metadata[['plot']][['RLE']][['colored.rle.plot']][[variable]] <- list()
                 }
-                if(!'ColoredRLE' %in% names(se.obj@metadata[['plot']][['RLE']][[variable]])){
-                    se.obj@metadata[['plot']][['RLE']][[variable]][['ColoredRLE']] <- list()
-                }
-                se.obj@metadata[['plot']][['RLE']][[variable]][['ColoredRLE']] <- overall.rle.plot
+                se.obj@metadata[['plot']][['RLE']][['colored.rle.plot']][[variable]] <- overall.rle.plot
             } else {
-                if(!'GeneralRLE' %in% names(se.obj@metadata[['plot']][['RLE']])){
-                    se.obj@metadata[['plot']][['RLE']][['GeneralRLE']] <- list()
+                if(!'uncolored.rle.plot' %in% names(se.obj@metadata[['plot']][['RLE']])){
+                    se.obj@metadata[['plot']][['RLE']][['uncolored.rle.plot']] <- list()
                 }
-                se.obj@metadata[['plot']][['RLE']][['GeneralRLE']] <- overall.rle.plot
+                se.obj@metadata[['plot']][['RLE']][['uncolored.rle.plot']] <- overall.rle.plot
             }
             printColoredMessage(
                 message = paste0('The RLE plots of all assays are saved to metadata@plot'),

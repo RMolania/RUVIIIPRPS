@@ -258,15 +258,15 @@ computeGenesVariableCorrelation <- function(
                 se.obj@metadata[['metric']][[x]] <- list()
             }
             ## check if metadata metric already exist for this assay and this metric
-            if (!'genes.var.corr' %in% names(se.obj@metadata[['metric']][[x]])) {
-                se.obj@metadata[['metric']][[x]][['genes.var.corr']] <- list()
+            if (!'Correlation' %in% names(se.obj@metadata[['metric']][[x]])) {
+                se.obj@metadata[['metric']][[x]][['Correlation']] <- list()
             }
             ## check if metadata metric already exist for this assay and this metric
-            if (!paste0('gene.', method, '.corr') %in% names(se.obj@metadata[['metric']][[x]][['genes.var.corr']])) {
-                se.obj@metadata[['metric']][[x]][['genes.var.corr']][[paste0('gene.', method, '.corr')]] <- list()
+            if (!method %in% names(se.obj@metadata[['metric']][[x]][['Correlation']])) {
+                se.obj@metadata[['metric']][[x]][['Correlation']][[method]] <- list()
             }
             ## check if metadata metric already exist for this assay, this metric and this variable
-            se.obj@metadata[['metric']][[x]][['genes.var.corr']][[paste0('gene.', method, '.corr')]][[variable]]$corrs <-
+            se.obj@metadata[['metric']][[x]][['Correlation']][[method]][[variable]]$cor.coef <-
                 cor.all[[x]][['corr.genes.var']][, 'correlation']
         }
         printColoredMessage(

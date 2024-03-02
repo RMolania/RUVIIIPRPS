@@ -91,13 +91,13 @@ computePCVariableRegression <- function(
                 color = 'blue',
                 verbose = verbose)
             if (fast.pca) {
-                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                if (!'fast.pca' %in% names(se.obj@metadata[['metric']][[x]][['PCA']]))
                     stop('To compute the regression,the fast PCA must be computed first on the assay ', x, ' .')
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u[colnames(se.obj),]
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']][['pca.data']]$svd$u[colnames(se.obj),]
             } else {
-                if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                if (!'pca' %in% names(se.obj@metadata[['metric']][[x]][['PCA']]))
                     stop('To compute the regression, the PCA must be computed first on the assay ', x, ' .')
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[colnames(se.obj), ]
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']][['pca']][['pca.data']]$svd$u[colnames(se.obj), ]
             }
             if(ncol(pca.data) < nb.pcs){
                 printColoredMessage(
@@ -143,14 +143,14 @@ computePCVariableRegression <- function(
                 se.obj@metadata[['metric']][[x]] <- list()
             }
             ## check if metadata metric already exist for this assay and this metric
-            if (!'pcs.lm' %in% names(se.obj@metadata[['metric']][[x]])) {
-                se.obj@metadata[['metric']][[x]][['pcs.lm']] <- list()
+            if (!'LRA' %in% names(se.obj@metadata[['metric']][[x]])) {
+                se.obj@metadata[['metric']][[x]][['LRA']] <- list()
             }
             if (!'rseq' %in% names(se.obj@metadata[['metric']][[x]][[variable]])) {
-                se.obj@metadata[['metric']][[x]][['pcs.lm']][[variable]][['rseq']] <- list()
+                se.obj@metadata[['metric']][[x]][['LRA']][[variable]][['rseq']] <- list()
             }
             ## Check if metadata metric already exist for this assay, this metric and this variable
-            se.obj@metadata[['metric']][[x]][['pcs.lm']][[variable]][['rseq']] <- all.r.squared[[x]]
+            se.obj@metadata[['metric']][[x]][['LRA']][[variable]][['rseq']] <- all.r.squared[[x]]
         }
         printColoredMessage(
             message = 'The regression results for individal assays are saved to metadata@metric',

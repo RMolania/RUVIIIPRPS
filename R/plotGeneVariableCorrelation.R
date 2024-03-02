@@ -32,7 +32,7 @@ plotGenesVariableCorrelation <- function(
         se.obj,
         assay.names = 'all',
         variable,
-        correlation.method = 'gene.spearman.corr',
+        correlation.method = 'spearman',
         plot.output = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
@@ -55,7 +55,7 @@ plotGenesVariableCorrelation <- function(
     # assays ####
     if (length(assay.names) == 1 && assay.names == 'all') {
         assay.names <- as.factor(names(assays(se.obj)))
-    } else assay.names <- as.factor(unlist(assay.names))
+    } else assay.names <- factor(x = assay.names, levels = assay.names)
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
@@ -81,16 +81,16 @@ plotGenesVariableCorrelation <- function(
                 color = 'blue',
                 verbose = verbose
             )
-            if (!'genes.var.corr' %in% names(se.obj@metadata[['metric']][[x]])) {
+            if (!'Correlation' %in% names(se.obj@metadata[['metric']][[x]])) {
                 stop(paste0('Any correlation analysis has not been computed yet on the  ', x, ' assay'))
             }
-            if (!correlation.method %in% names(se.obj@metadata[['metric']][[x]][['genes.var.corr']])) {
+            if (!correlation.method %in% names(se.obj@metadata[['metric']][[x]][['Correlation']])) {
                 stop(paste0('The ', correlation.method , ' has not been computed yet for the ', x, ' assay.'))
             }
-            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['genes.var.corr']][[correlation.method]])) {
+            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['Correlation']][[correlation.method]])) {
                 stop(paste0('The ', correlation.method , ' has not been computed yet for the ', variable, ' variable and the ', x, ' assay.'))
             }
-            corr.coeff <- se.obj@metadata[['metric']][[x]][['genes.var.corr']][[correlation.method]][[variable]]$corrs
+            corr.coeff <- se.obj@metadata[['metric']][[x]][['Correlation']][[correlation.method]][[variable]]$cor.coef
         })
     names(all.corr.coeff) <- levels(assay.names)
 
@@ -124,6 +124,7 @@ plotGenesVariableCorrelation <- function(
                     axis.text.x = element_text(size = 0),
                     axis.text.y = element_text(size = 12))
             if(isTRUE(plot.output) & length(assay.names) == 1) print(p.corr.coeff)
+            return(p.corr.coeff)
         })
     names(all.corr.coeff.plots) <- levels(assay.names)
 
@@ -162,11 +163,12 @@ plotGenesVariableCorrelation <- function(
         color = 'magenta',
         verbose = verbose)
     ## add results to the SummarizedExperiment object ####
-    if (save.se.obj == TRUE) {
+    if (isTRUE(save.se.obj)) {
         for (x in levels(assay.names)) {
             ## check if metadata metric already exist for this assay, this metric and this variable
-            se.obj@metadata[['metric']][[x]][['genes.var.corr']][[correlation.method]][[variable]]$corrs.plot <-
-                all.corr.coeff.plots[[x]]
+            if(!'cor.coef.plot' %in% se.obj@metadata[['metric']][[x]][['Correlation']][[correlation.method]][[variable]])
+                se.obj@metadata[['metric']][[x]][['Correlation']][[correlation.method]][[variable]][['cor.coef.plot']] <- list()
+            se.obj@metadata[['metric']][[x]][['Correlation']][[correlation.method]][[variable]][['cor.coef.plot']] <- all.corr.coeff.plots[[x]]
         }
         printColoredMessage(
             message = 'The correlation plots for indiviaul assay are saved to metadata@metric',
@@ -177,16 +179,16 @@ plotGenesVariableCorrelation <- function(
             if (!'plot' %in%  names(se.obj@metadata)) {
                 se.obj@metadata[['plot']] <- list()
             }
-            if (!'GeneVarCorr' %in%  names(se.obj@metadata[['plot']])) {
-                se.obj@metadata[['plot']][['GeneVarCorr']] <- list()
+            if (!'Correlation' %in%  names(se.obj@metadata[['plot']])) {
+                se.obj@metadata[['plot']][['Correlation']] <- list()
             }
-            if (!correlation.method %in%  names(se.obj@metadata[['plot']][['GeneVarCorr']])) {
-                se.obj@metadata[['plot']][['GeneVarCorr']][[correlation.method]] <- list()
+            if (!correlation.method %in%  names(se.obj@metadata[['plot']][['Correlation']])) {
+                se.obj@metadata[['plot']][['Correlation']][[correlation.method]] <- list()
             }
-            if (!variable %in%  names(se.obj@metadata[['plot']][['GeneVarCorr']][[correlation.method]])) {
-                se.obj@metadata[['plot']][['GeneVarCorr']][[correlation.method]][[variable]] <- list()
+            if (!variable %in%  names(se.obj@metadata[['plot']][['Correlation']][[correlation.method]])) {
+                se.obj@metadata[['plot']][['Correlation']][[correlation.method]][[variable]] <- list()
             }
-            se.obj@metadata[['plot']][['GeneVarCorr']][[correlation.method]][[variable]] <- overall.corr.coeff.plot
+            se.obj@metadata[['plot']][['Correlation']][[correlation.method]][[variable]] <- overall.corr.coeff.plot
 
             printColoredMessage(
                 message = paste0('The correlation plots all assays are saved to metadata@plot'),

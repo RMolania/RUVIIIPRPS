@@ -42,7 +42,7 @@ plotSilhouette <- function(
         assay.names = 'all',
         variables,
         silhouette.method = 'sil.euclidian',
-        plot.type = 'combined.plot',
+        plot.type = 'single.plot',
         plot.output = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
@@ -76,7 +76,7 @@ plotSilhouette <- function(
     m.out <- lapply(
         levels(assay.names),
         function(x) {
-            if (!'silhouette' %in% names(se.obj@metadata[['metric']][[x]]))
+            if (!'Silhouette' %in% names(se.obj@metadata[['metric']][[x]]))
                 stop(paste0('Any Silhouette analysis has not been computed yet on the  ', x,' assay'))
         })
 
@@ -97,13 +97,13 @@ plotSilhouette <- function(
                     color = 'blue',
                     verbose = verbose
                 )
-                if (!silhouette.method %in% names(se.obj@metadata[['metric']][[x]][['silhouette']])) {
+                if (!silhouette.method %in% names(se.obj@metadata[['metric']][[x]][['Silhouette']])) {
                     stop(paste0('Any ', silhouette.method ,' has not been computed yet for the ', x, ' assay.'))
                 }
-                if (!variables %in% names(se.obj@metadata[['metric']][[x]][['silhouette']][[silhouette.method]])) {
+                if (!variables %in% names(se.obj@metadata[['metric']][[x]][['Silhouette']][[silhouette.method]])) {
                     stop(paste0('The ', silhouette.method ,'has not been computed yet for the ', variables, ' variable and the ', x,' assay.'))
                 }
-                silhouette <- se.obj@metadata[['metric']][[x]][['silhouette']][[silhouette.method]][[variables]]$silhouette
+                silhouette <- se.obj@metadata[['metric']][[x]][['Silhouette']][[silhouette.method]][[variables]]$sil.coef
             })
         names(all.silhouette) <- levels(assay.names)
         ## individual plots ####
@@ -183,18 +183,18 @@ plotSilhouette <- function(
                     color = 'blue',
                     verbose = verbose
                 )
-                if (!silhouette.method %in% names(se.obj@metadata[['metric']][[x]][['silhouette']])) {
+                if (!silhouette.method %in% names(se.obj@metadata[['metric']][[x]][['Silhouette']])) {
                     stop(paste0('The ', silhouette.method ,'has not been computed yet for the ', variables,' variable and the ', x,' data.'))
                 }
                 for (i in variables) {
-                    if (!i %in% names(se.obj@metadata[['metric']][[x]][['silhouette']][[silhouette.method]])) {
+                    if (!i %in% names(se.obj@metadata[['metric']][[x]][['Silhouette']][[silhouette.method]])) {
                         stop(paste0('The ', silhouette.method ,' has not been computed yet for the ', i, ' variable and the ', x,' data.'))
                     }
                 }
                 silhouette <- c()
                 for (i in 1:length(variables))
                     silhouette[i] <-
-                    se.obj@metadata[['metric']][[x]][['silhouette']][[silhouette.method]][[variables[i]]]$silhouette
+                    se.obj@metadata[['metric']][[x]][['Silhouette']][[silhouette.method]][[variables[i]]]$sil.coef
                 return(silhouette)
             })
         names(all.silhouette) <- levels(assay.names)
@@ -270,14 +270,14 @@ plotSilhouette <- function(
         if (plot.type == 'single.plot') {
             for (i in variables) {
                 for (x in levels(assay.names)) {
-                    se.obj@metadata[['metric']][[x]][['silhouette']][[silhouette.method]][[i]][['silhouette.single.plot']] <-
+                    se.obj@metadata[['metric']][[x]][['Silhouette']][[silhouette.method]][[i]][['sil.coef.single.plot']] <-
                         all.single.silhouette.plots[[x]]
                 }
             }
         } else if (plot.type == 'combined.plot') {
             for (i in variables) {
                 for (x in levels(assay.names)) {
-                    se.obj@metadata[['metric']][[x]][['silhouette']][[silhouette.method]][[i]][['silhouette.combined.plot']] <-
+                    se.obj@metadata[['metric']][[x]][['Silhouette']][[silhouette.method]][[i]][['sil.coef.combined.plot']] <-
                         all.combined.silhouette.plots[[x]]
                 }
             }
@@ -299,21 +299,21 @@ plotSilhouette <- function(
                 se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]] <- list()
             }
             if (plot.type == 'single.plot') {
-                if (!'silhouette.single.plot' %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]])) {
-                    se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.single.plot']] <- list()
+                if (!variables %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]])) {
+                    se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]] <- list()
                 }
-                if (!variables %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.single.plot']])) {
-                    se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.single.plot']][[variables]] <- list()
+                if (!'silhouette.single.plot' %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variable]])) {
+                    se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]][['silhouette.single.plot']] <- list()
                 }
-                se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.single.plot']][[variables]] <- overall.single.silhouette.plot
+                se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]][['silhouette.single.plot']] <- overall.single.silhouette.plot
             } else if (plot.type == 'combined.plot') {
-                if (!'silhouette.combined.plot' %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]])) {
-                    se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.combined.plot']] <- list()
+                if (!variables %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]])) {
+                    se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]] <- list()
                 }
-                if (!variables %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.combined.plot']])) {
-                    se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.combined.plot']][[variables]] <- list()
+                if (!'silhouette.combined.plot' %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variable]])) {
+                    se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]][['silhouette.combined.plot']] <- list()
                 }
-                se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][['silhouette.combined.plot']][[variables]] <- overall.combined.silhouette.plot
+                se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]][['silhouette.combined.plot']] <- overall.combined.silhouette.plot
             }
             printColoredMessage(
                 message = paste0(

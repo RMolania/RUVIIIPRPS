@@ -77,7 +77,7 @@ plotARI <- function(
     m.out <- lapply(
         levels(assay.names),
         function(x) {
-            if (!'ari' %in% names(se.obj@metadata[['metric']][[x]]))
+            if (!'ARI' %in% names(se.obj@metadata[['metric']][[x]]))
                 stop(paste0('Any ARI analysis has not been computed yet on the  ', x, ' assay'))
         })
 
@@ -98,13 +98,13 @@ plotARI <- function(
                     color = 'blue',
                     verbose = verbose
                 )
-                if (!ari.method %in% names(se.obj@metadata[['metric']][[x]][['ari']])) {
+                if (!ari.method %in% names(se.obj@metadata[['metric']][[x]][['ARI']])) {
                     stop(paste0('Any ', ari.method , ' has not been computed yet for the ', x, ' assay.'))
                 }
-                if (!variables %in% names(se.obj@metadata[['metric']][[x]][['ari']][[ari.method]])) {
+                if (!variables %in% names(se.obj@metadata[['metric']][[x]][['ARI']][[ari.method]])) {
                     stop(paste0('The ', ari.method , 'has not been computed yet for the ', variables,' variable and the ', x, ' assay.'))
                 }
-                se.obj@metadata[['metric']][[x]][['ari']][[ari.method]][[variables]]$ari
+                se.obj@metadata[['metric']][[x]][['ARI']][[ari.method]][[variables]]$ari
             })
         names(all.ari) <- levels(assay.names)
         ## individual plots ####
@@ -185,18 +185,18 @@ plotARI <- function(
                     color = 'blue',
                     verbose = verbose
                 )
-                if (!ari.method %in% names(se.obj@metadata[['metric']][[x]][['ari']])) {
+                if (!ari.method %in% names(se.obj@metadata[['metric']][[x]][['ARI']])) {
                     stop(paste0('The ', ari.method ,'has not been computed yet for the ', variables, ' variable and the ', x, ' assay.'))
                 }
                 for (i in variables) {
-                    if (!i %in% names(se.obj@metadata[['metric']][[x]][['ari']][[ari.method]])) {
+                    if (!i %in% names(se.obj@metadata[['metric']][[x]][['ARI']][[ari.method]])) {
                         stop(paste0('The ', ari.method ,' has not been computed yet for the ', i, ' variable and the ', x, ' assay.'))
                     }
                 }
                 ari <- c()
                 for (i in 1:length(variables))
                     ari[i] <-
-                    se.obj@metadata[['metric']][[x]][['ari']][[ari.method]][[variables[i]]]$ari
+                    se.obj@metadata[['metric']][[x]][['ARI']][[ari.method]][[variables[i]]]$ari
                 return(ari)
             })
         names(all.ari) <- levels(assay.names)
@@ -279,13 +279,13 @@ plotARI <- function(
         if (plot.type == 'single.plot') {
             for (i in variables) {
                 for (x in levels(assay.names)) {
-                    se.obj@metadata[['metric']][[x]][['ari']][[ari.method]][[i]][['ari.single.plot']] <- all.single.ari.plots[[x]]
+                    se.obj@metadata[['metric']][[x]][['ARI']][[ari.method]][[i]][['ari.single.plot']] <- all.single.ari.plots[[x]]
                 }
             }
         } else if (plot.type == 'combined.plot') {
             for (i in variables) {
                 for (x in levels(assay.names)) {
-                    se.obj@metadata[['metric']][[x]][['ari']][[ari.method]][[i]][['ari.combined.plot']] <- all.combined.ari.plots[[x]]
+                    se.obj@metadata[['metric']][[x]][['ARI']][[ari.method]][[i]][['ari.combined.plot']] <- all.combined.ari.plots[[x]]
                 }
             }
         }
@@ -310,7 +310,7 @@ plotARI <- function(
                     se.obj@metadata[['plot']][['ARI']][[ari.method]][['ari.single.plot']] <- list()
                 }
                 if (!variables %in%  names(se.obj@metadata[['plot']][['ARI']][['ari.single.plot']])) {
-                    se.obj@metadata[['plot']][['ARI']][[ari.method]][['ari.single.plots']][[variables]] <- list()
+                    se.obj@metadata[['plot']][['ARI']][[ari.method]][['ari.single.plot']][[variables]] <- list()
                 }
                 se.obj@metadata[['plot']][['ARI']][[ari.method]][['ari.single.plot']][[variables]] <- overall.single.ari.plot
             } else if (plot.type == 'combined.plot') {

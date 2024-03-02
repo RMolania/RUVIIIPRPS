@@ -105,19 +105,19 @@ plotPCA <- function(
                 color = 'blue',
                 verbose = verbose)
             if (isTRUE(fast.pca)) {
-                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                if (!'fast.pca' %in% names(se.obj@metadata[['metric']][[x]][['PCA']]))
                     stop(paste0(
                         'To plot the PCA, the fast PCA must be computed first on the assay ', x,
                         '. Please run the computePCA function first.'))
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
-                pc.var <- se.obj@metadata[['metric']][[x]][['fastPCA']]$percentage.variation
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']][['pca.data']]$svd$u
+                pc.var <- se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']][['pca.data']]$percentage.variation
             } else if (isFALSE(fast.pca)) {
-                if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                if (!'pca' %in% names(se.obj@metadata[['metric']][[x]][['PCA']]))
                     stop(paste0(
                         'To plot the PCA, the PCA must be computed first on the assay ', x,
                         '. Please run the computePCA function first.'))
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u[, 1:nb.pcs]
-                pc.var <- se.obj@metadata[['metric']][[x]][['PCA']]$percentage.variation
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']][['pca']][['pca.data']]$svd$u[, 1:nb.pcs]
+                pc.var <- se.obj@metadata[['metric']][[x]][['PCA']][['pca']][['pca.data']]$percentage.variation
             }
             if(ncol(pca.data) < nb.pcs){
                 printColoredMessage(
@@ -377,21 +377,21 @@ plotPCA <- function(
             if(plot.type == 'scatter'){
                 for (x in levels(assay.names)) {
                     if (fast.pca) {
-                        se.obj@metadata[['metric']][[x]][['fastPCA']][[variable]][['pca.scat.plot']] <- all.scat.pca.plots.assay[[x]]
-                    } else se.obj@metadata[['metric']][[x]][['PCA']][[variable]][['pca.scat.plot']] <- all.scat.pca.plots.assay[[x]]
+                        se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']][['pca.plot']][[variable]][['pca.scat.plot']] <- all.scat.pca.plots.assay[[x]]
+                    } else se.obj@metadata[['metric']][[x]][['PCA']][['pca']][['pca.plot']][[variable]][['pca.scat.plot']] <- all.scat.pca.plots.assay[[x]]
                 }
             } else{
                 for (x in levels(assay.names)) {
                     if (fast.pca) {
-                        se.obj@metadata[['metric']][[x]][['fastPCA']][[variable]][['pca.box.plot']] <- all.boxplot.pca.plots[[x]]
-                    } else se.obj@metadata[['metric']][[x]][['PCA']][[variable]][['pca.box.plot']] <- all.boxplot.pca.plots[[x]]
+                        se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']][['pca.plot']][[variable]][['pca.box.plot']] <- all.boxplot.pca.plots[[x]]
+                    } else se.obj@metadata[['metric']][[x]][['PCA']][['pca']][['pca.plot']][[variable]][['pca.box.plot']] <- all.boxplot.pca.plots[[x]]
                 }
             }
         } else{
             for (x in levels(assay.names)) {
                 if (fast.pca) {
-                    se.obj@metadata[['metric']][[x]][['fastPCA']][[variable]][['pca.scat.var.plot']] <- all.scat.var.pca.plots[[x]]
-                } else se.obj@metadata[['metric']][[x]][['PCA']][[variable]][['pca.scat.var.plot']] <- all.scat.var.pca.plots[[x]]
+                    se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']][['pca.plot']][[variable]][['pca.var.scat.plot']] <- all.scat.var.pca.plots[[x]]
+                } else se.obj@metadata[['metric']][[x]][['PCA']][['pca']][['pca.plot']][[variable]][['pca.var.scat.plot']] <- all.scat.var.pca.plots[[x]]
             }
         }
 
@@ -405,35 +405,35 @@ plotPCA <- function(
             }
             if(fast.pca){
                 if(class(colData(se.obj)[[variable]]) %in% c('character', 'factor')){
-                    if (!'fastPCA' %in%  names(se.obj@metadata[['plot']][['PCA']])) {
-                        se.obj@metadata[['plot']][['PCA']][['fastPCA']] <- list()
+                    if (!'fast.pca' %in%  names(se.obj@metadata[['plot']][['PCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['fast.pca']] <- list()
                     }
-                    if (!variable %in%  names(se.obj@metadata[['plot']][['PCA']][['fastPCA']])) {
-                        se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]] <- list()
+                    if (!variable %in%  names(se.obj@metadata[['plot']][['PCA']][['fast.pca']])) {
+                        se.obj@metadata[['plot']][['PCA']][['fast.pca']][[variable]] <- list()
                     }
                     if(plot.type == 'scatter'){
-                        if (!'ScatPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['fastPCA']])) {
-                            se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['ScatPCA']] <- list()
-                            se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['ScatPCA']] <- overall.scat.pca.plot
+                        if (!'pca.scat.plot' %in%  names(se.obj@metadata[['plot']][['PCA']][['fast.pca']])) {
+                            se.obj@metadata[['plot']][['PCA']][['fast.pca']][[variable]][['pca.scat.plot']] <- list()
+                            se.obj@metadata[['plot']][['PCA']][['fast.pca']][[variable]][['pca.scat.plot']] <- overall.scat.pca.plot
                         }
                     } else{
-                        if (!'BoxPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['fastPCA']])) {
-                            se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['BoxPCA']] <- list()
-                            se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['BoxPCA']] <- overall.boxplot.pca.plot
+                        if (!'pca.box.plot' %in%  names(se.obj@metadata[['plot']][['PCA']][['fast.pca']])) {
+                            se.obj@metadata[['plot']][['PCA']][['fast.pca']][[variable]][['pca.box.plot']] <- list()
+                            se.obj@metadata[['plot']][['PCA']][['fast.pca']][[variable]][['pca.box.plot']] <- overall.boxplot.pca.plot
                         }
                     }
 
                 } else{
-                    if (!'fastPCA' %in%  names(se.obj@metadata[['plot']][['PCA']])) {
-                        se.obj@metadata[['plot']][['PCA']][['fastPCA']] <- list()
+                    if (!'fast.pca' %in%  names(se.obj@metadata[['plot']][['PCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['fast.pca']] <- list()
                     }
-                    if (!variable %in%  names(se.obj@metadata[['plot']][['PCA']][['fastPCA']])) {
-                        se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]] <- list()
+                    if (!variable %in%  names(se.obj@metadata[['plot']][['PCA']][['fast.pca']])) {
+                        se.obj@metadata[['plot']][['PCA']][['fast.pca']][[variable]] <- list()
                     }
-                    if (!'ScatVarPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['fastPCA']])){
-                        se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['ScatVarPCA']] <- list()
+                    if (!'pca.var.scat.plot' %in%  names(se.obj@metadata[['plot']][['PCA']][['pca.var.scat.plot']])){
+                        se.obj@metadata[['plot']][['PCA']][['fast.pca']][[variable]][['pca.var.scat.plot']] <- list()
                     }
-                    se.obj@metadata[['plot']][['PCA']][['fastPCA']][[variable]][['ScatVarPCA']] <- overall.scat.var.pca.plot
+                    se.obj@metadata[['plot']][['PCA']][['fast.pca']][[variable]][['pca.var.scat.plot']] <- overall.scat.var.pca.plot
                 }
             }else{
                 if(class(colData(se.obj)[[variable]]) %in% c('character', 'factor')){
@@ -444,14 +444,14 @@ plotPCA <- function(
                         se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]] <- list()
                     }
                     if(plot.type == 'scatter'){
-                        if (!'ScatPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
-                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['ScatPCA']] <- list()
-                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['ScatPCA']] <- overall.scat.pca.plot
+                        if (!'pca.scat.plot' %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
+                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['pca.scat.plot']] <- list()
+                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['pca.scat.plot']] <- overall.scat.pca.plot
                         }
                     } else{
-                        if (!'BoxPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
-                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['BoxPCA']] <- list()
-                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['BoxPCA']] <- overall.boxplot.pca.plot
+                        if (!'pca.box.plot' %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
+                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['pca.box.plot']] <- list()
+                            se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['pca.box.plot']] <- overall.boxplot.pca.plot
                         }
                     }
 
@@ -462,9 +462,9 @@ plotPCA <- function(
                     if (!variable %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
                         se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]] <- list()
                     }
-                    if (!'ScatVarPCA' %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
-                        se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['ScatVarPCA']] <- list()
-                        se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['ScatVarPCA']] <- overall.scat.var.pca.plot
+                    if (!'pca.var.scat.plot' %in%  names(se.obj@metadata[['plot']][['PCA']][['PCA']])) {
+                        se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['pca.var.scat.plot']] <- list()
+                        se.obj@metadata[['plot']][['PCA']][['PCA']][[variable]][['pca.var.scat.plot']] <- overall.scat.var.pca.plot
                     }
                 }
             }

@@ -8,7 +8,7 @@ plotGenesVariableCorrelation(
   se.obj,
   assay.names = "all",
   variable,
-  correlation.method = "gene.spearman.corr",
+  correlation.method = "spearman",
   plot.output = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE

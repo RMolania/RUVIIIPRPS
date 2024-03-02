@@ -9,7 +9,7 @@ plotSilhouette(
   assay.names = "all",
   variables,
   silhouette.method = "sil.euclidian",
-  plot.type = "combined.plot",
+  plot.type = "single.plot",
   plot.output = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE

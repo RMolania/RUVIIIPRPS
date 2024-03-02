@@ -53,7 +53,7 @@ SummarizedExperiment object.
 }
 \description{
 This function calculates relative log expression (RLE) of the assay(s) in a SummarizedExperiment object. In addition,
-the function returns the RLE medians and interquartile ranges (IQRs) of each sample for individual assays.
+the function returns the RLE medians and interquartile ranges (IQRs) of each sample for individual assay(s).
 }
 \details{
 RLE plots are used to reveal trends, temporal clustering and other non-random patterns resulting from unwanted variation

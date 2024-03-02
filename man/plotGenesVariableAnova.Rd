@@ -8,7 +8,7 @@ plotGenesVariableAnova(
   se.obj,
   assay.names = "all",
   variable,
-  anova.method = "genes.aov.anova",
+  anova.method = "aov",
   plot.output = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE

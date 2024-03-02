@@ -104,13 +104,13 @@ computeSilhouette <- function(
                 color = 'blue',
                 verbose = verbose)
             if (fast.pca) {
-                if (!'fastPCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                if (!'fast.pca' %in% names(se.obj@metadata[['metric']][[x]][['PCA']]))
                     stop('To compute the Silhouette coefficient, the fast PCA must be computed first on the assay ', x, '.' )
-                pca.data <- se.obj@metadata[['metric']][[x]][['fastPCA']]$svd$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']][['pca.data']]$svd$u
             } else {
-                if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]]))
+                if (!'pca' %in% names(se.obj@metadata[['metric']][[x]][['pca']]))
                     stop('To compute the Silhouette coefficient, the PCA must be computed first on the assay ', x, ' .')
-                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']]$svd$u
+                pca.data <- se.obj@metadata[['metric']][[x]][['PCA']][['pca']][['pca.data']]$svd$u
             }
             if(ncol(pca.data) < nb.pcs){
                 printColoredMessage(
@@ -163,15 +163,15 @@ computeSilhouette <- function(
                 se.obj@metadata[['metric']][[x]] <- list()
             }
             ## check if metadata metric already exist for this assay and this metric
-            if (!'silhouette' %in% names(se.obj@metadata[['metric']][[x]] )) {
-                se.obj@metadata[['metric']][[x]][['silhouette']] <- list()
+            if (!'Silhouette' %in% names(se.obj@metadata[['metric']][[x]] )) {
+                se.obj@metadata[['metric']][[x]][['Silhouette']] <- list()
             }
             ## check if metadata metric already exist for this assay and this metric
-            if (!paste0('sil.', dist.measure) %in% names(se.obj@metadata[['metric']][[x]][['silhouette']])) {
-                se.obj@metadata[['metric']][[x]][['silhouette']][[paste0('sil.', dist.measure)]] <- list()
+            if (!paste0('sil.', dist.measure) %in% names(se.obj@metadata[['metric']][[x]][['Silhouette']])) {
+                se.obj@metadata[['metric']][[x]][['Silhouette']][[paste0('sil.', dist.measure)]] <- list()
             }
             ## check if metadata metric already exist for this assay, this metric and this variable
-            se.obj@metadata[['metric']][[x]][['silhouette']][[paste0('sil.', dist.measure)]][[variable]]$silhouette <- sil.coef[[x]]
+            se.obj@metadata[['metric']][[x]][['Silhouette']][[paste0('sil.', dist.measure)]][[variable]]$sil.coef <- sil.coef[[x]]
         }
         printColoredMessage(
             message = 'The silhouette coefficients for individual assays are saved to metadata@metric',

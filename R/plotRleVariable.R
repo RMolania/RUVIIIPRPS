@@ -286,7 +286,7 @@ plotRleVariable <- function(
                           axis.title.x = element_text(size = 14),
                           legend.position = 'bottom',
                           axis.title.y = element_text(size = 14),
-                          axis.text.x = element_text(size = 14),
+                          axis.text.x = element_text(size = 12, angle = 35, vjust = 1, hjust = 1),
                           axis.text.y = element_text(size = 10))
             }
             if (plot.output) print(p.rle)
@@ -326,32 +326,32 @@ plotRleVariable <- function(
             if (!'rle.plot' %in% names(se.obj@metadata[['metric']][[x]][['RLE']])) {
                 se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']] <- list()
             }
-            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']])){
-                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]] <- list()
+            if (!'rle.var.plot' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']])){
+                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']] <- list()
             }
-            if (!'RleVarPlot' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]])){
-                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']] <- list()
+            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']])){
+                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]] <- list()
             }
             if(rle.data.type == 'both'){
-                if (!'RleMed' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']])){
-                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']][['RleMed']] <- list()
+                if (!'rle.med.var.plot' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]])){
+                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]][['rle.med.var.plot']] <- list()
                 }
-                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']][['RleMed']] <- all.rle.med.var.plots[[x]]
-                if (!'RleIqr' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']])){
-                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']][['RleIqr']] <- list()
+                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]][['rle.med.var.plot']] <- all.rle.med.var.plots[[x]]
+                if (!'rle.iqr.var.plot' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]])){
+                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]][['rle.iqr.var.plot']] <- list()
                 }
-                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']][['RleIqr']] <- all.rle.iqr.var.plots[[x]]
+                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]][['rle.iqr.var.plot']] <- all.rle.iqr.var.plots[[x]]
 
             }else if (rle.data.type == 'rle.medians') {
-                if (!'RleMed' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']])){
-                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']][['RleMed']] <- list()
+                if (!'rle.med.var.plot' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]])){
+                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]][['rle.med.var.plot']] <- list()
                 }
-                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']][['RleMed']] <- all.rle.med.var.plots[[x]]
+                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]][['rle.med.var.plot']] <- all.rle.med.var.plots[[x]]
             } else if (rle.data.type == 'rle.iqr'){
-                if (!'RleIqr' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']])){
-                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']][['RleIqr']] <- list()
+                if (!'rle.iqr.var.plot' %in% names(se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]])){
+                    se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]][['rle.iqr.var.plot']] <- list()
                 }
-                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][[variable]][['RleVarPlot']][['RleIqr']] <- all.rle.iqr.var.plots[[x]]
+                se.obj@metadata[['metric']][[x]][['RLE']][['rle.plot']][['rle.var.plot']][[variable]][['rle.iqr.var.plot']] <- all.rle.iqr.var.plots[[x]]
             }
         }
         printColoredMessage(
@@ -359,6 +359,7 @@ plotRleVariable <- function(
                 'The RLE plots of individual assays are saved to metadata@metric'),
             color = 'blue',
             verbose = verbose)
+
         ## add overall RLE plots of all assays ####
         if(length(assay.names) > 1){
             if (!'plot' %in%  names(se.obj@metadata)) {
@@ -367,32 +368,32 @@ plotRleVariable <- function(
             if (!'RLE' %in%  names(se.obj@metadata[['plot']])) {
                 se.obj@metadata[['plot']][['RLE']] <- list()
             }
-            if (!variable %in%  names(se.obj@metadata[['plot']][['RLE']])) {
-                se.obj@metadata[['plot']][['RLE']][['variable']] <- list()
+            if (!'rle.var.plot' %in%  names(se.obj@metadata[['plot']][['RLE']])) {
+                se.obj@metadata[['plot']][['RLE']][['rle.var.plot']] <- list()
             }
-            if (!'RleVarPlot' %in%  names(se.obj@metadata[['plot']][['RLE']][[variable]])) {
-                se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']] <- list()
+            if (!variable %in%  names(se.obj@metadata[['plot']][['RLE']][['rle.var.plot']])) {
+                se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]] <- list()
             }
             if(rle.data.type == 'both'){
-                if(!'RleMedians' %in% se.obj@metadata[['plot']][['RLE']][['variable']][['RleVarPlot']]){
-                    se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleMedians']] <- list()
+                if(!'rle.med.var.plot' %in% se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]]){
+                    se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]][['rle.med.var.plot']] <- list()
                 }
-                se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleMedians']] <- overall.rle.med.var.plots
-                if(!'RleIqr' %in% se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']]){
-                    se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleIqr']] <- list()
+                se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]][['rle.med.var.plot']] <- overall.rle.med.var.plots
+                if(!'rle.iqr.var.plot' %in% se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]]){
+                    se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]][['rle.iqr.var.plot']] <- list()
                 }
-                se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleIqr']] <- overall.rle.iqr.var.plots
+                se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]][['rle.iqr.var.plot']]  <- overall.rle.iqr.var.plots
             } else if (rle.data.type == 'rle.medians'){
-                if(!'RleMedians' %in% se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']]){
-                    se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleMedians']] <- list()
+                if(!'rle.med.var.plot' %in% se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]]){
+                    se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]][['rle.med.var.plot']] <- list()
                 }
-                se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleMedians']] <- overall.rle.med.var.plots
+                se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]][['rle.med.var.plot']] <- overall.rle.med.var.plots
 
             } else if (rle.data.type == 'rle.iqr'){
-                if(!'RleIqr' %in% se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']]){
-                    se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleIqr']] <- list()
+                if(!'rle.iqr.var.plot' %in% se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]]){
+                    se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]][['rle.iqr.var.plot']] <- list()
                 }
-                se.obj@metadata[['plot']][['RLE']][[variable]][['RleVarPlot']][['RleIqr']] <- overall.rle.iqr.var.plots
+                se.obj@metadata[['plot']][['RLE']][['rle.var.plot']][[variable]][['rle.iqr.var.plot']]  <- overall.rle.iqr.var.plots
             }
             printColoredMessage(
                 message = paste0('The RLE plots of all assays are saved to metadata@plot'),

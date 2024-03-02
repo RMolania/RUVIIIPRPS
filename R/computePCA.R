@@ -238,16 +238,25 @@ computePCA <- function(
             if (!x %in% names(se.obj@metadata[['metric']])) {
                 se.obj@metadata[['metric']][[x]] <- list()
             }
+            if (!'PCA' %in% names(se.obj@metadata[['metric']][[x]])) {
+                se.obj@metadata[['metric']][[x]][['PCA']] <- list()
+            }
             if (fast.pca) {
-                if('fastPCA' %in%  names(se.obj@metadata[['metric']][[x]]) ){
-                    se.obj@metadata[['metric']][[x]][['fastPCA']] <- list()
+                if('fast.pca' %in%  names(se.obj@metadata[['metric']][[x]][['PCA']]) ){
+                    se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']] <- list()
                 }
-                se.obj@metadata[['metric']][[x]][['fastPCA']] <- all.sv.decomposition[[x]]
+                if('pca.data' %in%  names(se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']]) ){
+                    se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']][['pca.data']] <- list()
+                }
+                se.obj@metadata[['metric']][[x]][['PCA']][['fast.pca']][['pca.data']] <- all.sv.decomposition[[x]]
             } else {
-                if('PCA' %in%  names(se.obj@metadata[['metric']][[x]]) ){
-                    se.obj@metadata[['metric']][[x]][['PCA']] <- list()
+                if('pca' %in%  names(se.obj@metadata[['metric']][[x]][['PCA']]) ){
+                    se.obj@metadata[['metric']][[x]][['PCA']][['pca']] <- list()
                 }
-                se.obj@metadata[['metric']][[x]][['PCA']] <- all.sv.decomposition[[x]]
+                if('pca.data' %in%  names(se.obj@metadata[['metric']][[x]][['PCA']][['pca']]) ){
+                    se.obj@metadata[['metric']][[x]][['PCA']][['pca']][['pca.data']] <- list()
+                }
+                se.obj@metadata[['metric']][[x]][['PCA']][['pca']][['pca.data']] <- all.sv.decomposition[[x]]
             }
         }
         printColoredMessage(

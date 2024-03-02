@@ -89,13 +89,13 @@ plotPCVariableRegression <- function(
                 message = paste0('-Obtain the regression r squared for the ', x,  ' data.'),
                 color = 'blue',
                 verbose = verbose)
-            if (!'pcs.lm' %in% names(se.obj@metadata[['metric']][[x]])) {
-                stop(paste0('Any  "pcs.lm" has not been computed yet for the ', x, ' assay.'))
+            if (!'LRA' %in% names(se.obj@metadata[['metric']][[x]])) {
+                stop(paste0('Any  "LRA" has not been computed yet for the ', x, ' assay.'))
             }
-            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.lm']])) {
-                stop(paste0('pcs.lm has not been computed yet for the ', variable, ' variable and the ', x, ' assay.'))
+            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['LRA']])) {
+                stop(paste0('LRA has not been computed yet for the ', variable, ' variable and the ', x, ' assay.'))
             }
-            reg.rseq <- se.obj@metadata[['metric']][[x]][['pcs.lm']][[variable]][['rseq']]
+            reg.rseq <- se.obj@metadata[['metric']][[x]][['LRA']][[variable]][['rseq']]
             if(length(reg.rseq) < nb.pcs){
                 stop(paste0('The number of vector correlations of the assay ',
                             x, ' for the ', variable, ' variable are less than', nb.pcs, '.',
@@ -196,11 +196,11 @@ plotPCVariableRegression <- function(
         ### for each assays ####s
         for (x in levels(assay.names)) {
             ## check if metadata metric already exist for this assay and this metric and the variable
-            if (!'vect.corr.plot' %in% names(se.obj@metadata[['metric']][[x]][['pcs.lm']][[variable]])) {
-                se.obj@metadata[['metric']][[x]][['pcs.lm']][[variable]][['pcs.lm.plot']] <- list()
+            if (!'vect.corr.plot' %in% names(se.obj@metadata[['metric']][[x]][['LRA']][[variable]])) {
+                se.obj@metadata[['metric']][[x]][['LRA']][[variable]][['lra.plot']] <- list()
             }
             ## check if metadata metric already exist for this assay, this metric and this variable
-            se.obj@metadata[['metric']][[x]][['pcs.lm']][[variable]][['pcs.lm.plot']] <- all.reg.plots[[x]]
+            se.obj@metadata[['metric']][[x]][['LRA']][[variable]][['lra.plot']] <- all.reg.plots[[x]]
         }
         printColoredMessage(
             message = 'The plot for individal assays are saved to metadata@metric',
@@ -212,13 +212,13 @@ plotPCVariableRegression <- function(
             if (!'plot' %in%  names(se.obj@metadata)) {
                 se.obj@metadata[['plot']] <- list()
             }
-            if (!'PcaReg' %in%  names(se.obj@metadata[['plot']])) {
-                se.obj@metadata[['plot']][['PcaReg']] <- list()
+            if (!'LRA' %in%  names(se.obj@metadata[['plot']])) {
+                se.obj@metadata[['plot']][['LRA']] <- list()
             }
-            if (!variable %in%  names(se.obj@metadata[['plot']][['PcaReg']])) {
-                se.obj@metadata[['plot']][['PcaReg']][[variable]] <- list()
+            if (!variable %in%  names(se.obj@metadata[['plot']][['LRA']])) {
+                se.obj@metadata[['plot']][['LRA']][[variable]] <- list()
             }
-            se.obj@metadata[['plot']][['PcaReg']][[variable]] <- overall.reg.plot
+            se.obj@metadata[['plot']][['LRA']][[variable]] <- overall.reg.plot
             printColoredMessage(
                 message = paste0('The plot of all assays is saved to metadata@plot'),
                 color = 'blue',

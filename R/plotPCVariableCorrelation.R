@@ -104,21 +104,21 @@ plotPCVariableCorrelation <- function(
     all.pcs.vect.corr <- lapply(
         levels(assay.names),
         function(x) {
-            if (!'pcs.vect.corr' %in% names(se.obj@metadata[['metric']][[x]]) ) {
-                stop(paste0('Any "pcs.vect.corr" is found for the ', x, ' data. Please run the "computePCVariableCorrelation" function first.'))
+            if (!'VCA' %in% names(se.obj@metadata[['metric']][[x]]) ) {
+                stop(paste0('Any vector correlation is found for the ', x, ' data. Please run the "computePCVariableCorrelation" function first.'))
             }
-            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['pcs.vect.corr']]) ) {
-                stop(paste0('The "pcs.vect.corr" is not found for the ', variable, ' variable and the ', x, ' data.'))
+            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['VCA']]) ) {
+                stop(paste0('The vector correlation is not found for the ', variable, ' variable and the ', x, ' data.'))
             }
-            if (!'corrs' %in% names(se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]]) ) {
-                stop(paste0('The "pcs.vect.corr" is not found for the ', variable, ' variable and the ', x, ' data.'))
+            if (!'vec.cor' %in% names(se.obj@metadata[['metric']][[x]][['VCA']][[variable]]) ) {
+                stop(paste0('The vector correlation is not found for the ', variable, ' variable and the ', x, ' data.'))
             }
             printColoredMessage(
                 message = paste0('-Obtain the vector correlations for', x , ' data.'),
                 color = 'blue',
                 verbose = verbose
             )
-            vectos.corrs <- se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]][['corrs']]
+            vectos.corrs <- se.obj@metadata[['metric']][[x]][['VCA']][[variable]][['vec.cor']]
             if(length(vectos.corrs) < nb.pcs){
                 stop(paste0('The number of vector correlations of the assay ',
                             x, ' for the ', variable, ' variable are less than', nb.pcs, '.',
@@ -221,11 +221,11 @@ plotPCVariableCorrelation <- function(
         ### for each assays ####
         for (x in levels(assay.names)) {
             ## check if metadata metric already exist for this assay and this metric and the variable
-            if (!'vect.corr.plot' %in% names(se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]])) {
-                se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]][['vect.corr.plot']] <- list()
+            if (!'vect.corr.plot' %in% names(se.obj@metadata[['metric']][[x]][['VCA']][[variable]])) {
+                se.obj@metadata[['metric']][[x]][['VCA']][[variable]][['vect.corr.plot']] <- list()
             }
             ## check if metadata metric already exist for this assay, this metric and this variable
-            se.obj@metadata[['metric']][[x]][['pcs.vect.corr']][[variable]][['vect.corr.plot']] <- all.vect.corr.plots[[x]]
+            se.obj@metadata[['metric']][[x]][['VCA']][[variable]][['vect.corr.plot']] <- all.vect.corr.plots[[x]]
         }
         printColoredMessage(
             message = 'The vector correlation plot for individal assays are saved to metadata@metric',
@@ -237,13 +237,13 @@ plotPCVariableCorrelation <- function(
             if (!'plot' %in%  names(se.obj@metadata)) {
                 se.obj@metadata[['plot']] <- list()
             }
-            if (!'VecCorr' %in%  names(se.obj@metadata[['plot']])) {
-                se.obj@metadata[['plot']][['VecCorr']] <- list()
+            if (!'VCA' %in%  names(se.obj@metadata[['plot']])) {
+                se.obj@metadata[['plot']][['VCA']] <- list()
             }
-            if (!variable %in%  names(se.obj@metadata[['plot']][['VecCorr']])) {
-                se.obj@metadata[['plot']][['VecCorr']][[variable]] <- list()
+            if (!variable %in%  names(se.obj@metadata[['plot']][['VCA']])) {
+                se.obj@metadata[['plot']][['VCA']][[variable]] <- list()
             }
-            se.obj@metadata[['plot']][['VecCorr']][[variable]] <- overall.vect.corr.plot
+            se.obj@metadata[['plot']][['VCA']][[variable]] <- overall.vect.corr.plot
             printColoredMessage(
                 message = paste0('The vector correlation plot of all the assays are saved to metadata@plot'),
                 color = 'blue',

@@ -248,15 +248,15 @@ computeGenesVariableAnova <- function(
                 se.obj@metadata[['metric']][[x]] <- list()
             }
             ## check if metadata metric already exist for this assay and this metric
-            if (!'genes.var.aov' %in% names(se.obj@metadata[['metric']][[x]])) {
-                se.obj@metadata[['metric']][[x]][['genes.var.aov']] <- list()
+            if (!'ANOVA' %in% names(se.obj@metadata[['metric']][[x]])) {
+                se.obj@metadata[['metric']][[x]][['ANOVA']] <- list()
             }
             ## check if metadata metric already exist for this assay and this metric
-            if (!paste0('gene.', method, '.anova') %in% names(se.obj@metadata[['metric']][[x]][['aov']])) {
-                se.obj@metadata[['metric']][[x]][['genes.var.aov']][[paste0('genes.', method, '.anova')]] <- list()
+            if (!method %in% names(se.obj@metadata[['metric']][[x]][['ANOVA']])) {
+                se.obj@metadata[['metric']][[x]][['ANOVA']][[method]] <- list()
             }
             ## check if metadata metric already exist for this assay, this metric and this variable
-            se.obj@metadata[['metric']][[x]][['aov']][[paste0('genes.', method, '.anova')]][[variable]]$fvals <-
+            se.obj@metadata[['metric']][[x]][['ANOVA']][[method]][[variable]][['F.values']] <-
                 log2(all.aov[[x]][['anova.genes.var']][, 'statistic'])
         }
         printColoredMessage(

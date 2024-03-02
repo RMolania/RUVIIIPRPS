@@ -29,7 +29,7 @@ plotGenesVariableAnova <- function(
         se.obj,
         assay.names = 'all',
         variable,
-        anova.method = 'genes.aov.anova',
+        anova.method = 'aov',
         plot.output = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
@@ -68,16 +68,16 @@ plotGenesVariableAnova <- function(
     all.aov.fvals <- lapply(
         levels(assay.names),
         function(x) {
-            if (!'aov' %in% names(se.obj@metadata[['metric']][[x]])) {
+            if (!'ANOVA' %in% names(se.obj@metadata[['metric']][[x]])) {
                 stop(paste0('Any ANOVA analysis has not been computed yet on the  ', x, ' assay'))
             }
-            if (!anova.method %in% names(se.obj@metadata[['metric']][[x]][['aov']])) {
+            if (!anova.method %in% names(se.obj@metadata[['metric']][[x]][['ANOVA']])) {
                 stop(paste0('The ', anova.method , ' has not been computed yet for the ', x, ' assay.'))
             }
-            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['aov']][[anova.method]])) {
+            if (!variable %in% names(se.obj@metadata[['metric']][[x]][['ANOVA']][[anova.method]])) {
                 stop(paste0('The ', anova.method , ' has not been computed yet for the ', variable, ' variable and the ', x, ' assay.'))
             }
-            se.obj@metadata[['metric']][[x]][['aov']][[anova.method]][[variable]]$fvals
+            se.obj@metadata[['metric']][[x]][['ANOVA']][[anova.method]][[variable]]$F.values
         })
     names(all.aov.fvals) <- levels(assay.names)
     aov.fvals <- NULL
@@ -135,7 +135,7 @@ plotGenesVariableAnova <- function(
     if (save.se.obj == TRUE) {
         for (x in levels(assay.names)) {
             ## check if metadata metric already exist for this assay, this metric and this variable
-            se.obj@metadata[['metric']][[x]][['genes.var.corr']][[anova.method]][[variable]]$corrs.plot <- all.aov.fvals.plots[[x]]
+            se.obj@metadata[['metric']][[x]][['ANOVA']][[anova.method]][[variable]]$F.values.plot <- all.aov.fvals.plots[[x]]
         }
         printColoredMessage(
             message = 'The F values plots for indiviaul assay are saved to metadata@metric',
@@ -146,16 +146,16 @@ plotGenesVariableAnova <- function(
             if (!'plot' %in%  names(se.obj@metadata)) {
                 se.obj@metadata[['plot']] <- list()
             }
-            if (!'GeneVarAnova' %in%  names(se.obj@metadata[['plot']])) {
-                se.obj@metadata[['plot']][['GeneVarAnova']] <- list()
+            if (!'ANOVA' %in%  names(se.obj@metadata[['plot']])) {
+                se.obj@metadata[['plot']][['ANOVA']] <- list()
             }
-            if (!anova.method %in%  names(se.obj@metadata[['plot']][['GeneVarAnova']])) {
-                se.obj@metadata[['plot']][['GeneVarAnova']][[anova.method]] <- list()
+            if (!anova.method %in%  names(se.obj@metadata[['plot']][['ANOVA']])) {
+                se.obj@metadata[['plot']][['ANOVA']][[anova.method]] <- list()
             }
-            if (!variable %in%  names(se.obj@metadata[['plot']][['GeneVarAnova']][[anova.method]])) {
-                se.obj@metadata[['plot']][['GeneVarAnova']][[anova.method]][[variable]] <- list()
+            if (!variable %in%  names(se.obj@metadata[['plot']][['ANOVA']][[anova.method]])) {
+                se.obj@metadata[['plot']][['ANOVA']][[anova.method]][[variable]] <- list()
             }
-            se.obj@metadata[['plot']][['GeneVarAnova']][[anova.method]][[variable]] <- overall.aov.fvals.plot
+            se.obj@metadata[['plot']][['ANOVA']][[anova.method]][[variable]] <- overall.aov.fvals.plot
             printColoredMessage(
                 message = paste0('The F values plots all assays are saved to metadata@plot'),
                 color = 'blue',
