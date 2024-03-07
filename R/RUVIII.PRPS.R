@@ -485,7 +485,7 @@ RUVIII.PRPS <- function(
                         return(list(newY = newY, W = W[1:ncol(se.obj) , , drop = FALSE]))
                     })
                 ruv.other.k[[length(k.vals)]] <- newY.max
-                names(ruv.other.k) <- paste0('RUVIIIRPPS_K:', k.vals)
+                names(ruv.other.k) <- paste0('RUVIIIRPPS_K.', k.vals)
                 ruv.other.k
             } else {
                 ncg.set <- ncg.list[[all.ncg.prps$NCG[x]]]
