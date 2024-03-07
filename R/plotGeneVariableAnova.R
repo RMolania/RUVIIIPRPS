@@ -77,7 +77,7 @@ plotGenesVariableAnova <- function(
             if (!variable %in% names(se.obj@metadata[['metric']][[x]][['ANOVA']][[anova.method]])) {
                 stop(paste0('The ', anova.method , ' has not been computed yet for the ', variable, ' variable and the ', x, ' assay.'))
             }
-            se.obj@metadata[['metric']][[x]][['ANOVA']][[anova.method]][[variable]]$F.values
+            log2(se.obj@metadata[['metric']][[x]][['ANOVA']][[anova.method]][[variable]]$F.values$statistic)
         })
     names(all.aov.fvals) <- levels(assay.names)
     aov.fvals <- NULL
