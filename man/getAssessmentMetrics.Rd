@@ -4,7 +4,7 @@
 \alias{getAssessmentMetrics}
 \title{Create all possible assessment metrics for the variables.}
 \usage{
-getAssessmentMetrics(se.obj, variables, output.file, plot.output = TRUE)
+getAssessmentMetrics(se.obj, variables, plot.output = TRUE, save.se.obj = TRUE)
 }
 \arguments{
 \item{se.obj}{A summarized experiment object.}
@@ -12,9 +12,9 @@ getAssessmentMetrics(se.obj, variables, output.file, plot.output = TRUE)
 \item{variables}{Symbols. A symbol and a vector of symbols indicating the columns names of variables in the samples
 annotation in the SummarizedExperiment object. The 'variables' can be categorical and continuous.}
 
-\item{output.file}{Symbol. A name for the output file.}
-
 \item{plot.output}{Logical. Whether to print the plot or not.}
+
+\item{save.se.obj}{Logical. Whether to save the results into the SummarizedExperiment object. The default is TRUE.}
 }
 \value{
 A list of all possible assessment metrics for the variables.
