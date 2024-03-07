@@ -236,6 +236,14 @@ getAssessmentMetrics <- function(
             plot.nodes$ymin[1] <- 0
             plot.nodes$xmax[1] <- 0
             plot.nodes$ymax[1] <- 0
+            plot.nodes$ymin <- plot.nodes$ymin - .1
+            plot.nodes$ymax <- plot.nodes$ymax + .1
+            mm <- seq(from = 2, to = nrow(plot.nodes), 2)
+            for(i in mm){
+                plot.nodes[i, c(8)] <- plot.nodes[i, c(8)] + .4
+                plot.nodes[i, c(9)] <- plot.nodes[i, c(9)] + .4
+                plot.nodes$y[i] <- 0.4
+            }
             p <- ggplot() + geom_rect(
                 data = plot.nodes,
                 mapping = aes(
@@ -243,26 +251,29 @@ getAssessmentMetrics <- function(
                     ymin = ymin,
                     xmax = xmax,
                     ymax = ymax,
-                    fill = type,
-                    colour = type),
+                    fill = type),
                 alpha = 0.5,
-                color = 'grey',
-                fill = 'white')
+                fill = 'orange3')
             p <- p + geom_text(
                 data = plot.nodes[1,],
                 mapping = aes(x = x, y = y, label = label),
-                color = "black", size = 10
+                color = "black",
+                size = 6
             )
             p <- p + geom_text(
                 data = plot.nodes[-1,],
                 mapping = aes(x = x, y = y, label = label),
-                color = "black",angle = 30, size = 3,
+                color = "black", size = 3,
             )
+            mm <- seq(2, nrow(plot.edges), 4)
+            plot.edges$y[mm] <- plot.edges$y[mm] + .55
+            mm <- seq(2, nrow(plot.edges), 2)
+            plot.edges$y[mm] <- plot.edges$y[mm] + .02
             p <- p + geom_path(
                 data = plot.edges,
                 mapping = aes(x = x, y = y, group = id),
-                colour = "#585c45",
-                arrow = arrow(length = unit(0.3, "cm"), type = "closed")
+                colour = "gray",
+                arrow = arrow(length = unit(0.1, "cm"), type = "closed")
             )
             p <- p + theme(
                 panel.background = element_blank(),
@@ -275,7 +286,7 @@ getAssessmentMetrics <- function(
     plot.caption <- expression(atop(
         scriptstyle("M: metrics | V: variable | P: plot type"))
         )
-    all.plots <- ggpubr::ggarrange(plotlist = plot.metrics, common.legend = TRUE)
+    all.plots <- ggpubr::ggarrange(plotlist = plot.metrics, common.legend = TRUE, ncol = 1)
     all.plots <- ggpubr::annotate_figure(
         p = all.plots,
         bottom = ggpubr::text_grob(label = plot.caption, size = 20))
