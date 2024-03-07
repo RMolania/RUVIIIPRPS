@@ -90,7 +90,7 @@ plotGenesVariableCorrelation <- function(
             if (!variable %in% names(se.obj@metadata[['metric']][[x]][['Correlation']][[correlation.method]])) {
                 stop(paste0('The ', correlation.method , ' has not been computed yet for the ', variable, ' variable and the ', x, ' assay.'))
             }
-            corr.coeff <- se.obj@metadata[['metric']][[x]][['Correlation']][[correlation.method]][[variable]]$cor.coef
+            corr.coeff <- se.obj@metadata[['metric']][[x]][['Correlation']][[correlation.method]][[variable]]$cor.coef[,2]
         })
     names(all.corr.coeff) <- levels(assay.names)
 
