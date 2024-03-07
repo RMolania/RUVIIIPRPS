@@ -87,7 +87,7 @@ plotGenesVariableAnova <- function(
             aov.fvals <- all.aov.fvals[[x]]
             p.corr.coeff <- ggplot() +
                 geom_boxplot(aes(y = aov.fvals, x = 1)) +
-                ggtitle(paste0('ANOVA, ', variable)) +
+                ggtitle(paste0('ANOVA, data:',x, 'variable:', variable)) +
                 xlab(x) +
                 ylab(expression(Log[2]~'F-statistic')) +
                 geom_hline(yintercept = 0) +
@@ -111,20 +111,21 @@ plotGenesVariableAnova <- function(
                 names_to = 'datasets',
                 values_to = 'aov.fvals')
         overall.aov.fvals.plot <- ggplot(all.aov.fvals, aes(x = datasets, y = aov.fvals)) +
-            geom_boxplot() +
-            ggtitle('ANOVA') +
+            geom_boxplot(outlier.colour = 'gray') +
+            ggtitle(paste0('ANOVA, variable:', variable)) +
             xlab('Datasets') +
-            ylab('F-statistic') +
+            ylab(expression(Log[2]~'F-statistics')) +
             geom_hline(yintercept = 0) +
             theme(
                 panel.background = element_blank(),
                 axis.line = element_line(colour = 'black', linewidth = 1),
-                axis.title.x = element_text(size = 18),
-                axis.title.y = element_text(size = 18),
+                axis.title.x = element_text(size = 14),
+                axis.title.y = element_text(size = 14),
                 plot.title = element_text(size = 15),
                 axis.text.x = element_text(size = 12, angle = 25, hjust = 1),
                 axis.text.y = element_text(size = 12))
     }
+    if(isTRUE(plot.output)) print(overall.aov.fvals.plot)
 
     # save the results ####
     printColoredMessage(

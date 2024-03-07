@@ -39,7 +39,7 @@
 #' @return A SummarizedExperiment object that contains all the PCA plot(s) in the metadata or a list that contains all
 #' the PCA plot(s).
 
-#' @importFrom ggpubr ggarrange theme_pubr
+#' @importFrom ggpubr ggarrange theme_pubr stat_cor
 #' @importFrom patchwork plot_spacer plot_layout
 #' @importFrom tidyr pivot_longer
 #' @importFrom utils combn
@@ -58,8 +58,8 @@ plotPCA <- function(
         stroke.size = .2,
         points.alpha = .5,
         densities.alpha = .5,
-        plot.ncol = NULL,
-        plot.nrow = 3,
+        plot.ncol = c(3,3),
+        plot.nrow = c(3,3),
         plot.output = TRUE,
         save.se.obj = TRUE,
         verbose = TRUE
@@ -175,41 +175,43 @@ plotPCA <- function(
                                 theme_pubr() +
                                 theme(
                                     legend.background = element_blank(),
-                                    legend.text = element_text(size = 12),
-                                    legend.title = element_text(size = 14),
-                                    legend.key = element_blank(),
-                                    axis.text.x = element_text(size = 8),
-                                    axis.text.y = element_text(size = 8),
-                                    axis.title.x = element_text(size = 10),
-                                    axis.title.y = element_text(size = 10),
+                                    plot.title = element_text(size = 8),
+                                    legend.text = element_text(size = 8),
+                                    legend.title = element_text(size = 10, face = "bold"),
+                                    axis.text.x = element_text(size = 6),
+                                    axis.text.y = element_text(size = 6),
+                                    axis.title.x = element_text(size = 8),
+                                    axis.title.y = element_text(size = 8),
+                                    plot.margin = unit(c(0,0,0,0), 'lines'),
                                     legend.position = "none") +
-                                scale_fill_discrete(name = variable) +
-                                guides(fill = guide_legend(override.aes = list(size = 3, shape = 21)))
+                                scale_fill_discrete(name = variable)
+
                             dense.x <-
                                 ggplot(mapping = aes(x = pca.data[, pair.pcs[1, i]], fill = se.obj@colData[, variable])) +
                                 geom_density(alpha = densities.alpha) +
                                 theme_void() +
                                 theme(
                                     legend.position = "none",
-                                    legend.text = element_text(size = 12),
-                                    legend.title = element_text(size = 14)) +
-                                scale_fill_discrete(name = variable) +
-                                guides(fill = guide_legend(override.aes = list(size = 3)))
+                                    legend.text = element_text(size = 10),
+                                    legend.title = element_text(size = 12, face = "bold")) +
+                                guides(fill = guide_legend(override.aes = list(size = 6, shape = 21))) +
+                                scale_fill_discrete(name = variable)
 
                             dense.y <- ggplot(mapping = aes(x = pca.data[, pair.pcs[2, i]], fill = se.obj@colData[, variable])) +
                                 geom_density(alpha = densities.alpha) +
                                 theme_void() +
                                 theme(
                                     legend.position = "none",
-                                    legend.text = element_text(size = 12),
-                                    legend.title = element_text(size = 14)) +
+                                    legend.text = element_text(size = 10),
+                                    legend.title = element_text(size = 12, face = "bold")) +
                                 coord_flip() +
-                                scale_fill_discrete(name = variable) +
-                                guides(fill = guide_legend(override.aes = list(size = 3)))
+                                guides(fill = guide_legend(override.aes = list(size = 6, shape = 21))) +
+                                scale_fill_discrete(name = variable)
 
                             dense.x +
                                 plot_spacer() +
-                                plot1 + dense.y +
+                                plot1 +
+                                dense.y +
                                 plot_layout(
                                     ncol = 2,
                                     nrow = 2,
@@ -245,10 +247,10 @@ plotPCA <- function(
                     plotlist = p,
                     common.legend = TRUE,
                     legend = "bottom",
-                    nrow = plot.nrow,
-                    ncol = plot.ncol
+                    nrow = plot.nrow[1],
+                    ncol = plot.ncol[1]
                     )
-                if(isTRUE(plot.output)) print(overall.scat.pca.plot)
+                if(isTRUE(plot.output)) suppressMessages(print(overall.scat.pca.plot))
             }
         } else{
             printColoredMessage(
@@ -312,7 +314,7 @@ plotPCA <- function(
                     message = paste0('PCA plots of for ', x, ' data.'),
                     color = 'blue',
                     verbose = verbose)
-                var <- PC <- NULL
+                var <- PC <- r.label <- NULL
                 pca.data <- as.data.frame(all.pca.data[[x]]$pca.data[ , seq_len(nb.pcs)])
                 colnames(pca.data) <- paste0('PC', seq_len(nb.pcs), ' (',all.pca.data[[x]]$pc.var[seq_len(nb.pcs)], '%)')
                 pca.data$var <- colData(se.obj)[, variable]
@@ -328,16 +330,19 @@ plotPCA <- function(
                 pca.data <- as.data.frame(pca.data)
                 plot.p <- ggplot(pca.data, aes(x = var, y = PC)) +
                     geom_point(
-                        color = stroke.color,
-                        pch = 19,
-                        stroke = stroke.size,
-                        size = 3,
+                        color = 'gray40',
+                        pch = 21,
+                        stroke = .2,
+                        size = 1.5,
                         alpha = points.alpha) +
                     facet_wrap(~PCs, scales = 'free') +
                     xlab(variable) +
                     ylab('PC') +
                     ggtitle(x) +
-                    geom_smooth(formula = y ~ x, method = 'lm') +
+                    geom_smooth(formula = y ~ x, method = 'lm', colour = "darkgreen")  +
+                    ggpubr::stat_cor(
+                        aes(label = r.label),
+                        color = "navy") +
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', size = 1),
@@ -355,8 +360,8 @@ plotPCA <- function(
             if(is.null(plot.ncol)) plot.ncol <- ncol(combn(length(seq_len(nb.pcs)), 2))
             overall.scat.var.pca.plot <- ggarrange(
                 plotlist = all.scat.var.pca.plots,
-                nrow = plot.nrow,
-                ncol = plot.ncol)
+                nrow = plot.nrow[2],
+                ncol = plot.ncol[2])
             if(isTRUE(plot.output))
                 suppressMessages(print(overall.scat.var.pca.plot))
         }

@@ -127,7 +127,7 @@ plotPCVariableRegression <- function(
                 geom_point(color = 'gray40', size = 3) +
                 xlab('Cumulative PCs') +
                 ylab(expression('R'[2])) +
-                ggtitle(paste0('Linear regression,', x, ', ', variable )) +
+                ggtitle(paste0('LRA, data:', x, ', variable:', variable )) +
                 scale_x_continuous(breaks = seq_len(nb.pcs), labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
                 scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0,1)) +
                 theme(
@@ -163,7 +163,7 @@ plotPCVariableRegression <- function(
             geom_point(aes(color = datasets), size = 3) +
             xlab('Cumulative PCs') +
             ylab(expression(R^2)) +
-            ggtitle(paste0('PCs variable regression, ', variable)) +
+            ggtitle(paste0('LRA, variable:', variable)) +
             scale_color_manual(values = c(data.sets.colors), name = 'Datasets') +
             scale_x_continuous(breaks = seq_len(nb.pcs), labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
             scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0,1)) +
@@ -171,12 +171,10 @@ plotPCVariableRegression <- function(
                 panel.background = element_blank(),
                 axis.line = element_line(colour = 'black', linewidth = 1),
                 plot.title = element_text(size = 16),
-                axis.title.x = element_text(size = 16),
-                axis.title.y = element_text(size = 16),
+                axis.title.x = element_text(size = 14),
+                axis.title.y = element_text(size = 14),
                 axis.text.x = element_text(size = 12, angle = 35, vjust = 1, hjust = 1),
-                axis.text.y = element_text(size = 12),
-                legend.text = element_text(size = 10),
-                legend.title = element_text(size = 14))
+                axis.text.y = element_text(size = 12))
         if(isTRUE(plot.output))
             print(overall.reg.plot)
     }

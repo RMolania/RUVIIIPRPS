@@ -151,7 +151,7 @@ plotPCVariableCorrelation <- function(
                 geom_point(color = 'gray40', size = 3) +
                 xlab('Cumulative PCs') +
                 ylab('Vector correlations') +
-                ggtitle(paste0('Vector correlation, ', x, ', ', variable )) +
+                ggtitle(paste0('VCA, data:', x, ', variable:', variable )) +
                 scale_x_continuous(breaks = seq_len(nb.pcs), labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
                 scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0,1)) +
                 theme(
@@ -188,7 +188,7 @@ plotPCVariableCorrelation <- function(
             geom_point(aes(color = datasets), size = 3) +
             xlab('Cumulative PCs') +
             ylab('Vector correlations') +
-            ggtitle(paste0('Vector correlation, ', variable)) +
+            ggtitle(paste0('VCA, variable:', variable)) +
             scale_color_manual(values = c(data.sets.colors), name = 'Datasets') +
             scale_x_continuous(breaks = seq_len(nb.pcs), labels = c('PC1', paste0('PC1:', 2:nb.pcs)) ) +
             scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0,1)) +
@@ -196,11 +196,11 @@ plotPCVariableCorrelation <- function(
                 panel.background = element_blank(),
                 axis.line = element_line(colour = 'black', linewidth = 1),
                 plot.title = element_text(size = 16),
-                axis.title.x = element_text(size = 16),
-                axis.title.y = element_text(size = 16),
-                axis.text.x = element_text(size = 12, angle = 35, vjust = 1, hjust = 1),
+                axis.title.x = element_text(size = 15),
+                axis.title.y = element_text(size = 15),
+                axis.text.x = element_text(size = 11, angle = 35, vjust = 1, hjust = 1),
                 axis.text.y = element_text(size = 12),
-                legend.text = element_text(size = 10),
+                legend.text = element_text(size = 12),
                 legend.title = element_text(size = 14))
         if(isTRUE(plot.output)) print(overall.vect.corr.plot)
     }

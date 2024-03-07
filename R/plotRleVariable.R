@@ -44,7 +44,7 @@
 #' Nature Biotechnology, 2023
 
 #' @importFrom SummarizedExperiment assays
-#' @importFrom ggpubr ggarrange stat_cor
+#' @importFrom ggpubr ggarrange stat_cor stat_compare_means
 #' @import ggplot2
 #' @export
 
@@ -169,22 +169,22 @@ plotRleVariable <- function(
                     color = 'blue',
                     verbose = verbose)
                 p.rle <- ggplot(rle.med.data, aes(x = var, y = rle.medians)) +
-                    geom_point() +
-                    ggtitle(x) +
+                    geom_point(size = points.size, color = 'gray40', stroke = .2, pch = 21, alpha = .6, size = 1.5) +
+                    ggtitle(paste0('Data: ', x)) +
                     xlab(variable) +
                     ylab('RLE medians') +
-                    geom_smooth(formula = y ~ x, method = 'lm') +
+                    geom_smooth(formula = y ~ x, method = 'lm', colour = "darkgreen") +
                     ggpubr::stat_cor(
                         aes(label = r.label),
-                        color = 'red',
+                        color = "navy",
                         label.y = max(ylim.rle.med)) +
                     coord_cartesian(ylim = ylim.rle.med.plot) +
                     theme(panel.background = element_blank(),
                            axis.line = element_line(colour = 'black', linewidth = 1),
                            axis.title.x = element_text(size = 12),
                            axis.title.y = element_text(size = 12),
-                           axis.text.x = element_text(size = 19),
-                           axis.text.y = element_text(size = 10),
+                           axis.text.x = element_text(size = 9),
+                           axis.text.y = element_text(size = 9),
                            legend.position = 'bottom')
             } else{
                 # boxplot ####
@@ -195,17 +195,18 @@ plotRleVariable <- function(
                           color = 'blue',
                           verbose = verbose)
                 p.rle <- ggplot(rle.med.data, aes(x = var, y = rle.medians)) +
-                    geom_boxplot() +
-                    ggtitle(x) +
+                    geom_boxplot(outlier.color = 'gray') +
+                    stat_compare_means(method = 'anova', label.x  = 1, label.y = ylim.rle.med.plot[2]-.1, color = 'navy') +
+                    ggtitle(paste0('Data: ', x)) +
                     xlab(variable) +
                     ylab('RLE medians') +
                     coord_cartesian(ylim = ylim.rle.med.plot) +
                     theme(panel.background = element_blank(),
                           axis.line = element_line(colour = 'black', linewidth = 1),
-                          axis.title.x = element_text(size = 14),
-                          axis.title.y = element_text(size = 14),
-                          axis.text.x = element_text(size = 12, angle = 35, vjust = 1, hjust = 1),
-                          axis.text.y = element_text(size = 10),
+                          axis.title.x = element_text(size = 12),
+                          axis.title.y = element_text(size = 12),
+                          axis.text.x = element_text(size = 8, angle = 35, vjust = 1, hjust = 1),
+                          axis.text.y = element_text(size = 9),
                           legend.position = 'bottom')
             }
             if (isTRUE(plot.output) & length(assay.names) == 1){
@@ -227,7 +228,7 @@ plotRleVariable <- function(
             ncol = plot.ncol,
             nrow = plot.nrow,
             common.legend = TRUE)
-        if (plot.output) print(overall.rle.med.var.plots)
+        if (isTRUE(plot.output)) print(overall.rle.med.var.plots)
     }
 
     # generate the RLE IQR plots ####
@@ -251,21 +252,20 @@ plotRleVariable <- function(
                         ' data and the variable:'),
                     color = 'blue',
                     verbose = verbose)
-                ..r.label.. <- NULL
                 p.rle <- ggplot(rle.iqr.data, aes(x = var, y = rle.iqr)) +
-                    geom_point(size = points.size) +
-                    ggtitle(x) +
+                    geom_point(size = points.size, color = 'gray40', stroke = .2, pch = 21, alpha = .6, size = 1.5) +
+                    ggtitle(paste0('Data: ', x)) +
                     xlab(variable) +
                     ylab('RLE IQRs') +
-                    geom_smooth(formula = y ~ x, method = 'lm') +
-                    ggpubr::stat_cor(aes(label = r.label), color = 'red', label.y = max(ylim.rle.iqr)) +
+                    geom_smooth(formula = y ~ x, method = 'lm', colour = "darkgreen") +
+                    ggpubr::stat_cor(aes(label = r.label), color = "navy", label.y = max(ylim.rle.iqr)) +
                     coord_cartesian(ylim = ylim.rle.iqr.plot) +
                     theme(panel.background = element_blank(),
                           axis.line = element_line(colour = 'black', linewidth = 1),
-                          axis.title.x = element_text(size = 14),
-                          axis.title.y = element_text(size = 14),
-                          axis.text.x = element_text(size = 14),
-                          axis.text.y = element_text(size = 10),
+                          axis.title.x = element_text(size = 12),
+                          axis.title.y = element_text(size = 12),
+                          axis.text.x = element_text(size = 9),
+                          axis.text.y = element_text(size = 9),
                           legend.position = 'bottom')
             } else{
                 # boxplot ####
@@ -276,20 +276,23 @@ plotRleVariable <- function(
                     color = 'blue',
                     verbose = verbose)
                 p.rle <- ggplot(rle.iqr.data, aes(x = var, y = rle.iqr)) +
-                    geom_boxplot() +
-                    ggtitle(x) +
+                    geom_boxplot(outlier.color = 'gray') +
+                    stat_compare_means(method = 'anova', label.x  = 1, label.y = ylim.rle.iqr.plot[2]-.1, color = 'navy') +
+                    ggtitle(paste0('Data: ', x)) +
                     xlab(variable) +
                     ylab('RLE IQRs') +
                     coord_cartesian(ylim = ylim.rle.iqr.plot) +
                     theme(panel.background = element_blank(),
                           axis.line = element_line(colour = 'black', linewidth = 1),
-                          axis.title.x = element_text(size = 14),
+                          axis.title.x = element_text(size = 12),
                           legend.position = 'bottom',
-                          axis.title.y = element_text(size = 14),
-                          axis.text.x = element_text(size = 12, angle = 35, vjust = 1, hjust = 1),
-                          axis.text.y = element_text(size = 10))
+                          axis.title.y = element_text(size = 12),
+                          axis.text.x = element_text(size = 8, angle = 35, vjust = 1, hjust = 1),
+                          axis.text.y = element_text(size = 9))
             }
-            if (plot.output) print(p.rle)
+            if (isTRUE(plot.output) & length(assay.names) == 1){
+                print(p.rle)
+            }
             p.rle
         })
     names(all.rle.iqr.var.plots) <- levels(assay.names)

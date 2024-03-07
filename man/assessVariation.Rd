@@ -17,7 +17,7 @@ assessVariation(
   rle.median.points.size = 1,
   rle.geom.hline.color = "cyan",
   fast.pca = TRUE,
-  compute.nb.pcs = 10,
+  compute.nb.pcs = 5,
   center.pca = TRUE,
   scale.pca = FALSE,
   svd.bsparam = bsparam(),

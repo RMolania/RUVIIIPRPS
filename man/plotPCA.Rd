@@ -16,8 +16,8 @@ plotPCA(
   stroke.size = 0.2,
   points.alpha = 0.5,
   densities.alpha = 0.5,
-  plot.ncol = NULL,
-  plot.nrow = 3,
+  plot.ncol = c(3, 3),
+  plot.nrow = c(3, 3),
   plot.output = TRUE,
   save.se.obj = TRUE,
   verbose = TRUE

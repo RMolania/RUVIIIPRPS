@@ -109,11 +109,11 @@ plotGenesVariableCorrelation <- function(
             )
             corr.coeff <- all.corr.coeff[[x]]
             p.corr.coeff <- ggplot() +
-                geom_boxplot(aes(y = corr.coeff, x = 1)) +
+                geom_boxplot(aes(y = corr.coeff, x = 1), outlier.color = 'gray') +
                 ylab('Spearman correlation coefficient') +
                 xlab(x) +
                 geom_hline(yintercept = 0) +
-                ggtitle('Spearman correlation analysis') +
+                ggtitle(paste0('Correlation, data:', x, 'variable:', variable)) +
                 theme(
                     panel.background = element_blank(),
                     axis.line = element_line(colour = 'black', linewidth = 1),
@@ -142,16 +142,16 @@ plotGenesVariableCorrelation <- function(
                 names_to = 'datasets',
                 values_to = 'corr.coff')
         overall.corr.coeff.plot <- ggplot(all.corr.coeff, aes(x = datasets, y = corr.coff)) +
-            geom_boxplot() +
+            geom_boxplot(outlier.color = 'gray') +
             ylab('Spearman correlation coefficients') +
             xlab('Datasets') +
             geom_hline(yintercept = 0) +
-            ggtitle(paste0('Spearman correlation analysis, ', variable)) +
+            ggtitle(paste0('Correlation, variable:', variable)) +
             theme(
                 panel.background = element_blank(),
                 axis.line = element_line(colour = 'black', linewidth = 1),
-                axis.title.x = element_text(size = 18),
-                axis.title.y = element_text(size = 18),
+                axis.title.x = element_text(size = 14),
+                axis.title.y = element_text(size = 14),
                 plot.title = element_text(size = 15),
                 axis.text.x = element_text(size = 12, angle = 25, hjust = 1),
                 axis.text.y = element_text(size = 12))

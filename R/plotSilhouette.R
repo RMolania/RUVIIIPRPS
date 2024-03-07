@@ -150,9 +150,9 @@ plotSilhouette <- function(
             overall.single.silhouette.plot <- ggplot(overall.single.silhouette.plot,
                        aes(x = datasets, y = silhou.coff)) +
                 geom_col() +
-                ylab('Silhouette ') +
+                ylab('Silhouette coefficient ') +
                 xlab('Datasets') +
-                ggtitle(paste0('Silhouette, ', variables)) +
+                ggtitle(paste0('Silhouette, variable:', variables)) +
                 theme(
                     panel.background = element_blank(),
                     axis.line = element_line(colour = 'black', linewidth = 1),
