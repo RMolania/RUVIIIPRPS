@@ -11,7 +11,11 @@ RoxygenNote: 7.2.3
 LinkingTo: Rcpp, RcppEigen
 Imports: 
     ggplot2,
+    ggforestplot,
+    ggh4x,
+    qvalue,
     singscore,
+    kunstomverse,
     NbClust,
     Rcpp,
     SummarizedExperiment,
@@ -36,7 +40,6 @@ Imports:
     mclust,
     matrixTests,
     fastDummies,
-    kunstomverse,
     stats,
     Rfast,
     matrixStats,
