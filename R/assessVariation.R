@@ -115,7 +115,7 @@ assessVariation <- function(
         rle.median.points.size = 1,
         rle.geom.hline.color = "cyan",
         fast.pca = TRUE,
-        compute.nb.pcs = 10,
+        compute.nb.pcs = 5,
         center.pca = TRUE,
         scale.pca = FALSE,
         svd.bsparam = bsparam(),
@@ -367,8 +367,8 @@ assessVariation <- function(
                 stroke.size = 0.2,
                 points.alpha = 0.5,
                 densities.alpha = 0.5,
-                plot.ncol = 1,
-                plot.nrow = 3,
+                plot.ncol = c(3,1),
+                plot.nrow = c(3,2),
                 plot.output = FALSE,
                 save.se.obj = TRUE,
                 verbose = TRUE)
@@ -912,6 +912,8 @@ assessVariation <- function(
         fa.gene.var.anova.pvalue.scores,
         fa.dge.scores,
         fa.dge.uniform.scores)
+    all[,1] <- gsub(':', ".", all[,1])
+    assay.names <- gsub(':', ".", assay.names)
     group <- NULL
     all$group <- 'Removal of unwanted variation'
     all$group[all$variable %in% bio.variables] <- 'Preservation of biological variation'
@@ -1004,7 +1006,7 @@ assessVariation <- function(
     )
     p.overall <- ggplot(data = all2, aes(x = test, y = data)) +
         geom_point(aes(size = measurements, color = rank)) +
-        scale_fill_manual(values = RColorBrewer::brewer.pal(n = 8, name = 'Dark2')[3:5]) +
+        scale_color_manual(values = RColorBrewer::brewer.pal(n = 8, name = 'Oranges')[8:1]) +
         theme_bw()  +
         xlab('') +
         ylab('') +
