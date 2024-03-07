@@ -9,22 +9,21 @@
 #' @param se.obj A summarized experiment object.
 #' @param variables Symbols. A symbol and a vector of symbols indicating the columns names of variables in the samples
 #' annotation in the SummarizedExperiment object. The 'variables' can be categorical and continuous.
-#' @param output.file Symbol. A name for the output file.
 #' @param plot.output Logical. Whether to print the plot or not.
+#' @param save.se.obj Logical. Whether to save the results into the SummarizedExperiment object. The default is TRUE.
 #'
 #' @return A list of all possible assessment metrics for the variables.
 
 #' @importFrom SummarizedExperiment colData
 #' @importFrom tibble tibble
 #' @importFrom igraph vertex_attr layout_as_tree graph_from_data_frame
-#' @importFrom ggpubr ggarrange
-
+#' @importFrom ggpubr ggarrange annotate_figure text_grob
 
 getAssessmentMetrics <- function(
         se.obj,
         variables,
-        output.file,
-        plot.output = TRUE) {
+        plot.output = TRUE,
+        save.se.obj = TRUE) {
     categorical.var <- continuous.var <- NULL
     if (!is.null(variables)) {
         var.class <- sapply(
@@ -34,7 +33,6 @@ getAssessmentMetrics <- function(
         categorical.var <- names(var.class[var.class %in% c('character', 'factor')])
         continuous.var <- names(var.class[var.class %in% c('numeric', 'integer')])
     }
-
     cat.char <- lapply(
         categorical.var,
         function(x){
@@ -66,8 +64,8 @@ getAssessmentMetrics <- function(
             'rleMedians||scatterPlot||RLE',
             'rleIqr||scatterPlot||RLE',
             'pcs||scatterPlot||PCA',
-            'pcs||lineDotPlot||PcaReg',
-            'geneCorr||boxPlot||GeneVarCorr')
+            'pcs||lineDotPlot||LRA',
+            'geneCorr||boxPlot||Correlation')
         metrics.for.cont.var <- expand.grid(
             continuous.var,
             metrics.for.cont.var)
@@ -93,7 +91,7 @@ getAssessmentMetrics <- function(
         metrics.for.cont.var.list <- NULL
     }
 
-    # possible metrics for continuous variables #####
+    # possible metrics for categorica variables #####
     if(length(categorical.var) > 0){
         metrics.for.cat.var <- c(
             'rle||coloredRLEplot||RLE',
@@ -101,10 +99,10 @@ getAssessmentMetrics <- function(
             'rleIqr||boxPlot||RLE',
             'pcs||boxPlot||PCA',
             'pcs||scatterPlot||PCA',
-            'pcs||lineDotPlot||PcaVecCorr',
+            'pcs||lineDotPlot||VCA',
             'ariCoeff||barPlot||ARI',
             'silhouetteCoeff||barPlot||Silhouette',
-            'geneAnov||boxPlot||GeneVarAov',
+            'geneAnov||boxPlot||ANOVA',
             'pvaluse||pvalHist||DGE')
         metrics.for.cat.var <- expand.grid(
             categorical.var,
@@ -120,7 +118,7 @@ getAssessmentMetrics <- function(
         metrics.for.cat.var$Factors <- unlist(lapply(
             metrics.for.cat.var$MetricsPlots,
             function(x) strsplit(x = as.character(x), split = '\\|\\|')[[1]][1]))
-        metrics.for.cat.var.table <- metrics.for.cat.var[,c(1,5,4,3)]
+        metrics.for.cat.var.table <- metrics.for.cat.var[,c(1,3,5,4)]
         metrics.for.cat.var.list <- paste0(
             metrics.for.cat.var$Variables,
             '_',
@@ -197,6 +195,7 @@ getAssessmentMetrics <- function(
     final.metrics.table <- rbind(final.metrics.table , general.plot)
 
     # plot ####
+    steps <- y <- label <- xmin <- xmax <- type <- s_e <- ymin <- ymax <- id <- NULL
     plot.metrics <- lapply(
         variables,
         function(x){
@@ -204,7 +203,7 @@ getAssessmentMetrics <- function(
             metrics.tree <- tibble::tibble(
                 from = sub.final.metrics.table.toplot$Variables,
                 to = paste(
-                    paste0('T: ', sub.final.metrics.table.toplot$Metrics),
+                    paste0('M: ', sub.final.metrics.table.toplot$Metrics),
                     paste0('V: ', sub.final.metrics.table.toplot$Factors),
                     paste0('P: ', sub.final.metrics.table.toplot$PlotTypes),
                     sep = '\n'))
@@ -213,8 +212,8 @@ getAssessmentMetrics <- function(
             colnames(coords) <- c("x", "y")
             output.df <- tibble::as_tibble(coords) %>%
                 mutate(
-                    step = igraph::vertex_attr(g, "name"),
-                    label = gsub("\\d+$", "", step),
+                    steps = igraph::vertex_attr(g, "name"),
+                    label = gsub("\\d+$", "", steps),
                     x = x * -1,
                     type = factor(1))
             plot.nodes = output.df %>%
@@ -228,8 +227,8 @@ getAssessmentMetrics <- function(
                 pivot_longer(
                     cols = c("from", "to"),
                     names_to = "s_e",
-                    values_to = "step") %>%
-                dplyr::left_join(plot.nodes, by = "step") %>%
+                    values_to = "steps") %>%
+                dplyr::left_join(plot.nodes, by = "steps") %>%
                 dplyr::select(-c(label, type, y, xmin, xmax)) %>%
                 dplyr::mutate(y = ifelse(s_e == "from", ymin, ymax)) %>%
                 dplyr::select(-c(ymin, ymax))
@@ -257,7 +256,7 @@ getAssessmentMetrics <- function(
             p <- p + geom_text(
                 data = plot.nodes[-1,],
                 mapping = aes(x = x, y = y, label = label),
-                color = "black",angle = 30
+                color = "black",angle = 30, size = 3,
             )
             p <- p + geom_path(
                 data = plot.edges,
@@ -273,19 +272,39 @@ getAssessmentMetrics <- function(
                 axis.ticks.y = element_blank(),
                 legend.position = 'none')
         })
-
-    pdf(paste0(output.file, '.pdf'), width = 8*length(variables), height = 14)
     plot.caption <- expression(atop(
-        scriptstyle("T: test | V: variable | P: plot type"))
+        scriptstyle("M: metrics | V: variable | P: plot type"))
         )
-    all.plots <- ggarrange(plotlist = plot.metrics, common.legend = TRUE)
+    all.plots <- ggpubr::ggarrange(plotlist = plot.metrics, common.legend = TRUE)
     all.plots <- ggpubr::annotate_figure(
         p = all.plots,
         bottom = ggpubr::text_grob(label = plot.caption, size = 20))
-    print(all.plots)
-    dev.off()
+
     if(isTRUE(plot.output)) print(all.plots)
-    return(all.metrics = list(
-        final.metrics.list = unlist(final.metrics.list),
-        final.metrics.table = final.metrics.table))
+    # save plot
+    if(isTRUE(save.se.obj)){
+        if(!'AssessmentMetrics' %in% names(se.obj@metadata)){
+            se.obj@metadata[['AssessmentMetrics']] <- list()
+        }
+        if(!'plot' %in% se.obj@metadata[['AssessmentMetrics']]){
+            se.obj@metadata[['AssessmentMetrics']][['plot']] <- list()
+            se.obj@metadata[['AssessmentMetrics']][['plot']] <- all.plots
+        }
+        if(!'metrics.list' %in% se.obj@metadata[['AssessmentMetrics']]){
+            se.obj@metadata[['AssessmentMetrics']][['metrics.list']] <- list()
+            se.obj@metadata[['AssessmentMetrics']][['metrics.list']] <- unlist(final.metrics.list)
+        }
+        if(!'metrics.table' %in% se.obj@metadata[['AssessmentMetrics']]){
+            se.obj@metadata[['AssessmentMetrics']][['metrics.table']] <- list()
+            se.obj@metadata[['AssessmentMetrics']][['metrics.table']] <- final.metrics.table
+        }
+        return(se.obj)
+
+    }else {
+        return(all.metrics = list(
+            final.metrics.list = unlist(final.metrics.list),
+            final.metrics.table = final.metrics.table))
+    }
+
 }
+
