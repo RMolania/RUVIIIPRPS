@@ -8,6 +8,8 @@ assessVariation(
   se.obj,
   assay.names = "all",
   variables,
+  bio.variables = NULL,
+  uv.variables = NULL,
   metrics = "all",
   metrics.to.exclude = NULL,
   rle.iqr.width = 2,
@@ -32,8 +34,10 @@ assessVariation(
   corr.method = "spearman",
   anove.method = "aov",
   assess.se.obj = TRUE,
+  overall.performance = TRUE,
   remove.na = "both",
   output.file = NULL,
+  plot.output = TRUE,
   verbose = TRUE
 )
 }
@@ -45,6 +49,10 @@ SummarizedExperiment class object. By default all the assays of the SummarizedEx
 
 \item{variables}{String or vector of strings of the label of continuous or categorical variable(s)
 such as samples types, batch or library size from colData(se).}
+
+\item{bio.variables}{Symbols.}
+
+\item{uv.variables}{Symbols.}
 
 \item{metrics}{Symbol. A symbol or vector of symbols indication winch assessment metrics to use.}
 
@@ -107,11 +115,16 @@ one of euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'. 
 
 \item{assess.se.obj}{Logical. Indicates whether to assess the SummarizedExperiment class object.}
 
+\item{overall.performance}{Logical. Indicates whether to assess the overall performance of different methods. The default
+is set to TRUE.}
+
 \item{remove.na}{Symbol. To remove NA or missing values from the assays or not. The options are 'assays' and 'none'.
 The default is "assays", so all the NA or missing values from the assay(s) will be removed before computing RLE. See
 the checkSeObj function for more details.}
 
 \item{output.file}{Path and name of the output file to save the assessments plots in a pdf format.}
+
+\item{plot.output}{Logical. If TRUE, the plots will be printed out.}
 
 \item{verbose}{Logical. If TRUE, displaying process messages is enabled.}
 }
@@ -150,6 +163,7 @@ It will output the following plots:
 \references{
 Molania R., ..., Speed, T. P., A new normalization for Nanostring nCounter gene expression data, Nucleic Acids Research,
 2019.
+
 Molania R., ..., Speed, T. P., Removing unwanted variation from large-scale RNA sequencing data with PRPS,
 Nature Biotechnology, 2023
 }
