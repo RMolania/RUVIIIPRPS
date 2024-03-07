@@ -1,0 +1,923 @@
+---
+title: "Fast and accurate integration of TCGA BRCA RNA-seq data using the RUVIIIPRPS R package"
+author:
+- name: Ramyar Molania
+  affiliation: Papenfuss Lab, Bioinformatics, WEHI.
+  url: https://www.wehi.edu.au/people/tony-papenfuss
+date: "15-02-2020"
+output:
+  rmdformats::readthedown:
+    code_folding: hide
+    gallery: yes
+    highlight: tango
+    lightbox: yes
+    self_contained: no
+    thumbnails: no
+    number_sections: yes
+    toc_depth: 3
+    use_bookdown: yes
+  html_document2:
+    df_print: paged
+  html_document:
+    toc_depth: '3'
+    df_print: paged
+params:
+  update_date: !r paste("Last updated on:", Sys.Date())
+editor_options:
+  chunk_output_type: console
+---
+`r params$update_date`
+
+<style type="text/css">
+h1.title {
+  font-size: 28px;
+  color: DarkRed;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+  color: DarkBlue;
+}
+h2 { /* Header 2 */
+    font-size: 20px;
+  color: DarkBlue;
+}
+h3 { /* Header 3 */
+    font-size: 18px;
+  color: DarkBlue;
+}
+h4 { /* Header 3 */
+    font-size: 16px;
+  color: DarkBlue;
+}
+</style>
+
+<style>
+p.caption {
+  font-size: 46em;
+  font-style: italic;
+  color: black;
+}
+</style>
+
+```{r knitr_init, echo=FALSE, results="asis"}
+library(knitr)
+library(rmdformats)
+library(DT)
+library(BiocStyle)
+```
+
+```{r setup, include=F}
+knitr::opts_chunk$set(
+  tidy = FALSE,
+  fig.width = 10,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+# Introduction
+In this vignette, we showed how to use the RUVIIIPRPS R package to normalize the TCGA breast cancer RNA-seq data.
+
+# Download the data using the TCGAbiolinks R package
+
+```{r downloadingTheData, message=F, warning=F}
+# harmonized.data <- TCGAbiolinks::GDCquery(
+#     project = 'TCGA-BRCA',
+#     data.category = 'Transcriptome Profiling',
+#     data.type = 'Gene Expression Quantification'
+#     )
+# TCGAbiolinks::GDCdownload(harmonized.data)
+# exp.se.obj <- TCGAbiolinks::GDCprepare(query = harmonized.data)
+# qs::qsave(x = exp.se.obj, file = 'TCGA_BrCaRNAseq_StarCounts38_TCGAbiolinks.021424.qs')
+```
+
+
+```{r message=FALSE, warning=F}
+library(SummarizedExperiment)
+library(RUVIIIPRPS)
+# exp.se.obj <- qs::qread(
+#     file = 'TCGA_BrCaRNAseq_StarCounts38_TCGAbiolinks.021424.qs'
+#     )
+path <- "/Users/molania.r/Documents/Scientific_files.files/CurrentProjects/Project13.3_Test_RUVIIIPRPS_Package/Test_RUVIIIPRPS_Functions/"
+exp.se.obj <- qs::qread(paste0(path,'TCGA_BrCaRNAseq_StarCounts38_TCGAbiolinks.021424.qs'))
+gene.annot <- rowData(x = exp.se.obj)
+exp.se.obj <- exp.se.obj[ gene.annot$gene_type == 'protein_coding', ]
+gene.annot <- rowData(x = exp.se.obj)
+exp.se.obj <- exp.se.obj[!duplicated(gene.annot$gene_name), ]
+row.names(exp.se.obj) <- rowData(x = exp.se.obj)$gene_name
+```
+
+
+```{r}
+path <- '/Users/molania.r/Documents/Scientific_files.files/CurrentProjects/Project13.3_Test_RUVIIIPRPS_Package/Test_RUVIIIPRPS_Functions/Data/'
+batch.info <- readxl::read_excel(
+    path = paste0(path, '/41587_2022_1440_MOESM3_ESM.xlsx'), 
+    sheet = 1, 
+    skip = 1)
+batch.info <- as.data.frame(batch.info)
+index <- intersect(batch.info$Samples, colnames(exp.se.obj))
+exp.se.obj <- exp.se.obj[ , index]
+batch.info <- batch.info[batch.info$Samples %in% index, ]
+exp.se.obj$batch.years <- batch.info$Year
+exp.se.obj$batch.plates <- batch.info$Plates
+exp.se.obj$batch.FcCh <- 'FcCh.A'
+exp.se.obj$batch.FcCh[exp.se.obj$batch.years > 2011] <- 'FcCh.B'
+```
+
+
+```{r}
+selected.assays <- c(
+    'unstranded', 
+    'tpm_unstrand', 
+    'fpkm_unstrand', 
+    'fpkm_uq_unstrand')
+data.sets <- lapply(
+    selected.assays, 
+    function(x) assay(x = exp.se.obj, i = x))
+names(data.sets) <- selected.assays
+sample.annotation <- as.data.frame(colData(exp.se.obj))
+gene.annot <- as.data.frame(rowData(exp.se.obj))
+colnames(gene.annot)[7] <- 'hgnc_symbol'
+```
+
+# Create a SummarizedExperiment object
+Here we use the createSeObj() function to generate SummarizedExperiment object from the TCGA BrCa datastes. We remove lowly expressed genes, estimate library size and tumor purity. 
+
+```{r createSeObj, message=FALSE, warning=F}
+brca.se.obj <- createSeObj(
+    data.sets = data.sets, 
+    raw.count.assay.name = 'unstranded', 
+    gene.annotation = gene.annot,
+    create.sample.annotation = FALSE,
+    sample.annotation = sample.annotation,
+    remove.lowly.expressed.genes = TRUE, 
+    assay.name.to.estimate.purity = 'unstranded',
+    estimate.tumor.purity = 'both',
+    calculate.library.size = TRUE,
+    add.housekeeping.genes = TRUE,
+    add.immun.stroma.genes = TRUE,
+    gene.group = 'hgnc_symbol'
+    )
+plot(brca.se.obj$tumour.purity.singscore, brca.se.obj$tumour.purity.estimate)
+```
+
+# Variation assessment
+We select the 'paper_BRCA_Subtype_PAM50' as a biological variation and the 'library.size', 'tumour.purity' and 
+'batch_FcCh' as sources of unwanted variation.
+
+In this section we will assess the variation of different biological and unwanted variables using a range of metrics.
+Before applying the metrics, we will assess the structure and missing values in the SummarizedExperiment object.
+
+```{r assessSeObject, message=FALSE, warning=F}
+colnames(brca.se.obj@colData)[colnames(brca.se.obj@colData) == 'paper_BRCA_Subtype_PAM50'] <- 'PAM50'
+brca.se.obj <- checkSeObj(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variables = c(
+        'PAM50', 
+        'library.size', 
+        'tumour.purity.estimate', 
+        'batch.FcCh'),
+    remove.na = 'both', 
+    verbose = TRUE)
+```
+
+
+## RLE plot
+We first compute of the RLE of all the assays in the SummarizedExperiment object.
+```{r computeRLE, message=FALSE, warning=F}
+brca.se.obj <- computeRLE(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    apply.log = TRUE, 
+    pseudo.count = 1, 
+    outputs.to.return = 'all', 
+    assess.se.obj = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE)
+plot(brca.se.obj@metadata$metric$unstranded$RLE$rle.data$rle.med)
+```
+Then, we explore the association of the RLE data with sources of unwanted variation. Here, we create colored RLE plot for
+the 'batch_FcCh' as categorical variable.
+
+```{r}
+brca.se.obj <- plotRLE(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'batch.FcCh', 
+    ylim.rle.plot = NULL, 
+    iqr.width = 1, 
+    median.points.size = 1, 
+    median.points.color = 'cyan', 
+    geom.hline.color = 'red', 
+    plot.ncol = 2, 
+    plot.nrow = 2, 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+brca.se.obj@metadata$metric$unstranded$RLE$rle.plot$colored.rle.plot$batch.FcCh
+brca.se.obj@metadata$plot$RLE$colored.rle.plot$batch.FcCh
+```
+
+
+```{r}
+variables <- c(
+        'PAM50', 
+        'library.size', 
+        'tumour.purity.estimate', 
+        'batch.FcCh')
+for(i in variables){
+    brca.se.obj <- plotRleVariable(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    rle.data.type = 'both', 
+    ylim.rle.med.plot = NULL, 
+    ylim.rle.iqr.plot = NULL, 
+    points.size = 1,  
+    plot.ncol = 2, 
+    plot.nrow = 2, 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+
+brca.se.obj@metadata$plot$RLE$rle.var.plot$tumour.purity.estimate
+brca.se.obj@metadata$plot$RLE$rle.var.plot$PAM50$
+```
+
+
+```{r}
+brca.se.obj <- computePCA(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    fast.pca = TRUE, 
+    nb.pcs = 10, 
+    center = TRUE, 
+    scale = FALSE, 
+    apply.log = TRUE, 
+    pseudo.count = 1, 
+    svd.bsparam = BiocSingular::bsparam(), 
+    assess.se.obj = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+brca.se.obj@metadata$metric$unstranded$fastPCA$svd$d
+```
+
+```{r}
+for(i in variables){
+    brca.se.obj <- RUVIIIPRPS::plotPCA(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    fast.pca = TRUE, 
+    nb.pcs = 3,
+    plot.type = 'scatter',
+    points.size = 1, 
+    stroke.color = 'gray', 
+    stroke.size = .2, 
+    points.alpha = .4, 
+    densities.alpha = .3, 
+    plot.ncol = c(3, 1),
+    plot.nrow = c(4, 4),
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+brca.se.obj@metadata$plot$PCA$fast.pca$library.size$pca.var.scat.plot
+
+```
+
+```{r}
+categorical.variables <- c('batch.FcCh', 'PAM50')
+for(i in categorical.variables){
+    brca.se.obj <- computePCVariableCorrelation(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    fast.pca = TRUE, 
+    nb.pcs = 10, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+```
+
+```{r}
+for(i in categorical.variables){
+    brca.se.obj <- plotPCVariableCorrelation(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    fast.pca = TRUE, 
+    nb.pcs = 10, 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+
+brca.se.obj@metadata$metric$unstranded$pcs.vect.corr$batch_FcCh$vect.corr.plot
+```
+
+```{r}
+continuous.variables <- c('library.size', 'tumour.purity.estimate')
+for(i in continuous.variables){
+    brca.se.obj <- computePCVariableRegression(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    fast.pca = TRUE, 
+    nb.pcs = 10, 
+    save.se.obj = TRUE,
+    verbose = TRUE)
+}
+brca.se.obj@metadata$metric$unstranded$pcs.lm$tumour.purity.estimate$rseq
+```
+
+```{r}
+for(i in continuous.variables){
+    brca.se.obj <- plotPCVariableRegression(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    fast.pca = TRUE, 
+    nb.pcs = 10, 
+    save.se.obj = TRUE, 
+    plot.output = TRUE, 
+    verbose = TRUE)
+}
+```
+
+```{r}
+for(i in categorical.variables){
+    brca.se.obj <- computeARI(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    fast.pca = TRUE,
+    nb.pcs = 3, 
+    clustering.method = 'hclust', 
+    hclust.method = 'complete', 
+    hclust.dist.measure = 'euclidian', 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+```
+
+```{r}
+for(i in categorical.variables){
+    brca.se.obj <- plotARI(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variables = i, 
+    ari.method = 'hclust.complete.euclidian', 
+    plot.type = 'single.plot', 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+
+```
+
+```{r}
+for(i in categorical.variables){
+    brca.se.obj <- computeSilhouette(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    dist.measure = 'euclidian', 
+    fast.pca = TRUE, 
+    nb.pcs = 3, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+
+```
+
+
+```{r}
+for(i in categorical.variables){
+    brca.se.obj <- plotSilhouette(
+    se.obj = brca.se.obj, 
+    assay.names = 'all',
+    variables = i, 
+    silhouette.method = 'sil.euclidian', 
+    plot.type = 'single.plot', 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+```
+
+
+```{r}
+for(i in continuous.variables){
+    brca.se.obj <- computeGenesVariableCorrelation(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i,
+    method = 'spearman', 
+    a = 0.05, 
+    rho = 0, 
+    apply.log = TRUE, 
+    pseudo.count = 1 , 
+    plot.top.genes = FALSE, 
+    nb.top.genes = NULL,
+    apply.round = TRUE, 
+    assess.se.obj = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+```
+
+
+```{r}
+for(i in continuous.variables){
+    brca.se.obj <- plotGenesVariableCorrelation(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    correlation.method = 'spearman', 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+
+brca.se.obj@metadata$metric$unstranded$genes.var.corr$gene.spearman.corr$tumour.purity.estimate$corrs
+```
+
+
+```{r}
+for(i in categorical.variables){
+   brca.se.obj <- computeGenesVariableAnova(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    method = 'aov', 
+    apply.log = TRUE,
+    pseudo.count = 1, 
+    plot.top.genes = FALSE,
+    nb.top.genes = 3, 
+    apply.round = FALSE,
+    assess.se.obj = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE, 
+    verbose = TRUE) 
+}
+
+brca.se.obj@metadata$metric$unstranded$aov$genes.aov.anova$batch_FcCh$fvals
+```
+
+```{r}
+for(i in categorical.variables){
+    brca.se.obj <- plotGenesVariableAnova(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    anova.method = 'aov', 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+brca.se.obj@metadata$plot$ANOVA$aov$batch.FcCh
+```
+
+
+```{r}
+for(i in categorical.variables){
+    brca.se.obj <- computeDGE(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = i, 
+    apply.log = TRUE,
+    pseudo.count = 1, 
+    assess.se.obj = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+}
+
+```
+
+```{r}
+brca.se.obj <- plotDGE(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'batch.FcCh', 
+    plot.ncol = 4, 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = FALSE)
+brca.se.obj@metadata$plot$
+```
+
+```{r}
+brca.se.obj <- RUVIIIPRPS:::getAssessmentMetrics(
+    se.obj = brca.se.obj, 
+    variables = variables)
+
+```
+
+
+# RUV-III-PRPS normalization
+## Find NCGs
+```{r}
+brca.se.obj <- findNCGsSupervised(
+    se.obj = brca.se.obj, 
+    assay.name = 'unstranded', 
+    approach = 'TWAnova', 
+    ncg.selection.method = 'noneOverlap', 
+    bio.variables = 'PAM50', 
+    uv.variables = c('library.size', 'batch.FcCh', 'tumour.purity.estimate'), 
+    nb.ncg = 10, 
+    grid.nb = 1, 
+    top.rank.bio.genes = 85, 
+    top.rank.uv.genes = 70, 
+    bio.groups = NULL, 
+    nb.bio.clusters = 3, 
+    bio.clustering.method = 'kmeans', 
+    uv.groups = NULL, 
+    nb.uv.clusters = 3, 
+    uv.clustering.method = 'kmeans', 
+    normalization = 'CPM', 
+    regress.out.uv.variables = NULL, 
+    regress.out.bio.variables = NULL, 
+    apply.log = TRUE, 
+    pseudo.count = 1,
+    min.sample.for.aov = 3, 
+    min.sample.for.correlation = 10, 
+    corr.method = 'spearman', 
+    a = 0.05, 
+    rho = 0, 
+    anova.method = 'aov',
+    assess.ncg = TRUE, 
+    variables.to.assess.ncg = NULL, 
+    nb.pcs = 10, 
+    center = TRUE, 
+    scale = FALSE, 
+    assess.se.obj = FALSE,
+    assess.variables = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+brca.se.obj@metadata$NCG$supervised$
+```
+
+```{r}
+brca.se.obj <- createSupervisedPRPS(
+    se.obj = brca.se.obj, 
+    assay.name = 'unstranded', 
+    bio.variables = 'PAM50', 
+    uv.variables = c('library.size', 'batch.FcCh', 'tumour.purity.estimate'), 
+    apply.other.uv.variables = TRUE, 
+    min.sample.for.prps = 3, 
+    bio.clustering.method = 'kmeans', 
+    nb.bio.clusters = 3, 
+    other.uv.clustering.method = 'kmeans', 
+    nb.other.uv.clusters = 3, 
+    check.prps.connectedness = TRUE, 
+    apply.log = TRUE, 
+    pseudo.count = 1, 
+    assess.se.obj = FALSE, 
+    assess.variables = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE, 
+    plot.output = TRUE, 
+    verbose = TRUE)
+brca.se.obj@metadata$NCG$supervised$
+```
+
+```{r}
+brca.se.obj <- RUVIII.PRPS(
+    se.obj = brca.se.obj, 
+    assay.name = 'unstranded', 
+    prps.group = 'supervised', 
+    prps.set.names = NULL,
+    ncg.group = 'supervised', 
+    ncg.set.names = NULL, 
+    k = c(1,10,15, 20), 
+    apply.log = 'assay', 
+    pseudo.count = 1, 
+    alpha = NULL,
+    eta = NULL, 
+    include.intercept = TRUE, 
+    return.info = TRUE, 
+    assess.se.obj = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE)
+```
+
+```{r}
+dd <- names(assays(brca.se.obj))[1:4]
+brca.se.obj <- RUVIIIPRPS:::createLogAssays(
+    se.obj = brca.se.obj, 
+    assay.names = dd, 
+    pseudo.count = 1, 
+    replace.assays = TRUE, 
+    apply.round = TRUE, 
+    verbose = TRUE
+    )
+
+
+brca.se.obj <- assessVariation(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variables = variables, 
+    bio.variables = c('PAM50', 'batch.FcCh'), 
+    uv.variables = c('library.size', 'tumour.purity.estimate'), 
+    apply.log = F
+    )
+
+```
+
+## RLE plot
+We first compute of the RLE of all the assays in the SummarizedExperiment object.
+```{r computeRLE, message=FALSE, warning=F}
+brca.se.obj <- computeRLE(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    apply.log = FALSE, 
+    pseudo.count = 1, 
+    outputs.to.return = 'all', 
+    assess.se.obj = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE)
+```
+Then, we explore the association of the RLE data with sources of unwanted variation. Here, we create colored RLE plot for
+the 'batch_FcCh' as categorical variable.
+
+```{r}
+brca.se.obj <- plotRLE(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'batch_FcCh', 
+    ylim.rle.plot = NULL, 
+    iqr.width = 1, 
+    median.points.size = 1, 
+    median.points.color = 'cyan', 
+    geom.hline.color = 'red', 
+    plot.ncol = 1, 
+    plot.nrow = 4, 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+```
+
+
+```{r}
+brca.se.obj <- plotRleVariable(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'tumour.purity.estimate', 
+    rle.data.type = 'both', 
+    ylim.rle.med.plot = NULL, 
+    ylim.rle.iqr.plot = NULL, 
+    points.size = 1, 
+    plot.ncol = 2, 
+    plot.nrow = 3, 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+brca.se.obj@metadata$metric$fpkm_unstrand$RLE$rle.data$rle.med
+```
+
+
+```{r}
+brca.se.obj <- computePCA(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    fast.pca = TRUE, 
+    nb.pcs = 10, 
+    center = TRUE, 
+    scale = FALSE, 
+    apply.log = FALSE, 
+    pseudo.count = 1, 
+    svd.bsparam = BiocSingular::bsparam(), 
+    assess.se.obj = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+```
+
+```{r}
+brca.se.obj <- RUVIIIPRPS::plotPCA(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'paper_BRCA_Subtype_PAM50', 
+    fast.pca = TRUE, 
+    nb.pcs = 3,
+    plot.type = 'scatter',
+    points.size = 1, 
+    stroke.color = 'gray', 
+    stroke.size = .2, 
+    points.alpha = .4, 
+    densities.alpha = .3, 
+    plot.ncol = 1, 
+    plot.nrow = 3,
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+brca.se.obj@metadata$plot$PCA$fastPCA$paper_BRCA_Subtype_PAM50
+```
+
+```{r}
+brca.se.obj <- computePCVariableCorrelation(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'batch_FcCh', 
+    fast.pca = TRUE, 
+    nb.pcs = 10, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+```
+
+```{r}
+brca.se.obj <- plotPCVariableCorrelation(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'batch_FcCh', 
+    fast.pca = TRUE, 
+    nb.pcs = 10, 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+brca.se.obj@metadata$plot$VecCorr$batch_FcCh
+```
+
+```{r}
+brca.se.obj <- computePCVariableRegression(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'tumour.purity.estimate', 
+    fast.pca = TRUE, 
+    nb.pcs = 10, 
+    save.se.obj = TRUE,
+    verbose = TRUE)
+```
+
+```{r}
+brca.se.obj <- plotPCVariableRegression(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'tumour.purity.estimate', 
+    fast.pca = TRUE, 
+    nb.pcs = 10, 
+    save.se.obj = TRUE, 
+    plot.output = TRUE, 
+    verbose = TRUE)
+```
+
+```{r}
+brca.se.obj <- computeARI(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'batch_FcCh', 
+    fast.pca = TRUE,
+    nb.pcs = 3, 
+    clustering.method = 'hclust', 
+    hclust.method = 'complete', 
+    hclust.dist.measure = 'euclidian', 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+```
+
+```{r}
+brca.se.obj <- plotARI(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variables = 'batch_FcCh', 
+    ari.method = 'hclust.complete.euclidian', 
+    plot.type = 'single.plot', 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+```
+
+```{r}
+brca.se.obj <- computeSilhouette(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'batch_FcCh', 
+    dist.measure = 'euclidian', 
+    fast.pca = TRUE, 
+    nb.pcs = 3, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+```
+
+
+```{r}
+brca.se.obj <- plotSilhouette(
+    se.obj = brca.se.obj, 
+    assay.names = 'all',
+    variables = 'batch_FcCh', 
+    silhouette.method = 'sil.euclidian', 
+    plot.type = 'single.plot', 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+```
+
+
+```{r}
+brca.se.obj <- computeGenesVariableCorrelation(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'tumour.purity.estimate',
+    method = 'spearman', 
+    a = 0.05, 
+    rho = 0, 
+    apply.log = TRUE, 
+    pseudo.count = 1 , 
+    plot.top.genes = FALSE, 
+    nb.top.genes = NULL,
+    apply.round = TRUE, 
+    assess.se.obj = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+```
+
+
+```{r}
+brca.se.obj <- plotGenesVariableCorrelation(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'tumour.purity.estimate', 
+    correlation.method = 'gene.spearman.corr', 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+```
+
+
+```{r}
+brca.se.obj <- computeGenesVariableAnova(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'batch_FcCh', 
+    method = 'aov', 
+    apply.log = TRUE,
+    pseudo.count = 1, 
+    plot.top.genes = TRUE,
+    nb.top.genes = 3, 
+    apply.round = FALSE,
+    assess.se.obj = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+```
+
+```{r}
+brca.se.obj <- plotGenesVariableAnova(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'batch_FcCh', 
+    anova.method = 'genes.aov.anova', 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+brca.se.obj@metadata$plot$GeneVarAnova$genes.aov.anova
+```
+
+
+```{r}
+brca.se.obj <- computeDGE(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'batch_FcCh', 
+    apply.log = FALSE,
+    pseudo.count = 1, 
+    assess.se.obj = FALSE, 
+    remove.na = 'none', 
+    save.se.obj = TRUE, 
+    verbose = TRUE)
+```
+
+```{r}
+brca.se.obj <- plotDGE(
+    se.obj = brca.se.obj, 
+    assay.names = 'all', 
+    variable = 'batch_FcCh', 
+    plot.ncol = 7, 
+    plot.output = TRUE, 
+    save.se.obj = TRUE, 
+    verbose = FALSE)
+ks.test(brca.se.obj@metadata$metric$`RUVIIIRPPS_K:15`$DGE$batch_FcCh$p.vals$`FcCh_A&FcCh_B`$pvalue>0.1, "punif")
+ks.test(brca.se.obj@metadata$metric$Log_fpkm_unstrand$DGE$batch_FcCh$p.vals$`FcCh_A&FcCh_B`$pvalue>0.1, "punif")
+```
+
+
+```{r}
+head(all.de.tests$Log_fpkm_unstrand)
+breaks <- seq(0, 1, by = .1)
+binned <- cut(
+    all.de.tests$Log_fpkm_unstrand$`FcCh_A&FcCh_B.pvalue`, 
+    breaks = breaks, 
+    include.lowest = TRUE)
+frequency <- table(binned)
+```
+
+
+
+
+
