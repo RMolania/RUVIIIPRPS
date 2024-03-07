@@ -179,7 +179,7 @@ computeGenesVariableCorrelation <- function(
                 ### positive correlation ####
                 p.pos <- as.data.frame(t(all.assays[[x]][row.names(temp.corr)[c(1:nb.top.genes)],]))
                 p.pos[, 'variable'] <- se.obj@colData[, variable]
-                p.pos <-p.pos %>%
+                p.pos <- p.pos %>%
                     pivot_longer(
                     -variable,
                     names_to = 'genes',
@@ -267,7 +267,7 @@ computeGenesVariableCorrelation <- function(
             }
             ## check if metadata metric already exist for this assay, this metric and this variable
             se.obj@metadata[['metric']][[x]][['Correlation']][[method]][[variable]]$cor.coef <-
-                cor.all[[x]][['corr.genes.var']][, 'correlation']
+                cor.all[[x]][['corr.genes.var']][ , c('p-value', 'correlation')]
         }
         printColoredMessage(
             message = 'The correlation results for indiviaul assay are saved to metadata@metric',
