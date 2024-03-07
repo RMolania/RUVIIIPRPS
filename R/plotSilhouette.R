@@ -302,7 +302,7 @@ plotSilhouette <- function(
                 if (!variables %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]])) {
                     se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]] <- list()
                 }
-                if (!'silhouette.single.plot' %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variable]])) {
+                if (!'silhouette.single.plot' %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]])) {
                     se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]][['silhouette.single.plot']] <- list()
                 }
                 se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]][['silhouette.single.plot']] <- overall.single.silhouette.plot
@@ -310,7 +310,7 @@ plotSilhouette <- function(
                 if (!variables %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]])) {
                     se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]] <- list()
                 }
-                if (!'silhouette.combined.plot' %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variable]])) {
+                if (!'silhouette.combined.plot' %in%  names(se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]])) {
                     se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]][['silhouette.combined.plot']] <- list()
                 }
                 se.obj@metadata[['plot']][['Silhouette']][[silhouette.method]][[variables]][['silhouette.combined.plot']] <- overall.combined.silhouette.plot
