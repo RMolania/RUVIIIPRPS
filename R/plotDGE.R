@@ -123,7 +123,7 @@ plotDGE <- function(
                     scale_y_continuous(labels = function(x) format(x / 1000, scientific = F), limits = c(0,ylim.pvalue)) +
                     ggtitle(x) +
                     xlab('p-values') +
-                    ylab('Frequency') +
+                    ylab(expression('Frequency'~10^3)) +
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', linewidth = 1),
@@ -140,10 +140,10 @@ plotDGE <- function(
                         values_to = 'p.vals')
                 pval.plot <- ggplot(pval.data, aes(x = p.vals)) +
                     geom_histogram(binwidth = 0.1) +
-                    scale_y_continuous(labels = function(x) format(x / 1000, scientific = F), limits = c(0,ylim.pvalue)) +
+                    scale_y_continuous(labels = function(x) format(x /1000, scientific = F), limits = c(0, ylim.pvalue)) +
                     ggtitle(x) +
                     xlab('p-values') +
-                    ylab('Frequency') +
+                    ylab(expression('Frequency'~10^3)) +
                     facet_wrap(~contrasts) +
                     theme(
                         panel.background = element_blank(),
