@@ -125,7 +125,7 @@ plotARI <- function(
                     geom_col(aes(y = all.ari[[x]], x = 1)) +
                     ylab('Adjusted rand index ') +
                     xlab(x) +
-                    ggtitle(paste0('Adjusted rand index, ', variables)) +
+                    ggtitle(paste0('ARI, data:', x, 'variable:', variables)) +
                     theme(
                         panel.background = element_blank(),
                         axis.line = element_line(colour = 'black', linewidth = 1),
@@ -134,7 +134,7 @@ plotARI <- function(
                         plot.title = element_text(size = 16),
                         axis.text.x = element_text(size = 0),
                         axis.text.y = element_text(size = 12))
-                if(plot.output)
+                if(isTRUE(plot.output) & length(assay.names) == 1)
                     print(ari.plot)
             })
         names(all.single.ari.plots) <- levels(assay.names)
@@ -155,19 +155,19 @@ plotARI <- function(
                 geom_col() +
                 ylab('Adjusted rand index ') +
                 xlab('Datasets') +
-                ggtitle(paste0('Adjusted rand index, ', variables)) +
+                ggtitle(paste0('ARI, variable:, ', variables)) +
                 theme(
                     panel.background = element_blank(),
                     axis.line = element_line(colour = 'black', linewidth = 1),
-                    axis.title.x = element_text(size = 18),
-                    axis.title.y = element_text(size = 18),
+                    axis.title.x = element_text(size = 16),
+                    axis.title.y = element_text(size = 16),
                     plot.title = element_text(size = 15),
                     axis.text.x = element_text(
-                        size = 12,
+                        size = 10,
                         angle = 25,
                         hjust = 1),
                     axis.text.y = element_text(size = 12))
-            if(plot.output)
+            if(isTRUE(plot.output))
                 print(overall.single.ari.plot)
         }
     } else if (plot.type == 'combined.plot') {
