@@ -257,7 +257,7 @@ computeGenesVariableAnova <- function(
             }
             ## check if metadata metric already exist for this assay, this metric and this variable
             se.obj@metadata[['metric']][[x]][['ANOVA']][[method]][[variable]][['F.values']] <-
-                log2(all.aov[[x]][['anova.genes.var']][, 'statistic'])
+                all.aov[[x]][['anova.genes.var']][, c('pvalue', 'statistic')]
         }
         printColoredMessage(
             message = 'The ANOVA results for indiviaul assay are saved to metadata@metric',
