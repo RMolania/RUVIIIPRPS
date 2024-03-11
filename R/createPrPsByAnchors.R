@@ -67,7 +67,7 @@
 #' @importFrom Matrix rowMeans
 #' @export
 
-createUnSupervisedPRPSbyAnchors <- function(
+createPrPsByAnchors <- function(
         se.obj,
         assay.name,
         uv.variable,

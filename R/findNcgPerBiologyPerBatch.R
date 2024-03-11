@@ -94,7 +94,7 @@
 #' @import ggplot2
 #' @export
 
-findNCGsPerBiologyPerBatch <- function(
+findNcgPerBiologyPerBatch <- function(
         se.obj,
         assay.name,
         bio.variables,

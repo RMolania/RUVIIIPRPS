@@ -82,7 +82,7 @@
 #' @importFrom tidyr %>%
 #' @export
 
-createSupervisedPRPS <- function(
+createPrPsSupervised <- function(
         se.obj,
         assay.name,
         bio.variables,
@@ -128,7 +128,7 @@ createSupervisedPRPS <- function(
                     if (apply.other.uv.variables) {
                         other.uv.variables <- uv.variables[!uv.variables %in% x]
                     } else other.uv.variables <- NULL
-                    createPRPSForCategoricalUV(
+                    createPrPsForCategoricalUV(
                         se.obj = se.obj,
                         assay.name = assay.name,
                         bio.variables = bio.variables,
@@ -155,7 +155,7 @@ createSupervisedPRPS <- function(
                 if (apply.other.uv.variables) {
                     other.uv.variables <- uv.variables[!uv.variables %in% x]
                 } else other.uv.variables <- NULL
-                se.obj <- createPRPSForCategoricalUV(
+                se.obj <- createPrPsForCategoricalUV(
                     se.obj = se.obj,
                     assay.name = assay.name,
                     bio.variables = bio.variables,
@@ -190,7 +190,7 @@ createSupervisedPRPS <- function(
                     if (apply.other.uv.variables) {
                         other.uv.variables <- uv.variables[!uv.variables %in% x]
                     } else other.uv.variables <- NULL
-                    createPRPSForContinuousUV(
+                    createPrPsForContinuousUV(
                         se.obj = se.obj,
                         assay.name = assay.name,
                         bio.variables = bio.variables,
@@ -218,7 +218,7 @@ createSupervisedPRPS <- function(
                 if (apply.other.uv.variables) {
                     other.uv.variables <- uv.variables[!uv.variables %in% x]
                 } else other.uv.variables <- NULL
-                se.obj <- createPRPSForContinuousUV(
+                se.obj <- createPrPsForContinuousUV(
                     se.obj = se.obj,
                     assay.name = assay.name,
                     bio.variables = bio.variables,

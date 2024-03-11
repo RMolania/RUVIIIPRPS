@@ -86,7 +86,7 @@
 #' @import ggplot2
 #' @export
 
-findNCGsByTwoWayAnova <- function(
+findNcgByTwoWayAnova <- function(
         se.obj,
         assay.name,
         bio.variables,

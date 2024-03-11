@@ -30,7 +30,7 @@ identifyUnknownUV(
   scale = FALSE,
   svd.bsparam = bsparam(),
   assess.se.obj = TRUE,
-  remove.na = "both",
+  remove.na = "none",
   save.se.obj = TRUE,
   plot.out = TRUE,
   verbose = TRUE

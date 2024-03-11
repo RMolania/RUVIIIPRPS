@@ -77,7 +77,7 @@
 #' @import ggplot2
 #' @export
 
-createPRPSForCategoricalUV <- function(
+createPrPsForCategoricalUV <- function(
         se.obj,
         assay.name,
         bio.variables,

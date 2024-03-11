@@ -114,7 +114,7 @@
 #' @importFrom S4Vectors DataFrame
 #' @export
 
-findNCGsSupervised <- function(
+findNcgSupervised <- function(
         se.obj,
         assay.name,
         approach = 'TWAnova',
@@ -163,7 +163,7 @@ findNCGsSupervised <- function(
     }
 
     if(approach == 'PbPbio'){
-        ncg.set <- findNCGsPerBiologyPerBatch(
+        ncg.set <- findNcgPerBiologyPerBatch(
             se.obj = se.obj,
             assay.name = assay.name,
             nb.ncg = nb.ncg,
@@ -198,7 +198,7 @@ findNCGsSupervised <- function(
             save.se.obj = save.se.obj,
             verbose = verbose)
     } else if(approach == 'AnoCorrAs'){
-        ncg.set <- findNCGsAcrossSamples(
+        ncg.set <- findNcgAcrossSamples(
             se.obj = se.obj,
             assay.name = assay.name,
             bio.variables = bio.variables,
@@ -232,7 +232,7 @@ findNCGsSupervised <- function(
             remove.na = remove.na,
             verbose = verbose)
     } else if(approach == 'TWAnova'){
-        ncg.set <- findNCGsByTwoWayAnova(
+        ncg.set <- findNcgByTwoWayAnova(
             se.obj = se.obj,
             assay.name = assay.name,
             bio.variables = bio.variables,

@@ -60,7 +60,7 @@
 #' @importFrom purrr map_df
 #' @export
 
-createUnSupervisedPRPSbyMNN <- function(
+createPrPsByMnn <- function(
         se.obj,
         assay.name,
         uv.variable,

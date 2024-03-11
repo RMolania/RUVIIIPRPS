@@ -85,7 +85,7 @@
 #' @importFrom tidyr %>%
 #' @export
 
-createUnSupervisedPRPS <- function(
+createPrPsUnSupervised<- function(
         se.obj,
         assay.name,
         approach = 'anchor',
@@ -129,7 +129,7 @@ createUnSupervisedPRPS <- function(
 ) {
     if (approach == 'anchor') {
         for (i in uv.variables) {
-            se.obj <- createUnSupervisedPRPSbyAnchors(
+            se.obj <- createPrPsByAnchors(
                 se.obj = se.obj,
                 assay.name = assay.name,
                 uv.variable = i,
@@ -165,7 +165,7 @@ createUnSupervisedPRPS <- function(
     }
     if (approach == 'mnn') {
         for (i in uv.variables) {
-            se.obj <- createUnSupervisedPRPSbyMNN (
+            se.obj <- createPrPsByMnn (
                 se.obj = se.obj,
                 assay.name = assay.name,
                 uv.variable = i,
