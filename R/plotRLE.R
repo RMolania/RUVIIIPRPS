@@ -104,17 +104,23 @@ plotRLE <- function(
 
     # select colors ####
     if(!is.null(variable)){
-        variable.data <- as.factor(colData(se.obj)[[variable]])
-        if(length(levels(variable)) < 9 ){
-            rle.plot.colors <- RColorBrewer::brewer.pal(8, 'Dark2')[1:length(levels(variable.data))]
-            names(rle.plot.colors) <- levels(variable.data)
-        } else {
-            colfunc <- grDevices::colorRampPalette( RColorBrewer::brewer.pal(8, 'Dark2'))
-            rle.plot.colors <- colfunc(n = length(levels(assay.names)))
-            names(rle.plot.colors) <- levels(variable.data)
-        }
+        currentCols <-  c(
+            RColorBrewer::brewer.pal(8, "Dark2")[-5],
+            RColorBrewer::brewer.pal(10, "Paired"),
+            RColorBrewer::brewer.pal(12, "Set3"),
+            RColorBrewer::brewer.pal(9, "Blues")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "Oranges")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "Greens")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "Purples")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "Reds")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "Greys")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "BuGn")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "PuRd")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "BuPu")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "YlGn")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(10, "Paired"))
+        rle.plot.colors <- currentCols[1:length(unique(colData(se.obj)[[variable]]))]
     }
-
     # obtain rle data ####
     printColoredMessage(
         message = paste0('-- Obtain the RLE data from the SummarizedExperiment object:'),
