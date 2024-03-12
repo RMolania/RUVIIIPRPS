@@ -11,6 +11,7 @@ plotPCA(
   fast.pca = TRUE,
   nb.pcs = 3,
   plot.type = "scatter",
+  variable.colors = NULL,
   points.size = 1,
   stroke.color = "gray30",
   stroke.size = 0.2,
@@ -44,6 +45,8 @@ that the variation of PCs for a portion of all selected PCs will be based solely
 
 \item{plot.type}{Symbol. Indicates which plot type should be used. Options are: 'scatter' and 'boxplot'. The default is
 set to 'scatter'. Please note, the 'plot.type' cannot be set to 'scatter' of a categorical variable is provided.}
+
+\item{variable.colors}{Symbol.}
 
 \item{points.size}{Numeric. Indicates the size of points in the scatter PCA plots.}
 

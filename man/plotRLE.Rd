@@ -8,6 +8,7 @@ plotRLE(
   se.obj,
   assay.names = "all",
   variable = NULL,
+  variable.colors = NULL,
   ylim.rle.plot = NULL,
   iqr.width = 1,
   median.points.size = 1,
@@ -30,6 +31,8 @@ SummarizedExperiment object will be selected.}
 \item{variable}{Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
 The interquartile ranges of the RLE boxplot will be colored based on the variable. The variable must be a categorical
 variable. The default is NULL.}
+
+\item{variable.colors}{Symbol.}
 
 \item{ylim.rle.plot}{Numeric. A vector of two values to specify the ylim of the RLE plot(s). If is 'NULL', the function
 uses the minimum and maximum interquartile ranges of all the RLE data to specify the ylim. The default is 'NULL'. The
