@@ -22,6 +22,7 @@
 #' that the variation of PCs for a portion of all selected PCs will be based solely on those selected PCs.
 #' @param plot.type Symbol. Indicates which plot type should be used. Options are: 'scatter' and 'boxplot'. The default is
 #' set to 'scatter'. Please note, the 'plot.type' cannot be set to 'scatter' of a categorical variable is provided.
+#' @param variable.colors Symbol.
 #' @param points.size Numeric. Indicates the size of points in the scatter PCA plots.
 #' @param stroke.color Symbol. Indicates the color of the stroke of the points in the scatter PCA plots.
 #' @param stroke.size Numeric. Indicates the size of the stroke of the points in the scatter PCA plots.
@@ -53,6 +54,7 @@ plotPCA <- function(
         fast.pca = TRUE,
         nb.pcs = 3,
         plot.type = 'scatter',
+        variable.colors = NULL,
         points.size = 1,
         stroke.color = 'gray30',
         stroke.size = .2,
@@ -90,6 +92,29 @@ plotPCA <- function(
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
+
+    # select colors ####
+    if(is.null(variable.colors)){
+        selected.colores <-  c(
+            RColorBrewer::brewer.pal(8, "Dark2")[-5],
+            RColorBrewer::brewer.pal(10, "Paired"),
+            RColorBrewer::brewer.pal(12, "Set3"),
+            RColorBrewer::brewer.pal(9, "Blues")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "Oranges")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "Greens")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "Purples")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "Reds")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "Greys")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "BuGn")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "PuRd")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "BuPu")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(9, "YlGn")[c(8, 3, 7, 4, 6, 9, 5)],
+            RColorBrewer::brewer.pal(10, "Paired"))
+        pca.plot.colors <- selected.colores[1:length(unique(colData(se.obj)[[variable]]))]
+    } else if (!is.null(variable.colors)){
+        pca.plot.colors <- variable.colors
+    }
+
 
     # obtain PCs from the SummarizedExperiment object ####
     printColoredMessage(
@@ -165,6 +190,7 @@ plotPCA <- function(
                                     stroke = stroke.size,
                                     size = points.size,
                                     alpha = points.alpha) +
+                                scale_fill_manual(values = pca.plot.colors) +
                                 scale_x_continuous(
                                     name = paste0('PC', pair.pcs[1, i], ' (', all.pca.data[[x]]$pc.var[pair.pcs[2, i]], '%)'),
                                     breaks = scales::pretty_breaks(n = 5)) +
