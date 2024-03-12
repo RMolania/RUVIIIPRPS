@@ -32,7 +32,7 @@ identifyUnknownUV(
   assess.se.obj = TRUE,
   remove.na = "none",
   save.se.obj = TRUE,
-  plot.out = TRUE,
+  plot.output = TRUE,
   verbose = TRUE
 )
 }
@@ -128,7 +128,7 @@ and 'uv.variables' will be excluded. By default, it is set to both'.}
 \item{save.se.obj}{Logical. Indicates whether to save the results in the metadata of the SummarizedExperiment class.
 Th default is 'TRUE', the results will be save to the 'metadata$UV$Unknown'.}
 
-\item{plot.out}{Logical. When set to 'TRUE', the function generates a plot of the input data for clustering, with
+\item{plot.output}{Logical. When set to 'TRUE', the function generates a plot of the input data for clustering, with
 colors representing the identified groups. The default value is 'TRUE}
 
 \item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
