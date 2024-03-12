@@ -26,6 +26,7 @@
 #' @param variable Symbol. Indicates a name of the column in the sample annotation of the SummarizedExperiment object.
 #' The interquartile ranges of the RLE boxplot will be colored based on the variable. The variable must be a categorical
 #' variable. The default is NULL.
+#' @param variable.colors Symbol.
 #' @param ylim.rle.plot Numeric. A vector of two values to specify the ylim of the RLE plot(s). If is 'NULL', the function
 #' uses the minimum and maximum interquartile ranges of all the RLE data to specify the ylim. The default is 'NULL'. The
 #' ylim of the RLE plots should be the same to able to compare them against each other.
@@ -59,6 +60,7 @@ plotRLE <- function(
         se.obj,
         assay.names = "all",
         variable = NULL,
+        variable.colors = NULL,
         ylim.rle.plot = NULL,
         iqr.width = 1,
         median.points.size = 1,
@@ -101,9 +103,8 @@ plotRLE <- function(
     if(!sum(assay.names %in% names(assays(se.obj))) == length(assay.names)){
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
-
     # select colors ####
-    if(!is.null(variable)){
+    if(!is.null(variable) & !is.null(variable.colors)){
         currentCols <-  c(
             RColorBrewer::brewer.pal(8, "Dark2")[-5],
             RColorBrewer::brewer.pal(10, "Paired"),
@@ -120,6 +121,8 @@ plotRLE <- function(
             RColorBrewer::brewer.pal(9, "YlGn")[c(8, 3, 7, 4, 6, 9, 5)],
             RColorBrewer::brewer.pal(10, "Paired"))
         rle.plot.colors <- currentCols[1:length(unique(colData(se.obj)[[variable]]))]
+    } else if (!is.null(variable) & is.null(variable.colors)){
+        rle.plot.colors <- variable.colors
     }
     # obtain rle data ####
     printColoredMessage(
@@ -183,7 +186,7 @@ plotRLE <- function(
             samples.quantiles$sample <- paste0('Sam', 1:ncol(rle.data))
             if(!is.null(variable)){
                 # colored RLE plots ####
-                samples.quantiles$variable <- variable.data
+                samples.quantiles$variable <- variable
                 samples.quantiles <- tidyr::pivot_longer(
                     data = samples.quantiles,
                     -c(sample, variable),
