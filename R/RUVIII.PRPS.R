@@ -81,6 +81,9 @@ RUVIII.PRPS <- function(
     if (length(assay.name) > 1) {
         stop('The "assay.name" should contain only one assay name.')
     }
+    if(is.logical(apply.log)){
+        stop('The "apply.log" must be one of the "assay", "prps", "both", "none" ')
+    }
 
     # check the SummarizedExperiment object ####
     if (assess.se.obj) {
