@@ -185,7 +185,6 @@ plotPCA <- function(
                                     plot.margin = unit(c(0,0,0,0), 'lines'),
                                     legend.position = "none") +
                                 scale_fill_discrete(name = variable)
-
                             dense.x <-
                                 ggplot(mapping = aes(x = pca.data[, pair.pcs[1, i]], fill = se.obj@colData[, variable])) +
                                 geom_density(alpha = densities.alpha) +
