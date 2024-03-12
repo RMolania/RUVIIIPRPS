@@ -87,7 +87,7 @@
 #' and 'uv.variables' will be excluded. By default, it is set to both'.
 #' @param save.se.obj Logical. Indicates whether to save the results in the metadata of the SummarizedExperiment class.
 #' Th default is 'TRUE', the results will be save to the 'metadata$UV$Unknown'.
-#' @param plot.out Logical. When set to 'TRUE', the function generates a plot of the input data for clustering, with
+#' @param plot.output Logical. When set to 'TRUE', the function generates a plot of the input data for clustering, with
 #' colors representing the identified groups. The default value is 'TRUE
 #' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
@@ -129,7 +129,7 @@ identifyUnknownUV <- function(
         assess.se.obj = TRUE,
         remove.na = 'none',
         save.se.obj = TRUE,
-        plot.out = TRUE,
+        plot.output = TRUE,
         verbose = TRUE
         ){
     printColoredMessage(message = '------------The indentifyUnknownUV function starts:',
@@ -452,12 +452,12 @@ identifyUnknownUV <- function(
                 names(input.data),
                 function(x){
                     groups <- kmeans(x = input.data[[x]], centers = nb.clusters, iter.max = 10000)$cluster
-                    paste0(input.data.name, '_', x, '_batch' , groups)
+                    paste0('Batch' , groups)
                 })
             names(uv.sources) <- names(input.data)
         } else {
             groups <- kmeans(x = input.data, centers = nb.clusters, iter.max = 10000)$cluster
-            uv.sources <- paste0(input.data.name, '_batch' , groups)
+            uv.sources <- paste0('Batch' , groups)
             }
     } else if (clustering.methods == 'cut'){
         printColoredMessage(
@@ -470,12 +470,12 @@ identifyUnknownUV <- function(
                 names(input.data),
                 function(x){
                     groups <- as.numeric(cut(x = input.data[[x]], breaks = nb.clusters, include.lowest = TRUE))
-                    paste0(input.data.name, '_', x, '_batch' , groups)
+                    paste0('Batch' , groups)
                 })
             names(uv.sources) <- names(input.data)
         } else {
             groups <- as.numeric(cut(x = input.data, breaks = nb.clusters, include.lowest = TRUE))
-            uv.sources <- paste0(input.data.name, '_batch' , groups)
+            uv.sources <- paste0('Batch' , groups)
             }
     } else if(clustering.methods == 'quantile'){
         printColoredMessage(
@@ -490,13 +490,13 @@ identifyUnknownUV <- function(
                 function(x){
                     quantiles <- quantile(x = input.data[[x]], probs = seq(0, 1, 1 / nb.clusters))
                     groups <- as.numeric(cut(x = input.data[[x]], breaks = quantiles, include.lowest = TRUE))
-                    paste0(input.data.name, '_', x, '_batch' , groups)
+                    paste0('Batch' , groups)
                 })
             names(uv.sources) <- names(input.data)
         } else {
             quantiles <- quantile(x = input.data, probs = seq(0, 1, 1 / nb.clusters))
             groups <- as.numeric(cut(x = input.data, breaks = quantiles, include.lowest = TRUE))
-            uv.sources <- paste0(input.data.name, '_batch' , groups)
+            uv.sources <- paste0('Batch' , groups)
         }
     } else if(clustering.methods == 'nbClust'){
         printColoredMessage(
@@ -550,7 +550,7 @@ identifyUnknownUV <- function(
                     vec = batch.samples$batch,
                     n.repeat = round(max.samples.per.batch * ncol(se.obj), digits = 0))
             }
-            uv.sources <- paste0(input.data.name, '_nbClust_batch', batch.samples$batch)
+            uv.sources <- paste0('Batch', batch.samples$batch)
         } else {
             uv.sources <- lapply(
                 names(input.data),
@@ -600,7 +600,7 @@ identifyUnknownUV <- function(
                             vec = batch.samples$batch,
                             n.repeat = round(max.samples.per.batch * ncol(se.obj), digits = 0))
                     }
-                    return(paste0(x, '_nbclust_batch', batch.samples$batch))
+                    return(paste0('Batch', batch.samples$batch))
                 })
             names(uv.sources) <- names(input.data)
         }
@@ -612,32 +612,49 @@ identifyUnknownUV <- function(
         verbose = verbose)
 
     # plot outputs ####
-    samples <- batches <- NULL
-    if(isTRUE(plot.out)){
-        n <- 74
-        colors.selected <- brewer.pal.info[brewer.pal.info$category == 'qual',]
-        colors.selected <- unlist(mapply(brewer.pal, colors.selected$maxcolors, rownames(colors.selected)))
-        set.seed(3232)
-        colors.selected <- sample(colors.selected, length(unique(uv.sources)))
+    currentCols <-  c(
+        RColorBrewer::brewer.pal(8, "Dark2")[-5],
+        RColorBrewer::brewer.pal(10, "Paired"),
+        RColorBrewer::brewer.pal(12, "Set3"),
+        RColorBrewer::brewer.pal(9, "Blues")[c(8, 3, 7, 4, 6, 9, 5)],
+        RColorBrewer::brewer.pal(9, "Oranges")[c(8, 3, 7, 4, 6, 9, 5)],
+        RColorBrewer::brewer.pal(9, "Greens")[c(8, 3, 7, 4, 6, 9, 5)],
+        RColorBrewer::brewer.pal(9, "Purples")[c(8, 3, 7, 4, 6, 9, 5)],
+        RColorBrewer::brewer.pal(9, "Reds")[c(8, 3, 7, 4, 6, 9, 5)],
+        RColorBrewer::brewer.pal(9, "Greys")[c(8, 3, 7, 4, 6, 9, 5)],
+        RColorBrewer::brewer.pal(9, "BuGn")[c(8, 3, 7, 4, 6, 9, 5)],
+        RColorBrewer::brewer.pal(9, "PuRd")[c(8, 3, 7, 4, 6, 9, 5)],
+        RColorBrewer::brewer.pal(9, "BuPu")[c(8, 3, 7, 4, 6, 9, 5)],
+        RColorBrewer::brewer.pal(9, "YlGn")[c(8, 3, 7, 4, 6, 9, 5)],
+        RColorBrewer::brewer.pal(10, "Paired")
+    )
+        colors.selected <- currentCols[1:length(unique(uv.sources))]
         if(!is.matrix(input.data)){
             data.to.plot <- data.frame(
                 input.data = input.data,
-                samples = c(1:ncol(se.obj)),
+                # samples = c(1:ncol(se.obj)),
                 batches = factor(
                     x = paste0('Batch', as.numeric(as.factor(uv.sources))),
                     levels = paste0('Batch', sort(unique(as.numeric(as.factor(uv.sources))))))
                 )
+            data.to.plot <- data.to.plot[order(data.to.plot$batches) , ]
+            data.to.plot$samples <- c(1:ncol(se.obj))
             p <- ggplot(data = data.to.plot, aes(x = samples, y = input.data, color = batches)) +
                 geom_point() +
                 ggtitle('Possible sources of batches') +
-                scale_color_manual(values = colors.selected) +
+                scale_color_manual(values = colors.selected, name = 'Batch') +
                 theme(panel.background = element_blank(),
+                      legend.key = element_blank(),
+                      legend.text = element_text(size = 12),
+                      legend.title = element_text(size = 14),
                       axis.line = element_line(colour = 'black', linewidth = 1),
                       axis.title.x = element_text(size = 12),
                       axis.title.y = element_text(size = 12),
                       axis.text.x = element_text(size = 9),
-                      axis.text.y = element_text(size = 9))
-            print(p)
+                      axis.text.y = element_text(size = 9)) +
+                guides(colour = guide_legend(override.aes = list(size = 5)))
+            if(isTRUE(plot.output)) print(p)
+
         } else{
             if(ncol(input.data) == 1){
                 data.to.plot <- as.data.frame(input.data)
@@ -646,17 +663,22 @@ identifyUnknownUV <- function(
                     levels = paste0('Batch', sort(unique(as.numeric(as.factor(uv.sources)))))
                     )
                 data.to.plot$samples <- c(1:ncol(se.obj))
+                data.to.plot <- data.to.plot[order(data.to.plot$batches) , ]
                 p <- ggplot(data = data.to.plot, aes(x = samples, y = input.data, color = batches)) +
                     geom_point() +
                     ggtitle('Possible sources of batches') +
-                    scale_color_manual(values = colors.selected) +
+                    scale_color_manual(values = colors.selected, name = 'Batch') +
                     theme(panel.background = element_blank(),
+                          legend.key = element_blank(),
+                          legend.text = element_text(size = 12),
+                          legend.title = element_text(size = 14),
                           axis.line = element_line(colour = 'black', linewidth = 1),
                           axis.title.x = element_text(size = 12),
                           axis.title.y = element_text(size = 12),
                           axis.text.x = element_text(size = 9),
-                          axis.text.y = element_text(size = 9))
-                print(p)
+                          axis.text.y = element_text(size = 9)) +
+                    guides(colour = guide_legend(override.aes = list(size = 5)))
+                if(isTRUE(plot.output)) print(p)
 
             } else{
                 data.to.plot <- as.data.frame(input.data)
@@ -669,10 +691,9 @@ identifyUnknownUV <- function(
                     mapping = ggplot2::aes(colour = data.to.plot[, ncol(data.to.plot)]),
                     upper = NULL) +
                     scale_color_manual(values = colors.selected)
-                print(p)
+                if(isTRUE(plot.output)) print(p)
             }
         }
-    }
 
 
     # saving the data results ####
@@ -710,7 +731,10 @@ identifyUnknownUV <- function(
             message = '------------The indentifyUnknownUV function finished.',
             color = 'white',
             verbose = verbose)
-        return(list(batches = uv.sources, input.data = input.data))
+        return(list(
+            batches = paste0('Batch', as.numeric(as.factor(uv.sources))),
+            input.data = input.data,
+            plot = p ))
     }
 }
 
