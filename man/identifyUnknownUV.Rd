@@ -29,6 +29,8 @@ identifyUnknownUV(
   center = TRUE,
   scale = FALSE,
   svd.bsparam = bsparam(),
+  remove.current.estimates = FALSE,
+  output.name = NULL,
   assess.se.obj = TRUE,
   remove.na = "none",
   save.se.obj = TRUE,
@@ -116,6 +118,11 @@ when the approach is set to 'PCA'. The default is 2.}
 \item{svd.bsparam}{A BiocParallelParam object specifying how parallelization should be performed. We refer to the
 BiocParallelParam R package for more details. The default is bsparam().
 We refer to the 'runSVD' function from the BiocSingular R package for more details.}
+
+\item{remove.current.estimates}{Symbol. Specifies whether to remove the current estimates of the unknown batch in the
+SummarizedExperiment object or not. The default is set to 'TRUE'.}
+
+\item{output.name}{Symbol. A symbol specifies the name of the output file. If is 'NULL', the functions creates a name.}
 
 \item{assess.se.obj}{Logical. Whether to assess the SummarizedExperiment object or not. If 'TRUE', the function
 'checkSeobj' will be applied. The default is 'TRUE'.}
