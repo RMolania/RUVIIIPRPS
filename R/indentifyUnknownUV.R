@@ -79,6 +79,9 @@
 #' @param svd.bsparam A BiocParallelParam object specifying how parallelization should be performed. We refer to the
 #' BiocParallelParam R package for more details. The default is bsparam().
 #' We refer to the 'runSVD' function from the BiocSingular R package for more details.
+#' @param remove.current.estimates Symbol. Specifies whether to remove the current estimates of the unknown batch in the
+#' SummarizedExperiment object or not. The default is set to 'TRUE'.
+#' @param output.name Symbol. A symbol specifies the name of the output file. If is 'NULL', the functions creates a name.
 #' @param assess.se.obj Logical. Whether to assess the SummarizedExperiment object or not. If 'TRUE', the function
 #' 'checkSeobj' will be applied. The default is 'TRUE'.
 #' @param remove.na A symbol. Indicates whether to remove NA or missing values from either the 'assays', sample.annotation',
@@ -126,6 +129,8 @@ identifyUnknownUV <- function(
         center = TRUE,
         scale = FALSE,
         svd.bsparam = bsparam(),
+        remove.current.estimates = FALSE,
+        output.name = NULL,
         assess.se.obj = TRUE,
         remove.na = 'none',
         save.se.obj = TRUE,
@@ -225,6 +230,34 @@ identifyUnknownUV <- function(
         stop('The "remove.na" cannot be set to "both" when the "regress.out.bio.variables = NULL".')
     } else if (is.null(regress.out.bio.variables) & remove.na == 'sample.annotation'){
         stop('The "remove.na" cannot be set to "sample.annotation" when the "regress.out.bio.variables = NULL".')
+    }
+    if(is.logical(output.name)){
+        stop('The "output.name" should be eitehr NULL or a character.')
+    }
+
+    # remove current estimates for the assay ####
+    printColoredMessage(
+        message = paste0('The current estimated unknown batches:'),
+        color = 'magenta',
+        verbose = verbose)
+    if(isTRUE(remove.current.estimates)){
+        if (!'UknownUV' %in%  names(se.obj@metadata)) {
+            printColoredMessage(
+                message = paste0('There is not any estimated unknown batches for the SummarizedExperiment object.'),
+                color = 'blue',
+                verbose = verbose)
+        } else  if (assay.name %in% names(se.obj@metadata[['UknownUV']])) {
+            printColoredMessage(
+                message = paste0('The current estimated unknown batches for the  ', assay.name, ' data is removed.'),
+                color = 'blue',
+                verbose = verbose)
+            se.obj@metadata[['UknownUV']][[assay.name]] <- list()
+        } else{
+            printColoredMessage(
+                message = paste0('There is not any estimated unknown batches for the  ', assay.name, ' data.'),
+                color = 'blue',
+                verbose = verbose)
+        }
     }
 
     # check the SummarizedExperiment object ####
@@ -364,8 +397,8 @@ identifyUnknownUV <- function(
         input.data = sv.dec$u
         colnames(input.data) <- c(paste0('PC', 1:ncol(input.data)))
         if(clustering.methods == 'nbClust'){
-            input.data.name <- paste0(approach, '_onAllGenes_nbClust.', nbClust.method, 'Clustering')
-        } else input.data.name <- paste0(approach, '_onAllGenes_', clustering.methods, 'Clustering')
+            input.data.name <- paste0(approach, '|AllGenes_nbClust.', nbClust.method, 'Clustering')
+        } else input.data.name <- paste0(approach, '|AllGenes|', clustering.methods, 'Clustering')
     } else if (approach == 'pca' & !is.null(ncg)){
         printColoredMessage(
             message = paste0(
@@ -382,8 +415,8 @@ identifyUnknownUV <- function(
             scale = scale)
         input.data = sv.dec$u
         if(clustering.methods == 'nbClust'){
-            input.data.name <- paste0(approach, '_onNCG_nbClust.', nbClust.method, 'Clustering')
-        } else input.data.name <- paste0(approach, '_onNCG_', clustering.methods, 'Clustering')
+            input.data.name <- paste0(approach, '|NCG|nbClust.', nbClust.method, 'Clustering')
+        } else input.data.name <- paste0(approach, '|NCG|', clustering.methods, 'Clustering')
     } else if (approach == 'rle'){
         if(is.null(ncg)){
             printColoredMessage(
@@ -392,8 +425,8 @@ identifyUnknownUV <- function(
                 verbose = verbose)
             rle.data <- temp.data - rowMedians(temp.data)
             if(clustering.methods == 'nbClust'){
-                input.data.name <- paste0(approach, '.',rle.comp, '_onAllGenes_nbClust.', nbClust.method, 'Clustering')
-            } else input.data.name <- paste0(approach, '.', rle.comp,'_onAllGenes_', clustering.methods, 'Clustering')
+                input.data.name <- paste0(approach, '.',rle.comp, '|AllGenes|nbClust.', nbClust.method, 'Clustering')
+            } else input.data.name <- paste0(approach, '.', rle.comp,'|AllGenes|', clustering.methods, 'Clustering')
         } else if (!is.null(ncg)){
             printColoredMessage(
                 message = paste0('-Apply RLE on the data using only "ncg" genes.'),
@@ -401,8 +434,8 @@ identifyUnknownUV <- function(
                 verbose = verbose)
             rle.data <- temp.data[ncg , ] - rowMedians(temp.data[ncg , ])
             if(clustering.methods == 'nbClust'){
-                input.data.name <- paste0(approach, '.', rle.comp, '_onNCG_nbClust.', nbClust.method, 'Clustering')
-            } else input.data.name <- paste0(approach, '.', rle.comp,'_onNCG_', clustering.methods, 'Clustering')
+                input.data.name <- paste0(approach, '.', rle.comp, '|NCG|nbClust.', nbClust.method, 'Clustering')
+            } else input.data.name <- paste0(approach, '.', rle.comp,'|NCG|', clustering.methods, 'Clustering')
         }
         if(rle.comp == 'median'){
             input.data <- colMedians(rle.data)
@@ -433,8 +466,8 @@ identifyUnknownUV <- function(
         rm(ranked.data)
         gc()
         if(clustering.methods == 'nbClust'){
-            input.data.name <- paste0(approach, '_nbClust.', nbClust.method, 'Clustering')
-        } else input.data.name <- paste0(approach, '_', clustering.methods, 'Clustering')
+            input.data.name <- paste0(approach, '|nbClust.', nbClust.method, 'Clustering')
+        } else input.data.name <- paste0(approach, '|', clustering.methods, 'Clustering')
     }
     # clustering ####
     printColoredMessage(message = '- Cluster the data',
@@ -607,9 +640,15 @@ identifyUnknownUV <- function(
     }
     # number of possible batches ####
     printColoredMessage(
-        message = paste0(length(unique(uv.sources)),' potential batches are found in the ', assay.name, ' data.'),
+        message = paste0(
+            length(unique(uv.sources)),
+            ' potential batches are found in the ',
+            assay.name,
+            ' data.'
+        ),
         color = 'blue',
-        verbose = verbose)
+        verbose = verbose
+    )
 
     # plot outputs ####
     currentCols <-  c(
@@ -628,72 +667,94 @@ identifyUnknownUV <- function(
         RColorBrewer::brewer.pal(9, "YlGn")[c(8, 3, 7, 4, 6, 9, 5)],
         RColorBrewer::brewer.pal(10, "Paired")
     )
-        colors.selected <- currentCols[1:length(unique(uv.sources))]
-        if(!is.matrix(input.data)){
-            data.to.plot <- data.frame(
-                input.data = input.data,
-                # samples = c(1:ncol(se.obj)),
-                batches = factor(
-                    x = paste0('Batch', as.numeric(as.factor(uv.sources))),
-                    levels = paste0('Batch', sort(unique(as.numeric(as.factor(uv.sources))))))
-                )
-            data.to.plot <- data.to.plot[order(data.to.plot$batches) , ]
+    colors.selected <- currentCols[1:length(unique(uv.sources))]
+    if (!is.matrix(input.data)) {
+        data.to.plot <- data.frame(input.data = input.data,
+                                   # samples = c(1:ncol(se.obj)),
+                                   batches = factor(
+                                       x = paste0('Batch', as.numeric(as.factor(uv.sources))),
+                                       levels = paste0('Batch', sort(unique(
+                                           as.numeric(as.factor(uv.sources))
+                                       )))
+                                   ))
+        data.to.plot <-
+            data.to.plot[order(data.to.plot$batches) ,]
+        data.to.plot$samples <- c(1:ncol(se.obj))
+        p <-
+            ggplot(data = data.to.plot, aes(x = samples, y = input.data, color = batches)) +
+            geom_point() +
+            ggtitle('Possible sources of batches') +
+            scale_color_manual(values = colors.selected, name = 'Batch') +
+            theme(
+                panel.background = element_blank(),
+                legend.key = element_blank(),
+                legend.text = element_text(size = 12),
+                legend.title = element_text(size = 14),
+                axis.line = element_line(colour = 'black', linewidth = 1),
+                axis.title.x = element_text(size = 12),
+                axis.title.y = element_text(size = 12),
+                axis.text.x = element_text(size = 9),
+                axis.text.y = element_text(size = 9)
+            ) +
+            guides(colour = guide_legend(override.aes = list(size = 5)))
+        if (isTRUE(plot.output))
+            print(p)
+
+    } else{
+        if (ncol(input.data) == 1) {
+            data.to.plot <- as.data.frame(input.data)
+            data.to.plot$batches <- factor(x = paste0('Batch', as.numeric(as.factor(uv.sources))),
+                                           levels = paste0('Batch', sort(unique(
+                                               as.numeric(as.factor(uv.sources))
+                                           ))))
             data.to.plot$samples <- c(1:ncol(se.obj))
-            p <- ggplot(data = data.to.plot, aes(x = samples, y = input.data, color = batches)) +
+            data.to.plot <-
+                data.to.plot[order(data.to.plot$batches) ,]
+            p <-
+                ggplot(data = data.to.plot, aes(
+                    x = samples,
+                    y = input.data,
+                    color = batches
+                )) +
                 geom_point() +
                 ggtitle('Possible sources of batches') +
                 scale_color_manual(values = colors.selected, name = 'Batch') +
-                theme(panel.background = element_blank(),
-                      legend.key = element_blank(),
-                      legend.text = element_text(size = 12),
-                      legend.title = element_text(size = 14),
-                      axis.line = element_line(colour = 'black', linewidth = 1),
-                      axis.title.x = element_text(size = 12),
-                      axis.title.y = element_text(size = 12),
-                      axis.text.x = element_text(size = 9),
-                      axis.text.y = element_text(size = 9)) +
+                theme(
+                    panel.background = element_blank(),
+                    legend.key = element_blank(),
+                    legend.text = element_text(size = 12),
+                    legend.title = element_text(size = 14),
+                    axis.line = element_line(colour = 'black', linewidth = 1),
+                    axis.title.x = element_text(size = 12),
+                    axis.title.y = element_text(size = 12),
+                    axis.text.x = element_text(size = 9),
+                    axis.text.y = element_text(size = 9)
+                ) +
                 guides(colour = guide_legend(override.aes = list(size = 5)))
-            if(isTRUE(plot.output)) print(p)
+            if (isTRUE(plot.output))
+                print(p)
 
         } else{
-            if(ncol(input.data) == 1){
-                data.to.plot <- as.data.frame(input.data)
-                data.to.plot$batches <- factor(
-                    x = paste0('Batch', as.numeric(as.factor(uv.sources))),
-                    levels = paste0('Batch', sort(unique(as.numeric(as.factor(uv.sources)))))
-                    )
-                data.to.plot$samples <- c(1:ncol(se.obj))
-                data.to.plot <- data.to.plot[order(data.to.plot$batches) , ]
-                p <- ggplot(data = data.to.plot, aes(x = samples, y = input.data, color = batches)) +
-                    geom_point() +
-                    ggtitle('Possible sources of batches') +
-                    scale_color_manual(values = colors.selected, name = 'Batch') +
-                    theme(panel.background = element_blank(),
-                          legend.key = element_blank(),
-                          legend.text = element_text(size = 12),
-                          legend.title = element_text(size = 14),
-                          axis.line = element_line(colour = 'black', linewidth = 1),
-                          axis.title.x = element_text(size = 12),
-                          axis.title.y = element_text(size = 12),
-                          axis.text.x = element_text(size = 9),
-                          axis.text.y = element_text(size = 9)) +
-                    guides(colour = guide_legend(override.aes = list(size = 5)))
-                if(isTRUE(plot.output)) print(p)
-
-            } else{
-                data.to.plot <- as.data.frame(input.data)
-                data.to.plot$batches <- factor(
-                    x = paste0('Batch', as.numeric(as.factor(uv.sources))),
-                    levels = paste0('Batch', sort(unique(as.numeric(as.factor(uv.sources)))))
-                )
-                p <- GGally::ggpairs(
-                    data = data.to.plot[, 1:(ncol(data.to.plot)-1)],
-                    mapping = ggplot2::aes(colour = data.to.plot[, ncol(data.to.plot)]),
-                    upper = NULL) +
-                    scale_color_manual(values = colors.selected)
-                if(isTRUE(plot.output)) print(p)
-            }
+            data.to.plot <- as.data.frame(input.data)
+            data.to.plot$batches <- factor(x = paste0('Batch', as.numeric(as.factor(uv.sources))),
+                                           levels = paste0('Batch', sort(unique(
+                                               as.numeric(as.factor(uv.sources))
+                                           ))))
+            p <- GGally::ggpairs(
+                data = data.to.plot[, 1:(ncol(data.to.plot) - 1)],
+                mapping = ggplot2::aes(colour = data.to.plot[, ncol(data.to.plot)]),
+                upper = NULL
+            ) +
+                scale_color_manual(values = colors.selected)
+            if (isTRUE(plot.output))
+                print(p)
         }
+    }
+
+    # out put name ####
+    if(is.null(output.name)){
+        input.data.name <- paste0(length(unique(uv.sources)), 'batches|', input.data.name)
+    } else input.data.name <- output.name
 
 
     # saving the data results ####
