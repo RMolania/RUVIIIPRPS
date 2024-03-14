@@ -99,9 +99,9 @@ RUVIII.PRPS <- function(
     ## use all the prps sets in the SummarizedExperiment object ####
     if (is.null(prps.set.names)) {
         if (is.null(prps.group) | length(prps.group) == 0) {
-            stop('The "prps.group" should be specified ("supervised", "unSupervised" or "both").')
-        } else if (!prps.group %in% c('supervised', 'unSupervised', 'both')) {
-            stop('The "prps.group" should be one of the "supervised", "unSupervised" or "both".')
+            stop('The "prps.group" should be specified ("supervised", "un.supervised" or "both").')
+        } else if (!prps.group %in% c('supervised', 'un.supervised', 'both')) {
+            stop('The "prps.group" should be one of the "supervised", "un.supervised" or "both".')
         }
         if (prps.group == 'supervised') {
             prps.data <- se.obj@metadata$PRPS$supervised
@@ -109,16 +109,16 @@ RUVIII.PRPS <- function(
                 message = paste0(length(prps.data), ' supervised PRPS set(s) are found in the SummarizedExperiment object.'),
                 color = 'blue',
                 verbose = verbose)
-        } else if (prps.group == 'unSupervised') {
-            prps.data <- se.obj@metadata$PRPS$unSupervised
+        } else if (prps.group == 'un.supervised') {
+            prps.data <- se.obj@metadata$PRPS$un.supervised
             printColoredMessage(
-                message = paste0(length(prps.data), ' unSupervised PRPS set(s) are found in the SummarizedExperiment object.'),
+                message = paste0(length(prps.data), ' un.supervised PRPS set(s) are found in the SummarizedExperiment object.'),
                 color = 'blue',
                 verbose = verbose)
         } else if (prps.group == 'both') {
-            all.prps <- intersect(names(se.obj@metadata$PRPS), c('supervised', 'unSupervised'))
+            all.prps <- intersect(names(se.obj@metadata$PRPS), c('supervised', 'un.supervised'))
             if (length(all.prps) != 2) {
-                stop('The "supervised" or "unSupervised" PRPSsets are not found in the SummarizedExperiment object.')
+                stop('The "supervised" or "un.supervised" PRPSsets are not found in the SummarizedExperiment object.')
             }
             prps.data <- c(se.obj@metadata$PRPS$supervised, se.obj@metadata$PRPS$unSupervised)
         }
