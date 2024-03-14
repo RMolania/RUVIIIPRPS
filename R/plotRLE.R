@@ -104,8 +104,8 @@ plotRLE <- function(
         stop('The "assay.names" cannot be found in the SummarizedExperiment object.')
     }
     # select colors ####
-    if(!is.null(variable) & !is.null(variable.colors)){
-        currentCols <-  c(
+    if(!is.null(variable) & is.null(variable.colors)){
+        currentCols <- c(
             RColorBrewer::brewer.pal(8, "Dark2")[-5],
             RColorBrewer::brewer.pal(10, "Paired"),
             RColorBrewer::brewer.pal(12, "Set3"),
@@ -121,7 +121,7 @@ plotRLE <- function(
             RColorBrewer::brewer.pal(9, "YlGn")[c(8, 3, 7, 4, 6, 9, 5)],
             RColorBrewer::brewer.pal(10, "Paired"))
         rle.plot.colors <- currentCols[1:length(unique(colData(se.obj)[[variable]]))]
-    } else if (!is.null(variable) & is.null(variable.colors)){
+    } else if (!is.null(variable) & !is.null(variable.colors)){
         rle.plot.colors <- variable.colors
     }
     # obtain rle data ####
@@ -186,15 +186,15 @@ plotRLE <- function(
             samples.quantiles$sample <- paste0('Sam', 1:ncol(rle.data))
             if(!is.null(variable)){
                 # colored RLE plots ####
-                samples.quantiles$variable <- variable
+                samples.quantiles$variable <- colData(se.obj)[[variable]]
                 samples.quantiles <- tidyr::pivot_longer(
                     data = samples.quantiles,
                     -c(sample, variable),
                     values_to = 'rle',
                     names_to = 'range')
                 samples.quantiles$sample <- factor(samples.quantiles$sample, levels = paste0('Sam', 1:ncol(rle.data)))
-                p.rle <- ggplot(samples.quantiles, aes(x = sample, y = rle, group = sample)) +
-                    geom_line(aes(color = variable), linewidth = 1) +
+                p.rle <- ggplot(samples.quantiles, aes(x = sample, y = rle, group = sample, color = variable)) +
+                    geom_line(linewidth = iqr.width) +
                     geom_point(data = samples.quantiles[samples.quantiles$range == 'medians',],
                                aes(group = range),
                                size = median.points.size ,
@@ -214,7 +214,8 @@ plotRLE <- function(
                         axis.text.x = element_blank(),
                         axis.text.y = element_text(size = 9),
                         axis.ticks.x = element_blank(),
-                        legend.position = 'bottom')
+                        legend.position = 'bottom') +
+                guides(color = guide_legend(override.aes = list(linewidth = iqr.width *3)))
             } else if (is.null(variable)){
                 # general RLE plots ####
                 samples.quantiles <- tidyr::pivot_longer(
@@ -224,7 +225,7 @@ plotRLE <- function(
                     names_to = 'range')
                 samples.quantiles$sample <- factor(samples.quantiles$sample, levels = paste0('Sam', 1:ncol(rle.data)))
                 p.rle <- ggplot(samples.quantiles, aes(x = sample, y = rle, group = sample)) +
-                    geom_line(linewidth = 1) +
+                    geom_line(linewidth = iqr.width) +
                     geom_point(data = samples.quantiles[samples.quantiles$range == 'medians',],
                                aes(group = range),
                                size = median.points.size ,
