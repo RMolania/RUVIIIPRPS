@@ -190,4 +190,5 @@ createPrPsUnSupervised<- function(
             )
         }
     }
+    return(se.obj)
 }
