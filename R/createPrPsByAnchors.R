@@ -98,7 +98,7 @@ createPrPsByAnchors <- function(
         remove.na = 'assays',
         save.se.obj = TRUE,
         verbose = TRUE) {
-    printColoredMessage(message = '------------The createUnSupervisedPRPSbyAnchors function starts:',
+    printColoredMessage(message = '------------The createPrPsByAnchors function starts:',
                         color = 'white',
                         verbose = verbose)
     # check input #####
@@ -114,8 +114,6 @@ createPrPsByAnchors <- function(
         stop('The "uv.variable" cannot be found in the SummarizedExperiment object')
     } else if (k.anchor == 0) {
         stop('The k.anchor cannot be 0.')
-    } else if (min.score > 1 | min.score < 0){
-        stop('The value of "min.score" must be between 0 and 1.')
     } else if (!normalization.method %in% c("LogNormalize", "SCT")) {
         stop('The "normalization.method" must be one of the "LogNormalize" or "SCT".')
     } else if (!reduction %in% c("cca", "rpca", 'rlsi')) {
@@ -123,6 +121,11 @@ createPrPsByAnchors <- function(
     } else if (sum(hvg %in% row.names(se.obj)) != length(hvg)) {
         stop('All the "hvg" genes are not found in the SummarizedExperiment object.')
     }
+    if(!is.null(min.score)){
+        if (min.score > 1 | min.score < 0)
+            stop('The value of "min.score" must be between 0 and 1.')
+    }
+
 
     # check the SummarizedExperiment ####
     if (assess.se.obj) {
@@ -262,19 +265,21 @@ createPrPsByAnchors <- function(
     printColoredMessage(message = '- Find all possible sets of PRPS.',
                         color = 'blue',
                         verbose = verbose)
+    rep.anchors <- nrow(all.anchors)/2
+    if(isTRUE(all.equal(all.anchors$sample.index1[1:rep.anchors], all.anchors$sample.index2[c(rep.anchors+1):nrow(all.anchors)])))
+        all.anchors <- all.anchors[1:rep.anchors, ]
     all.prps.sets <- split(
         x = all.anchors,
         f = all.anchors$sample.index1)
+
     all.prps.sets <- lapply(
         all.prps.sets,
         function(x) {
             temp.anchors <- x
-            temp.anchors <-
-                rbind(temp.anchors, do.call(
-                    rbind,
+            temp.anchors <- rbind(temp.anchors, do.call(rbind,
                     lapply(temp.anchors$sample.index2, function(j)
-                        all.anchors[all.anchors$sample.index2 == j,]
-                        )))
+                        all.anchors[all.anchors$sample.index2 == j,])
+                    ))
             average.scores <- mean(temp.anchors$score)
             all.datasets <- sort(unique(c( temp.anchors$dataset1, temp.anchors$dataset2)))
             anchor.sets <-
@@ -323,14 +328,14 @@ createPrPsByAnchors <- function(
     colnames(prps.coverage) <- groups
     prps.coverage[is.na(prps.coverage)] <- 0
 
-    if (sum(colSums(prps.coverage) == 0)) {
+    if (isTRUE(sum(colSums(prps.coverage) == 0) > 0 )) {
         printColoredMessage(
             message = paste(
                 paste0(colnames(prps.coverage)[colSums(prps.coverage) == 0], collapse = ' & '), 'are not covered by any PRPS set.'),
-            color = 'blue',
+            color = 'red',
             verbose = verbose)
     }
-    if (sum(rowSums(prps.coverage > 0) == length(groups)) > 0) {
+    if (isTRUE(sum(rowSums(prps.coverage > 0) == length(groups)) > 0)) {
         printColoredMessage(
             message = paste0('There are ',sum(rowSums(prps.coverage >= 0) == length(groups)),
                 ' anchor sets across all subgroups of ', uv.variable,'.'),
@@ -352,7 +357,7 @@ createPrPsByAnchors <- function(
     } else {
         # check connection
         printColoredMessage(
-            message = 'There is no any acnhor or PRPS sets that cover all batches. We assess the connection between differet sets:',
+            message = 'There is no any PRPS sets that cover all batches. We assess the connection between differet sets:',
             color = 'blue',
             verbose = verbose)
         prps.connection <- list()
@@ -412,7 +417,7 @@ createPrPsByAnchors <- function(
                     legend.position = 'bottom'
                 )
         }
-        if (sum(all.anchors$score < min.score) == nrow(all.anchors)) {
+        if (isTRUE(sum(all.anchors$score < min.score) == nrow(all.anchors))) {
             stop(
                 paste0(
                     'All anchor pairs have the score less than "min.score":',
@@ -431,8 +436,7 @@ createPrPsByAnchors <- function(
             color = 'blue',
             verbose = verbose
         )
-        all.anchors <-
-            all.anchors[all.anchors$score >= min.score, ]
+        all.anchors <- all.anchors[all.anchors$score >= min.score, ]
     }
 
     ## filter PRPS sets based on sample size ####
@@ -677,28 +681,25 @@ createPrPsByAnchors <- function(
 
     if (save.se.obj) {
         ## check if metadata PRPS already exists
-        if (length(se.obj@metadata) == 0) {
-            se.obj@metadata[['PRPS']] <- list()
-        }
-        ## check if metadata PRPS already exists
         if (!'PRPS' %in% names(se.obj@metadata)) {
             se.obj@metadata[['PRPS']] <- list()
         }
         ## check if metadata PRPS already exist for supervised
-        if (!'Supervised' %in% names(se.obj@metadata[['PRPS']])) {
-            se.obj@metadata[['PRPS']][['supervised']] <- list()
+        if (!'un.supervised' %in% names(se.obj@metadata[['PRPS']])) {
+            se.obj@metadata[['PRPS']][['un.supervised']] <- list()
         }
         ## Check if metadata PRPS already exist for supervised
-        se.obj@metadata[['PRPS']][['UnSupervised']][[out.put.name]] <- prps.data
+        se.obj@metadata[['PRPS']][['un.supervised']][[out.put.name]] <- prps.data
 
-        printColoredMessage(message = '------------The createUnSupervisedPRPSbyAnchors function finished.',
+        printColoredMessage(message = '------------The createPrPsByAnchors function finished.',
                             color = 'white',
                             verbose = verbose)
         return(se.obj)
     } else{
-        printColoredMessage(message = '------------The createUnSupervisedPRPSbyAnchors function finished.',
+        printColoredMessage(message = '------------The createPrPsByAnchors function finished.',
                             color = 'white',
                             verbose = verbose)
         return(list(prps.data = prps.data))
     }
 }
+
