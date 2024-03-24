@@ -35,6 +35,7 @@ identifyUnknownUV(
   remove.na = "none",
   save.se.obj = TRUE,
   plot.output = TRUE,
+  order.batches = FALSE,
   verbose = TRUE
 )
 }
@@ -137,6 +138,8 @@ Th default is 'TRUE', the results will be save to the 'metadata$UV$Unknown'.}
 
 \item{plot.output}{Logical. When set to 'TRUE', the function generates a plot of the input data for clustering, with
 colors representing the identified groups. The default value is 'TRUE}
+
+\item{order.batches}{Logical. When set to 'TRUE', the estimated batches will be ordered in the plot.}
 
 \item{verbose}{Logical. If 'TRUE', shows the messages of different steps of the function.}
 }
