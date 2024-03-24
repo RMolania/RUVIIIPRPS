@@ -92,6 +92,7 @@
 #' Th default is 'TRUE', the results will be save to the 'metadata$UV$Unknown'.
 #' @param plot.output Logical. When set to 'TRUE', the function generates a plot of the input data for clustering, with
 #' colors representing the identified groups. The default value is 'TRUE
+#' @param order.batches Logical. When set to 'TRUE', the estimated batches will be ordered in the plot.
 #' @param verbose Logical. If 'TRUE', shows the messages of different steps of the function.
 
 #' @importFrom SummarizedExperiment assay colData
@@ -99,6 +100,7 @@
 #' @importFrom BiocSingular bsparam runSVD
 #' @importFrom NbClust NbClust
 #' @importFrom stats as.formula
+#' @importFrom dplyr arrange
 #' @importFrom GGally ggpairs
 #' @importFrom RColorBrewer brewer.pal.info
 #' @import ggplot2
@@ -135,6 +137,7 @@ identifyUnknownUV <- function(
         remove.na = 'none',
         save.se.obj = TRUE,
         plot.output = TRUE,
+        order.batches = FALSE,
         verbose = TRUE
         ){
     printColoredMessage(message = '------------The indentifyUnknownUV function starts:',
@@ -153,9 +156,15 @@ identifyUnknownUV <- function(
     } else if (!approach %in% c('rle', 'pca', 'sample.scoring') ) {
         stop('The approach must be one of the "rle", "pca" or "sample.scoring".')
     }
+    if(is.logical(regress.out.bio.variables)){
+        stop('The "regress.out.bio.variables" should be either NULL or a vector of variable names.')
+    }
     if (!is.null(regress.out.bio.variables)) {
         if (!regress.out.bio.variables %in% colnames(colData(se.obj)))
             stop('The "regress.out.bio.variables" are not found in the SummarizedExperiment object.')
+    }
+    if(is.logical(regress.out.bio.gene.sets)){
+        stop('The "regress.out.bio.gene.sets" should be either NULL or a list of genes.')
     }
     if(!is.null(regress.out.bio.gene.sets)){
         lapply(
@@ -165,6 +174,9 @@ identifyUnknownUV <- function(
                     stop('The "regress.out.bio.gene.sets" are not found in the SummarizedExperiment object.')
             })
     }
+    if(is.logical(uv.gene.sets)){
+        stop('The "uv.gene.sets" should be either NULL or a list of genes.')
+    }
     if(!is.null(uv.gene.sets)){
         lapply(
             names(uv.gene.sets),
@@ -172,6 +184,9 @@ identifyUnknownUV <- function(
                 if(sum(uv.gene.sets[[x]] %in% row.names(se.obj)) < 2)
                     stop('The "uv.gene.sets" are not found in the SummarizedExperiment object.')
             })
+    }
+    if(is.logical(ncg)){
+        stop('The "ncg" should be either NULL or vector of genes ids.')
     }
     if (!is.null(ncg)) {
         if (sum(ncg %in% row.names(se.obj)) == 0)
@@ -217,7 +232,7 @@ identifyUnknownUV <- function(
     }
     if(approach == 'pca'){
         if(nb.pcs == 0 | is.null(max.samples.per.batch))
-            stop('The value of nb.pcs should be more than 0 when the arroach is equal to pca.')
+            stop('The value of "nb.pcs" should be more than 0 when the arroach is equal to pca.')
     }
     if(apply.log){
         if (pseudo.count < 0)
@@ -388,6 +403,7 @@ identifyUnknownUV <- function(
                 ' PCs as an input for clustering.'),
             color = 'blue',
             verbose = verbose)
+        set.seed(2233)
         sv.dec <- runSVD(
             x = t(temp.data),
             k = nb.pcs,
@@ -407,6 +423,7 @@ identifyUnknownUV <- function(
                 ' PCs as an input for clustering.'),
             color = 'blue',
             verbose = verbose)
+        set.seed(2233)
         sv.dec <- runSVD(
             x = t(temp.data[ncg , ]),
             k = nb.pcs,
@@ -441,10 +458,6 @@ identifyUnknownUV <- function(
             input.data <- colMedians(rle.data)
         } else if (rle.comp == 'iqr'){
             input.data <- colIQRs(rle.data)
-        } else if (rle.comp == 'both'){
-            input.data <- list(
-                rle.med = colMedians(rle.data),
-                rle.iqr = colIQRs(rle.data))
         }
     } else if(approach == 'sample.scoring'){
         if(is.null(uv.gene.sets)){
@@ -480,36 +493,25 @@ identifyUnknownUV <- function(
             verbose = verbose)
         ## kmeans ####
         set.seed(3344)
-        if(is.list(input.data)){
-            uv.sources <- lapply(
-                names(input.data),
-                function(x){
-                    groups <- kmeans(x = input.data[[x]], centers = nb.clusters, iter.max = 10000)$cluster
-                    paste0('Batch' , groups)
-                })
-            names(uv.sources) <- names(input.data)
-        } else {
-            groups <- kmeans(x = input.data, centers = nb.clusters, iter.max = 10000)$cluster
-            uv.sources <- paste0('Batch' , groups)
-            }
+        groups <-
+            kmeans(x = input.data,
+                   centers = nb.clusters,
+                   iter.max = 10000)$cluster
+        uv.sources <- paste0('Batch' , groups)
     } else if (clustering.methods == 'cut'){
         printColoredMessage(
             message = paste0('- Apply the cut method with breaks = ', nb.clusters, ' on the data'),
             color = 'blue',
             verbose = verbose)
         ## cut ####
-        if(is.list(input.data)){
-            uv.sources <- lapply(
-                names(input.data),
-                function(x){
-                    groups <- as.numeric(cut(x = input.data[[x]], breaks = nb.clusters, include.lowest = TRUE))
-                    paste0('Batch' , groups)
-                })
-            names(uv.sources) <- names(input.data)
-        } else {
-            groups <- as.numeric(cut(x = input.data, breaks = nb.clusters, include.lowest = TRUE))
-            uv.sources <- paste0('Batch' , groups)
-            }
+        groups <-
+            as.numeric(cut(
+                x = input.data,
+                breaks = nb.clusters,
+                include.lowest = TRUE
+            ))
+        uv.sources <- paste0('Batch' , groups)
+
     } else if(clustering.methods == 'quantile'){
         printColoredMessage(
             message = paste0('- Apply the quantile method with probs = ',
@@ -517,79 +519,49 @@ identifyUnknownUV <- function(
             color = 'blue',
             verbose = verbose)
         ## quantile ####
-        if(is.list(input.data)){
-            uv.sources <- lapply(
-                names(input.data),
-                function(x){
-                    quantiles <- quantile(x = input.data[[x]], probs = seq(0, 1, 1 / nb.clusters))
-                    groups <- as.numeric(cut(x = input.data[[x]], breaks = quantiles, include.lowest = TRUE))
-                    paste0('Batch' , groups)
-                })
-            names(uv.sources) <- names(input.data)
-        } else {
-            quantiles <- quantile(x = input.data, probs = seq(0, 1, 1 / nb.clusters))
-            groups <- as.numeric(cut(x = input.data, breaks = quantiles, include.lowest = TRUE))
-            uv.sources <- paste0('Batch' , groups)
-        }
+        quantiles <-
+            quantile(x = input.data, probs = seq(0, 1, 1 / nb.clusters))
+        groups <-
+            as.numeric(cut(
+                x = input.data,
+                breaks = quantiles,
+                include.lowest = TRUE
+            ))
+        uv.sources <- paste0('Batch' , groups)
+
     } else if(clustering.methods == 'nbClust'){
         printColoredMessage(
             message = '- Apply the nbClust method on the data.',
             color = 'blue',
             verbose = verbose)
         ## nbClust ####
-        if(!is.list(input.data)){
-            initial.clusters <- NbClust(
-                data = input.data,
-                diss = nbClust.diss,
-                distance = nbClust.distance,
-                min.nc = nbClust.min.nc,
-                max.nc = nbClust.max.nc,
-                method = nbClust.method,
-                index = nbClust.index,
-                alphaBeale = nbClust.alphaBeale
-            )
-            batch.samples <- data.frame(
-                id = colnames(se.obj),
-                batch = initial.clusters$Best.partition
-            )
-            selected.clusters <- findRepeatingPatterns(
-                vec = batch.samples$batch,
-                n.repeat = round(max.samples.per.batch * ncol(se.obj), digits = 0)
-            )
-            while(length(selected.clusters) > 0){
-                more.clusters <- lapply(
-                    selected.clusters,
-                    function(x){
-                        index <- batch.samples$batch == x
-                        if(is.matrix(input.data)){
-                            sub.input.data <- input.data[index , ]
-                        } else sub.input.data <- input.data[index]
-                        sub.clusters <- NbClust(
-                            data = sub.input.data,
-                            diss = nbClust.diss,
-                            distance = nbClust.distance,
-                            min.nc = nbClust.min.nc,
-                            max.nc = nbClust.max.nc,
-                            method = nbClust.method,
-                            index = nbClust.index,
-                            alphaBeale = nbClust.alphaBeale)
-                        data.frame(
-                            id = batch.samples$id[index],
-                            batch = paste0(x, sub.clusters$Best.partition))
-                    })
-                more.clusters <- do.call(rbind, more.clusters)
-                batch.samples$batch[match(more.clusters$id, batch.samples$id)] <- more.clusters$batch
-                selected.clusters <- findRepeatingPatterns(
-                    vec = batch.samples$batch,
-                    n.repeat = round(max.samples.per.batch * ncol(se.obj), digits = 0))
-            }
-            uv.sources <- paste0('Batch', batch.samples$batch)
-        } else {
-            uv.sources <- lapply(
-                names(input.data),
-                function(x){
-                    initial.clusters <- NbClust(
-                        data = input.data[[x]],
+        initial.clusters <- NbClust(
+            data = input.data,
+            diss = nbClust.diss,
+            distance = nbClust.distance,
+            min.nc = nbClust.min.nc,
+            max.nc = nbClust.max.nc,
+            method = nbClust.method,
+            index = nbClust.index,
+            alphaBeale = nbClust.alphaBeale
+        )
+        batch.samples <- data.frame(
+            id = colnames(se.obj),
+            batch = initial.clusters$Best.partition)
+        selected.clusters <- findRepeatingPatterns(
+            vec = batch.samples$batch,
+            n.repeat = round(max.samples.per.batch * ncol(se.obj), digits = 0))
+        while (length(selected.clusters) > 0) {
+            more.clusters <- lapply(
+                selected.clusters,
+                function(x) {
+                    index <- batch.samples$batch == x
+                    if (is.matrix(input.data)) {
+                        sub.input.data <- input.data[index , ]
+                    } else
+                        sub.input.data <- input.data[index]
+                    sub.clusters <- NbClust(
+                        data = sub.input.data,
                         diss = nbClust.diss,
                         distance = nbClust.distance,
                         min.nc = nbClust.min.nc,
@@ -598,45 +570,18 @@ identifyUnknownUV <- function(
                         index = nbClust.index,
                         alphaBeale = nbClust.alphaBeale
                     )
-                    batch.samples <- data.frame(
-                        id = colnames(se.obj),
-                        batch = initial.clusters$Best.partition)
-                    selected.clusters <- findRepeatingPatterns(
-                        vec = batch.samples$batch,
-                        n.repeat = round(max.samples.per.batch * ncol(se.obj), digits = 0))
-                    while(length(selected.clusters) > 0){
-                        more.clusters <- lapply(
-                            selected.clusters,
-                            function(y){
-                                index <- batch.samples$batch == y
-                                if(is.matrix(input.data)){
-                                    sub.input.data <- input.data[[x]][index , ]
-                                } else sub.input.data[[x]][index]
-                                sub.clusters <- NbClust(
-                                    data = sub.input.data,
-                                    diss = nbClust.diss,
-                                    distance = nbClust.distance,
-                                    min.nc = nbClust.min.nc,
-                                    max.nc = nbClust.max.nc,
-                                    method = nbClust.method,
-                                    index = nbClust.index,
-                                    alphaBeale = nbClust.alphaBeale
-                                )
-                                data.frame(
-                                    id = batch.samples$id[index],
-                                    batch = paste0(y, sub.clusters$Best.partition))
-                            })
-                        more.clusters <- do.call(rbind, more.clusters)
-                        all.equal(more.clusters$id, batch.samples$id)
-                        batch.samples$batch[match( more.clusters$id, batch.samples$id )] <- more.clusters$batch
-                        selected.clusters <- findRepeatingPatterns(
-                            vec = batch.samples$batch,
-                            n.repeat = round(max.samples.per.batch * ncol(se.obj), digits = 0))
-                    }
-                    return(paste0('Batch', batch.samples$batch))
+                    data.frame(id = batch.samples$id[index],
+                               batch = paste0(x, sub.clusters$Best.partition))
                 })
-            names(uv.sources) <- names(input.data)
+            more.clusters <- do.call(rbind, more.clusters)
+            batch.samples$batch[match(more.clusters$id, batch.samples$id)] <-
+                more.clusters$batch
+            selected.clusters <- findRepeatingPatterns(
+                vec = batch.samples$batch,
+                n.repeat = round(max.samples.per.batch * ncol(se.obj), digits = 0)
+            )
         }
+        uv.sources <- paste0('Batch', as.numeric(as.factor(batch.samples$batch)))
     }
     # number of possible batches ####
     printColoredMessage(
@@ -644,8 +589,7 @@ identifyUnknownUV <- function(
             length(unique(uv.sources)),
             ' potential batches are found in the ',
             assay.name,
-            ' data.'
-        ),
+            ' data.'),
         color = 'blue',
         verbose = verbose
     )
@@ -668,20 +612,18 @@ identifyUnknownUV <- function(
         RColorBrewer::brewer.pal(10, "Paired")
     )
     colors.selected <- currentCols[1:length(unique(uv.sources))]
+    names(colors.selected) <- sort(unique(uv.sources))
     if (!is.matrix(input.data)) {
-        data.to.plot <- data.frame(input.data = input.data,
-                                   # samples = c(1:ncol(se.obj)),
-                                   batches = factor(
-                                       x = paste0('Batch', as.numeric(as.factor(uv.sources))),
-                                       levels = paste0('Batch', sort(unique(
-                                           as.numeric(as.factor(uv.sources))
-                                       )))
-                                   ))
-        data.to.plot <-
-            data.to.plot[order(data.to.plot$batches) ,]
+        data.to.plot <- data.frame(
+            input.data = input.data,
+            batches = factor(x = paste0('Batch', as.numeric(as.factor(uv.sources))),
+                             levels = paste0('Batch', sort(unique(
+                                 as.numeric(as.factor(uv.sources))
+                             )))))
+        if(isTRUE(order.batches))
+            data.to.plot <- arrange(data.to.plot, batches)
         data.to.plot$samples <- c(1:ncol(se.obj))
-        p <-
-            ggplot(data = data.to.plot, aes(x = samples, y = input.data, color = batches)) +
+        p <- ggplot(data = data.to.plot, aes(x = samples, y = input.data, color = batches)) +
             geom_point() +
             ggtitle('Possible sources of batches') +
             scale_color_manual(values = colors.selected, name = 'Batch') +
@@ -703,17 +645,17 @@ identifyUnknownUV <- function(
     } else{
         if (ncol(input.data) == 1) {
             data.to.plot <- as.data.frame(input.data)
-            data.to.plot$batches <- factor(x = paste0('Batch', as.numeric(as.factor(uv.sources))),
-                                           levels = paste0('Batch', sort(unique(
-                                               as.numeric(as.factor(uv.sources))
-                                           ))))
+            colnames(data.to.plot) <- 'input'
+            data.to.plot$batches <- factor(
+                x = uv.sources,
+                levels = sort(unique(uv.sources))
+                )
+            if(isTRUE(order.batches))
+                data.to.plot <- arrange(data.to.plot, batches)
             data.to.plot$samples <- c(1:ncol(se.obj))
-            data.to.plot <-
-                data.to.plot[order(data.to.plot$batches) ,]
-            p <-
-                ggplot(data = data.to.plot, aes(
+            p <- ggplot(data = data.to.plot, aes(
                     x = samples,
-                    y = input.data,
+                    y = input,
                     color = batches
                 )) +
                 geom_point() +
@@ -743,8 +685,28 @@ identifyUnknownUV <- function(
             p <- GGally::ggpairs(
                 data = data.to.plot[, 1:(ncol(data.to.plot) - 1)],
                 mapping = ggplot2::aes(colour = data.to.plot[, ncol(data.to.plot)]),
-                upper = NULL
+                showStrips = FALSE,
+                switch = 'y',
+                labeller = NULL,
+                diag = list(continuous = wrap("diagAxis", labelSize = 8, diagAxis = 0)),
+                upper = "blank"
             ) +
+                theme(
+                    panel.background = element_blank(),
+                    legend.key = element_blank(),
+                    legend.text = element_text(size = 12),
+                    legend.title = element_text(size = 14),
+                    panel.grid.major = element_blank(),
+                    axis.ticks = element_blank(),
+                    strip.background = element_blank(),
+                    strip.text.x.bottom = element_text(size = 0),
+                    strip.text = element_text(size = 0),
+                    axis.line = element_line(colour = 'black', linewidth = 1),
+                    axis.title.x = element_text(size = 12),
+                    axis.title.y = element_text(size = 2),
+                    axis.text.x = element_text(size = 0),
+                    axis.text.y = element_text(size = 0)
+                ) +
                 scale_color_manual(values = colors.selected)
             if (isTRUE(plot.output))
                 print(p)
@@ -771,7 +733,8 @@ identifyUnknownUV <- function(
         if (!input.data.name %in%  names(se.obj@metadata[['UknownUV']][[assay.name]])){
             se.obj@metadata[['UknownUV']][[assay.name]][[input.data.name]] <- list()
         }
-        se.obj@metadata[['UknownUV']][[assay.name]][[input.data.name]][['batches']] <- uv.sources
+        se.obj@metadata[['UknownUV']][[assay.name]][[input.data.name]][['batches']] <-
+            paste0('Batch', as.numeric(as.factor(uv.sources)))
         se.obj@metadata[['UknownUV']][[assay.name]][[input.data.name]][['input.data']] <- input.data
         se.obj@metadata[['UknownUV']][[assay.name]][[input.data.name]][['plot']] <- p
         printColoredMessage(
