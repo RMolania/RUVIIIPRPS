@@ -126,7 +126,6 @@ createPrPsByAnchors <- function(
             stop('The value of "min.score" must be between 0 and 1.')
     }
 
-
     # check the SummarizedExperiment ####
     if (assess.se.obj) {
         se.obj <- checkSeObj(
@@ -271,7 +270,6 @@ createPrPsByAnchors <- function(
     all.prps.sets <- split(
         x = all.anchors,
         f = all.anchors$sample.index1)
-
     all.prps.sets <- lapply(
         all.prps.sets,
         function(x) {
@@ -281,7 +279,7 @@ createPrPsByAnchors <- function(
                         all.anchors[all.anchors$sample.index2 == j,])
                     ))
             average.scores <- mean(temp.anchors$score)
-            all.datasets <- sort(unique(c( temp.anchors$dataset1, temp.anchors$dataset2)))
+            all.datasets <- sort(unique(c(temp.anchors$dataset1, temp.anchors$dataset2)))
             anchor.sets <-
                 lapply(all.datasets, function(x) {
                     unique(c(
