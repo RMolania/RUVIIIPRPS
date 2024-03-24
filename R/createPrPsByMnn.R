@@ -260,7 +260,7 @@ createPrPsByMnn <- function(
     printColoredMessage(message = '-- Create PRPS data:',
         color = 'magenta',
         verbose = verbose)
-    ## data transformation and normalization ####
+    ## data transformation ####
     printColoredMessage(
         message = '- Apply log on the data before creating PRPS:',
         color = 'blue',
@@ -287,7 +287,7 @@ createPrPsByMnn <- function(
     }
     printColoredMessage(
         message = '- Aeverage samples to create psudo samples:',
-        color = 'blue')
+        color = 'blue', verbose = verbose)
     prps.data <- lapply(
         unique(all.prps.sets$mnn.sets),
         function(x){
