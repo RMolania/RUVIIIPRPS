@@ -119,6 +119,9 @@ createSeObj <- function(
             stop('To add the calculated library size, either a "sample.annotation" should be provided or set the create.sample.annotation=TRUE.')
         }
     }
+    if(is.logical(estimate.tumor.purity)){
+        stop('The "estimate.tumor.purity" must be one of the "estimate", "singscore", "both" and "NULL"')
+    }
     if(!is.null(estimate.tumor.purity)){
         if(is.null(sample.annotation) & isFALSE(create.sample.annotation)){
             stop('To add the calculated tumour purity, either a "sample.annotation" should be provided or set the create.sample.annotation=TRUE.')
@@ -471,6 +474,8 @@ createSeObj <- function(
             color = 'blue',
             verbose = verbose
         )
+        for(g in colnames(hk.im.genes)[4:9])
+            gene.annotation[[g]][is.na(gene.annotation[[g]])] <- FALSE
         nb.hk.genes <- lapply(
             colnames(hk.im.genes)[4:9],
             function(x) sum(gene.annotation[[x]]))
@@ -501,6 +506,8 @@ createSeObj <- function(
             color = 'blue',
             verbose = verbose
         )
+        for(g in colnames(hk.im.genes)[10:11])
+            gene.annotation[[g]][is.na(gene.annotation[[g]])] <- FALSE
         nb.genes <- lapply(
             colnames(hk.im.genes)[10:11],
             function(x) sum(gene.annotation[x]))
@@ -549,7 +556,7 @@ createSeObj <- function(
                 rankData = tumour.purity,
                 upSet = im.str.gene.sig)
             tumour.purity <- tumour.purity$TotalScore
-            sample.annotation[['tumour.purity']] <- tumour.purity
+            sample.annotation[['tumour.purity']] <- 1 - tumour.purity
         } else if (estimate.tumor.purity == 'both'){
             printColoredMessage(
                 message = '-- Estimate tumour purity using both ESTIMATE and singscore methods:',
@@ -579,7 +586,7 @@ createSeObj <- function(
                 upSet = im.str.gene.sig)
             tumour.purity.singscore <- tumour.purity$TotalScore
             sample.annotation[['tumour.purity.estimate']] <- tumour.purity.estimate
-            sample.annotation[['tumour.purity.singscore']] <- tumour.purity.singscore
+            sample.annotation[['tumour.purity.singscore']] <- 1 - tumour.purity.singscore
         }
     }
     # outputs ####
