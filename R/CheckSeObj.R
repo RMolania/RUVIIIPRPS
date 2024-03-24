@@ -112,7 +112,7 @@ checkSeObj <- function(
             stop(paste0(
                 'The assay(s): ',
                 paste(not.found.assay, collapse = ', '),
-                'cannot be found in the SummarizedExperiment object.'))
+                ' cannot be found in the SummarizedExperiment object.'))
         } else{
             printColoredMessage(
                 message = paste0(
